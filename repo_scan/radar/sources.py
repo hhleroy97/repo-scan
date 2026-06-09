@@ -1,7 +1,8 @@
 """Source model and docs/research/ writers.
 
 Every ingested source normalizes to one Source and one markdown file at
-docs/research/sources/{id}.md with a parseable key-value frontmatter block.
+docs/research/sources/{id}.md with YAML frontmatter, so Obsidian graph view
+and Dataview see real tags and properties instead of opaque code blocks.
 """
 
 import re
@@ -9,6 +10,47 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
 from ..utils import now_iso, ok, write_doc
+
+
+# ---------------------------------------------------------------------------
+# Minimal YAML frontmatter (write + parse) — stdlib only, flat keys
+# ---------------------------------------------------------------------------
+
+def _yaml_value(value) -> str:
+    if isinstance(value, list):
+        return "[" + ", ".join(_yaml_value(v) for v in value) + "]"
+    text = str(value)
+    return '"' + text.replace('"', "'") + '"' if text else '""'
+
+
+def frontmatter(fields: dict) -> str:
+    """Render a flat dict as a YAML frontmatter block. Strings are quoted so
+    colons in URLs/titles never break parsing; lists use flow style."""
+    lines = ["---"]
+    for key, value in fields.items():
+        lines.append(f"{key}: {_yaml_value(value)}")
+    lines.append("---")
+    return "\n".join(lines)
+
+
+def parse_frontmatter(text: str) -> dict:
+    """Parse a flat frontmatter block back into strings (lists → 'a, b')."""
+    meta: dict = {}
+    m = re.match(r"---\n(.*?)\n---", text, re.S)
+    if not m:
+        return meta
+    for line in m.group(1).splitlines():
+        if ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        value = value.strip()
+        if value.startswith("[") and value.endswith("]"):
+            items = [v.strip().strip('"') for v in value[1:-1].split(",")]
+            value = ", ".join(v for v in items if v)
+        else:
+            value = value.strip('"')
+        meta[key.strip()] = value
+    return meta
 
 
 @dataclass
@@ -58,19 +100,21 @@ def write_source(root: Path, cfg: dict, source: Source) -> Path:
     path = sources_dir / f"{source.id}.md"
 
     claims = "\n".join(f"- {c}" for c in source.key_claims) or "_none extracted yet_"
+    tags = [slugify(t, 30) for t in source.tags]
+    linked = [f if f.startswith("[[") else f"[[{f}]]" for f in source.linked_files]
     generated = "\n".join([
-        f"# {source.title}",
+        frontmatter({
+            "id": source.id,
+            "type": source.type,
+            "url": source.url,
+            "raw_url": source.raw_url or source.url,
+            "tags": tags,
+            "linked_files": linked,
+            "relevance": source.relevance,
+            "ingested_at": source.ingested_at,
+        }),
         "",
-        "```source",
-        f"id: {source.id}",
-        f"type: {source.type}",
-        f"url: {source.url}",
-        f"raw_url: {source.raw_url or source.url}",
-        f"tags: {', '.join(source.tags)}",
-        f"linked_files: {', '.join(source.linked_files)}",
-        f"relevance: {source.relevance}",
-        f"ingested_at: {source.ingested_at}",
-        "```",
+        f"# {source.title}",
         "",
         "## Summary",
         "",
@@ -79,6 +123,7 @@ def write_source(root: Path, cfg: dict, source: Source) -> Path:
         "## Key claims",
         "",
         claims,
+        "",
         "",
     ])
 
@@ -94,17 +139,13 @@ def write_source(root: Path, cfg: dict, source: Source) -> Path:
 
 
 def parse_source_file(path: Path) -> dict:
-    """Parse the ```source block back into a dict (for index rebuilds)."""
-    meta: dict = {}
+    """Parse a source note's frontmatter back into a dict (for index rebuilds)."""
     text = path.read_text(encoding="utf-8", errors="ignore")
-    m = re.search(r"```source\n(.*?)```", text, re.S)
-    if not m:
+    meta = parse_frontmatter(text)
+    if not meta:
         return meta
-    for line in m.group(1).splitlines():
-        if ":" in line:
-            key, _, value = line.partition(":")
-            meta[key.strip()] = value.strip()
-    title = text.splitlines()[0].lstrip("# ").strip() if text.splitlines() else path.stem
+    title = next((line[2:].strip() for line in text.splitlines() if line.startswith("# ")),
+                 path.stem)
     meta["title"] = title
     return meta
 
@@ -131,7 +172,10 @@ def rebuild_research_index(root: Path, cfg: dict):
     ]
     for m in entries:
         sid = m.get("id", "?")
-        lines.append(f"| [[sources/{sid}\\|{m.get('title', sid)}]] | {m.get('type', '?')} | "
+        title = m.get("title", sid)
+        if len(title) > 90:
+            title = title[:90].rsplit(" ", 1)[0] + "…"
+        lines.append(f"| [[sources/{sid}\\|{title}]] | {m.get('type', '?')} | "
                      f"{m.get('tags', '')} | {m.get('ingested_at', '')} |")
     if not entries:
         lines.append("| _none yet — run `radar ingest <ref>`_ | | | |")

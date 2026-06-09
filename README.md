@@ -137,6 +137,15 @@ Every decision is appended to `docs/research/decisions.md`. Loop runs are
 recorded to `docs/changelog/{date}-loop.md`; specs land in `docs/specs/`
 (`status: draft` → `status: approved` after Gate 2).
 
+### Obsidian graph + Dataview
+
+All radar artifacts carry YAML frontmatter (type, tags, status, confidence —
+queryable with Dataview/Bases) and wikilink their provenance: spec → analysis
+→ sources + run log, and gate decisions link both. Each loop run renders as a
+connected cluster in graph view — click a spec, see exactly what research
+justified it. Source `linked_files` emit `[[path]]` ghost nodes so sources
+cluster around the code they inform.
+
 ### What radar writes
 
 ```

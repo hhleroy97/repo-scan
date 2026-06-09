@@ -1,21 +1,21 @@
 # Health report
-_Generated 2026-06-09 22:54 UTC_  |  _Branch: main_  |  _Last commit: 6a140a5 feat: phase B3 — file-backed gates and full radar loop pipeline_
+_Generated 2026-06-09 23:11 UTC_  |  _Branch: main_  |  _Last commit: 2083b77 feat: phase B4 — metric-triggered radar full, scan nudge, CLI e2e_
 
 ## File sizes
 
 | File | Lines | Size | Status |
 |------|-------|------|--------|
-| `docs/scan.json` | 454 | 8.4 KB | 🟡 large |
+| `docs/scan.json` | 617 | 11.9 KB | 🔴 critical |
+| `repo_scan/radar/pipeline.py` | 286 | 12.2 KB | ✅ |
 | `repo_scan/writers.py` | 272 | 10.7 KB | ✅ |
-| `repo_scan/radar/pipeline.py` | 248 | 10.5 KB | ✅ |
-| `repo_scan/radar/fetchers.py` | 167 | 7.5 KB | ✅ |
+| `repo_scan/radar/fetchers.py` | 170 | 7.6 KB | ✅ |
+| `repo_scan/radar/sources.py` | 166 | 6.7 KB | ✅ |
 | `repo_scan/handoff.py` | 156 | 5.2 KB | ✅ |
-| `repo_scan/radar/sources.py` | 132 | 5.1 KB | ✅ |
-| `repo_scan/radar/research.py` | 129 | 5.1 KB | ✅ |
-| `tests/test_radar_ingest.py` | 114 | 4.8 KB | ✅ |
+| `tests/test_radar_ingest.py` | 141 | 6.0 KB | ✅ |
+| `repo_scan/radar/research.py` | 136 | 5.3 KB | ✅ |
+| `tests/test_radar_pipeline.py` | 113 | 5.9 KB | ✅ |
 | `repo_scan/graphs.py` | 111 | 4.4 KB | ✅ |
 | `repo_scan/scanner.py` | 103 | 4.8 KB | ✅ |
-| `tests/test_radar_pipeline.py` | 102 | 5.2 KB | ✅ |
 | `tests/test_radar_llm.py` | 95 | 4.6 KB | ✅ |
 | `repo_scan/radar/llm.py` | 90 | 3.4 KB | ✅ |
 | `repo_scan/radar/gates.py` | 85 | 3.9 KB | ✅ |
@@ -40,11 +40,11 @@ _Generated 2026-06-09 22:54 UTC_  |  _Branch: main_  |  _Last commit: 6a140a5 fe
 | `pyproject.toml` | 14 | 0.4 KB | ✅ |
 | `setup.py` | 13 | 0.3 KB | ✅ |
 | `repo_scan/radar/__init__.py` | 5 | 0.2 KB | ✅ |
-| `docs/research/tags.md` | 0 | 0.7 KB | ✅ |
-| `docs/research/index.md` | 0 | 0.5 KB | ✅ |
+| `docs/research/sources/gh-yamadashy-repomix.md` | 0 | 0.7 KB | ✅ |
+| `docs/research/tags.md` | 0 | 0.3 KB | ✅ |
+| `docs/research/index.md` | 0 | 0.3 KB | ✅ |
+| `docs/research/candidates.md` | 0 | 0.3 KB | ✅ |
 | `docs/reports/calls.md` | 0 | 0.2 KB | ✅ |
-| `docs/RADAR_CONTEXT.md` | 0 | 6.5 KB | ✅ |
-| `docs/changelog/2026-06-09-phase-b3-loop.md` | 0 | 2.2 KB | ✅ |
 
 ## Complexity hotspots
 
@@ -53,15 +53,16 @@ _Generated 2026-06-09 22:54 UTC_  |  _Branch: main_  |  _Last commit: 6a140a5 fe
 | `repo_scan/scanner.py` | `scan` | C | 20 | 25 |
 | `repo_scan/graphs.py` | `get_python_dep_edges` | C | 19 | 46 |
 | `repo_scan/writers.py` | `write_index` | C | 19 | 113 |
+| `tests/test_radar_pipeline.py` | `test_loop_happy_path_auto_gates` | C | 19 | 54 |
 | `repo_scan/languages.py` | `get_line_counts` | C | 16 | 31 |
 | `repo_scan/ranking.py` | `rank_files` | C | 16 | 15 |
 | `repo_scan/identity.py` | `detect_entry_points` | C | 14 | 17 |
+| `repo_scan/radar/sources.py` | `rebuild_research_index` | C | 14 | 153 |
 | `repo_scan/digest.py` | `write_digest` | C | 13 | 10 |
-| `repo_scan/radar/sources.py` | `rebuild_research_index` | C | 13 | 112 |
 | `repo_scan/graphs.py` | `get_c_call_graph_mermaid` | C | 12 | 99 |
 | `repo_scan/writers.py` | `write_health_report` | C | 12 | 10 |
-| `tests/test_radar_pipeline.py` | `test_loop_happy_path_auto_gates` | C | 12 | 54 |
 | `repo_scan/graphs.py` | `get_ts_dep_edges` | C | 11 | 24 |
+| `repo_scan/radar/pipeline.py` | `write_analysis` | C | 11 | 96 |
 
 ## Git churn (most changed files)
 
@@ -69,16 +70,20 @@ _Generated 2026-06-09 22:54 UTC_  |  _Branch: main_  |  _Last commit: 6a140a5 fe
 |------|---------|
 | `pyproject.toml` | 5 |
 | `setup.py` | 5 |
-| `docs/architecture/dependency-graph.md` | 3 |
-| `docs/index.md` | 3 |
-| `docs/reports/calls.md` | 3 |
-| `docs/reports/dependencies.md` | 3 |
-| `docs/reports/health.md` | 3 |
+| `docs/architecture/dependency-graph.md` | 4 |
+| `docs/index.md` | 4 |
+| `docs/reports/calls.md` | 4 |
+| `docs/reports/dependencies.md` | 4 |
+| `docs/reports/health.md` | 4 |
+| `README.md` | 3 |
+| `docs/scan.json` | 3 |
 | `repo_scan.py` | 3 |
+| `docs/digest.md` | 2 |
+| `repo_scan/scanner.py` | 2 |
 | `repo_scan/radar/cli.py` | 2 |
-| `docs/scan.json` | 2 |
-| `README.md` | 2 |
 | `.gitignore` | 2 |
 | `HANDOFF.md` | 2 |
-| `docs/changelog/2026-06-09-phase-b3-loop.md` | 1 |
-| `repo_scan/radar/gates.py` | 1 |
+
+## Action items
+
+- [ ] Split `docs/scan.json` (617 lines)

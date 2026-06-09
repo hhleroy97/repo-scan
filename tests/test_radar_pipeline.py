@@ -68,7 +68,20 @@ def test_loop_happy_path_auto_gates(loop_env):
 
     analysis = list((docs / "research" / "analysis").glob("*.md"))
     assert len(analysis) == 1
-    assert "confidence: high" in analysis[0].read_text()
+    analysis_text = analysis[0].read_text()
+    assert "confidence: high" in analysis_text
+
+    # provenance cluster: spec -> analysis -> sources/run log; decisions -> artifacts
+    analysis_stem = analysis[0].stem
+    assert analysis_stem.endswith("-analysis")
+    assert f"[[{analysis_stem}]]" in spec
+    assert "[[file-note\\|" in analysis_text          # evidence wikilink to source
+    run_log = next((docs / "research" / "runs").glob("*.md"))
+    assert f"[[{run_log.stem}]]" in analysis_text
+    assert run_log.stem != analysis_stem != specs[0].stem  # bare links stay unambiguous
+    decisions_text = (docs / "research" / "decisions.md").read_text()
+    assert f"[[{analysis_stem}]]" in decisions_text
+    assert f"[[{specs[0].stem}]]" in decisions_text
 
     loop_logs = list((docs / "changelog").glob("*-loop.md"))
     assert len(loop_logs) == 1

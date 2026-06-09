@@ -7,7 +7,7 @@ from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step,
 from .gates import gate
 from .llm import LLMError, complete, complete_json
 from .research import repo_context_snippet, run_research, write_run_log
-from .sources import slugify
+from .sources import frontmatter, slugify
 
 ANALYZE_PROMPT = """You are the analysis stage of a research loop for a software project.
 
@@ -93,11 +93,26 @@ def run_analyze(root: Path, cfg: dict, problem: str, ingested: list[dict]) -> di
     return analysis
 
 
-def write_analysis(root: Path, cfg: dict, problem: str, analysis: dict) -> Path:
+def write_analysis(root: Path, cfg: dict, problem: str, analysis: dict,
+                   ingested: list[dict] | None = None,
+                   run_log_path: Path | None = None) -> Path:
+    """Analysis note. Wikilinks its evidence (sources + run log) so each loop
+    forms a connected provenance cluster in Obsidian's graph view. The
+    `-analysis` filename suffix keeps bare wikilinks unambiguous vs the spec
+    and run log, which share the same date-slug."""
     out_dir = root / cfg["docs_dir"] / "research" / "analysis"
     out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / f"{now_date()}-{slugify(problem, 40)}.md"
+    path = out_dir / f"{now_date()}-{slugify(problem, 40)}-analysis.md"
+    ingested = ingested or []
     lines = [
+        frontmatter({
+            "type": "analysis",
+            "problem": problem,
+            "confidence": analysis["confidence"],
+            "sources": [item["id"] for item in ingested],
+            "generated_at": now_iso(),
+        }),
+        "",
         f"# Analysis — {problem}",
         f"_Generated {now_iso()} — confidence: {analysis['confidence']}_",
         "",
@@ -108,6 +123,14 @@ def write_analysis(root: Path, cfg: dict, problem: str, analysis: dict) -> Path:
     lines += ["", "## Recommendation", "", analysis["recommendation"] or "_none_", ""]
     if analysis["risks"]:
         lines += ["## Risks", ""] + [f"- {r}" for r in analysis["risks"]] + [""]
+    lines += ["## Evidence", ""]
+    for item in ingested:
+        lines.append(f"- [[{item['id']}\\|{item['title']}]]")
+    if not ingested:
+        lines.append("_no sources ingested_")
+    if run_log_path is not None:
+        lines.append(f"- research run: [[{run_log_path.stem}]]")
+    lines.append("")
     write_doc(path, "\n".join(lines), root)
     return path
 
@@ -129,11 +152,20 @@ def run_audit(cfg: dict, problem: str, spec_text: str) -> dict:
 
 
 def write_spec(root: Path, cfg: dict, problem: str, spec_text: str,
-               audit: dict, status: str) -> Path:
+               audit: dict, status: str, analysis_path: Path | None = None) -> Path:
     specs = root / cfg["docs_dir"] / "specs"
     specs.mkdir(parents=True, exist_ok=True)
-    path = specs / f"{now_date()}-{slugify(problem, 40)}.md"
+    path = specs / f"{now_date()}-{slugify(problem, 40)}-spec.md"
     lines = [
+        frontmatter({
+            "type": "spec",
+            "problem": problem,
+            "status": status,
+            "audit_verdict": audit["verdict"],
+            "analysis": f"[[{analysis_path.stem}]]" if analysis_path else "",
+            "drafted_at": now_iso(),
+        }),
+        "",
         f"# Spec — {problem}",
         f"_Drafted {now_iso()} by radar — **status: {status}**_",
         "",
@@ -146,6 +178,8 @@ def write_spec(root: Path, cfg: dict, problem: str, spec_text: str,
     ]
     if audit["issues"]:
         lines += [f"- {i}" for i in audit["issues"]] + [""]
+    if analysis_path is not None:
+        lines += ["## Provenance", "", f"- analysis: [[{analysis_path.stem}]]", ""]
     write_doc(path, "\n".join(lines), root)
     return path
 
@@ -189,20 +223,22 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         # 1 — Research
         step("[1/7] Research")
         research = run_research(root, cfg, problem, max_sources)
-        write_run_log(root, cfg, research)
+        run_log_path = write_run_log(root, cfg, research)
         result["sources"] = len(research["ingested"])
         ok(f"{result['sources']} source(s) ingested")
 
         # 2 — Analyze
         step("[2/7] Analyze")
         analysis = run_analyze(root, cfg, problem, research["ingested"])
-        write_analysis(root, cfg, problem, analysis)
+        analysis_path = write_analysis(root, cfg, problem, analysis,
+                                       research["ingested"], run_log_path)
         result["confidence"] = analysis["confidence"]
         ok(f"{len(analysis['findings'])} finding(s), confidence {analysis['confidence']}")
 
         # 3 — Gate 1
         step("[3/7] Gate 1 (post-analyze)")
-        if not gate("post_analyze", {"summary": analysis["recommendation"]}, cfg, root, approved):
+        gate1_payload = {"summary": f"{analysis['recommendation']} — [[{analysis_path.stem}]]"}
+        if not gate("post_analyze", gate1_payload, cfg, root, approved):
             gates_log.append("post_analyze: stopped")
             result["gates"] = "; ".join(gates_log)
             record_loop(root, cfg, problem, result)
@@ -227,9 +263,10 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
 
         # 6 — Gate 2
         step("[6/7] Gate 2 (post-audit)")
-        spec_path = write_spec(root, cfg, problem, spec_text, audit, status="draft")
-        result["spec"] = str(spec_path.relative_to(root))
-        payload = {"summary": f"audit {audit['verdict']}: {audit['notes']} — spec at {result['spec']}"}
+        spec_path = write_spec(root, cfg, problem, spec_text, audit,
+                               status="draft", analysis_path=analysis_path)
+        result["spec"] = f"[[{spec_path.stem}]]"
+        payload = {"summary": f"audit {audit['verdict']}: {audit['notes']} — [[{spec_path.stem}]]"}
         if not gate("post_audit", payload, cfg, root, approved):
             gates_log.append("post_audit: stopped")
             result["gates"] = "; ".join(gates_log)
@@ -239,7 +276,8 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
 
         # 7 — Record
         step("[7/7] Record")
-        write_spec(root, cfg, problem, spec_text, audit, status="approved")
+        write_spec(root, cfg, problem, spec_text, audit,
+                   status="approved", analysis_path=analysis_path)
         result["outcome"] = "approved"
         result["gates"] = "; ".join(gates_log)
         record_loop(root, cfg, problem, result)

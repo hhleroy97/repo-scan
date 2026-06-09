@@ -11,7 +11,7 @@ from pathlib import Path
 from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step, write_doc
 from .fetchers import FetchError, fetch
 from .llm import LLMError, complete_json, summarize_source
-from .sources import rebuild_research_index, slugify, write_source
+from .sources import frontmatter, rebuild_research_index, slugify, write_source
 
 PROPOSE_PROMPT = """You are the research arm of a software project's knowledge loop.
 
@@ -108,6 +108,13 @@ def write_run_log(root: Path, cfg: dict, result: dict) -> Path:
     path = runs / f"{now_date()}-{slugify(result['question'], 40)}.md"
 
     lines = [
+        frontmatter({
+            "type": "research-run",
+            "question": result["question"],
+            "sources": [item["id"] for item in result["ingested"]],
+            "run_at": now_iso(),
+        }),
+        "",
         f"# Research run — {result['question']}",
         f"_Run {now_iso()}_",
         "",

@@ -1,5 +1,5 @@
 # Repo index
-_Last scan: 2026-06-09 22:54 UTC_
+_Last scan: 2026-06-09 23:11 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
@@ -8,12 +8,12 @@ _Last scan: 2026-06-09 22:54 UTC_
 | Metric | Value |
 |--------|-------|
 | Source files | 33 |
-| Total lines | 3,269 |
+| Total lines | 3,552 |
 | Languages | PY: 33 |
 | Large files (>300 lines) | 1 |
-| Critical files (>600 lines) | 0 |
+| Critical files (>600 lines) | 1 |
 | Branch | main |
-| Last commit | 6a140a5 feat: phase B3 — file-backed gates and full radar loop pipeline |
+| Last commit | 2083b77 feat: phase B4 — metric-triggered radar full, scan nudge, CLI e2e |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml`, `setup.py` |
 
@@ -28,21 +28,21 @@ _Composite of import centrality × git churn × complexity × size._
 
 | File | Score | Imported by | Commits | CC | Lines |
 |------|-------|-------------|---------|----|-------|
+| `repo_scan/writers.py` | 49.0 | 3 | 0 | 31 | 272 |
 | `repo_scan/config.py` | 36.5 | 5 | 0 | 0 | 42 |
-| `repo_scan/languages.py` | 32.8 | 3 | 0 | 16 | 61 |
 | `setup.py` | 30.5 | 0 | 5 | 0 | 13 |
+| `repo_scan/radar/pipeline.py` | 30.5 | 2 | 0 | 11 | 286 |
 | `pyproject.toml` | 30.5 | 0 | 5 | 0 | 14 |
-| `repo_scan/graphs.py` | 29.1 | 0 | 0 | 42 | 111 |
-| `repo_scan/radar/pipeline.py` | 29.1 | 2 | 1 | 0 | 248 |
-| `repo_scan/writers.py` | 28.5 | 0 | 0 | 31 | 272 |
-| `repo_scan/radar/sources.py` | 26.6 | 2 | 0 | 13 | 132 |
-| `tests/test_radar_pipeline.py` | 16.9 | 0 | 1 | 12 | 102 |
-| `repo_scan/radar/llm.py` | 16.3 | 1 | 1 | 0 | 90 |
-| `repo_scan/radar/gates.py` | 16.1 | 1 | 1 | 0 | 85 |
-| `repo_scan/scanner.py` | 15.7 | 0 | 0 | 20 | 103 |
-| `repo_scan/radar/cli.py` | 14.9 | 0 | 2 | 0 | 80 |
-| `repo_scan/radar/fetchers.py` | 13.1 | 1 | 0 | 0 | 167 |
-| `README.md` | 12.0 | 0 | 2 | 0 | 0 |
+| `repo_scan/graphs.py` | 28.9 | 0 | 0 | 42 | 111 |
+| `repo_scan/radar/sources.py` | 28.1 | 2 | 0 | 14 | 166 |
+| `repo_scan/scanner.py` | 27.5 | 0 | 2 | 20 | 103 |
+| `README.md` | 18.0 | 0 | 3 | 0 | 0 |
+| `tests/test_radar_pipeline.py` | 15.3 | 0 | 0 | 19 | 113 |
+| `repo_scan/radar/cli.py` | 14.8 | 0 | 2 | 0 | 80 |
+| `repo_scan/radar/fetchers.py` | 12.9 | 1 | 0 | 0 | 170 |
+| `repo_scan/radar/research.py` | 11.8 | 1 | 0 | 0 | 136 |
+| `repo_scan/languages.py` | 11.7 | 0 | 0 | 16 | 61 |
+| `repo_scan/ranking.py` | 11.3 | 0 | 0 | 16 | 52 |
 
 ## Structure
 
@@ -64,6 +64,7 @@ repo-scan/
 │   │   └── health.md
 │   ├── research/
 │   │   ├── sources/
+│   │   ├── candidates.md
 │   │   ├── index.md
 │   │   └── tags.md
 │   ├── digest.md
@@ -133,3 +134,7 @@ repo-scan/
 
 - [[research/index]] — ingested sources _(populated by RADAR)_
 - [[research/theory]] — distilled understanding _(yours to write)_
+
+## Action items
+
+- [ ] Split `docs/scan.json` (617 lines)

@@ -72,11 +72,14 @@ def fetch_arxiv(arxiv_id: str) -> tuple[Source, str]:
 # ---------------------------------------------------------------------------
 
 def parse_github_repo(api_json: dict, readme_text: str, owner_repo: str) -> tuple[Source, str]:
+    desc = (api_json.get("description") or "GitHub repository").strip()
+    if len(desc) > 80:
+        desc = desc[:80].rsplit(" ", 1)[0] + "…"
     source = Source(
         id=source_id_for("github", owner_repo),
         type="github",
         url=api_json.get("html_url", f"https://github.com/{owner_repo}"),
-        title=f"{owner_repo} — {api_json.get('description') or 'GitHub repository'}",
+        title=f"{owner_repo} — {desc}",
         summary=api_json.get("description") or "",
         tags=["repo"] + ([api_json["language"].lower()] if api_json.get("language") else []),
     )

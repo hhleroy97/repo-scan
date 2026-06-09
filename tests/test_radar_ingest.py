@@ -14,6 +14,8 @@ from repo_scan.radar.fetchers import (
 )
 from repo_scan.radar.sources import (
     Source,
+    frontmatter,
+    parse_frontmatter,
     parse_source_file,
     rebuild_research_index,
     source_id_for,
@@ -31,6 +33,35 @@ ARXIV_ATOM = """<?xml version="1.0"?>
     <author><name>Jeffrey Zhao</name></author>
   </entry>
 </feed>"""
+
+
+def test_frontmatter_roundtrip_with_colons_and_lists():
+    block = frontmatter({
+        "id": "arxiv-1",
+        "url": "https://arxiv.org/abs/1",
+        "title_like": "ReAct: Synergizing",
+        "tags": ["paper", "agents"],
+        "empty": "",
+    })
+    assert block.startswith("---\n") and block.endswith("\n---")
+    meta = parse_frontmatter(block)
+    assert meta["url"] == "https://arxiv.org/abs/1"
+    assert meta["title_like"] == "ReAct: Synergizing"
+    assert meta["tags"] == "paper, agents"
+    assert meta["empty"] == ""
+
+
+def test_write_source_emits_obsidian_frontmatter(tmp_repo: Path):
+    cfg = load_config(tmp_repo)
+    src = Source(id="arxiv-2", type="arxiv", url="https://arxiv.org/abs/2",
+                 title="P", tags=["Multi Agent", "paper"],
+                 linked_files=["repo_scan/gates.py"])
+    path = write_source(tmp_repo, cfg, src)
+    text = path.read_text()
+    assert text.startswith("---\n")
+    assert 'tags: ["multi-agent", "paper"]' in text      # slugified for Obsidian
+    assert 'linked_files: ["[[repo_scan/gates.py]]"]' in text  # ghost-node link
+    assert "\n# P\n" in text
 
 
 def test_source_id_for():
