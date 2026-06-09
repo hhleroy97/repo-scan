@@ -26,6 +26,8 @@ from pathlib import Path
 # Defaults (overridden by .repo-scan.json)
 # ---------------------------------------------------------------------------
 
+VERSION = "0.2.0"
+
 DEFAULT_CONFIG = {
     "line_warn": 300,
     "line_crit": 600,
@@ -38,6 +40,9 @@ DEFAULT_CONFIG = {
     ],
     "docs_dir": "docs",
     "radar_enabled": False,
+    "tree_depth": 3,
+    "rank_top_n": 15,
+    "digest_tokens": 4000,
 }
 
 TS_EXTENSIONS = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"}
@@ -55,6 +60,9 @@ def load_config(root: Path) -> dict:
     if config_file.exists():
         try:
             overrides = json.loads(config_file.read_text())
+            unknown = set(overrides) - set(DEFAULT_CONFIG) - {"gates", "llm_cli"}
+            if unknown:
+                warn(f".repo-scan.json unknown keys ignored by scan: {', '.join(sorted(unknown))}")
             cfg.update(overrides)
         except json.JSONDecodeError as e:
             warn(f".repo-scan.json parse error: {e} — using defaults")
@@ -188,6 +196,172 @@ def detect_languages(root: Path, cfg: dict) -> dict[str, list[Path]]:
 
 
 # ---------------------------------------------------------------------------
+# Repo identity (manifests, entry points, README summary)
+# ---------------------------------------------------------------------------
+
+KNOWN_MANIFESTS = [
+    "pyproject.toml", "setup.py", "requirements.txt", "package.json",
+    "Cargo.toml", "go.mod", "Makefile", "CMakeLists.txt", "Dockerfile",
+    "docker-compose.yml", "Gemfile", "composer.json",
+]
+
+
+def detect_manifests(root: Path) -> list[str]:
+    return [m for m in KNOWN_MANIFESTS if (root / m).exists()]
+
+
+def detect_entry_points(root: Path) -> list[str]:
+    """Best-effort entry points from common manifests. No parsing deps."""
+    entries: list[str] = []
+
+    pyproject = root / "pyproject.toml"
+    if pyproject.exists():
+        in_scripts = False
+        for line in pyproject.read_text(errors="ignore").splitlines():
+            stripped = line.strip()
+            if stripped.startswith("["):
+                in_scripts = stripped == "[project.scripts]"
+                continue
+            if in_scripts and "=" in stripped:
+                name, _, target = stripped.partition("=")
+                entries.append(f"`{name.strip()}` → {target.strip().strip(chr(34))} (pyproject)")
+
+    pkg_json = root / "package.json"
+    if pkg_json.exists():
+        try:
+            data = json.loads(pkg_json.read_text(errors="ignore"))
+            if isinstance(data.get("main"), str):
+                entries.append(f"`{data['main']}` (package.json main)")
+            bins = data.get("bin")
+            if isinstance(bins, str):
+                entries.append(f"`{bins}` (package.json bin)")
+            elif isinstance(bins, dict):
+                for name, target in bins.items():
+                    entries.append(f"`{name}` → {target} (package.json bin)")
+        except json.JSONDecodeError:
+            pass
+
+    for candidate in ["main.py", "app.py", "manage.py", "main.go", "src/main.rs", "src/index.ts", "index.js"]:
+        if (root / candidate).exists():
+            entries.append(f"`{candidate}` (convention)")
+
+    return entries
+
+
+def readme_summary(root: Path, max_chars: int = 280) -> str:
+    for name in ["README.md", "README.rst", "README.txt", "README"]:
+        readme = root / name
+        if not readme.exists():
+            continue
+        for block in readme.read_text(errors="ignore").split("\n\n"):
+            text = " ".join(
+                line.strip() for line in block.splitlines()
+                if line.strip() and not line.strip().startswith(("#", "!", "[", "<", "---", "```"))
+            )
+            if len(text) > 40:
+                return text[:max_chars] + ("…" if len(text) > max_chars else "")
+    return ""
+
+
+# ---------------------------------------------------------------------------
+# Directory tree
+# ---------------------------------------------------------------------------
+
+def get_directory_tree(root: Path, cfg: dict, max_entries: int = 150) -> str:
+    """Depth-capped ASCII tree honoring exclude_dirs."""
+    skip = set(cfg["exclude_dirs"])
+    max_depth = cfg.get("tree_depth", 3)
+    lines = [root.name + "/"]
+    count = 0
+
+    def walk(d: Path, prefix: str, depth: int):
+        nonlocal count
+        if depth > max_depth or count >= max_entries:
+            return
+        try:
+            entries = sorted(d.iterdir(), key=lambda p: (p.is_file(), p.name.lower()))
+        except OSError:
+            return
+        entries = [e for e in entries if e.name not in skip and not (e.name.startswith(".") and e.name not in {".repo-scan.json", ".gitignore"})]
+        for i, e in enumerate(entries):
+            if count >= max_entries:
+                lines.append(prefix + "└── …")
+                return
+            last = i == len(entries) - 1
+            lines.append(f"{prefix}{'└── ' if last else '├── '}{e.name}{'/' if e.is_dir() else ''}")
+            count += 1
+            if e.is_dir():
+                walk(e, prefix + ("    " if last else "│   "), depth + 1)
+
+    walk(root, "", 1)
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Important-files ranking
+# ---------------------------------------------------------------------------
+
+def _module_to_file(module: str, line_counts: dict) -> str | None:
+    """Map a dotted module or relative path back to a counted file path."""
+    if module in line_counts:
+        return module
+    candidate = module.replace(".", "/")
+    for suffix in [".py", "/__init__.py"]:
+        if candidate + suffix in line_counts:
+            return candidate + suffix
+    return None
+
+
+def rank_files(line_counts: dict, churn: list, complexity: list,
+               dep_edges: list[tuple[str, str]], top_n: int = 15,
+               exclude_prefix: str = "docs/") -> list[dict]:
+    """Composite importance score: import centrality x churn x complexity.
+
+    Heuristic stand-in for aider-style PageRank — uses signals the scan
+    already collects, keeping the zero-dependency rule. Generated docs are
+    excluded so the scan output never ranks itself.
+    """
+    line_counts = {f: s for f, s in line_counts.items() if not f.startswith(exclude_prefix)}
+    if not line_counts:
+        return []
+
+    in_degree: dict[str, int] = {}
+    for _, dst in dep_edges:
+        f = _module_to_file(dst, line_counts)
+        if f:
+            in_degree[f] = in_degree.get(f, 0) + 1
+
+    churn_by_file = {c["file"]: c["commits"] for c in churn}
+    cc_by_file: dict[str, int] = {}
+    for item in complexity:
+        cc_by_file[item["file"]] = cc_by_file.get(item["file"], 0) + item["complexity"]
+
+    max_deg = max(in_degree.values(), default=0) or 1
+    max_churn = max(churn_by_file.values(), default=0) or 1
+    max_cc = max(cc_by_file.values(), default=0) or 1
+    max_lines = max((s["lines"] for s in line_counts.values()), default=0) or 1
+
+    ranked = []
+    for f, stats in line_counts.items():
+        centrality = in_degree.get(f, 0) / max_deg
+        churn_score = churn_by_file.get(f, 0) / max_churn
+        cc_score = cc_by_file.get(f, 0) / max_cc
+        size_score = stats["lines"] / max_lines
+        score = 100 * (0.35 * centrality + 0.3 * churn_score + 0.25 * cc_score + 0.1 * size_score)
+        ranked.append({
+            "file": f,
+            "score": round(score, 1),
+            "imported_by": in_degree.get(f, 0),
+            "commits": churn_by_file.get(f, 0),
+            "complexity": cc_by_file.get(f, 0),
+            "lines": stats["lines"],
+        })
+
+    ranked.sort(key=lambda x: x["score"], reverse=True)
+    return [r for r in ranked[:top_n] if r["score"] > 0]
+
+
+# ---------------------------------------------------------------------------
 # Line counts
 # ---------------------------------------------------------------------------
 
@@ -286,18 +460,47 @@ def get_python_complexity(root: Path, py_files: list[Path], cfg: dict) -> list[d
 # Dependency graphs
 # ---------------------------------------------------------------------------
 
-def get_ts_dep_graph_mermaid(root: Path) -> str | None:
-    if not tool_available("madge"):
+def _edges_to_mermaid(edges: list[tuple[str, str]]) -> str | None:
+    """Render (src_module, dst_module) edges as a Mermaid graph."""
+    if not edges:
         return None
+    seen = set()
+    lines = ["graph TD"]
+    for s, t in edges:
+        if (s, t) not in seen:
+            seen.add((s, t))
+            sl = s.replace(".", "_").replace("/", "_").replace("-", "_")
+            tl = t.replace(".", "_").replace("/", "_").replace("-", "_")
+            lines.append(f'  {sl}["{s.split(".")[-1].split("/")[-1]}"] --> {tl}["{t.split(".")[-1].split("/")[-1]}"]')
+    return "\n".join(lines) if len(lines) > 1 else None
+
+
+def get_ts_dep_edges(root: Path, ts_files: list[Path]) -> tuple[list[tuple[str, str]], str]:
+    """TS/JS dependency edges via `madge --json` (madge >= 6 has no --mermaid).
+
+    Returns (edges_as_relative_paths, skip_reason). Reason is "" on success.
+    """
+    if not ts_files:
+        return [], "no TS/JS files"
+    if not tool_available("madge"):
+        return [], "madge not installed — npm install -g madge"
     src_candidates = ["src", "app", "lib", "."]
     src_dir = next((root / d for d in src_candidates if (root / d).is_dir()), root)
-    out, _, code = run(["madge", "--mermaid", str(src_dir)], cwd=root)
-    return out.strip() if code == 0 and out.strip() else None
+    out, _, code = run(["madge", "--json", str(src_dir)], cwd=root)
+    if code != 0 or not out.strip():
+        return [], "madge produced no output"
+    try:
+        graph = json.loads(out)
+    except json.JSONDecodeError:
+        return [], "madge output was not valid JSON"
+    edges = [(src, dst) for src, deps in graph.items() for dst in deps]
+    return edges, "" if edges else "no imports between files detected"
 
 
-def get_python_dep_graph_mermaid(root: Path, py_files: list[Path], cfg: dict) -> str | None:
+def get_python_dep_edges(root: Path, py_files: list[Path], cfg: dict) -> list[tuple[str, str]]:
+    """Intra-repo Python import edges as (src_module, dst_module) pairs."""
     if not py_files:
-        return None
+        return []
     skip = set(cfg["exclude_dirs"])
     repo_modules: set[str] = set()
     for f in py_files:
@@ -340,19 +543,11 @@ def get_python_dep_graph_mermaid(root: Path, py_files: list[Path], cfg: dict) ->
                     if mod == imported or mod.startswith(imported + "."):
                         edges.append((src_mod, mod))
                         break
+    return edges
 
-    if not edges:
-        return None
 
-    seen = set()
-    lines = ["graph TD"]
-    for s, t in edges:
-        if (s, t) not in seen:
-            seen.add((s, t))
-            sl = s.replace(".", "_")
-            tl = t.replace(".", "_")
-            lines.append(f'  {sl}["{s.split(".")[-1]}"] --> {tl}["{t.split(".")[-1]}"]')
-    return "\n".join(lines) if len(lines) > 1 else None
+def get_python_dep_graph_mermaid(root: Path, py_files: list[Path], cfg: dict) -> str | None:
+    return _edges_to_mermaid(get_python_dep_edges(root, py_files, cfg))
 
 
 def get_c_call_graph_mermaid(root: Path, c_files: list[Path]) -> str | None:
@@ -443,7 +638,8 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
     write_doc(docs / "reports" / "health.md", "\n".join(lines), root)
 
 
-def write_dep_report(root: Path, cfg: dict, ts_mermaid: str | None, py_mermaid: str | None):
+def write_dep_report(root: Path, cfg: dict, ts_mermaid: str | None, py_mermaid: str | None,
+                     ts_reason: str = ""):
     ts = now_iso()
     docs = root / cfg["docs_dir"]
 
@@ -452,7 +648,7 @@ def write_dep_report(root: Path, cfg: dict, ts_mermaid: str | None, py_mermaid: 
     if ts_mermaid:
         lines += ["## TypeScript / JavaScript", "", "```mermaid", ts_mermaid, "```", ""]
     else:
-        lines += ["## TypeScript / JavaScript", "", "_madge not installed — run `npm install -g madge`_", ""]
+        lines += ["## TypeScript / JavaScript", "", f"_Skipped: {ts_reason or 'no graph'}_", ""]
 
     if py_mermaid:
         lines += ["## Python", "", "```mermaid", py_mermaid, "```", ""]
@@ -489,7 +685,8 @@ def write_call_report(root: Path, cfg: dict, c_mermaid: str | None):
     write_doc(docs / "reports" / "calls.md", "\n".join(lines), root)
 
 
-def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict):
+def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
+                ranking: list[dict] | None = None, tree: str = ""):
     ts = now_iso()
     docs = root / cfg["docs_dir"]
     warn_n = cfg["line_warn"]
@@ -500,11 +697,18 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict):
     lang_summary = ", ".join(f"{k.upper()}: {len(v)}" for k, v in languages.items() if v)
     large = [f for f, s in line_counts.items() if s["lines"] >= warn_n]
     critical = [f for f, s in line_counts.items() if s["lines"] >= crit_n]
+    manifests = detect_manifests(root)
+    entry_points = detect_entry_points(root)
+    summary = readme_summary(root)
 
     lines = [
         "# Repo index",
         f"_Last scan: {ts}_",
         "",
+    ]
+    if summary:
+        lines += [f"> {summary}", ""]
+    lines += [
         "## Overview",
         "",
         "| Metric | Value |",
@@ -516,7 +720,34 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict):
         f"| Critical files (>{crit_n} lines) | {len(critical)} |",
         f"| Branch | {git_branch(root)} |",
         f"| Last commit | {git_last_commit(root)} |",
-        "",
+        f"| Remote | {git_remote_url(root)} |",
+    ]
+    if manifests:
+        lines.append(f"| Manifests | {', '.join(f'`{m}`' for m in manifests)} |")
+    lines.append("")
+
+    if entry_points:
+        lines += ["## Entry points", ""]
+        lines += [f"- {e}" for e in entry_points]
+        lines.append("")
+
+    if ranking:
+        lines += [
+            "## Start here (ranked by importance)",
+            "",
+            "_Composite of import centrality × git churn × complexity × size._",
+            "",
+            "| File | Score | Imported by | Commits | CC | Lines |",
+            "|------|-------|-------------|---------|----|-------|",
+        ]
+        for r in ranking:
+            lines.append(f"| `{r['file']}` | {r['score']} | {r['imported_by']} | {r['commits']} | {r['complexity']} | {r['lines']} |")
+        lines.append("")
+
+    if tree:
+        lines += ["## Structure", "", "```", tree, "```", ""]
+
+    lines += [
         "## Reports",
         "",
         "- [[reports/health]] — file sizes, complexity, git churn",
@@ -542,6 +773,175 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict):
         lines.append("")
 
     write_doc(docs / "index.md", "\n".join(lines), root)
+
+
+def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
+                    churn: list, complexity: list, ranking: list,
+                    py_edges: list, ts_edges: list):
+    """Machine-readable sidecar so agents don't have to parse markdown."""
+    docs = root / cfg["docs_dir"]
+    payload = {
+        "schema_version": 1,
+        "generated_at": now_iso(),
+        "repo": {
+            "name": root.name,
+            "remote": git_remote_url(root),
+            "branch": git_branch(root),
+            "last_commit": git_last_commit(root),
+            "manifests": detect_manifests(root),
+            "entry_points": detect_entry_points(root),
+        },
+        "languages": {k: len(v) for k, v in languages.items() if v},
+        "files": line_counts,
+        "churn": churn,
+        "complexity": complexity,
+        "ranking": ranking,
+        "dependency_edges": {
+            "python": [list(e) for e in py_edges],
+            "typescript": [list(e) for e in ts_edges],
+        },
+        "config": cfg,
+    }
+    path = docs / "scan.json"
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    ok(str(path.relative_to(root)))
+
+
+def write_candidates(root: Path, cfg: dict, churn: list, complexity: list):
+    """RADAR trigger feed: files that are both high-churn and complex."""
+    docs = root / cfg["docs_dir"]
+    churn_by_file = {c["file"]: c["commits"] for c in churn}
+    cc_by_file: dict[str, int] = {}
+    for item in complexity:
+        cc_by_file[item["file"]] = cc_by_file.get(item["file"], 0) + item["complexity"]
+
+    candidates = []
+    for f in set(churn_by_file) & set(cc_by_file):
+        candidates.append({
+            "file": f,
+            "commits": churn_by_file[f],
+            "complexity": cc_by_file[f],
+            "priority": churn_by_file[f] * cc_by_file[f],
+        })
+    candidates.sort(key=lambda x: x["priority"], reverse=True)
+
+    lines = [
+        "# RADAR candidates",
+        f"_Generated {now_iso()}_",
+        "",
+        "Files that are both high-churn and high-complexity — the most valuable",
+        "targets for external research. Consumed by `radar` as a trigger feed.",
+        "",
+    ]
+    if candidates:
+        lines += [
+            "| File | Commits | Complexity | Priority |",
+            "|------|---------|------------|----------|",
+        ]
+        for c in candidates[:10]:
+            lines.append(f"| `{c['file']}` | {c['commits']} | {c['complexity']} | {c['priority']} |")
+    else:
+        lines.append("_No files are currently both high-churn and high-complexity._")
+    lines.append("")
+
+    write_doc(docs / "research" / "candidates.md", "\n".join(lines), root)
+
+
+def write_digest(root: Path, cfg: dict, line_counts: dict, languages: dict,
+                 churn: list, complexity: list, ranking: list, tree: str) -> Path:
+    """Single token-budgeted markdown export (repomix/gitingest-style)."""
+    docs = root / cfg["docs_dir"]
+    docs.mkdir(parents=True, exist_ok=True)
+    budget_chars = cfg.get("digest_tokens", 4000) * 4  # ~4 chars per token
+
+    total_lines = sum(s["lines"] for s in line_counts.values())
+    lang_summary = ", ".join(f"{k.upper()}: {len(v)}" for k, v in languages.items() if v)
+    summary = readme_summary(root)
+
+    sections = [
+        f"# {root.name} — repo digest",
+        f"_Generated {now_iso()} by repo-scan {VERSION}. Single-file context for LLM use._",
+        "",
+        f"**Remote:** {git_remote_url(root)}  |  **Branch:** {git_branch(root)}  |  "
+        f"**Last commit:** {git_last_commit(root)}",
+        f"**Files:** {len(line_counts)}  |  **Lines:** {total_lines:,}  |  **Languages:** {lang_summary}",
+    ]
+    if summary:
+        sections += ["", f"> {summary}"]
+
+    if ranking:
+        sections += ["", "## Most important files", ""]
+        for r in ranking:
+            sections.append(f"- `{r['file']}` (score {r['score']}, {r['lines']} lines, "
+                            f"imported by {r['imported_by']}, {r['commits']} commits)")
+
+    if tree:
+        sections += ["", "## Structure", "", "```", tree, "```"]
+
+    hotspots = complexity[:8]
+    if hotspots:
+        sections += ["", "## Complexity hotspots", ""]
+        for h in hotspots:
+            sections.append(f"- `{h['file']}::{h['name']}` rank {h['rank']} (CC {h['complexity']})")
+
+    if churn:
+        sections += ["", "## Most changed files", ""]
+        for c in churn[:8]:
+            sections.append(f"- `{c['file']}` ({c['commits']} commits)")
+
+    content = "\n".join(sections) + "\n"
+    if len(content) > budget_chars:
+        content = content[:budget_chars] + "\n\n_…truncated to digest token budget._\n"
+
+    path = docs / "digest.md"
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
+# ---------------------------------------------------------------------------
+# AGENTS.md scaffold
+# ---------------------------------------------------------------------------
+
+AGENTS_TEMPLATE = """\
+# AGENTS.md
+
+Rules for AI agents working in this repository. Generated by `repo-scan --init-agents`
+— edit to fit this repo, then commit.
+
+## Ownership
+
+- `docs/research/`  — RADAR writes, human annotates
+- `docs/specs/`     — RADAR drafts, human approves before merge
+- `docs/reports/`   — repo-scan writes, do not edit manually
+- Source code       — human writes, RADAR never touches directly
+
+## Gate behavior
+
+- Gate 1 (post-Analyze): always require approval
+- Gate 2 (post-Audit): always require approval
+
+Gates are configured per-repo in `.repo-scan.json` under `"gates"`.
+
+## Off-limits
+
+- Never modify files outside `docs/` without explicit approval
+- Never commit to main directly
+- Never delete existing source files in `docs/research/sources/`
+
+## Context
+
+- Start from `docs/index.md` (human view) or `docs/scan.json` (machine view)
+- Diagrams are always Mermaid
+"""
+
+
+def write_agents_md(root: Path):
+    path = root / "AGENTS.md"
+    if path.exists():
+        warn("AGENTS.md already exists — skipping (edit it directly)")
+        return
+    path.write_text(AGENTS_TEMPLATE, encoding="utf-8")
+    ok(f"wrote {path.name} — review the ownership rules and commit")
 
 
 # ---------------------------------------------------------------------------
@@ -871,20 +1271,37 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
         info("radon not available or no Python files")
 
     step("Building dependency graphs")
-    ts_deps = get_ts_dep_graph_mermaid(root)
-    py_deps = get_python_dep_graph_mermaid(root, languages["py"], cfg)
-    ok(f"TS: {'graph generated' if ts_deps else 'skipped (madge not found)' }")
-    ok(f"Python: {'graph generated' if py_deps else 'skipped (no imports found)'}")
+    ts_edges, ts_reason = get_ts_dep_edges(root, languages["ts"])
+    ts_deps = _edges_to_mermaid(ts_edges)
+    py_edges = get_python_dep_edges(root, languages["py"], cfg)
+    py_deps = _edges_to_mermaid(py_edges)
+    ok(f"TS: {'graph generated' if ts_deps else f'skipped ({ts_reason})'}")
+    ok(f"Python: {'graph generated' if py_deps else 'skipped (no intra-repo imports)'}")
 
     step("Building call graphs")
     c_calls = get_c_call_graph_mermaid(root, languages["c"])
-    ok(f"C: {'graph generated' if c_calls else 'skipped (cflow not found)'}")
+    if languages["c"]:
+        ok(f"C: {'graph generated' if c_calls else 'skipped (cflow not available)'}")
+    else:
+        ok("C: skipped (no C files)")
+
+    step("Ranking files")
+    all_edges = py_edges + ts_edges
+    ranking = rank_files(line_counts, churn, complexity, all_edges,
+                         cfg.get("rank_top_n", 15), exclude_prefix=cfg["docs_dir"] + "/")
+    tree = get_directory_tree(root, cfg)
+    ok(f"top {len(ranking)} files scored")
 
     step("Writing docs")
     write_health_report(root, cfg, line_counts, churn, complexity)
-    write_dep_report(root, cfg, ts_deps, py_deps)
+    write_dep_report(root, cfg, ts_deps, py_deps, ts_reason)
     write_call_report(root, cfg, c_calls)
-    write_index(root, cfg, line_counts, languages)
+    write_index(root, cfg, line_counts, languages, ranking, tree)
+    write_scan_json(root, cfg, line_counts, languages, churn, complexity,
+                    ranking, py_edges, ts_edges)
+
+    if cfg.get("radar_enabled"):
+        write_candidates(root, cfg, churn, complexity)
 
     if include_handoff:
         write_handoff(root, cfg, languages, line_counts)
@@ -907,10 +1324,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("repo_path", nargs="?", default=".", help="Repo root (default: cwd)")
+    parser.add_argument("--version",       action="version", version=f"repo-scan {VERSION}")
     parser.add_argument("--init",          action="store_true", help="Write default .repo-scan.json to repo")
+    parser.add_argument("--init-agents",   action="store_true", help="Write AGENTS.md scaffold to repo root")
     parser.add_argument("--install-hook",  action="store_true", help="Install git pre-commit hook")
     parser.add_argument("--check-deps",    action="store_true", help="Check required tools")
     parser.add_argument("--handoff",       action="store_true", help="Generate docs/HANDOFF.md bootstrap doc")
+    parser.add_argument("--digest",        action="store_true", help="Write docs/digest.md single-file LLM context")
     parser.add_argument("--quiet",         action="store_true", help="Minimal output (for hook use)")
     args = parser.parse_args()
 
@@ -930,6 +1350,26 @@ def main():
     if args.init:
         step("Writing config")
         write_default_config(root)
+        return
+
+    if args.init_agents:
+        step("Writing AGENTS.md")
+        write_agents_md(root)
+        return
+
+    if args.digest:
+        cfg = load_config(root)
+        ensure_dirs(root, cfg)
+        languages = detect_languages(root, cfg)
+        line_counts = get_line_counts(root, cfg)
+        churn = get_git_churn(root, cfg)
+        complexity = get_python_complexity(root, languages["py"], cfg)
+        edges = get_python_dep_edges(root, languages["py"], cfg) + get_ts_dep_edges(root, languages["ts"])[0]
+        ranking = rank_files(line_counts, churn, complexity, edges,
+                             cfg.get("rank_top_n", 15), exclude_prefix=cfg["docs_dir"] + "/")
+        tree = get_directory_tree(root, cfg)
+        path = write_digest(root, cfg, line_counts, languages, churn, complexity, ranking, tree)
+        ok(f"wrote {path.relative_to(root)}")
         return
 
     scan(root, quiet=args.quiet, include_handoff=args.handoff)

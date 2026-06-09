@@ -1,10 +1,14 @@
 # Dependency graph
-_Generated 2026-06-09 21:13 UTC_
+_Generated 2026-06-09 22:39 UTC_
 
 ## TypeScript / JavaScript
 
-_madge not installed — run `npm install -g madge`_
+_Skipped: no TS/JS files_
 
 ## Python
 
-_No intra-repo Python imports detected_
+```mermaid
+graph TD
+  tests_test_phase_a["test_phase_a"] --> repo_scan["repo_scan"]
+  tests_test_scan["test_scan"] --> repo_scan["repo_scan"]
+```

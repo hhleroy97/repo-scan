@@ -29,9 +29,12 @@ pip install -e . --no-build-isolation
 repo-scan                     # scan cwd
 repo-scan /path/to/project    # scan specific path
 repo-scan --init              # write .repo-scan.json config
+repo-scan --init-agents       # write AGENTS.md scaffold (agent rules)
 repo-scan --install-hook      # wire to git pre-commit
 repo-scan --handoff           # generate docs/HANDOFF.md bootstrap doc
+repo-scan --digest            # single token-budgeted docs/digest.md for LLM context
 repo-scan --check-deps        # check optional tool availability
+repo-scan --version           # print version
 ```
 
 ---
@@ -40,15 +43,23 @@ repo-scan --check-deps        # check optional tool availability
 
 ```
 docs/
-  index.md                    # dashboard: overview, links, action items
+  index.md                    # dashboard: identity, ranked files, structure, links
+  scan.json                   # machine-readable sidecar for agents (same data)
+  digest.md                   # token-budgeted single-file LLM context (--digest)
   reports/
     health.md                 # file sizes, complexity, git churn
     dependencies.md           # Mermaid dep graphs (TS + Python)
     calls.md                  # Mermaid call graphs (C)
   architecture/
     dependency-graph.md       # stable dep graph for Obsidian linking
-  research/                   # populated by RADAR (separate tool)
+  research/
+    candidates.md             # high-churn x high-complexity files (radar_enabled)
+  changelog/                  # build + loop progress entries
 ```
+
+`index.md` opens with the repo identity (manifests, entry points, README summary),
+a "start here" table ranking files by import centrality x churn x complexity, and a
+depth-capped directory tree — one read orients a human or an agent.
 
 Plain Markdown + Mermaid. Point Obsidian at the repo root — everything renders natively.
 
@@ -64,7 +75,10 @@ Plain Markdown + Mermaid. Point Obsidian at the repo root — everything renders
   "churn_top_n": 20,
   "exclude_dirs": ["node_modules", ".git", "dist", "build"],
   "docs_dir": "docs",
-  "radar_enabled": false
+  "radar_enabled": false,
+  "tree_depth": 3,
+  "rank_top_n": 15,
+  "digest_tokens": 4000
 }
 ```
 

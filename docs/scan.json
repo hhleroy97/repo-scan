@@ -1,0 +1,310 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-09 22:39 UTC",
+  "repo": {
+    "name": "repo-scan",
+    "remote": "https://github.com/hhleroy97/repo-scan.git",
+    "branch": "main",
+    "last_commit": "1e69bb8 chore: baseline docs/ scan output, RADAR context, ignore .obsidian",
+    "manifests": [
+      "pyproject.toml",
+      "setup.py"
+    ],
+    "entry_points": [
+      "`repo-scan` \u2192 repo_scan:main (pyproject)"
+    ]
+  },
+  "languages": {
+    "py": 5
+  },
+  "files": {
+    "docs/scan.json": {
+      "lines": 306,
+      "bytes": 5677
+    },
+    "docs/reports/health.md": {
+      "lines": 0,
+      "bytes": 2080
+    },
+    "docs/changelog/2026-06-09-phase-a.md": {
+      "lines": 0,
+      "bytes": 2211
+    },
+    "docs/RADAR_CONTEXT.md": {
+      "lines": 0,
+      "bytes": 6610
+    },
+    "docs/reports/calls.md": {
+      "lines": 0,
+      "bytes": 247
+    },
+    "docs/index.md": {
+      "lines": 0,
+      "bytes": 2623
+    },
+    "docs/digest.md": {
+      "lines": 0,
+      "bytes": 3083
+    },
+    "docs/reports/dependencies.md": {
+      "lines": 0,
+      "bytes": 265
+    },
+    "docs/architecture/dependency-graph.md": {
+      "lines": 0,
+      "bytes": 265
+    },
+    "README.md": {
+      "lines": 0,
+      "bytes": 3210
+    },
+    "setup.py": {
+      "lines": 12,
+      "bytes": 248
+    },
+    "tests/conftest.py": {
+      "lines": 28,
+      "bytes": 1117
+    },
+    "tests/test_phase_a.py": {
+      "lines": 78,
+      "bytes": 4067
+    },
+    "tests/test_scan.py": {
+      "lines": 80,
+      "bytes": 3934
+    },
+    "repo_scan.py": {
+      "lines": 1131,
+      "bytes": 49751
+    },
+    "pyproject.toml": {
+      "lines": 13,
+      "bytes": 320
+    }
+  },
+  "churn": [
+    {
+      "file": ".gitignore",
+      "commits": 2
+    },
+    {
+      "file": "HANDOFF.md",
+      "commits": 2
+    },
+    {
+      "file": "pyproject.toml",
+      "commits": 2
+    },
+    {
+      "file": "setup.py",
+      "commits": 2
+    },
+    {
+      "file": "docs/RADAR_CONTEXT.md",
+      "commits": 1
+    },
+    {
+      "file": "docs/architecture/dependency-graph.md",
+      "commits": 1
+    },
+    {
+      "file": "docs/index.md",
+      "commits": 1
+    },
+    {
+      "file": "docs/reports/calls.md",
+      "commits": 1
+    },
+    {
+      "file": "docs/reports/dependencies.md",
+      "commits": 1
+    },
+    {
+      "file": "docs/reports/health.md",
+      "commits": 1
+    },
+    {
+      "file": "README.md",
+      "commits": 1
+    },
+    {
+      "file": "repo_scan.py",
+      "commits": 1
+    },
+    {
+      "file": "repo_scan_README.md",
+      "commits": 1
+    }
+  ],
+  "complexity": [
+    {
+      "file": "repo_scan.py",
+      "name": "get_python_dep_edges",
+      "rank": "C",
+      "complexity": 19,
+      "lineno": 500
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "write_index",
+      "rank": "C",
+      "complexity": 19,
+      "lineno": 688
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "rank_files",
+      "rank": "C",
+      "complexity": 16,
+      "lineno": 315
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "get_line_counts",
+      "rank": "C",
+      "complexity": 16,
+      "lineno": 368
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "scan",
+      "rank": "C",
+      "complexity": 16,
+      "lineno": 1243
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "detect_entry_points",
+      "rank": "C",
+      "complexity": 14,
+      "lineno": 213
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "write_digest",
+      "rank": "C",
+      "complexity": 13,
+      "lineno": 850
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "get_c_call_graph_mermaid",
+      "rank": "C",
+      "complexity": 12,
+      "lineno": 553
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "write_health_report",
+      "rank": "C",
+      "complexity": 12,
+      "lineno": 585
+    },
+    {
+      "file": "repo_scan.py",
+      "name": "get_ts_dep_edges",
+      "rank": "C",
+      "complexity": 11,
+      "lineno": 478
+    }
+  ],
+  "ranking": [
+    {
+      "file": "repo_scan.py",
+      "score": 85.0,
+      "imported_by": 2,
+      "commits": 1,
+      "complexity": 148,
+      "lines": 1131
+    },
+    {
+      "file": "setup.py",
+      "score": 30.1,
+      "imported_by": 0,
+      "commits": 2,
+      "complexity": 0,
+      "lines": 12
+    },
+    {
+      "file": "pyproject.toml",
+      "score": 30.1,
+      "imported_by": 0,
+      "commits": 2,
+      "complexity": 0,
+      "lines": 13
+    },
+    {
+      "file": "README.md",
+      "score": 15.0,
+      "imported_by": 0,
+      "commits": 1,
+      "complexity": 0,
+      "lines": 0
+    },
+    {
+      "file": "tests/test_phase_a.py",
+      "score": 0.7,
+      "imported_by": 0,
+      "commits": 0,
+      "complexity": 0,
+      "lines": 78
+    },
+    {
+      "file": "tests/test_scan.py",
+      "score": 0.7,
+      "imported_by": 0,
+      "commits": 0,
+      "complexity": 0,
+      "lines": 80
+    },
+    {
+      "file": "tests/conftest.py",
+      "score": 0.2,
+      "imported_by": 0,
+      "commits": 0,
+      "complexity": 0,
+      "lines": 28
+    }
+  ],
+  "dependency_edges": {
+    "python": [
+      [
+        "tests.test_phase_a",
+        "repo_scan"
+      ],
+      [
+        "tests.test_scan",
+        "repo_scan"
+      ]
+    ],
+    "typescript": []
+  },
+  "config": {
+    "line_warn": 300,
+    "line_crit": 600,
+    "complexity_min_rank": "C",
+    "churn_top_n": 20,
+    "exclude_dirs": [
+      "node_modules",
+      ".git",
+      "__pycache__",
+      ".venv",
+      "venv",
+      "dist",
+      "build",
+      ".next",
+      "target",
+      ".mypy_cache",
+      ".pytest_cache",
+      "coverage",
+      ".turbo",
+      "out"
+    ],
+    "docs_dir": "docs",
+    "radar_enabled": false,
+    "tree_depth": 3,
+    "rank_top_n": 15,
+    "digest_tokens": 4000
+  }
+}
