@@ -13,4 +13,4 @@ dependencies = []
 repo-scan = "repo_scan:main"
 
 [tool.setuptools]
-py-modules = ["repo_scan"]
+packages = ["repo_scan"]
