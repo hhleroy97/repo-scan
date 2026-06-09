@@ -9,5 +9,5 @@ setup(
             "repo-scan=repo_scan:main",
         ],
     },
-    python_requires=">=3.11",
+    python_requires=">=3.10",
 )

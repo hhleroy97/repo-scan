@@ -12,7 +12,14 @@ cd repo-scan
 pip install -e .
 ```
 
-Puts `repo-scan` on PATH. Run from any repo.
+Puts `repo-scan` on PATH. Run from any repo. Requires Python 3.10+.
+
+On older pip versions (e.g. pip 22.x on Ubuntu 22.04), the editable install
+may fail with a `setup.py develop` permission error. Use the fallback:
+
+```bash
+pip install -e . --no-build-isolation
+```
 
 ---
 
