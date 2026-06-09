@@ -1,4 +1,5 @@
 __pycache__/
+.obsidian/
 *.egg-info/
 build/
 dist/
