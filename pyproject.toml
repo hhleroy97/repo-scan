@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo-scan"
+version = "0.1.0"
+description = "Repo intelligence tool"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+repo-scan = "repo_scan:main"
+
+[tool.setuptools]
+py-modules = ["repo_scan"]
