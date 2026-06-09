@@ -99,6 +99,72 @@ All optional — scan degrades gracefully without them.
 
 ---
 
+## radar — the research loop
+
+Installed alongside `repo-scan`. RADAR turns the `docs/` knowledge base into a
+research-to-implementation loop: **R**esearch → **A**nalyze → Gate 1 →
+**D**raft → **A**udit → Gate 2 → **R**ecord.
+
+```bash
+radar ingest github:owner/repo        # normalize one source into docs/research/sources/
+radar ingest arxiv:2210.03629         #   also: url:https://...  file:./paper.pdf
+radar research "how do X loops work?" # LLM proposes sources, radar ingests them
+radar loop "should we adopt X?"       # full pipeline, pauses at gates for approval
+radar full                            # metric-triggered: top churn x complexity file
+```
+
+### LLM backend
+
+No API keys. `radar` shells out to an agent CLI on PATH — `cursor-agent` or
+`claude` by default, configurable per repo:
+
+```json
+{ "llm_cli": ["cursor-agent -p --output-format text", "claude -p"] }
+```
+
+### Gates (progressive autonomy)
+
+```json
+{ "gates": { "post_analyze": "prompt", "post_audit": "prompt" } }
+```
+
+- `prompt` — CLI y/n; non-interactive runs pause to `docs/research/pending/`
+  and resume with `radar loop "..." --approve post_analyze`
+- `auto` — pass through silently (abstract the gate away once trusted)
+- `deny` — hard stop
+
+Every decision is appended to `docs/research/decisions.md`. Loop runs are
+recorded to `docs/changelog/{date}-loop.md`; specs land in `docs/specs/`
+(`status: draft` → `status: approved` after Gate 2).
+
+### What radar writes
+
+```
+docs/
+  research/
+    sources/{id}.md         # one file per source; your ## Notes are never overwritten
+    index.md / tags.md      # rebuilt from sources on every ingest
+    runs/                   # one auditable log per research session
+    analysis/               # findings + recommendation per loop
+    pending/                # paused gates (file-backed, resumable)
+    decisions.md            # append-only gate decision trail
+  specs/                    # drafted + audited implementation specs
+  changelog/{date}-loop.md  # loop outcomes
+```
+
+---
+
+## Development
+
+```bash
+pip install pytest
+python3 -m pytest tests/   # offline: fake-LLM harness, no network calls
+```
+
+Build progress is tracked per phase in `docs/changelog/`.
+
+---
+
 ## HANDOFF.md
 
 `repo-scan --handoff` writes `docs/HANDOFF.md`: current repo state + full build spec for packaging this prototype. Hand it to an agent or developer to build the tool out. Delete once done.

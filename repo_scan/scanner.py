@@ -84,6 +84,10 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
 
     if cfg.get("radar_enabled"):
         write_candidates(root, cfg, churn, complexity)
+        churn_files = {c["file"] for c in churn}
+        cc_files = {item["file"] for item in complexity}
+        if churn_files & cc_files and not quiet:
+            info("RADAR candidates detected — run `radar full` to research the top one")
 
     if include_handoff:
         write_handoff(root, cfg, languages, line_counts)
