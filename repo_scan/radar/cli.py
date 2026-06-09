@@ -64,8 +64,15 @@ def main():
 
     p_loop = sub.add_parser("loop", help="Full R-A-D-A-R pipeline for a problem")
     p_loop.add_argument("problem", help="Natural-language problem description")
+    p_loop.add_argument("--approve", action="append", default=[], metavar="GATE",
+                        help="Pre-approve a gate (post_analyze, post_audit); repeatable")
+    p_loop.add_argument("--gates", choices=["prompt", "auto", "deny"],
+                        help="Override all gate modes for this run")
+    p_loop.add_argument("--max-sources", type=int, default=3)
 
-    sub.add_parser("full", help="Metric-triggered loop over RADAR candidates")
+    p_full = sub.add_parser("full", help="Metric-triggered loop over RADAR candidates")
+    p_full.add_argument("--approve", action="append", default=[], metavar="GATE")
+    p_full.add_argument("--gates", choices=["prompt", "auto", "deny"])
 
     args = parser.parse_args()
     if not args.command:
@@ -84,11 +91,12 @@ def main():
 
     if args.command == "loop":
         from .pipeline import cmd_loop
-        sys.exit(cmd_loop(root, cfg, args.problem))
+        sys.exit(cmd_loop(root, cfg, args.problem, approve=args.approve,
+                          gates_override=args.gates, max_sources=args.max_sources))
 
     if args.command == "full":
         from .pipeline import cmd_full
-        sys.exit(cmd_full(root, cfg))
+        sys.exit(cmd_full(root, cfg, approve=args.approve, gates_override=args.gates))
 
 
 if __name__ == "__main__":
