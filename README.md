@@ -50,8 +50,9 @@ docs/
   digest.md                   # token-budgeted single-file LLM context (--digest)
   reports/
     health.md                 # file sizes, complexity, git churn
-    dependencies.md           # Mermaid dep graphs (TS + Python)
+    dependencies.md           # Mermaid dep graphs (TS + Python), PageRank-tinted
     calls.md                  # Mermaid call graphs (C)
+    trend.md                  # scan-over-scan metric history (capped log)
   architecture/
     dependency-graph.md       # stable dep graph for Obsidian linking
   research/
@@ -60,9 +61,15 @@ docs/
 ```
 
 `index.md` opens with the repo identity (manifests, entry points, README summary),
-a "start here" table ranking files by import-graph PageRank x churn x complexity x
-size, and a depth-capped directory tree — one read orients a human or an agent.
-PageRank is computed inline (no networkx); "imported by" stays the direct count.
+a health verdict and a "since last scan" delta callout, then a "start here" table
+ranking files by import-graph PageRank x churn x complexity x size — including a
+Tests column flagging files with no matching test file — and a depth-capped
+directory tree. One read orients a human or an agent. PageRank is computed inline
+(no networkx); "imported by" stays the direct count.
+
+Complexity covers every language: radon scores Python, lizard scores TS/TSX/JS/C/
+Java/Go and friends on the same A–F rank scale. Untested candidates get a 2x
+priority boost in the RADAR trigger feed.
 
 Plain Markdown + Mermaid. Point Obsidian at the repo root — everything renders natively.
 
@@ -96,6 +103,7 @@ Run `repo-scan --init` to write defaults. All fields optional.
 | `tokei` | Line counts | `brew install tokei` |
 | `madge` | TS/JS dep graphs | `npm install -g madge` |
 | `radon` | Python complexity | `pip install radon` |
+| `lizard` | TS/JS/C/Java/Go complexity | `pip install lizard` |
 | `cflow` | C call graphs | `brew install cflow` |
 
 All optional — scan degrades gracefully without them.

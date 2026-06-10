@@ -1,0 +1,9 @@
+# Scan trend
+
+One row per scan — the long-term memory that makes interventions
+measurable. Newest at the bottom.
+
+| When | Files | Lines | Hotspot fns | Critical | Δ lines | Δ hotspots |
+|------|-------|-------|-------------|----------|---------|------------|
+| 2026-06-10 00:38 UTC | 41 | 3691 | 17 | 0 | +348 | +2 |
+| 2026-06-10 00:38 UTC | 41 | 3691 | 17 | 0 | 0 | 0 |
