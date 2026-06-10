@@ -104,3 +104,6 @@
 | 2026-06-10 13:38 UTC | pre_implement | auto | implement [[2026-06-10-refactor-repo-scan-hub-daemon-py-cc-38-1-spec]] on branch radar/tkt-0013 for tkt-0013 |
 | 2026-06-10 13:43 UTC | post_analyze | approved (dashboard) | Extend the existing Markdown+Mermaid pipeline with auto-generated, ticket-scoped diagrams sourced from scan.json: add a  |
 | 2026-06-10 13:43 UTC | post_audit | approved (dashboard) | audit revise: The spec aligns well with existing Mermaid writers, coupling/seam signals, and fingerprinted tickets, but  |
+| 2026-06-10 13:43 UTC | pre_implement | auto | implement [[2026-06-10-i-want-to-add-a-more-robust-way-to-visua-spec]] on branch radar/tkt-0012 for tkt-0012 |
+| 2026-06-10 13:44 UTC | post_analyze | approved (dashboard) | Introduce a private `RadarLoopRunner` (Replace Function with Command) that holds `root`, `cfg`, `problem`, `ckpt`, `resu |
+| 2026-06-10 13:44 UTC | post_audit | approved (dashboard) | audit revise: Radon/scan.json baselines (cmd_loop CC 19, write_analysis CC 11, derived cc_by_file 30, churn 10 vs stale  |

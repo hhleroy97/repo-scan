@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Refactor repo_scan/radar/pipeline.py (CC 11, 3 commits). `repo_scan/radar/pipeline.py` is both high-churn (3 commits) and high-complexity (total CC 11). Acceptance criteria: Complexity of every function below rank C; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-analysis]]"
-drafted_at: "2026-06-10 13:21 UTC"
+drafted_at: "2026-06-10 13:44 UTC"
 ---
 
 # Spec — Refactor repo_scan/radar/pipeline.py (CC 11, 3 commits). `repo_scan/radar/pipeline.py` is both high-churn (3 commits) and high-complexity (total CC 11). Acceptance criteria: Complexity of every function below rank C; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 13:21 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 13:44 UTC by radar — **status: approved**_
 
 ## Goal
 
