@@ -22,6 +22,7 @@ DEFAULT_CONFIG = {
     "tree_depth": 3,
     "rank_top_n": 15,
     "digest_tokens": 4000,
+    "repo_snapshot_max_chars": 2500,
     # behavioral analysis (change coupling / ownership / age)
     "coupling_min_shared": 4,
     "coupling_min_degree": 50,
@@ -46,8 +47,9 @@ RADAR_CONFIG_KEYS = {
     "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
     # model routing + parallelism
     "llm_roles", "max_parallel_acts", "max_parallel_loops",
+    "repo_snapshot_max_chars",
     # PR workflow
-    "act_open_pr",
+    "act_open_pr", "pr_auto_remediate",
     # governance: budgets, path policy, per-kind autonomy, acceptance tests
     "budget_daily_tokens", "max_acts_per_day", "protected_paths",
     "gates_by_kind", "require_tests_for_kinds",

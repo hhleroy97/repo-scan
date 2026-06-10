@@ -6,13 +6,13 @@ from pathlib import Path
 from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step, warn, write_doc
 from .gates import gate, gate_mode
 from .llm import LLMError, complete, complete_json
-from .research import repo_context_snippet, run_research, write_run_log
+from .research import repo_snapshot, run_research, write_run_log
 from .sources import frontmatter, slugify
 
 ANALYZE_PROMPT = """You are the analysis stage of a research loop for a software project.
 
-Repo context:
-{repo_context}
+Repo snapshot (fresh at analyze time):
+{repo_snapshot}
 
 Problem: {problem}
 
@@ -28,6 +28,8 @@ Synthesize the research against the problem. Respond with ONLY a JSON object:
 }}"""
 
 DRAFT_PROMPT = """You are drafting an implementation spec for a software project.
+
+Repo snapshot as of analyze: {repo_snapshot}
 
 Problem: {problem}
 
@@ -87,7 +89,7 @@ def _research_digest(root: Path, cfg: dict, ingested: list[dict], max_chars: int
 
 def run_analyze(root: Path, cfg: dict, problem: str, ingested: list[dict]) -> dict:
     analysis = complete_json(ANALYZE_PROMPT.format(
-        repo_context=repo_context_snippet(root, cfg),
+        repo_snapshot=repo_snapshot(root, cfg),
         problem=problem,
         research=_research_digest(root, cfg, ingested),
     ), cfg, role="analyze", root=root)
@@ -169,7 +171,10 @@ def write_analysis(root: Path, cfg: dict, problem: str, analysis: dict,
 
 
 def run_draft(root: Path, cfg: dict, problem: str, analysis: dict) -> str:
+    snap = repo_snapshot(root, cfg)
+    ts = snap.split("\n", 1)[0].replace("## Repo snapshot (generated ", "").rstrip(")")
     return complete(DRAFT_PROMPT.format(
+        repo_snapshot=ts or "unknown",
         problem=problem,
         findings="\n".join(f"- {f}" for f in analysis["findings"]),
         recommendation=analysis["recommendation"],

@@ -195,6 +195,12 @@ radar daemon                          # resident runner: scans, loops, acts, gat
 radar serve                           # mobile dashboard + daemon (port 8800)
 ```
 
+**Repo snapshot.** Research, analyze, and act stages inject a ranked
+`repo_snapshot()` built from `scan.json` (hotspots, open tickets, trend deltas,
+coupling alerts) — not whole files. Digest dedup on `scan.generated_at` + git
+HEAD keeps parallel loops from re-sending identical context. Tune with
+`repo_snapshot_max_chars` (default 2500).
+
 ### LLM backend, model routing, and the usage ledger
 
 No API keys. `radar` shells out to an agent CLI on PATH — `cursor-agent` or

@@ -410,6 +410,7 @@
       "tree_depth": 3,
       "rank_top_n": 15,
       "digest_tokens": 4000,
+      "repo_snapshot_max_chars": 2500,
       "coupling_min_shared": 4,
       "coupling_min_degree": 50,
       "coupling_max_changeset": 30,

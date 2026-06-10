@@ -5,7 +5,9 @@ actions (source refs), the tool executes them, and the run is recorded to
 docs/research/runs/ so every research session is auditable.
 """
 
+import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step, write_doc
@@ -38,25 +40,173 @@ Respond with ONLY a JSON object:
 }}"""
 
 
-def repo_context_snippet(root: Path, cfg: dict, max_chars: int = 1500) -> str:
-    """Compact identity block from scan.json (run repo-scan first for best results)."""
+_SNAPSHOT_CACHE: dict[str, str] = {}
+
+
+def _git_head_short(root: Path) -> str:
+    try:
+        r = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root,
+                           capture_output=True, text=True, timeout=10)
+        return r.stdout.strip() if r.returncode == 0 else "?"
+    except (subprocess.TimeoutExpired, OSError):
+        return "?"
+
+
+def repo_snapshot_digest(root: Path, cfg: dict) -> str:
+    """Stable digest from scan timestamp + git HEAD — dedup across parallel loops."""
+    scan_json = root / cfg["docs_dir"] / "scan.json"
+    generated = "none"
+    if scan_json.exists():
+        try:
+            generated = json.loads(scan_json.read_text()).get("generated_at", "none")
+        except json.JSONDecodeError:
+            generated = "unreadable"
+    raw = f"{generated}:{_git_head_short(root)}"
+    return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+
+def repo_snapshot(root: Path, cfg: dict, max_chars: int | None = None) -> str:
+    """Ranked repo map for LLM prompts — scan.json + tickets, not whole files."""
+    max_chars = max_chars or int(cfg.get("repo_snapshot_max_chars", 2500))
+    digest = repo_snapshot_digest(root, cfg)
+    if digest in _SNAPSHOT_CACHE:
+        return _SNAPSHOT_CACHE[digest][:max_chars]
+
     scan_json = root / cfg["docs_dir"] / "scan.json"
     if not scan_json.exists():
-        return f"(no scan.json — repo '{root.name}', run repo-scan for richer context)"
+        text = repo_context_snippet(root, cfg, max_chars)
+        _SNAPSHOT_CACHE[digest] = text
+        return text
     try:
-        data = json.loads(scan_json.read_text())
+        data = json.loads(scan_json.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
-        return f"(unreadable scan.json — repo '{root.name}')"
+        text = repo_context_snippet(root, cfg, max_chars)
+        _SNAPSHOT_CACHE[digest] = text
+        return text
+
     repo = data.get("repo", {})
-    top = [r["file"] for r in data.get("ranking", [])[:5]]
-    snippet = (
-        f"name: {repo.get('name')}\n"
-        f"remote: {repo.get('remote')}\n"
-        f"languages: {data.get('languages')}\n"
-        f"entry_points: {repo.get('entry_points')}\n"
-        f"most_important_files: {top}"
-    )
-    return snippet[:max_chars]
+    branch = repo.get("branch") or _git_branch(root)
+    generated = data.get("generated_at", "?")
+    head = _git_head_short(root)
+    lines = [
+        f"## Repo snapshot (generated {generated}, {branch}@{head})",
+        f"Languages: {data.get('languages', {})}",
+        "Hotspots (rank × churn × complexity):",
+    ]
+
+    churn_by_file = {c["file"]: c.get("commits", 0) for c in data.get("churn", [])}
+    for i, row in enumerate(data.get("ranking", [])[:8], 1):
+        f = row["file"]
+        churn = churn_by_file.get(f, row.get("commits", 0))
+        tested = "yes" if row.get("tested") else "no"
+        lines.append(
+            f"  - {f} — rank #{i}, {row.get('lines', '?')} lines, "
+            f"tests: {tested}, churn {churn}, CC {row.get('complexity', 0)}"
+        )
+
+    from ..tickets import OPEN_STATUSES, load_tickets
+    open_tickets = [t for t in load_tickets(root, cfg)
+                    if t.get("status") in OPEN_STATUSES][:5]
+    if open_tickets:
+        lines.append("Open tickets:")
+        for t in open_tickets:
+            title = (t.get("title") or "")[:60]
+            lines.append(f"  - {t['id']}: {title} ({t.get('status')})")
+
+    delta_lines = _snapshot_delta_lines(root, cfg)
+    if delta_lines:
+        lines.append("Metric deltas:")
+        lines.extend(delta_lines)
+
+    seam = _top_seam_pair(data)
+    if seam:
+        lines.append(f"Coupling alert: {seam['a']} ↔ {seam['b']} "
+                     f"(degree {seam.get('degree', '?')}, shared {seam.get('shared', '?')})")
+
+    digest_excerpt = _digest_excerpt(root, cfg)
+    if digest_excerpt:
+        lines.append(f"Digest: {digest_excerpt}")
+
+    text = "\n".join(lines)[:max_chars]
+    _SNAPSHOT_CACHE[digest] = text
+    return text
+
+
+def _git_branch(root: Path) -> str:
+    try:
+        r = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=root,
+                           capture_output=True, text=True, timeout=10)
+        return r.stdout.strip() if r.returncode == 0 else "?"
+    except (subprocess.TimeoutExpired, OSError):
+        return "?"
+
+
+def _snapshot_delta_lines(root: Path, cfg: dict) -> list[str]:
+    """Last trend row or index callout — top regressions only."""
+    trend = root / cfg["docs_dir"] / "reports" / "trend.md"
+    if trend.exists():
+        rows = [ln for ln in trend.read_text(encoding="utf-8").splitlines()
+                if ln.startswith("|") and "---" not in ln and "generated_at" not in ln]
+        if rows:
+            cells = [c.strip() for c in rows[-1].strip("|").split("|")]
+            if len(cells) >= 5:
+                return [f"  - since {cells[0]}: lines {cells[1]}, files {cells[2]}, "
+                        f"hotspots {cells[3]}, critical {cells[4]}"]
+    index = root / cfg["docs_dir"] / "index.md"
+    if not index.exists():
+        return []
+    block = []
+    for ln in index.read_text(encoding="utf-8").splitlines():
+        if ln.startswith("> "):
+            block.append(ln[2:].strip())
+        elif block and not ln.strip():
+            break
+        elif block and ln.startswith(">"):
+            block.append(ln.lstrip("> ").strip())
+    return [f"  - {ln}" for ln in block[:3]] if block else []
+
+
+def _top_seam_pair(data: dict) -> dict | None:
+    seams = data.get("behavior", {}).get("seams") or data.get("seams") or []
+    if seams:
+        return max(seams, key=lambda s: s.get("degree", 0))
+    coupling = data.get("behavior", {}).get("coupling") or []
+    if not coupling:
+        return None
+    py_edges = {(e.get("a"), e.get("b")) for e in data.get("py_edges", [])}
+    ts_edges = {(e.get("a"), e.get("b")) for e in data.get("ts_edges", [])}
+    import_edges = py_edges | ts_edges | {(b, a) for a, b in py_edges | ts_edges}
+    seam_pairs = []
+    for c in coupling:
+        a, b = c.get("a"), c.get("b")
+        if not a or not b:
+            continue
+        if (a, b) not in import_edges and (b, a) not in import_edges:
+            seam_pairs.append(c)
+    if not seam_pairs:
+        return max(coupling, key=lambda s: s.get("degree", 0))
+    return max(seam_pairs, key=lambda s: s.get("degree", 0))
+
+
+def _digest_excerpt(root: Path, cfg: dict, limit: int = 800) -> str:
+    for rel in ("digest.md", "reports/health.md"):
+        path = root / cfg["docs_dir"] / rel
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for ln in text.splitlines():
+            stripped = ln.strip()
+            if stripped and not stripped.startswith("#") and not stripped.startswith("---"):
+                return stripped[:limit]
+    return ""
+
+
+def repo_context_snippet(root: Path, cfg: dict, max_chars: int = 1500) -> str:
+    """Compact identity block — delegates to repo_snapshot when scan.json exists."""
+    scan_json = root / cfg["docs_dir"] / "scan.json"
+    if scan_json.exists():
+        return repo_snapshot(root, cfg, max_chars=max_chars)
+    return f"(no scan.json — repo '{root.name}', run repo-scan for richer context)"
 
 
 def existing_source_ids(root: Path, cfg: dict) -> list[str]:
@@ -69,7 +219,7 @@ def existing_source_ids(root: Path, cfg: dict) -> list[str]:
 def run_research(root: Path, cfg: dict, question: str, max_sources: int = 3) -> dict:
     """Core research routine. Returns a result dict (also used by the B3 loop)."""
     proposal = complete_json(PROPOSE_PROMPT.format(
-        repo_context=repo_context_snippet(root, cfg),
+        repo_context=repo_snapshot(root, cfg),
         existing="\n".join(existing_source_ids(root, cfg)) or "(none)",
         question=question,
         max_sources=max_sources,
