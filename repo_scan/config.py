@@ -43,6 +43,8 @@ RADAR_CONFIG_KEYS = {
     "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
     # model routing + parallelism
     "llm_roles", "max_parallel_acts",
+    # PR workflow
+    "act_open_pr",
 }
 
 

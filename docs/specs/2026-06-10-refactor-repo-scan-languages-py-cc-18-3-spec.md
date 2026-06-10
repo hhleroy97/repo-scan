@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Refactor repo_scan/languages.py (CC 18, 3 commits, untested). `repo_scan/languages.py` is both high-churn (3 commits) and high-complexity (total CC 18) with no matching test file. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-analysis]]"
-drafted_at: "2026-06-10 04:08 UTC"
+drafted_at: "2026-06-10 04:11 UTC"
 ---
 
 # Spec — Refactor repo_scan/languages.py (CC 18, 3 commits, untested). `repo_scan/languages.py` is both high-churn (3 commits) and high-complexity (total CC 18) with no matching test file. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 04:08 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 04:11 UTC by radar — **status: approved**_
 
 ## Goal
 

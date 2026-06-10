@@ -29,3 +29,10 @@
 | 2026-06-10 04:05 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
 | 2026-06-10 04:06 UTC | post_implement | approved (dashboard) | tests passed; 2 files changed, 197 insertions(+), 83 deletions(-) on radar/tkt-0002 — commit? |
 | 2026-06-10 04:08 UTC | post_audit | paused | audit revise: The phased characterization-then-extract plan, CC targets, skip-flag design, and public API preservation a |
+| 2026-06-10 04:11 UTC | post_analyze | approved (dashboard) | Follow the repo’s snapshot-then-extract pattern: Phase 1 adds `tests/test_languages.py` with fixture repos, monkeypatche |
+| 2026-06-10 04:11 UTC | post_audit | approved (dashboard) | audit revise: The phased characterization-then-extract plan, CC targets, skip-flag design, and public API preservation a |
+| 2026-06-10 04:11 UTC | pre_implement | paused | implement [[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec]] on branch radar/tkt-0004 for tkt-0004 |
+| 2026-06-10 04:12 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec]] on branch radar/tkt-0004 for tkt-0004 |
+| 2026-06-10 04:15 UTC | post_implement | paused | tests passed; 2 files changed, 78 insertions(+), 37 deletions(-) on radar/tkt-0004 — commit? |
+| 2026-06-10 04:20 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec]] on branch radar/tkt-0004 for tkt-0004 |
+| 2026-06-10 04:20 UTC | post_implement | approved (dashboard) | tests passed; 2 files changed, 78 insertions(+), 37 deletions(-) on radar/tkt-0004 — commit? |
