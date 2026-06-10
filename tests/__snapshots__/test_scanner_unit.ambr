@@ -1,0 +1,32 @@
+# serializer version: 1
+# name: test_run_digest_writes_expected_path
+  '''
+  # fixed — repo digest
+  _Generated 2026-01-01 00:00 UTC by repo-scan 0.2.0. Single-file context for LLM use._
+  
+  **Remote:** https://example.com/repo.git  |  **Branch:** main  |  **Last commit:** abc1234 fixed commit
+  **Files:** 4  |  **Lines:** 1,180  |  **Languages:** PY: 1
+  
+  ## Most important files
+  
+  - `src/app.py` (score 80.0, pagerank 0.4100, 700 lines, imported by 2, 12 commits)
+  - `src/util.py` (score 40.5, pagerank 0.1800, 350 lines, imported by 1, 4 commits)
+  
+  ## Structure
+  
+  ```
+  src/
+    app.py
+    util.py
+    ok.py
+  tests/
+    test_app.py
+  ```
+  
+  ## Complexity hotspots
+  
+  - `src/app.py::main` rank D (CC 24)
+  - `src/util.py::helper` rank C (CC 12)
+  
+  '''
+# ---

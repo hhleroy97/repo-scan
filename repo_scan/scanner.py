@@ -1,10 +1,11 @@
 """Scan pipeline orchestration."""
 
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from .behavior import analyze_history, hidden_seams
 from .churn import get_git_churn
-from .complexity import get_complexity, get_python_complexity
+from .complexity import get_complexity
 from .config import load_config
 from .digest import write_digest
 from .graphs import edges_to_mermaid, get_c_call_graph_mermaid, get_python_dep_edges, get_ts_dep_edges
@@ -43,115 +44,197 @@ def ranking_node_scores(ranking: list[dict]) -> dict[str, float]:
     return scores
 
 
-def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
-    cfg = load_config(root)
+@dataclass
+class ScanContext:
+    root: Path
+    quiet: bool = False
+    include_handoff: bool = False
+    cfg: dict = field(default_factory=dict)
+    languages: dict = field(default_factory=dict)
+    line_counts: dict = field(default_factory=dict)
+    churn: list = field(default_factory=list)
+    behavior: dict = field(default_factory=dict)
+    complexity: list = field(default_factory=list)
+    ts_edges: list = field(default_factory=list)
+    ts_reason: str = ""
+    py_edges: list = field(default_factory=list)
+    c_calls: str | None = None
+    ranking: list = field(default_factory=list)
+    tree: str = ""
+    tested: set = field(default_factory=set)
+    node_scores: dict = field(default_factory=dict)
+    ts_deps: str | None = None
+    py_deps: str | None = None
+    prev_summary: dict | None = None
+    curr_summary: dict = field(default_factory=dict)
+    delta: dict | None = None
+    seams: list = field(default_factory=list)
 
-    if not quiet:
-        header(f"repo-scan  {root.name}")
-        info(f"Config: {'custom .repo-scan.json' if (root / '.repo-scan.json').exists() else 'defaults'}")
 
-    ensure_dirs(root, cfg)
+def _prepare_scan(ctx: ScanContext) -> None:
+    ctx.cfg = load_config(ctx.root)
+    if not ctx.quiet:
+        header(f"repo-scan  {ctx.root.name}")
+        info(f"Config: {'custom .repo-scan.json' if (ctx.root / '.repo-scan.json').exists() else 'defaults'}")
+    ensure_dirs(ctx.root, ctx.cfg)
 
+
+def _detect_languages(ctx: ScanContext) -> None:
     step("Detecting languages")
-    languages = detect_languages(root, cfg)
-    for lang, files in languages.items():
+    ctx.languages = detect_languages(ctx.root, ctx.cfg)
+    for lang, files in ctx.languages.items():
         if files:
             ok(f"{lang.upper()}: {len(files)} files")
 
+
+def _count_lines(ctx: ScanContext) -> None:
     step("Counting lines")
-    line_counts = get_line_counts(root, cfg)
-    ok(f"{len(line_counts)} files")
+    ctx.line_counts = get_line_counts(ctx.root, ctx.cfg)
+    ok(f"{len(ctx.line_counts)} files")
 
+
+def _check_git_churn(ctx: ScanContext) -> None:
     step("Checking git churn")
-    churn = get_git_churn(root, cfg)
-    ok(f"{len(churn)} files in history")
+    ctx.churn = get_git_churn(ctx.root, ctx.cfg)
+    ok(f"{len(ctx.churn)} files in history")
 
+
+def _analyze_behavior(ctx: ScanContext) -> None:
     step("Behavioral analysis (git history)")
-    behavior = analyze_history(root, cfg, set(line_counts))
-    ok(f"{len(behavior['coupling'])} coupled pairs, "
-       f"{len(behavior['ownership'])} files with ownership data")
+    ctx.behavior = analyze_history(ctx.root, ctx.cfg, set(ctx.line_counts))
+    ok(f"{len(ctx.behavior['coupling'])} coupled pairs, "
+       f"{len(ctx.behavior['ownership'])} files with ownership data")
 
+
+def _analyze_complexity(ctx: ScanContext) -> None:
     step("Analyzing complexity")
-    complexity = get_complexity(root, languages["py"], cfg)
-    if complexity:
-        ok(f"{len(complexity)} complex functions (rank {cfg['complexity_min_rank']}+)")
+    ctx.complexity = get_complexity(ctx.root, ctx.languages["py"], ctx.cfg)
+    if ctx.complexity:
+        ok(f"{len(ctx.complexity)} complex functions (rank {ctx.cfg['complexity_min_rank']}+)")
     else:
         info("no functions at threshold (or radon/lizard not installed)")
 
-    step("Building dependency graphs")
-    ts_edges, ts_reason = get_ts_dep_edges(root, languages["ts"])
-    py_edges = get_python_dep_edges(root, languages["py"], cfg)
-    ok(f"TS: {'graph generated' if ts_edges else f'skipped ({ts_reason})'}")
-    ok(f"Python: {'graph generated' if py_edges else 'skipped (no intra-repo imports)'}")
 
+def _build_dependency_graphs(ctx: ScanContext) -> None:
+    step("Building dependency graphs")
+    ctx.ts_edges, ctx.ts_reason = get_ts_dep_edges(ctx.root, ctx.languages["ts"])
+    ctx.py_edges = get_python_dep_edges(ctx.root, ctx.languages["py"], ctx.cfg)
+    ok(f"TS: {'graph generated' if ctx.ts_edges else f'skipped ({ctx.ts_reason})'}")
+    ok(f"Python: {'graph generated' if ctx.py_edges else 'skipped (no intra-repo imports)'}")
+
+
+def _build_call_graphs(ctx: ScanContext) -> None:
     step("Building call graphs")
-    c_calls = get_c_call_graph_mermaid(root, languages["c"])
-    if languages["c"]:
-        ok(f"C: {'graph generated' if c_calls else 'skipped (cflow not available)'}")
+    ctx.c_calls = get_c_call_graph_mermaid(ctx.root, ctx.languages["c"])
+    if ctx.languages["c"]:
+        ok(f"C: {'graph generated' if ctx.c_calls else 'skipped (cflow not available)'}")
     else:
         ok("C: skipped (no C files)")
 
+
+def _rank_files(ctx: ScanContext) -> None:
     step("Ranking files")
-    all_edges = py_edges + ts_edges
-    ranking = rank_files(line_counts, churn, complexity, all_edges,
-                         cfg.get("rank_top_n", 15), exclude_prefix=cfg["docs_dir"] + "/")
-    tree = get_directory_tree(root, cfg)
-    tested = find_tested_files(list(line_counts))
-    for r in ranking:
-        r["tested"] = r["file"] in tested or is_test_file(r["file"])
-    untested_ranked = sum(1 for r in ranking if not r["tested"])
-    ok(f"top {len(ranking)} files scored ({untested_ranked} without tests)")
+    all_edges = ctx.py_edges + ctx.ts_edges
+    ctx.ranking = rank_files(ctx.line_counts, ctx.churn, ctx.complexity, all_edges,
+                             ctx.cfg.get("rank_top_n", 15),
+                             exclude_prefix=ctx.cfg["docs_dir"] + "/")
+    ctx.tree = get_directory_tree(ctx.root, ctx.cfg)
+    ctx.tested = find_tested_files(list(ctx.line_counts))
+    for r in ctx.ranking:
+        r["tested"] = r["file"] in ctx.tested or is_test_file(r["file"])
+    untested_ranked = sum(1 for r in ctx.ranking if not r["tested"])
+    ok(f"top {len(ctx.ranking)} files scored ({untested_ranked} without tests)")
 
-    node_scores = ranking_node_scores(ranking)
-    ts_deps = edges_to_mermaid(ts_edges, node_scores)
-    py_deps = edges_to_mermaid(py_edges, node_scores)
+    ctx.node_scores = ranking_node_scores(ctx.ranking)
+    ctx.ts_deps = edges_to_mermaid(ctx.ts_edges, ctx.node_scores)
+    ctx.py_deps = edges_to_mermaid(ctx.py_edges, ctx.node_scores)
 
+
+def _write_reports(ctx: ScanContext) -> None:
     step("Writing docs")
-    prev_summary = load_previous_summary(root, cfg)
-    curr_summary = summarize_metrics(line_counts, complexity, cfg)
-    delta = compute_delta(prev_summary, curr_summary)
+    ctx.prev_summary = load_previous_summary(ctx.root, ctx.cfg)
+    ctx.curr_summary = summarize_metrics(ctx.line_counts, ctx.complexity, ctx.cfg)
+    ctx.delta = compute_delta(ctx.prev_summary, ctx.curr_summary)
 
-    seams = hidden_seams(behavior["coupling"], all_edges)
-    write_health_report(root, cfg, line_counts, churn, complexity, behavior=behavior)
-    write_coupling_report(root, cfg, behavior["coupling"], seams)
-    write_dep_report(root, cfg, ts_deps, py_deps, ts_reason)
-    write_call_report(root, cfg, c_calls)
-    write_index(root, cfg, line_counts, languages, ranking, tree, delta=delta)
-    write_scan_json(root, cfg, line_counts, languages, churn, complexity,
-                    ranking, py_edges, ts_edges, behavior=behavior)
-    append_trend_log(root, cfg, curr_summary, delta)
+    all_edges = ctx.py_edges + ctx.ts_edges
+    ctx.seams = hidden_seams(ctx.behavior["coupling"], all_edges)
+    write_health_report(ctx.root, ctx.cfg, ctx.line_counts, ctx.churn, ctx.complexity,
+                        behavior=ctx.behavior)
+    write_coupling_report(ctx.root, ctx.cfg, ctx.behavior["coupling"], ctx.seams)
+    write_dep_report(ctx.root, ctx.cfg, ctx.ts_deps, ctx.py_deps, ctx.ts_reason)
+    write_call_report(ctx.root, ctx.cfg, ctx.c_calls)
+    write_index(ctx.root, ctx.cfg, ctx.line_counts, ctx.languages, ctx.ranking, ctx.tree,
+                delta=ctx.delta)
+    write_scan_json(ctx.root, ctx.cfg, ctx.line_counts, ctx.languages, ctx.churn,
+                    ctx.complexity, ctx.ranking, ctx.py_edges, ctx.ts_edges,
+                    behavior=ctx.behavior)
+    append_trend_log(ctx.root, ctx.cfg, ctx.curr_summary, ctx.delta)
 
-    if cfg.get("radar_enabled"):
-        write_candidates(root, cfg, churn, complexity, tested=tested)
-        churn_files = {c["file"] for c in churn}
-        cc_files = {item["file"] for item in complexity}
-        if churn_files & cc_files and not quiet:
-            info("RADAR candidates detected — run `radar full` to research the top one")
 
-    if cfg.get("tickets_enabled", True):
-        created, resolved = generate_tickets(root, cfg, {
-            "line_counts": line_counts, "ranking": ranking, "churn": churn,
-            "complexity": complexity, "tested": tested, "behavior": behavior,
-            "seams": seams,
-        })
-        if not quiet:
-            if created:
-                info(f"{created} ticket(s) proposed — review {cfg['docs_dir']}/tickets/board.md "
-                     f"or `repo-scan tickets`")
-            for t in resolved:
-                info(f"{t['id']} looks resolved (metric cleared) — "
-                     f"`repo-scan tickets done {t['id']}`")
+def _maybe_run_radar(ctx: ScanContext) -> None:
+    if not ctx.cfg.get("radar_enabled"):
+        return
+    write_candidates(ctx.root, ctx.cfg, ctx.churn, ctx.complexity, tested=ctx.tested)
+    churn_files = {c["file"] for c in ctx.churn}
+    cc_files = {item["file"] for item in ctx.complexity}
+    if churn_files & cc_files and not ctx.quiet:
+        info("RADAR candidates detected — run `radar full` to research the top one")
 
-    if include_handoff:
-        write_handoff(root, cfg, languages, line_counts)
 
-    if not quiet:
-        crit = [f for f, s in line_counts.items() if s["lines"] >= cfg["line_crit"]]
-        docs = cfg["docs_dir"]
-        print(fmt(f"\n✓ Done. Open {docs}/index.md in Obsidian to explore.", GREEN + BOLD))
-        if crit:
-            warn(f"{len(crit)} file(s) exceed {cfg['line_crit']} lines — see {docs}/reports/health.md")
-        print()
+def _maybe_run_tickets(ctx: ScanContext) -> None:
+    if not ctx.cfg.get("tickets_enabled", True):
+        return
+    created, resolved = generate_tickets(ctx.root, ctx.cfg, {
+        "line_counts": ctx.line_counts, "ranking": ctx.ranking, "churn": ctx.churn,
+        "complexity": ctx.complexity, "tested": ctx.tested, "behavior": ctx.behavior,
+        "seams": ctx.seams,
+    })
+    if ctx.quiet:
+        return
+    if created:
+        info(f"{created} ticket(s) proposed — review {ctx.cfg['docs_dir']}/tickets/board.md "
+             f"or `repo-scan tickets`")
+    for t in resolved:
+        info(f"{t['id']} looks resolved (metric cleared) — "
+             f"`repo-scan tickets done {t['id']}`")
+
+
+def _maybe_write_handoff(ctx: ScanContext) -> None:
+    if ctx.include_handoff:
+        write_handoff(ctx.root, ctx.cfg, ctx.languages, ctx.line_counts)
+
+
+def _print_completion(ctx: ScanContext) -> None:
+    if ctx.quiet:
+        return
+    crit = [f for f, s in ctx.line_counts.items() if s["lines"] >= ctx.cfg["line_crit"]]
+    docs = ctx.cfg["docs_dir"]
+    print(fmt(f"\n✓ Done. Open {docs}/index.md in Obsidian to explore.", GREEN + BOLD))
+    if crit:
+        warn(f"{len(crit)} file(s) exceed {ctx.cfg['line_crit']} lines — see {docs}/reports/health.md")
+    print()
+
+
+def _post_scan_actions(ctx: ScanContext) -> None:
+    _maybe_run_radar(ctx)
+    _maybe_run_tickets(ctx)
+    _maybe_write_handoff(ctx)
+    _print_completion(ctx)
+
+
+def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
+    ctx = ScanContext(root=root, quiet=quiet, include_handoff=include_handoff)
+    _prepare_scan(ctx)
+    _detect_languages(ctx)
+    _count_lines(ctx)
+    _check_git_churn(ctx)
+    _analyze_behavior(ctx)
+    _analyze_complexity(ctx)
+    _build_dependency_graphs(ctx)
+    _build_call_graphs(ctx)
+    _rank_files(ctx)
+    _write_reports(ctx)
+    _post_scan_actions(ctx)
 
 
 def collect_digest_inputs(root: Path, cfg: dict) -> dict:
