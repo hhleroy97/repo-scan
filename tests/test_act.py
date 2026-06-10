@@ -106,6 +106,14 @@ def test_act_happy_path_commits_on_branch(act_repo, tmp_path):
     problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
     assert load_checkpoint(root, cfg, problem) == {}
 
+    # every stage and LLM call landed in the shared agent feed
+    from repo_scan.hub.state import load_events
+    events = load_events(root, cfg, limit=50)
+    stages = [e["text"] for e in events if e["kind"] == "stage"]
+    assert any("[3/5] Implement" in s for s in stages)
+    assert any("[4/5] Test" in s for s in stages)
+    assert any(e["kind"] == "llm" for e in events)
+
 
 def test_act_refuses_dirty_tree_outside_vault(act_repo, tmp_path):
     root, cfg = act_repo
@@ -202,6 +210,93 @@ def test_daemon_runs_act_for_inprogress_ticket(act_repo, tmp_path):
 
     # implemented ticket no longer a candidate -> next tick is a no-op
     assert daemon_tick(root, cfg) == []
+
+
+def test_act_opens_pr_when_configured(act_repo, tmp_path, monkeypatch):
+    """With act_open_pr, a successful act pushes the branch and opens a PR
+    via the gh CLI; the URL lands on the ticket and in the act log."""
+    import os
+    root, cfg = act_repo
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["act_open_pr"] = True
+
+    # local bare remote so the push is real
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)],
+                   cwd=root, capture_output=True)
+
+    # fake gh on PATH that records argv and prints a PR URL
+    bindir = tmp_path / "bin"
+    bindir.mkdir()
+    gh = bindir / "gh"
+    gh.write_text("#!/bin/sh\necho \"$@\" > " + str(tmp_path / "gh-args.txt") +
+                  "\necho https://github.com/x/y/pull/7\n")
+    gh.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
+
+    assert cmd_act(root, cfg) == 0
+    args = (tmp_path / "gh-args.txt").read_text()
+    assert "pr create" in args and "radar/tkt-0001" in args
+    # branch made it to the remote
+    heads = subprocess.run(["git", "ls-remote", "--heads", str(remote)],
+                           capture_output=True, text=True).stdout
+    assert "radar/tkt-0001" in heads
+    body = Path(load_tickets(root, cfg)[0]["path"]).read_text()
+    assert "https://github.com/x/y/pull/7" in body
+    act_log = next((root / "docs" / "changelog").glob("*-act.md")).read_text()
+    assert "pull/7" in act_log
+
+
+def test_act_pr_failure_keeps_commit(act_repo, tmp_path):
+    """No gh / no remote: the commit and branch survive, outcome unchanged."""
+    root, cfg = act_repo
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["act_open_pr"] = True  # no remote configured -> push fails gracefully
+    assert cmd_act(root, cfg) == 0
+    assert _git(root, "log", "-1", "--pretty=%s").startswith("radar: implement")
+
+
+def test_daemon_tick_survives_live_act_thread(act_repo):
+    """Regression: a tick while an act thread is in flight must not crash
+    (the daemon thread died on a bad iteration over _act_threads)."""
+    import threading
+    from repo_scan.hub import daemon as daemon_mod
+    root, cfg = act_repo
+    save_meta(root, cfg, {"last_scan": time.time()})
+    t = threading.Thread(target=time.sleep, args=(1.0,), daemon=True)
+    t.start()
+    daemon_mod._act_threads["fake-run-id"] = t
+    try:
+        daemon_tick(root, cfg)  # must not raise
+    finally:
+        del daemon_mod._act_threads["fake-run-id"]
+
+
+def test_reclaim_orphan_runs_resurrects_work(act_repo, tmp_path):
+    """A run left 'running' by a dead process is reclaimed at startup and
+    the next tick restarts the act from its checkpoints."""
+    from repo_scan.hub.daemon import reclaim_orphan_runs
+    from repo_scan.hub.state import create_run, update_run
+    from repo_scan.radar.act import act_problem
+    root, cfg = act_repo
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["max_parallel_acts"] = 1
+    save_meta(root, cfg, {"last_scan": time.time()})
+
+    problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
+    run = create_run(root, cfg, problem, ticket="tkt-0001", kind="act")
+    update_run(root, cfg, run["id"], "running")  # owner "died" here
+
+    assert daemon_tick(root, cfg) == []  # starved: stale run blocks the slot
+    assert reclaim_orphan_runs(root, cfg) == [run["id"]]
+    actions = daemon_tick(root, cfg)
+    assert any(a.startswith("act-started:") for a in actions)
+    assert load_runs(root, cfg)[-1]["status"] == "done"
+    assert "VALUE = 42" in _git(root, "show", "radar/tkt-0001:impl.py")
 
 
 def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):

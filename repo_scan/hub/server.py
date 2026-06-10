@@ -19,7 +19,7 @@ from urllib.parse import parse_qs, urlparse
 
 from ..config import VERSION
 from ..utils import git_branch, header, info, ok
-from .state import get_token, load_runs, submit_decision
+from .state import get_token, load_events, load_runs, submit_decision
 from .ui import DASHBOARD_HTML
 
 ACTIVITY_ROWS = 10
@@ -90,6 +90,7 @@ def build_state(root: Path, cfg: dict) -> dict:
                                  "decision": cells[2], "summary": cells[3]})
 
     from ..radar.llm import usage_summary
+    from .prs import list_open_prs
     return {
         "version": VERSION,
         "repo": {"name": root.name, "branch": git_branch(root)},
@@ -99,7 +100,9 @@ def build_state(root: Path, cfg: dict) -> dict:
         "tickets": tickets,
         "runs": load_runs(root, cfg)[::-1][:10],
         "activity": activity,
+        "events": load_events(root, cfg, limit=15)[::-1],
         "usage": usage_summary(root, cfg),
+        "prs": list_open_prs(root),
     }
 
 
@@ -197,6 +200,48 @@ def make_handler(root: Path, cfg: dict, token: str):
                 submit_decision(root, cfg, gate, problem, decision,
                                 comment=comment, source="dashboard")
                 return self._json({"ok": True})
+
+            if url.path == "/api/pr/merge":
+                from .prs import merge_pr
+                try:
+                    number = int(body.get("number", 0))
+                except (TypeError, ValueError):
+                    number = 0
+                if not number:
+                    return self._json({"error": "number required"}, 400)
+                done, msg = merge_pr(root, cfg, number)
+                return self._json({"ok": done, "message": msg},
+                                  200 if done else 502)
+
+            if url.path == "/api/pr/update":
+                from .prs import update_pr_branch
+                try:
+                    number = int(body.get("number", 0))
+                except (TypeError, ValueError):
+                    number = 0
+                if not number:
+                    return self._json({"error": "number required"}, 400)
+                done, msg = update_pr_branch(root, number)
+                return self._json({"ok": done, "message": msg},
+                                  200 if done else 502)
+
+            if url.path == "/api/ticket/new":
+                from ..tickets import new_ticket
+                title = str(body.get("title", "")).strip()
+                if not title:
+                    return self._json({"error": "title required"}, 400)
+                criteria = [str(c).strip() for c in body.get("criteria", [])
+                            if str(c).strip()]
+                try:
+                    t = new_ticket(
+                        root, cfg, title,
+                        why=str(body.get("why", ""))[:2000],
+                        priority=str(body.get("priority", "medium")),
+                        criteria=criteria,
+                        kind=str(body.get("kind", "feature"))[:30] or "feature")
+                except ValueError as e:
+                    return self._json({"error": str(e)[:200]}, 400)
+                return self._json({"ok": True, "id": t["id"], "status": t["status"]})
 
             if url.path == "/api/ticket":
                 from ..tickets import set_ticket_status

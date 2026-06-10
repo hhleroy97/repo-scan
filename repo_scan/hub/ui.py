@@ -110,7 +110,8 @@ function esc(s){return String(s??'').replace(/[&<>"]/g,
 function toast(m){const t=document.getElementById('toast');t.textContent=m;
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 async function api(path,opts){const r=await fetch(path,opts);
-  if(!r.ok)throw new Error((await r.json()).error||r.status);return r.json()}
+  if(!r.ok){const j=await r.json().catch(()=>({}));
+    throw new Error(j.error||j.message||r.status)}return r.json()}
 
 async function refresh(){
   try{S=await api('/api/state');render()}
@@ -121,17 +122,26 @@ async function refresh(){
 function setTab(t){tab=t;
   document.querySelectorAll('nav a').forEach(a=>
     a.classList.toggle('active',a.dataset.tab===t));
-  render()}
+  render(true)}
 document.querySelectorAll('nav a').forEach(a=>
   a.addEventListener('click',e=>setTab(a.dataset.tab)));
 
-function render(){
+function formBusy(){
+  // never repaint over someone mid-thought: a focused field or any
+  // unsubmitted composer text holds the current DOM in place
+  const a=document.activeElement;
+  if(a&&['INPUT','TEXTAREA','SELECT'].includes(a.tagName)&&a.closest('#main'))return true;
+  return ['nt-title','nt-why','nt-criteria'].some(id=>{
+    const e=document.getElementById(id);return e&&e.value.trim()});
+}
+function render(force){
   if(!S)return;
   document.getElementById('repo').textContent=S.repo.name;
   document.getElementById('meta').textContent=
     `${S.repo.branch} · v${S.version}`;
   const open=S.tickets.filter(t=>t.status==='proposed').length;
   badge('ngates',S.gates.length);badge('ntickets',open);
+  if(!force&&formBusy())return;
   const m=document.getElementById('main');
   m.innerHTML={now:rNow,gates:rGates,tickets:rTickets,activity:rActivity}[tab]();
 }
@@ -154,17 +164,64 @@ function rNow(){
   </div>`;
   if(S.runs.length){
     h+=`<div class="section">Runs</div><div class="card">`+
-      S.runs.map(r=>`<div class="run"><span class="dot ${r.status}"></span>
-        <span style="flex:1">${esc(r.problem).slice(0,90)}</span>
-        <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`).join('')+
+      S.runs.map(r=>{
+        const live=['running','queued'].includes(r.status);
+        const stage=r.stage?`<br><span class="dim small">${live?'&#9654; ':''}${esc(r.stage)}${r.stage_detail?' — '+esc(r.stage_detail):''}</span>`:'';
+        return `<div class="run"><span class="dot ${r.status}"></span>
+        <span style="flex:1">${esc(r.problem).slice(0,90)}${stage}</span>
+        <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`}).join('')+
       `</div>`;
   }
+  h+=rPRs();
+  h+=rFeed();
   h+=rUsage();
   h+=`<div class="dim small" style="text-align:center;margin-top:14px">
     last scan ${esc(sc.generated_at||'never')} · refreshed ${esc(S.now)}</div>`;
   return h;
 }
 function tok(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'k':String(n??0)}
+function rPRs(){
+  const prs=S.prs||[];if(!prs.length)return '';
+  const ck={passing:['ok','checks passing'],failing:['bad','checks FAILING'],
+            pending:['warn','checks running'],none:['','no checks']};
+  return `<div class="section">Pull requests</div>`+prs.map(p=>{
+    const [cls,label]=ck[p.checks]||['',p.checks];
+    const conflict=p.mergeable==='CONFLICTING';
+    let btns=`<a class="ghost" style="text-decoration:none;text-align:center" href="${esc(p.url)}" target="_blank" rel="noopener">View</a>`;
+    if(p.checks==='failing'||conflict)
+      btns+=`<button class="ghost" onclick="prAct('update',${p.number},this)">Update branch</button>`;
+    btns+=`<button class="approve" ${conflict?'disabled':''} onclick="prMerge(${p.number},'${esc(p.ticket||'')}',this)">Merge</button>`;
+    return `<div class="card" ${p.checks==='failing'?'style="border-color:var(--bad)"':''}>
+      <span class="badge ${cls}">${label}</span>
+      ${p.ticket?`<span class="badge">${esc(p.ticket)}</span>`:''}
+      ${conflict?`<span class="badge bad">conflicts</span>`:''}
+      ${p.draft?`<span class="badge">draft</span>`:''}
+      <div class="title" style="margin-top:8px">#${p.number} ${esc(p.title)}</div>
+      <div class="dim small">${esc(p.branch)}</div>
+      <div class="btnrow">${btns}</div></div>`}).join('');
+}
+function prMerge(number,ticket,btn){
+  const failing=(S.prs.find(p=>p.number===number)||{}).checks==='failing';
+  if(!confirm(`Squash-merge PR #${number}${ticket?' ('+ticket+')':''}`
+    +(failing?' — CHECKS ARE FAILING':'')+'?'))return;
+  prAct('merge',number,btn);
+}
+async function prAct(op,number,btn){
+  btn.disabled=true;btn.textContent=op==='merge'?'Merging…':'Updating…';
+  try{const r=await api('/api/pr/'+op,{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({number})});
+    toast(r.message||'done');setTimeout(refresh,800)}
+  catch(e){toast('Failed: '+e.message);btn.disabled=false;
+    btn.textContent=op==='merge'?'Merge':'Update branch'}
+}
+function rFeed(){
+  const ev=S.events||[];if(!ev.length)return '';
+  const icon={stage:'&#9654;',llm:'&#9889;',run:'&#10003;',scan:'&#8635;'};
+  return `<div class="section">Agent feed</div><div class="card">`+
+    ev.map(e=>`<div class="run"><span class="dim small" style="flex:none;width:42px">${esc((e.when||'').slice(11,16))}</span>
+      <span style="flex:1" class="small">${icon[e.kind]||'·'} ${esc(e.text)}</span></div>`).join('')+
+    `</div>`;
+}
 function rUsage(){
   const u=S.usage;if(!u||!u.total||!u.total.calls)return '';
   const row=(name,a)=>`<div class="run"><span style="flex:1">${esc(name)}</span>
@@ -220,15 +277,40 @@ async function gateDecide(gate,btn,decision){
 function rTickets(){
   const order={proposed:0,approved:1,'in-progress':2,done:3,rejected:4};
   const ts=[...S.tickets].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9));
-  if(!ts.length)return `<div class="empty">No tickets yet — run a scan.</div>`;
   const cls={proposed:'warn',approved:'info','in-progress':'info',done:'ok',rejected:'bad'};
-  return ts.map(t=>`<div class="card">
+  let h=`<div class="card">
+    <div class="title">New idea</div>
+    <input id="nt-title" placeholder="What should be built or changed?" style="width:100%;margin:8px 0;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px">
+    <textarea id="nt-why" placeholder="Why? (optional)" rows="2" style="width:100%;margin-bottom:8px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit"></textarea>
+    <textarea id="nt-criteria" placeholder="Acceptance criteria, one per line (drive the spec + tests)" rows="2" style="width:100%;margin-bottom:8px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit"></textarea>
+    <div class="btnrow">
+      <select id="nt-priority" style="flex:1;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px;font-size:14px">
+        <option value="medium">medium</option><option value="high">high</option><option value="low">low</option>
+      </select>
+      <button class="approve" onclick="newTicket(this)">Create ticket</button>
+    </div></div>`;
+  if(!ts.length)return h+`<div class="empty">No tickets yet — run a scan or capture an idea above.</div>`;
+  h+=ts.map(t=>`<div class="card">
     <span class="badge ${cls[t.status]||''}">${esc(t.status)}</span>
     ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
     ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
     <div class="title" style="margin-top:8px">${esc(t.title)}</div>
     ${t.why?`<div class="dim small">${esc(t.why).slice(0,180)}</div>`:''}
     ${actions(t)}</div>`).join('');
+  return h;
+}
+async function newTicket(btn){
+  const title=document.getElementById('nt-title').value.trim();
+  if(!title){toast('Title required');return}
+  const criteria=document.getElementById('nt-criteria').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  btn.disabled=true;
+  try{const r=await api('/api/ticket/new',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({title,why:document.getElementById('nt-why').value,
+      priority:document.getElementById('nt-priority').value,criteria})});
+    toast(`${r.id} created — approve it to start the loop`);
+    ['nt-title','nt-why','nt-criteria'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(refresh,500)}
+  catch(e){toast('Failed: '+e.message);btn.disabled=false}
 }
 function actions(t){
   const b=(a,l,c)=>`<button class="${c||'ghost'}" onclick="ticketAct('${t.id}','${a}',this)">${l}</button>`;

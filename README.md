@@ -98,6 +98,21 @@ repo-scan tickets approve tkt-0001
 repo-scan tickets start | reject | done <id>
 ```
 
+**Intent intake.** Your ideas enter the same pipeline as scan signals — as
+`feature` tickets that the loop researches, specs, implements, and PRs like
+any other work:
+
+```bash
+repo-scan tickets new "Add CSV export" --why "users asked" \
+  --criterion "exports all rows" --criterion "handles utf-8" --approve
+```
+
+The dashboard's Tickets tab has the same composer ("New idea"), so intent can
+be captured from your phone. Acceptance criteria matter: they ride into the
+spec (which must map each criterion to a concrete automated test) and the act
+stage refuses to commit `feature` work that ships without tests. Re-submitting
+the same title dedups against the existing ticket instead of duplicating.
+
 The loop closes itself: `radar full` works the highest-priority **approved**
 ticket (falling back to raw metric candidates), moves it to `in-progress` with
 a spec wikilink when the loop's gates pass, and when a later scan sees the
@@ -186,6 +201,15 @@ token counts (parsed from the agent CLI's JSON envelope; plain-text backends
 get a chars/4 estimate flagged as such). Both dashboards aggregate it by
 day, model, and role.
 
+**Timeouts and liveness.** Agent CLIs are silent until they finish, which
+looks identical to a hang. While a call runs, radar emits a heartbeat event
+every `llm_heartbeat_seconds` (default 120) — `research · composer-2.5 still
+working · 6m elapsed (pid alive, limit 25m)` — to the agent feed, dashboard,
+and TUI, so you can tell working from stuck. Hard caps: `llm_timeout` for
+research/analyze/draft/audit calls and `act_timeout` for implementation runs;
+set them generously — a killed call loses that stage's work (checkpoints
+resume from the last completed stage, not mid-call).
+
 ### The Act stage — from approved spec to reviewed commit
 
 With `"act_enabled": true`, `radar act` takes the highest-priority in-progress
@@ -238,6 +262,35 @@ Every decision is appended to `docs/research/decisions.md`. Loop runs are
 recorded to `docs/changelog/{date}-loop.md`; specs land in `docs/specs/`
 (`status: draft` → `status: approved` after Gate 2).
 
+### Governance — budgets, protected paths, per-kind autonomy
+
+Autonomy is granted in policy, not all at once:
+
+```json
+{
+  "budget_daily_tokens": 2000000,
+  "max_acts_per_day": 6,
+  "protected_paths": [".github/*", "repo_scan/config.py"],
+  "gates_by_kind": { "refactor": { "pre_implement": "auto" } },
+  "require_tests_for_kinds": ["feature"]
+}
+```
+
+- **Budgets** — when the day's LLM tokens (from the usage ledger) or act-run
+  count hit their cap, the daemon stops *starting* new work (one notification,
+  one event); runs already mid-flight finish so spent tokens aren't wasted.
+- **Protected paths** — if an implementation touches a matching file
+  (fnmatch globs), the `post_implement` gate is forced to `prompt` even if
+  you've set it to `auto`: sensitive areas always face a human.
+- **Per-kind autonomy** (`gates_by_kind`) — trust is earned per work type.
+  Keyed by the ticket's fingerprint prefix (`refactor:`, `feature:`,
+  `seam:`...), merged over `gates` for that act run only — e.g. let refactors
+  start unattended while features still ask first.
+- **Acceptance tests** — for kinds in `require_tests_for_kinds` (default
+  `["feature"]`), an implementation that changes no test files gets one
+  dedicated round to add the spec's acceptance tests; still none and the run
+  stops with `no-acceptance-tests`, branch kept for review.
+
 ### The hub — approve from your phone
 
 `radar serve` runs a zero-dependency stdlib HTTP server (plus the daemon in a
@@ -258,6 +311,15 @@ radar top                  # same state in the terminal (curses, stdlib)
 gates (approve with `a`, reject with `r`), actionable tickets, the LLM token
 ledger by model and role, and the recent decision trail — handy when you're
 already in the shell and don't want to reach for a browser.
+
+**PRs from the phone.** When `act_open_pr` is on, the dashboard's Now tab
+lists every open PR with its CI verdict (checks passing / running /
+**failing**, plus merge conflicts), read via the `gh` CLI and cached for a
+minute. One tap to **Merge** (squash + delete branch, confirm dialog warns
+if checks are failing) — the matching ticket is auto-noted and moved to
+done. **Update branch** appears on failing/conflicting PRs: it merges the
+base branch in so CI re-runs against current main — the usual cure when a
+PR fails on something already fixed upstream.
 
 Remote access, the low-friction way: install [Tailscale](https://tailscale.com)
 on this machine and your phone, then open

@@ -1,8 +1,13 @@
 # Research index
-_Rebuilt 2026-06-10 03:26 UTC — 14 source(s)_
+_Rebuilt 2026-06-10 05:35 UTC — 19 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in…]] | github | 12-factor-agents, ai-agents, claude-code, coding-agents, context-engineering, human-in-the-loop, ide, parallel-agents, repo, team-workflows, typescript | 2026-06-10 05:35 UTC |
+| [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]] | github | agpl, analytics, django, docker, issue-tracker, jira-alternative, kanban, kubernetes, postgresql, product-management, project-management, react, redis, repo, roadmaps, self-hosting, typescript | 2026-06-10 05:35 UTC |
+| [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported…]] | github | cli, code-statistics, generated-code, git, gitattributes, json-output, language-detection, repo, repo-analysis, ruby, sloc, static-analysis, vendored-files | 2026-06-10 04:03 UTC |
+| [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]] | github | cli, cloc, code-statistics, gitignore, json-output, library, line-counting, repo, rust, sloc, static-analysis, yaml-output | 2026-06-10 04:02 UTC |
+| [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales…]] | github | fixtures, parametrization, plugins, python, repo, test-discovery, test-runner, testing, unit-testing | 2026-06-10 04:02 UTC |
 | [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]] | github | amd, circular-dependencies, cli, commonjs, css-preprocessors, dependency-graph, es6-modules, graphviz, javascript, module-resolution, repo, static-analysis, typescript | 2026-06-10 03:26 UTC |
 | [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]] | github | caching, dependencies, dependency-resolution, heroku, package-metadata, pypi, python, repo, rest-api | 2026-06-10 03:25 UTC |
 | [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]] | url | ai-assisted-refactoring, article, behavior-preservation, characterization-tests, legacy-code, mutation-testing, refactoring, safety-net, technical-debt, test-coverage, test-then-refactor | 2026-06-10 03:15 UTC |

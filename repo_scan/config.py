@@ -35,7 +35,7 @@ DEFAULT_CONFIG = {
 
 # Keys owned by radar (B-phases) — valid in .repo-scan.json, unused by scan.
 RADAR_CONFIG_KEYS = {
-    "gates", "llm_cli", "llm_timeout",
+    "gates", "llm_cli", "llm_timeout", "llm_heartbeat_seconds",
     # hub (daemon + dashboard)
     "serve_host", "serve_port", "daemon_poll_seconds", "daemon_scan_hours",
     "ntfy_topic", "ntfy_server", "dashboard_url",
@@ -43,6 +43,11 @@ RADAR_CONFIG_KEYS = {
     "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
     # model routing + parallelism
     "llm_roles", "max_parallel_acts",
+    # PR workflow
+    "act_open_pr",
+    # governance: budgets, path policy, per-kind autonomy, acceptance tests
+    "budget_daily_tokens", "max_acts_per_day", "protected_paths",
+    "gates_by_kind", "require_tests_for_kinds",
 }
 
 

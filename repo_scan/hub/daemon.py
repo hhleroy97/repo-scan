@@ -19,10 +19,10 @@ import threading
 import time
 from pathlib import Path
 
-from ..utils import header, info, ok, warn
+from ..utils import header, info, now_date, ok, warn
 from .notify import notify
-from .state import (active_runs, create_run, load_meta, peek_decision,
-                    save_meta, update_run)
+from .state import (active_runs, append_event, create_run, load_meta,
+                    load_runs, peek_decision, save_meta, update_run)
 
 # run id -> thread, for in-flight act runs owned by this process
 _act_threads: dict[str, threading.Thread] = {}
@@ -61,6 +61,7 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
+        append_event(root, cfg, "run", f"loop done — spec approved ({run.get('ticket')})")
         if run.get("ticket"):
             # the spec wikilink is what makes this ticket an act candidate
             from ..radar.pipeline import _latest_spec
@@ -103,6 +104,8 @@ def _run_act(root: Path, cfg: dict, run: dict) -> int:
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
+        append_event(root, cfg, "run",
+                     f"implementation committed on radar/{run.get('ticket')} — review and merge")
         notify(cfg, "RADAR: implementation committed",
                f"{run.get('ticket')}: review the branch and merge.",
                tags=["white_check_mark"], click=_dashboard_url(cfg))
@@ -137,6 +140,51 @@ def _spawn_act(root: Path, cfg: dict, run: dict, parallel: bool) -> None:
     t.start()
 
 
+def over_budget(root: Path, cfg: dict) -> str | None:
+    """Governance: daily spend caps. Returns the reason if a cap is hit.
+
+        "budget_daily_tokens": 2000000,   # in+out tokens per day (usage ledger)
+        "max_acts_per_day": 6             # act runs started per day
+
+    Caps block STARTING new work; runs already mid-flight (paused at a gate,
+    resuming from checkpoints) finish normally so spent tokens aren't wasted.
+    """
+    cap_tokens = int(cfg.get("budget_daily_tokens", 0))
+    if cap_tokens:
+        from ..radar.llm import usage_summary
+        today = usage_summary(root, cfg).get("today", {})
+        used = int(today.get("input_tokens", 0)) + int(today.get("output_tokens", 0))
+        if used >= cap_tokens:
+            return f"daily token budget reached ({used:,}/{cap_tokens:,})"
+    cap_acts = int(cfg.get("max_acts_per_day", 0))
+    if cap_acts:
+        started = [r for r in load_runs(root, cfg)
+                   if r.get("kind") == "act"
+                   and str(r.get("created_at", "")).startswith(now_date())]
+        if len(started) >= cap_acts:
+            return f"daily act cap reached ({len(started)}/{cap_acts})"
+    return None
+
+
+def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
+    """Mark queued/running runs with no owning thread as stopped.
+
+    Called at daemon startup: if a previous process died mid-run, its run
+    records would otherwise sit in "running" forever and starve the
+    scheduler. Stopping them lets the normal fan-out resurrect the work —
+    checkpoints (branch, worktree, completed stages) and inbox decisions
+    survive, so the resume is cheap and consistent.
+    """
+    reclaimed = []
+    for r in active_runs(root, cfg):
+        if r["status"] in ("queued", "running") and r["id"] not in _act_threads:
+            update_run(root, cfg, r["id"], "stopped",
+                       note="reclaimed at daemon startup (owner died)")
+            warn(f"reclaimed orphaned run {r['id']} ({r.get('ticket')})")
+            reclaimed.append(r["id"])
+    return reclaimed
+
+
 def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
     actions: list[str] = []
@@ -146,7 +194,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
     max_acts = int(cfg.get("max_parallel_acts", 2))
     parallel = max_acts > 1
     active = active_runs(root, cfg)
-    busy = {r["id"] for r in _act_threads}  # threads this process is running
+    busy = set(_act_threads)  # run ids whose threads this process owns
 
     # 1 — resume paused runs whose decisions arrived
     for run in active:
@@ -161,7 +209,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
             actions.append(f"resumed:{run['id']}")
     if actions:
         active = active_runs(root, cfg)
-        busy = {r["id"] for r in _act_threads}
+        busy = set(_act_threads)
 
     mid_flight = [r for r in active
                   if r["status"] in ("queued", "running") and r["id"] not in busy]
@@ -176,6 +224,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
         if time.time() - float(meta.get("last_scan", 0)) >= scan_interval:
             from ..scanner import scan
             info("scheduled scan starting")
+            append_event(root, cfg, "scan", "scheduled scan started")
             try:
                 scan(root, quiet=True)
                 actions.append("scanned")
@@ -191,6 +240,19 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
                        "; ".join(t["title"][:60] for t in proposed[:3]),
                        tags=["ticket"], click=_dashboard_url(cfg))
             return actions
+
+    # budgets gate NEW work only — resumes above already ran
+    budget_reason = over_budget(root, cfg)
+    if budget_reason:
+        meta = load_meta(root, cfg)
+        if meta.get("budget_notified") != now_date():
+            warn(f"budget: {budget_reason} — not starting new runs")
+            append_event(root, cfg, "run", f"budget: {budget_reason}")
+            notify(cfg, "RADAR: daily budget reached", budget_reason,
+                   tags=["money_with_wings"], click=_dashboard_url(cfg))
+            meta["budget_notified"] = now_date()
+            save_meta(root, cfg, meta)
+        return actions
 
     # 3 — fan out acts on approved specs, up to max_parallel_acts
     if cfg.get("act_enabled"):
@@ -229,13 +291,19 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
 
 def cmd_daemon(root: Path, cfg: dict, poll_seconds: int | None = None) -> int:
     header("radar daemon")
+    reclaim_orphan_runs(root, cfg)
     poll = int(poll_seconds or cfg.get("daemon_poll_seconds", 20))
     info(f"polling every {poll}s — scans every {cfg.get('daemon_scan_hours', 6)}h "
          f"(state: {cfg['docs_dir']}/.radar/)")
     try:
         while True:
-            for action in daemon_tick(root, cfg):
-                ok(f"tick: {action}")
+            try:
+                for action in daemon_tick(root, cfg):
+                    ok(f"tick: {action}")
+            except Exception as e:  # a bad tick must never kill the scheduler
+                import traceback
+                warn(f"tick failed: {e}")
+                traceback.print_exc()
             time.sleep(poll)
     except KeyboardInterrupt:
         info("daemon stopped")

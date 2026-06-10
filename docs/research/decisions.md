@@ -19,3 +19,30 @@
 | 2026-06-10 03:30 UTC | post_analyze | approved (dashboard) | Follow the established two-phase pattern: first add tests/test_graphs.py with fixture repos covering Python import varia |
 | 2026-06-10 03:33 UTC | post_audit | paused | audit revise: Phasing, hotspot metrics, and research-backed ast/madge approach are sound, but radon rank wording is wron |
 | 2026-06-10 03:49 UTC | pre_implement | paused | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
+| 2026-06-10 03:51 UTC | post_analyze | approved (dashboard) | Follow the established two-phase pattern: first add tests/test_graphs.py with fixture repos covering Python import varia |
+| 2026-06-10 03:51 UTC | post_audit | approved (dashboard) | audit revise: Phasing, hotspot metrics, and research-backed ast/madge approach are sound, but radon rank wording is wron |
+| 2026-06-10 03:51 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
+| 2026-06-10 04:00 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
+| 2026-06-10 04:02 UTC | post_implement | paused | tests passed; 2 files changed, 197 insertions(+), 83 deletions(-) on radar/tkt-0002 — commit? |
+| 2026-06-10 04:03 UTC | post_analyze | paused | Follow the repo’s snapshot-then-extract pattern: Phase 1 adds `tests/test_languages.py` with fixture repos, monkeypatche |
+| 2026-06-10 04:05 UTC | post_analyze | approved (dashboard) | Follow the repo’s snapshot-then-extract pattern: Phase 1 adds `tests/test_languages.py` with fixture repos, monkeypatche |
+| 2026-06-10 04:05 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
+| 2026-06-10 04:06 UTC | post_implement | approved (dashboard) | tests passed; 2 files changed, 197 insertions(+), 83 deletions(-) on radar/tkt-0002 — commit? |
+| 2026-06-10 04:08 UTC | post_audit | paused | audit revise: The phased characterization-then-extract plan, CC targets, skip-flag design, and public API preservation a |
+| 2026-06-10 04:11 UTC | post_analyze | approved (dashboard) | Follow the repo’s snapshot-then-extract pattern: Phase 1 adds `tests/test_languages.py` with fixture repos, monkeypatche |
+| 2026-06-10 04:11 UTC | post_audit | approved (dashboard) | audit revise: The phased characterization-then-extract plan, CC targets, skip-flag design, and public API preservation a |
+| 2026-06-10 04:11 UTC | pre_implement | paused | implement [[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec]] on branch radar/tkt-0004 for tkt-0004 |
+| 2026-06-10 04:12 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec]] on branch radar/tkt-0004 for tkt-0004 |
+| 2026-06-10 04:15 UTC | post_implement | paused | tests passed; 2 files changed, 78 insertions(+), 37 deletions(-) on radar/tkt-0004 — commit? |
+| 2026-06-10 04:20 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec]] on branch radar/tkt-0004 for tkt-0004 |
+| 2026-06-10 04:20 UTC | post_implement | approved (dashboard) | tests passed; 2 files changed, 78 insertions(+), 37 deletions(-) on radar/tkt-0004 — commit? |
+| 2026-06-10 05:38 UTC | post_analyze | paused | Add an 'Open tickets' section to `rNow()` immediately after the gates card (or after the stats grid if no gates), filter |
+| 2026-06-10 05:39 UTC | post_analyze | approved (dashboard) | Add an 'Open tickets' section to `rNow()` immediately after the gates card (or after the stats grid if no gates), filter |
+| 2026-06-10 05:42 UTC | post_audit | paused | audit revise: The functional approach aligns well with codebase facts (`build_state()` fields, `rTickets()` status-order |
+| 2026-06-10 05:43 UTC | post_analyze | approved (dashboard) | Add an 'Open tickets' section to `rNow()` immediately after the gates card (or after the stats grid if no gates), filter |
+| 2026-06-10 05:43 UTC | post_audit | approved (dashboard) | audit revise: The functional approach aligns well with codebase facts (`build_state()` fields, `rTickets()` status-order |
+| 2026-06-10 05:43 UTC | pre_implement | paused | implement [[2026-06-10-add-a-list-for-the-open-tickets-to-the-n-spec]] on branch radar/tkt-0010 for tkt-0010 |
+| 2026-06-10 05:44 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-add-a-list-for-the-open-tickets-to-the-n-spec]] on branch radar/tkt-0010 for tkt-0010 |
+| 2026-06-10 05:46 UTC | post_implement | paused | tests passed; 2 files changed, 35 insertions(+), 9 deletions(-) on radar/tkt-0010 — commit? |
+| 2026-06-10 05:46 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-add-a-list-for-the-open-tickets-to-the-n-spec]] on branch radar/tkt-0010 for tkt-0010 |
+| 2026-06-10 05:47 UTC | post_implement | approved (dashboard) | tests passed; 2 files changed, 35 insertions(+), 9 deletions(-) on radar/tkt-0010 — commit? |

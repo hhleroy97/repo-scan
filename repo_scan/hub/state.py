@@ -174,6 +174,58 @@ def active_run(root: Path, cfg: dict) -> dict | None:
     return active[-1] if active else None
 
 
+def set_run_stage(root: Path, cfg: dict, problem: str, stage: str, detail: str = ""):
+    """Update the live stage on a run record (no status change). No-op when
+    no run record exists (e.g. manual CLI invocations outside the daemon)."""
+    rid = problem_key(problem)
+    with _RUNS_LOCK:
+        runs = load_runs(root, cfg)
+        for r in runs:
+            if r["id"] == rid:
+                r["stage"] = stage
+                r["stage_detail"] = detail[:160]
+                r["updated_at"] = now_iso()
+                _save_runs(root, cfg, runs)
+                return
+
+
+# --- agent event feed -----------------------------------------------------------
+
+_EVENTS_LOCK = threading.Lock()
+EVENTS_KEEP = 250
+
+
+def append_event(root: Path, cfg: dict, kind: str, text: str, **fields):
+    """One line in the shared agent feed (docs/.radar/events.jsonl).
+
+    Every surface tails this to show what the agents are actually doing;
+    capped so it never grows unbounded.
+    """
+    import time as _time
+    path = state_dir(root, cfg) / "events.jsonl"
+    event = {"ts": int(_time.time()), "when": now_iso(), "kind": kind,
+             "text": text[:200], **fields}
+    with _EVENTS_LOCK:
+        with path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, separators=(",", ":")) + "\n")
+        lines = path.read_text(encoding="utf-8").splitlines()
+        if len(lines) > EVENTS_KEEP * 2:
+            path.write_text("\n".join(lines[-EVENTS_KEEP:]) + "\n", encoding="utf-8")
+
+
+def load_events(root: Path, cfg: dict, limit: int = 30) -> list[dict]:
+    path = state_dir(root, cfg) / "events.jsonl"
+    if not path.exists():
+        return []
+    events = []
+    for line in path.read_text(encoding="utf-8").splitlines()[-limit:]:
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return events
+
+
 # --- meta (daemon bookkeeping) ------------------------------------------------
 
 def load_meta(root: Path, cfg: dict) -> dict:

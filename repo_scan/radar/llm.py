@@ -170,16 +170,40 @@ def complete(prompt: str, cfg: dict, timeout: int | None = None,
     if model:
         cmd = cmd + ["--model", model]
     started = time.time()
-    try:
-        result = subprocess.run(
-            cmd + [prompt], capture_output=True, text=True, timeout=timeout,
-            stdin=subprocess.DEVNULL, cwd=cwd,
-        )
-    except subprocess.TimeoutExpired:
-        raise LLMError(f"{cmd[0]} timed out after {timeout}s")
-    if result.returncode != 0:
-        raise LLMError(f"{cmd[0]} exited {result.returncode}: {result.stderr.strip()[:200]}")
-    raw = (result.stdout or "").strip()
+    # Run with a liveness heartbeat: agent CLIs are silent until they finish,
+    # which is indistinguishable from a hang. While the process is alive we
+    # emit a periodic event (feed/TUI/dashboard) with elapsed time, so a long
+    # call reads as "working" instead of "stuck".
+    beat = max(5, int(cfg.get("llm_heartbeat_seconds", 120)))
+    proc = subprocess.Popen(cmd + [prompt], stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, text=True,
+                            stdin=subprocess.DEVNULL, cwd=cwd)
+    while True:
+        remaining = timeout - (time.time() - started)
+        try:
+            stdout, stderr = proc.communicate(timeout=max(1.0, min(beat, remaining)))
+            break
+        except subprocess.TimeoutExpired:
+            elapsed = time.time() - started
+            if elapsed >= timeout:
+                proc.kill()
+                proc.communicate()
+                raise LLMError(f"{cmd[0]} timed out after {timeout}s "
+                               f"(raise \"llm_timeout\" in .repo-scan.json if "
+                               f"this work legitimately runs longer)")
+            if root is not None:
+                try:
+                    from ..hub.state import append_event
+                    append_event(root, cfg, "llm",
+                                 f"{role or 'general'} · {model or 'default'} "
+                                 f"still working · {elapsed / 60:.0f}m elapsed "
+                                 f"(pid {proc.pid} alive, limit {timeout // 60}m)",
+                                 role=role or "general", model=model or "default")
+                except OSError:
+                    pass
+    if proc.returncode != 0:
+        raise LLMError(f"{cmd[0]} exited {proc.returncode}: {(stderr or '').strip()[:200]}")
+    raw = (stdout or "").strip()
     if not raw:
         raise LLMError(f"{cmd[0]} returned empty output")
     out, usage = _parse_envelope(raw)
@@ -201,6 +225,17 @@ def complete(prompt: str, cfg: dict, timeout: int | None = None,
         "model": model or "default",
         **usage,
     })
+    if root is not None:
+        try:
+            from ..hub.state import append_event
+            secs = usage.get("duration_ms", 0) / 1000
+            append_event(root, cfg, "llm",
+                         f"{role or 'general'} · {model or 'default'} · "
+                         f"{usage.get('input_tokens', 0):,}→{usage.get('output_tokens', 0):,} tok"
+                         f" · {secs:.0f}s",
+                         role=role or "general", model=model or "default")
+        except OSError:
+            pass
     return out
 
 

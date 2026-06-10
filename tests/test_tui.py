@@ -23,7 +23,12 @@ STATE = {
         {"id": "tkt-0003", "status": "done", "title": "Old", "priority": "low"},
     ],
     "runs": [{"status": "waiting-on-gate", "gate": "post_audit",
-              "problem": "Fix the thing", "kind": "loop"}],
+              "problem": "Fix the thing", "kind": "loop",
+              "stage": "[6/7] Gate 2 (post-audit)", "stage_detail": "waiting on human"}],
+    "events": [{"when": "2026-06-10T03:00:00", "kind": "llm",
+                "text": "act · composer-2.5 · 33,115→27 tok · 6s"},
+               {"when": "2026-06-10T02:59:00", "kind": "stage",
+                "text": "[3/5] Implement — composer-2.5 editing per spec"}],
     "activity": [{"when": "2026-06-10", "gate": "post_audit",
                   "decision": "approved", "summary": "ok"}],
     "usage": {
@@ -52,7 +57,9 @@ def test_frame_lines_renders_all_panels():
     text = "\n".join(t for _, t in frame_lines(STATE, sel=0))
     for needle in ("demo hub", "GATES (1)", "post_audit", "RUNS (1)",
                    "TICKETS (2 actionable)", "LLM USAGE", "composer-2.5",
-                   "150.0k in", "RECENT DECISIONS", "a approve"):
+                   "150.0k in", "RECENT DECISIONS", "a approve",
+                   "> [6/7] Gate 2 (post-audit) — waiting on human",
+                   "AGENT FEED", "33,115"):
         assert needle in text, needle
 
 

@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step, warn, write_doc
-from .gates import gate
+from .gates import gate, gate_mode
 from .llm import LLMError, complete, complete_json
 from .research import repo_context_snippet, run_research, write_run_log
 from .sources import frontmatter, slugify
@@ -37,8 +37,13 @@ Analysis findings:
 Recommendation: {recommendation}
 
 Write a concise implementation spec in markdown (no JSON). Sections:
-## Goal, ## Approach, ## Changes (bulleted, by file/module), ## Risks, ## Out of scope.
-Keep it under 80 lines. Do not include a top-level title heading."""
+## Goal, ## Approach, ## Changes (bulleted, by file/module), ## Tests,
+## Documentation (docstrings/README sections that must change with the
+implementation), ## Risks, ## Out of scope.
+If the problem lists acceptance criteria, the ## Tests section MUST map each
+criterion to a concrete automated test (file + test name) — those tests are
+the definition of done for the implementation stage.
+Keep it under 90 lines. Do not include a top-level title heading."""
 
 AUDIT_PROMPT = """You are auditing an implementation spec before it reaches a human reviewer.
 
@@ -249,9 +254,10 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
     result = {"outcome": "stopped", "sources": 0, "confidence": "?", "spec": "—"}
     ckpt = load_checkpoint(root, cfg, problem)
 
+    from ..hub.progress import progress
     try:
         # 1 — Research
-        step("[1/7] Research")
+        progress(root, cfg, problem, "[1/7] Research", "proposing + ingesting sources")
         if "ingested" in ckpt:
             ingested = ckpt["ingested"]
             run_log_path = Path(ckpt["run_log"]) if ckpt.get("run_log") else None
@@ -267,7 +273,8 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         ok(f"{result['sources']} source(s) ingested")
 
         # 2 — Analyze
-        step("[2/7] Analyze")
+        progress(root, cfg, problem, "[2/7] Analyze",
+                 f"synthesizing {result['sources']} source(s) against the repo")
         if "analysis" in ckpt:
             analysis = ckpt["analysis"]
             analysis_path = Path(ckpt["analysis_path"])
@@ -283,7 +290,8 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         ok(f"{len(analysis['findings'])} finding(s), confidence {analysis['confidence']}")
 
         # 3 — Gate 1
-        step("[3/7] Gate 1 (post-analyze)")
+        progress(root, cfg, problem, "[3/7] Gate 1 (post-analyze)",
+                 "waiting on human" if gate_mode("post_analyze", cfg) == "prompt" else "")
         gate1_payload = {
             "problem": problem,
             "summary": f"{analysis['recommendation']} — [[{analysis_path.stem}]]",
@@ -304,7 +312,7 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         gates_log.append("post_analyze: passed")
 
         # 4 — Draft
-        step("[4/7] Draft")
+        progress(root, cfg, problem, "[4/7] Draft", "writing the implementation spec")
         if "spec_text" in ckpt:
             spec_text = ckpt["spec_text"]
             info("resumed from checkpoint")
@@ -313,14 +321,15 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
             ok(f"spec drafted ({len(spec_text.splitlines())} lines)")
 
         # 5 — Audit (one revision round if needed)
-        step("[5/7] Audit")
+        progress(root, cfg, problem, "[5/7] Audit", "adversarial review of the spec")
         if "audit" in ckpt:
             audit = ckpt["audit"]
             info("resumed from checkpoint")
         else:
             audit = run_audit(cfg, problem, spec_text, root=root)
             if audit["verdict"] != "pass" and audit["issues"]:
-                info(f"audit requested revision: {len(audit['issues'])} issue(s)")
+                progress(root, cfg, problem, "[5/7] Audit",
+                         f"revising: {len(audit['issues'])} issue(s)", banner=False)
                 spec_text = complete(REVISE_PROMPT.format(
                     spec=spec_text, issues="\n".join(f"- {i}" for i in audit["issues"]),
                 ), cfg, role="draft", root=root)
@@ -331,7 +340,8 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         ok(f"audit verdict: {audit['verdict']}")
 
         # 6 — Gate 2
-        step("[6/7] Gate 2 (post-audit)")
+        progress(root, cfg, problem, "[6/7] Gate 2 (post-audit)",
+                 "waiting on human" if gate_mode("post_audit", cfg) == "prompt" else "")
         spec_path = write_spec(root, cfg, problem, spec_text, audit,
                                status="draft", analysis_path=analysis_path)
         result["spec"] = f"[[{spec_path.stem}]]"
@@ -354,7 +364,7 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         gates_log.append("post_audit: passed")
 
         # 7 — Record
-        step("[7/7] Record")
+        progress(root, cfg, problem, "[7/7] Record", "spec approved")
         write_spec(root, cfg, problem, spec_text, audit,
                    status="approved", analysis_path=analysis_path)
         result["outcome"] = "approved"
@@ -395,8 +405,14 @@ def pick_candidate(root: Path, cfg: dict) -> str | None:
 
 def ticket_problem(ticket: dict) -> str:
     """Canonical problem string for a ticket — must be stable, it keys
-    checkpoints and gate decisions across pauses/resumes."""
-    return (f"{ticket['title']}. {ticket['why']} "
+    checkpoints and gate decisions across pauses/resumes.
+
+    Acceptance criteria ride along: they are the contract the spec's
+    Tests/Documentation sections and the act stage must satisfy."""
+    criteria = ticket.get("criteria") or []
+    crit = (" Acceptance criteria: " + "; ".join(c.strip() for c in criteria) + ".") \
+        if criteria else ""
+    return (f"{ticket['title']}. {ticket['why']}{crit} "
             "Research current best practices and draft a spec for this work.")
 
 
