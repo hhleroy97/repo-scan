@@ -19,7 +19,7 @@ from urllib.parse import parse_qs, urlparse
 
 from ..config import VERSION
 from ..utils import git_branch, header, info, ok
-from .state import get_token, load_runs, submit_decision
+from .state import get_token, load_events, load_runs, submit_decision
 from .ui import DASHBOARD_HTML
 
 ACTIVITY_ROWS = 10
@@ -99,6 +99,7 @@ def build_state(root: Path, cfg: dict) -> dict:
         "tickets": tickets,
         "runs": load_runs(root, cfg)[::-1][:10],
         "activity": activity,
+        "events": load_events(root, cfg, limit=15)[::-1],
         "usage": usage_summary(root, cfg),
     }
 

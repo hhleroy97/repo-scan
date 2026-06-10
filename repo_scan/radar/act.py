@@ -201,7 +201,11 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             return 1
 
     # -- Gate: pre_implement ---------------------------------------------------
-    step("[1/5] Gate (pre-implement)")
+    from ..hub.progress import progress
+    from .gates import gate_mode
+    from .llm import role_model
+    progress(root, cfg, problem, "[1/5] Gate (pre-implement)",
+             "waiting on human" if gate_mode("pre_implement", cfg) == "prompt" else "")
     payload = {
         "problem": problem,
         "summary": f"implement [[{spec_stem}]] on branch {branch} for {ticket['id']}",
@@ -215,7 +219,8 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
 
     try:
         # -- branch / worktree --------------------------------------------------
-        step("[2/5] Branch")
+        progress(root, cfg, problem, "[2/5] Branch",
+                 f"isolated worktree on {branch}" if worktree else branch)
         work = root  # where the agent edits, tests run, and the commit lands
         if worktree:
             wt = worktree_path(root, ticket["id"])
@@ -254,7 +259,9 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             ok(f"{base} -> {branch}")
 
         # -- implement -----------------------------------------------------------
-        step("[3/5] Implement (agent)")
+        act_model = role_model(cfg, "act") or "default model"
+        progress(root, cfg, problem, "[3/5] Implement",
+                 f"{act_model} editing per spec (can take many minutes)")
         if ckpt.get("implemented"):
             info("resumed from checkpoint")
         else:
@@ -268,13 +275,15 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             ok("agent finished")
 
         # -- test (hard gate, bounded fix rounds) -----------------------------------
-        step("[4/5] Test")
+        progress(root, cfg, problem, "[4/5] Test",
+                 cfg.get("test_cmd") or default_test_cmd(work) or "no suite detected")
         rounds = int(cfg.get("act_fix_rounds", 2))
         passed, output = run_tests(work, cfg)
         attempt = int(ckpt.get("fix_attempts", 0))
         while not passed and attempt < rounds:
             attempt += 1
-            info(f"tests failing — fix round {attempt}/{rounds}")
+            progress(root, cfg, problem, "[4/5] Test",
+                     f"failing — fix round {attempt}/{rounds} ({act_model})", banner=False)
             complete(FIX_PROMPT.format(
                 test_cmd=cfg.get("test_cmd") or default_test_cmd(work),
                 output=output), cfg,
@@ -297,7 +306,8 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
         ok("tests passing")
 
         # -- Gate: post_implement -----------------------------------------------------
-        step("[5/5] Gate (post-implement) + commit")
+        progress(root, cfg, problem, "[5/5] Gate (post-implement)",
+                 "waiting on human" if gate_mode("post_implement", cfg) == "prompt" else "")
         diff_stat = _git(work, "diff", "--stat", "HEAD", "--",
                          f":(exclude){cfg['docs_dir']}").stdout.strip()
         stat_tail = diff_stat.splitlines()[-1].strip() if diff_stat else "no changes"

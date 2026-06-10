@@ -154,17 +154,29 @@ function rNow(){
   </div>`;
   if(S.runs.length){
     h+=`<div class="section">Runs</div><div class="card">`+
-      S.runs.map(r=>`<div class="run"><span class="dot ${r.status}"></span>
-        <span style="flex:1">${esc(r.problem).slice(0,90)}</span>
-        <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`).join('')+
+      S.runs.map(r=>{
+        const live=['running','queued'].includes(r.status);
+        const stage=r.stage?`<br><span class="dim small">${live?'&#9654; ':''}${esc(r.stage)}${r.stage_detail?' — '+esc(r.stage_detail):''}</span>`:'';
+        return `<div class="run"><span class="dot ${r.status}"></span>
+        <span style="flex:1">${esc(r.problem).slice(0,90)}${stage}</span>
+        <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`}).join('')+
       `</div>`;
   }
+  h+=rFeed();
   h+=rUsage();
   h+=`<div class="dim small" style="text-align:center;margin-top:14px">
     last scan ${esc(sc.generated_at||'never')} · refreshed ${esc(S.now)}</div>`;
   return h;
 }
 function tok(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'k':String(n??0)}
+function rFeed(){
+  const ev=S.events||[];if(!ev.length)return '';
+  const icon={stage:'&#9654;',llm:'&#9889;',run:'&#10003;',scan:'&#8635;'};
+  return `<div class="section">Agent feed</div><div class="card">`+
+    ev.map(e=>`<div class="run"><span class="dim small" style="flex:none;width:42px">${esc((e.when||'').slice(11,16))}</span>
+      <span style="flex:1" class="small">${icon[e.kind]||'·'} ${esc(e.text)}</span></div>`).join('')+
+    `</div>`;
+}
 function rUsage(){
   const u=S.usage;if(!u||!u.total||!u.total.calls)return '';
   const row=(name,a)=>`<div class="run"><span style="flex:1">${esc(name)}</span>

@@ -120,6 +120,9 @@ def frame_lines(state: dict, sel: int, message: str = "") -> list[tuple[int, str
         kind = r.get("kind", "loop")
         rows.append((mark, f"  {r.get('status', '?'):<16}{gate:<18} {kind:<5} "
                            f"{str(r.get('problem', ''))[:70]}"))
+        if r.get("stage") and r.get("status") in ("running", "queued", "waiting-on-gate"):
+            detail = f" — {r['stage_detail']}" if r.get("stage_detail") else ""
+            rows.append((S_DIM, f"      > {r['stage']}{detail}"[:110]))
 
     rows.append((S_ACCENT, f" TICKETS ({len(tickets)} actionable)"))
     if not tickets:
@@ -128,6 +131,13 @@ def frame_lines(state: dict, sel: int, message: str = "") -> list[tuple[int, str
         i = len(gates) + j
         style = S_SEL if i == sel else S_TEXT
         rows.append((style, f"  {'>' if i == sel else ' '} [{t['status']}] {t['label']}"))
+
+    events = state.get("events", [])
+    if events:
+        rows.append((S_ACCENT, " AGENT FEED"))
+        for e in events[:6]:
+            when = str(e.get("when", ""))[11:16]
+            rows.append((S_DIM, f"  {when}  {e.get('kind', '?'):<6} {e.get('text', '')[:85]}"))
 
     rows.append((S_ACCENT, " LLM USAGE"))
     rows.extend(_usage_rows(state.get("usage", {})))

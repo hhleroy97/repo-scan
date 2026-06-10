@@ -21,8 +21,8 @@ from pathlib import Path
 
 from ..utils import header, info, ok, warn
 from .notify import notify
-from .state import (active_runs, create_run, load_meta, peek_decision,
-                    save_meta, update_run)
+from .state import (active_runs, append_event, create_run, load_meta,
+                    peek_decision, save_meta, update_run)
 
 # run id -> thread, for in-flight act runs owned by this process
 _act_threads: dict[str, threading.Thread] = {}
@@ -61,6 +61,7 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
+        append_event(root, cfg, "run", f"loop done — spec approved ({run.get('ticket')})")
         if run.get("ticket"):
             # the spec wikilink is what makes this ticket an act candidate
             from ..radar.pipeline import _latest_spec
@@ -103,6 +104,8 @@ def _run_act(root: Path, cfg: dict, run: dict) -> int:
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
+        append_event(root, cfg, "run",
+                     f"implementation committed on radar/{run.get('ticket')} — review and merge")
         notify(cfg, "RADAR: implementation committed",
                f"{run.get('ticket')}: review the branch and merge.",
                tags=["white_check_mark"], click=_dashboard_url(cfg))
@@ -195,6 +198,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
         if time.time() - float(meta.get("last_scan", 0)) >= scan_interval:
             from ..scanner import scan
             info("scheduled scan starting")
+            append_event(root, cfg, "scan", "scheduled scan started")
             try:
                 scan(root, quiet=True)
                 actions.append("scanned")

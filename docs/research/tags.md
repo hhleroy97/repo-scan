@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 03:26 UTC_
+_Rebuilt 2026-06-10 04:03 UTC_
 
 ## ai-assisted-refactoring
 
@@ -42,8 +42,14 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 ## cli
 
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
+
+## cloc
+
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
 ## code-quality
 
@@ -52,6 +58,11 @@ _Rebuilt 2026-06-10 03:26 UTC_
 ## code-readability
 
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
+
+## code-statistics
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
 ## codebase-analysis
 
@@ -118,6 +129,26 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## fixtures
+
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## generated-code
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## git
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## gitattributes
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## gitignore
+
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
+
 ## graph-algorithms
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
@@ -167,6 +198,15 @@ _Rebuilt 2026-06-10 03:26 UTC_
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## json-output
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
+
+## language-detection
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
 ## legacy-code
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -174,7 +214,12 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 ## library
 
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
+
+## line-counting
+
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
 ## llm
 
@@ -223,6 +268,14 @@ _Rebuilt 2026-06-10 03:26 UTC_
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## parametrization
+
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## plugins
+
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
 ## program-slicing
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -242,6 +295,7 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 ## python
 
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -261,6 +315,9 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 ## repo
 
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
@@ -272,6 +329,10 @@ _Rebuilt 2026-06-10 03:26 UTC_
 - [[sources/gh-Aider-AI-aider\|Aider-AI/aider — aider is AI pair programming in your terminal]]
 - [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]
 
+## repo-analysis
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
 ## reporting
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -279,6 +340,14 @@ _Rebuilt 2026-06-10 03:26 UTC_
 ## rest-api
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## ruby
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## rust
+
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
 ## safe-change-algorithm
 
@@ -300,6 +369,11 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## sloc
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
+
 ## snapshot-testing
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -310,6 +384,8 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 ## static-analysis
 
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
@@ -327,6 +403,10 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## test-discovery
+
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
 ## test-fixtures
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -334,6 +414,10 @@ _Rebuilt 2026-06-10 03:26 UTC_
 ## test-results
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
+
+## test-runner
+
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 
 ## test-then-refactor
 
@@ -345,6 +429,7 @@ _Rebuilt 2026-06-10 03:26 UTC_
 
 ## testing
 
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -356,6 +441,18 @@ _Rebuilt 2026-06-10 03:26 UTC_
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 - [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]
 
+## unit-testing
+
+- [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
 ## unsupervised-learning
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
+
+## vendored-files
+
+- [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## yaml-output
+
+- [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]

@@ -201,6 +201,17 @@ def complete(prompt: str, cfg: dict, timeout: int | None = None,
         "model": model or "default",
         **usage,
     })
+    if root is not None:
+        try:
+            from ..hub.state import append_event
+            secs = usage.get("duration_ms", 0) / 1000
+            append_event(root, cfg, "llm",
+                         f"{role or 'general'} · {model or 'default'} · "
+                         f"{usage.get('input_tokens', 0):,}→{usage.get('output_tokens', 0):,} tok"
+                         f" · {secs:.0f}s",
+                         role=role or "general", model=model or "default")
+        except OSError:
+            pass
     return out
 
 

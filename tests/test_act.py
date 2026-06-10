@@ -106,6 +106,14 @@ def test_act_happy_path_commits_on_branch(act_repo, tmp_path):
     problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
     assert load_checkpoint(root, cfg, problem) == {}
 
+    # every stage and LLM call landed in the shared agent feed
+    from repo_scan.hub.state import load_events
+    events = load_events(root, cfg, limit=50)
+    stages = [e["text"] for e in events if e["kind"] == "stage"]
+    assert any("[3/5] Implement" in s for s in stages)
+    assert any("[4/5] Test" in s for s in stages)
+    assert any(e["kind"] == "llm" for e in events)
+
 
 def test_act_refuses_dirty_tree_outside_vault(act_repo, tmp_path):
     root, cfg = act_repo

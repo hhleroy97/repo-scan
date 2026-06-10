@@ -194,6 +194,32 @@ def test_daemon_full_cycle(loop_env, monkeypatch):
     assert "-spec]]" in body
 
 
+def test_event_feed_append_load_and_cap(tmp_repo: Path):
+    from repo_scan.hub.state import EVENTS_KEEP, append_event, load_events
+    cfg = DEFAULT_CONFIG
+    append_event(tmp_repo, cfg, "stage", "[1/7] Research", problem="p")
+    append_event(tmp_repo, cfg, "llm", "act · composer-2.5 · 10→2 tok · 1s")
+    events = load_events(tmp_repo, cfg)
+    assert [e["kind"] for e in events] == ["stage", "llm"]
+    assert events[0]["problem"] == "p"
+    # cap: the file is trimmed once it doubles past EVENTS_KEEP
+    for i in range(EVENTS_KEEP * 2):
+        append_event(tmp_repo, cfg, "stage", f"e{i}")
+    raw = (tmp_repo / "docs" / ".radar" / "events.jsonl").read_text().splitlines()
+    assert len(raw) <= EVENTS_KEEP + 1
+
+
+def test_set_run_stage_updates_record_and_noops_without_run(tmp_repo: Path):
+    from repo_scan.hub.state import create_run, load_runs, set_run_stage
+    cfg = DEFAULT_CONFIG
+    set_run_stage(tmp_repo, cfg, "no such run", "[1/7] Research")  # must not raise
+    create_run(tmp_repo, cfg, "fix the thing", ticket="tkt-0001", kind="act")
+    set_run_stage(tmp_repo, cfg, "fix the thing", "[3/5] Implement", "composer-2.5 editing")
+    run = load_runs(tmp_repo, cfg)[0]
+    assert run["stage"] == "[3/5] Implement"
+    assert run["stage_detail"] == "composer-2.5 editing"
+
+
 def test_daemon_scheduled_scan(tmp_repo: Path):
     cfg = load_config(tmp_repo)
     actions = daemon_tick(tmp_repo, cfg)  # no meta -> scan is due
