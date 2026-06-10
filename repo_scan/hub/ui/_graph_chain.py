@@ -1,8 +1,8 @@
 """Provenance chain slide-up panel for the knowledge dashboard."""
 
 _FRAGMENT = r"""function scoreRingColor(score){
-  if(score>=4)return '#3fb96d';
-  if(score>=3)return '#4f9cf9';
+  if(score>=3)return '#3fb96d';
+  if(score>=2)return '#4f9cf9';
   if(score>=1)return '#e0a93e';
   return '#e25d5d';
 }

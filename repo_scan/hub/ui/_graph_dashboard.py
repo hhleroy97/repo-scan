@@ -95,16 +95,16 @@ function rDashHistogram(){
     <div class="dim small">No scored vault docs yet.</div></div>`;
   const max=Math.max(1,...Object.values(hist).map(v=>+v||0));
   let bars='';
-  for(let s=0;s<=4;s++){
+  for(let s=0;s<=3;s++){
     const n=+(hist[String(s)]||0);
     const h=Math.round(n/max*100);
-    const col=s>=4?'var(--ok)':s>=3?'var(--accent)':s>=1?'var(--warn)':'var(--bad)';
+    const col=s>=3?'var(--ok)':s>=2?'var(--accent)':s>=1?'var(--warn)':'var(--bad)';
     bars+=`<div class="dash-bar-wrap" title="score ${s}: ${n} docs">
       <div class="dash-bar" style="height:${h}%;background:${col}"></div>
       <span class="dash-bar-lbl">★${s}</span><span class="dim small">${n}</span></div>`;
   }
   return `<div class="card dash-panel"><div class="title">Score distribution</div>
-    <div class="dim small" style="margin-bottom:10px">docs by provenance score (0–4)</div>
+    <div class="dim small" style="margin-bottom:10px">docs by provenance score (0–3) · fresh is vanity</div>
     <div class="dash-bars">${bars}</div></div>`;
 }
 

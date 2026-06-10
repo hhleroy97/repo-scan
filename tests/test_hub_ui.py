@@ -140,6 +140,43 @@ def test_dashboard_has_telemetry_section():
     assert "S.telemetry" in DASHBOARD_HTML
 
 
+def test_dashboard_has_knowledge_tab():
+    assert 'data-tab="dashboard"' in DASHBOARD_HTML
+    assert "Knowledge dashboard" in DASHBOARD_HTML
+    assert "function rGraph()" in DASHBOARD_HTML
+    assert "function mountGraph()" in DASHBOARD_HTML
+    assert "API_GRAPH" in DASHBOARD_HTML
+    assert "graph-wrap" in DASHBOARD_HTML
+
+
+def test_dashboard_has_audit_panels():
+    assert "function rGraphDashboard()" in DASHBOARD_HTML
+    assert "Signal coverage" in DASHBOARD_HTML
+    assert "function signalGlyphs(" in DASHBOARD_HTML
+    assert "dash-matrix" in DASHBOARD_HTML
+    assert "Score distribution" in DASHBOARD_HTML
+    assert "Untracked code" in DASHBOARD_HTML
+    assert "graphLayer==='coverage'" in DASHBOARD_HTML
+    assert "scoreRingColor" in DASHBOARD_HTML
+    assert "function graphEdgeStyle(" in DASHBOARD_HTML
+
+
+def test_dashboard_has_mermaid_agentic_loop():
+    assert "function rGraphPipeline()" in DASHBOARD_HTML
+    assert "function renderAgenticLoopMermaid()" in DASHBOARD_HTML
+    assert "agentic-loop-host" in DASHBOARD_HTML
+    assert "agentic_loop_mermaid" in DASHBOARD_HTML
+    assert "/static/mermaid.min.js" in DASHBOARD_HTML
+    assert "mermaid-wrap" in DASHBOARD_HTML
+
+
+def test_dashboard_has_chain_panel():
+    assert "function openGraphChain(" in DASHBOARD_HTML
+    assert "API_GRAPH_CHAIN" in DASHBOARD_HTML
+    assert "graph-chain" in DASHBOARD_HTML
+    assert "dash-sigs" in DASHBOARD_HTML
+
+
 def test_dashboard_has_stage_burn_chart():
     assert "function rStageBurnChart()" in DASHBOARD_HTML
     assert "function buildStageChartClient(" in DASHBOARD_HTML
@@ -324,7 +361,7 @@ def test_untracked_summary_opens_panel():
 
 
 _DASHBOARD_HTML_SHA256 = (
-    "085332bd7f3361f1699e2e799ed009d91368de02f3eb327bb2e06526af537070"
+    "fc0587af26e840bb24fa38848b7e0743cb169a53120c0461711cf09d1492a36c"
 )
 _UI_PACKAGE = Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui"
 _UI_LINE_CAP = 300
@@ -339,6 +376,43 @@ def test_ui_package_modules_under_line_cap():
 def test_dashboard_html_byte_parity():
     digest = hashlib.sha256(DASHBOARD_HTML.encode()).hexdigest()
     assert digest == _DASHBOARD_HTML_SHA256
+
+
+def test_dashboard_has_sparkline_and_delta():
+    assert "function sparkSVG(" in DASHBOARD_HTML
+    assert "function deltaTag(" in DASHBOARD_HTML
+    assert "trend_sparkline" in DASHBOARD_HTML
+    assert "vault_delta" in DASHBOARD_HTML
+
+
+def test_dashboard_has_knowledge_debt_card():
+    assert "knowledge debt" in DASHBOARD_HTML
+    assert "knowledge_debt" in DASHBOARD_HTML
+
+
+def test_dashboard_has_approved_unhealthy_badge():
+    assert "approved_unhealthy" in DASHBOARD_HTML
+    assert "approved unhealthy" in DASHBOARD_HTML
+
+
+def test_dashboard_has_thin_links_section():
+    assert "function rDashThinLinks()" in DASHBOARD_HTML
+    assert "thin_citations" in DASHBOARD_HTML
+    assert "Fragile code links" in DASHBOARD_HTML
+
+
+def test_dashboard_has_trend_chart():
+    assert "function rDashTrendChart()" in DASHBOARD_HTML
+    assert "Scan trend" in DASHBOARD_HTML
+    assert "viewBox" in DASHBOARD_HTML
+
+
+def test_dashboard_matrix_cells_are_clickable():
+    start = DASHBOARD_HTML.index("function rDashMatrix()")
+    end = DASHBOARD_HTML.index("function rDashHistogram()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "onclick" in src
+    assert "setGraphMissFilter" in src
 
 
 def test_dashboard_contract_marker_placement():
