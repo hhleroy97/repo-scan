@@ -204,6 +204,22 @@ def test_daemon_runs_act_for_inprogress_ticket(act_repo, tmp_path):
     assert daemon_tick(root, cfg) == []
 
 
+def test_daemon_tick_survives_live_act_thread(act_repo):
+    """Regression: a tick while an act thread is in flight must not crash
+    (the daemon thread died on a bad iteration over _act_threads)."""
+    import threading
+    from repo_scan.hub import daemon as daemon_mod
+    root, cfg = act_repo
+    save_meta(root, cfg, {"last_scan": time.time()})
+    t = threading.Thread(target=time.sleep, args=(1.0,), daemon=True)
+    t.start()
+    daemon_mod._act_threads["fake-run-id"] = t
+    try:
+        daemon_tick(root, cfg)  # must not raise
+    finally:
+        del daemon_mod._act_threads["fake-run-id"]
+
+
 def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):
     """Two approved specs -> two act runs in the same tick, isolated worktrees."""
     root, cfg = act_repo

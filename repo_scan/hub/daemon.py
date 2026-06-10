@@ -146,7 +146,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
     max_acts = int(cfg.get("max_parallel_acts", 2))
     parallel = max_acts > 1
     active = active_runs(root, cfg)
-    busy = {r["id"] for r in _act_threads}  # threads this process is running
+    busy = set(_act_threads)  # run ids whose threads this process owns
 
     # 1 — resume paused runs whose decisions arrived
     for run in active:
@@ -161,7 +161,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
             actions.append(f"resumed:{run['id']}")
     if actions:
         active = active_runs(root, cfg)
-        busy = {r["id"] for r in _act_threads}
+        busy = set(_act_threads)
 
     mid_flight = [r for r in active
                   if r["status"] in ("queued", "running") and r["id"] not in busy]

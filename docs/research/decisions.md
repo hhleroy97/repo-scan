@@ -19,3 +19,6 @@
 | 2026-06-10 03:30 UTC | post_analyze | approved (dashboard) | Follow the established two-phase pattern: first add tests/test_graphs.py with fixture repos covering Python import varia |
 | 2026-06-10 03:33 UTC | post_audit | paused | audit revise: Phasing, hotspot metrics, and research-backed ast/madge approach are sound, but radon rank wording is wron |
 | 2026-06-10 03:49 UTC | pre_implement | paused | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
+| 2026-06-10 03:51 UTC | post_analyze | approved (dashboard) | Follow the established two-phase pattern: first add tests/test_graphs.py with fixture repos covering Python import varia |
+| 2026-06-10 03:51 UTC | post_audit | approved (dashboard) | audit revise: Phasing, hotspot metrics, and research-backed ast/madge approach are sound, but radon rank wording is wron |
+| 2026-06-10 03:51 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]] on branch radar/tkt-0002 for tkt-0002 |
