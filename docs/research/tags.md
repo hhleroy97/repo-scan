@@ -1,9 +1,17 @@
 # Research tags
-_Rebuilt 2026-06-10 05:35 UTC_
+_Rebuilt 2026-06-10 06:59 UTC_
 
 ## 12-factor-agents
 
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## acceptance-criteria
+
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## agentic-development
+
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 
 ## agpl
 
@@ -27,21 +35,46 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## article
 
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
 ## arxiv
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
+
+## atlassian
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## automated-refactoring
+
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 
 ## behavior-preservation
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## build-isolation
+
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+
+## build-system
+
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+
 ## caching
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## chain-of-thought
+
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 
 ## characterization-tests
 
@@ -62,6 +95,7 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## cli
 
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
@@ -73,6 +107,7 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## code-quality
 
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
 ## code-readability
@@ -91,6 +126,8 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## coding-agents
 
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## commonjs
@@ -100,6 +137,10 @@ _Rebuilt 2026-06-10 05:35 UTC_
 ## complex-networks
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
+
+## complexity-management
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## context-engineering
 
@@ -132,6 +173,14 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
+## deployment
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## distribution
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+
 ## django
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
@@ -146,11 +195,16 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## empirical-evaluation
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
 ## es6-modules
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## evaluation
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
 ## extract-function
 
@@ -219,11 +273,24 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## human-in-the-loop
 
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## ide
 
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## ide-plugin
+
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
+## importlib-metadata
+
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+
+## information-architecture
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## inline-function
 
@@ -233,18 +300,31 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
+## interaction-design
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
 ## issue-tracker
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## java
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
 ## javascript
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
+
+## jetbrains
+
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
+## jira
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
 ## jira-alternative
 
@@ -259,6 +339,10 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## kotlin
+
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
 ## kubernetes
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
@@ -266,6 +350,10 @@ _Rebuilt 2026-06-10 05:35 UTC_
 ## language-detection
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## learnability
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## legacy-code
 
@@ -281,17 +369,34 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
+## linear
+
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
 ## llm
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
+
+## llm-agents
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
 ## long-methods
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
+## markdown
+
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
 ## martin-fowler
 
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
+
+## metadata
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 
 ## michael-feathers
 
@@ -301,6 +406,10 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## mobile-design
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
 ## module-prioritization
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
@@ -309,13 +418,27 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 
+## multi-agent
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
 ## mutation-testing
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## nngroup
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
 ## package-metadata
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## packaging
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
 ## pagerank
 
@@ -325,6 +448,8 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## paper
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
@@ -335,6 +460,14 @@ _Rebuilt 2026-06-10 05:35 UTC_
 ## parametrization
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## pip
+
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+
+## planning
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
 ## plugins
 
@@ -352,16 +485,41 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
+## progressive-disclosure
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
 ## project-management
 
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## project-metadata
+
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+
+## pycharm
+
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
+## pypa
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 
 ## pypi
 
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## pyproject-toml
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
 ## pytest
 
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
@@ -371,6 +529,10 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## python
 
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -378,9 +540,17 @@ _Rebuilt 2026-06-10 05:35 UTC_
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/gh-Aider-AI-aider\|Aider-AI/aider — aider is AI pair programming in your terminal]]
 
+## quick-fix
+
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
 ## react
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## readme
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 
 ## redis
 
@@ -388,6 +558,7 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## refactoring
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
@@ -399,6 +570,9 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## repo
 
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
@@ -447,6 +621,10 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## sample-project
+
+- [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+
 ## seams
 
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
@@ -463,6 +641,18 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## setup-py
+
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+
+## setuptools
+
+- [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
+
+## single-source-of-truth
+
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+
 ## sloc
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
@@ -472,21 +662,38 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## software-engineering
+
+- [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
 ## software-quality
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## staged-disclosure
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
 ## static-analysis
 
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## sync
+
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
 ## syrupy
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
+
+## task-analysis
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## team-workflows
 
@@ -517,6 +724,11 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 
+## test-smells
+
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
 ## test-then-refactor
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -527,6 +739,9 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## testing
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -534,6 +749,7 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## typescript
 
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
@@ -543,15 +759,44 @@ _Rebuilt 2026-06-10 05:35 UTC_
 
 ## unit-testing
 
+- [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## unittest
+
+- [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 
 ## unsupervised-learning
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## usability
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## user-stories
+
+- [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## ux
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## vcs-tags
+
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+
 ## vendored-files
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## versioning
+
+- [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+
+## wizards
+
+- [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## yaml-output
 

@@ -1,8 +1,16 @@
 # Research index
-_Rebuilt 2026-06-10 05:35 UTC — 19 source(s)_
+_Rebuilt 2026-06-10 06:59 UTC — 27 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]] | arxiv | arxiv, automated-refactoring, chain-of-thought, empirical-evaluation, java, llm, paper, refactoring, test-smells, testing, unit-testing | 2026-06-10 06:59 UTC |
+| [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]] | github | ide-plugin, jetbrains, kotlin, pycharm, pytest, python, quick-fix, repo, static-analysis, test-smells, testing, unittest | 2026-06-10 06:58 UTC |
+| [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]] | github | distribution, metadata, packaging, pypa, pypi, pyproject-toml, python, readme, repo, sample-project | 2026-06-10 06:45 UTC |
+| [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]] | url | article, build-system, importlib-metadata, packaging, pyproject-toml, python, single-source-of-truth, testing, vcs-tags, versioning | 2026-06-10 06:45 UTC |
+| [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]] | url | article, build-isolation, build-system, packaging, pip, project-metadata, pyproject-toml, python, setup-py, setuptools | 2026-06-10 06:45 UTC |
+| [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]] | arxiv | atlassian, code-quality, coding-agents, deployment, evaluation, human-in-the-loop, jira, llm-agents, multi-agent, paper, planning, software-engineering | 2026-06-10 06:09 UTC |
+| [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]] | github | acceptance-criteria, agentic-development, cli, coding-agents, linear, markdown, project-management, repo, sync, typescript, user-stories | 2026-06-10 06:09 UTC |
+| [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]] | url | article, complexity-management, information-architecture, interaction-design, learnability, mobile-design, nngroup, progressive-disclosure, staged-disclosure, task-analysis, usability, ux, wizards | 2026-06-10 06:09 UTC |
 | [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in…]] | github | 12-factor-agents, ai-agents, claude-code, coding-agents, context-engineering, human-in-the-loop, ide, parallel-agents, repo, team-workflows, typescript | 2026-06-10 05:35 UTC |
 | [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]] | github | agpl, analytics, django, docker, issue-tracker, jira-alternative, kanban, kubernetes, postgresql, product-management, project-management, react, redis, repo, roadmaps, self-hosting, typescript | 2026-06-10 05:35 UTC |
 | [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported…]] | github | cli, code-statistics, generated-code, git, gitattributes, json-output, language-detection, repo, repo-analysis, ruby, sloc, static-analysis, vendored-files | 2026-06-10 04:03 UTC |

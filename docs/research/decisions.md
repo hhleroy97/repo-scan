@@ -46,3 +46,25 @@
 | 2026-06-10 05:46 UTC | post_implement | paused | tests passed; 2 files changed, 35 insertions(+), 9 deletions(-) on radar/tkt-0010 — commit? |
 | 2026-06-10 05:46 UTC | pre_implement | approved (dashboard) | implement [[2026-06-10-add-a-list-for-the-open-tickets-to-the-n-spec]] on branch radar/tkt-0010 for tkt-0010 |
 | 2026-06-10 05:47 UTC | post_implement | approved (dashboard) | tests passed; 2 files changed, 35 insertions(+), 9 deletions(-) on radar/tkt-0010 — commit? |
+| 2026-06-10 06:11 UTC | post_analyze | paused | Introduce a derived PM card layer on top of existing tkt-*.md files: parse ground truth into a mobile-first summary (pla |
+| 2026-06-10 06:12 UTC | post_analyze | approved (dashboard) | Introduce a derived PM card layer on top of existing tkt-*.md files: parse ground truth into a mobile-first summary (pla |
+| 2026-06-10 06:15 UTC | post_analyze | approved (dashboard) | Introduce a derived PM card layer on top of existing tkt-*.md files: parse ground truth into a mobile-first summary (pla |
+| 2026-06-10 06:20 UTC | post_audit | paused | audit revise: The spec aligns well with the existing markdown ticket model, scan criteria behavior, and approval-gap fin |
+| 2026-06-10 06:26 UTC | post_analyze | approved (dashboard) | Introduce a derived PM card layer on top of existing tkt-*.md files: parse ground truth into a mobile-first summary (pla |
+| 2026-06-10 06:26 UTC | post_audit | approved (dashboard) | audit revise: The spec aligns well with the existing markdown ticket model, scan criteria behavior, and approval-gap fin |
+| 2026-06-10 06:26 UTC | pre_implement | auto | implement [[2026-06-10-convert-tickets-to-most-human-friendly-t-spec]] on branch radar/tkt-0011 for tkt-0011 |
+| 2026-06-10 06:33 UTC | post_implement | paused | tests passed; 10 files changed, 478 insertions(+), 27 deletions(-) on radar/tkt-0011 — commit? |
+| 2026-06-10 06:47 UTC | post_analyze | paused | Delete setup.py and treat pyproject.toml as the sole packaging manifest, matching PyPA modernization and sampleproject p |
+| 2026-06-10 06:48 UTC | pre_implement | auto | implement [[2026-06-10-convert-tickets-to-most-human-friendly-t-spec]] on branch radar/tkt-0011 for tkt-0011 |
+| 2026-06-10 06:48 UTC | post_analyze | approved (dashboard) | Delete setup.py and treat pyproject.toml as the sole packaging manifest, matching PyPA modernization and sampleproject p |
+| 2026-06-10 06:49 UTC | post_implement | approved (dashboard) | tests passed; 10 files changed, 478 insertions(+), 27 deletions(-) on radar/tkt-0011 — commit? |
+| 2026-06-10 06:53 UTC | post_audit | paused | audit revise: Delete-setup.py is the right PyPA-aligned fix and the fixture-based coupling test is sound, but revise the |
+| 2026-06-10 06:55 UTC | post_analyze | approved (dashboard) | Delete setup.py and treat pyproject.toml as the sole packaging manifest, matching PyPA modernization and sampleproject p |
+| 2026-06-10 06:55 UTC | post_audit | approved (dashboard) | audit revise: Delete-setup.py is the right PyPA-aligned fix and the fixture-based coupling test is sound, but revise the |
+| 2026-06-10 06:55 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-pyproject-toml-setup-py-100-spec]] on branch radar/tkt-0007 for tkt-0007 |
+| 2026-06-10 06:55 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-pyproject-toml-setup-py-100-spec]] on branch radar/tkt-0007 for tkt-0007 |
+| 2026-06-10 06:58 UTC | post_implement | paused | tests passed; 2 files changed, 5 insertions(+), 17 deletions(-) on radar/tkt-0007 — commit? |
+| 2026-06-10 07:00 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-pyproject-toml-setup-py-100-spec]] on branch radar/tkt-0007 for tkt-0007 |
+| 2026-06-10 07:01 UTC | post_implement | auto | tests passed; 2 files changed, 5 insertions(+), 17 deletions(-) on radar/tkt-0007 — commit? |
+| 2026-06-10 07:01 UTC | post_analyze | paused | Run pytest green as baseline, then lower CC in `test_loop_happy_path_auto_gates` by extracting pure assertion helpers fo |
+| 2026-06-10 07:03 UTC | post_analyze | approved (dashboard) | Run pytest green as baseline, then lower CC in `test_loop_happy_path_auto_gates` by extracting pure assertion helpers fo |
