@@ -1,8 +1,9 @@
 # Research index
-_Rebuilt 2026-06-10 07:47 UTC — 34 source(s)_
+_Rebuilt 2026-06-10 07:51 UTC — 35 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]] | arxiv | code-level-migration, dependencies, microservices, migration-automation, monolith-decomposition, paper, refactoring, service-extraction, software-architecture | 2026-06-10 07:51 UTC |
 | [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]] | url | architecture-analysis, article, change-coupling, codescene, git-history, logical-dependencies, microservices, retrospectives, sum-of-couplings, team-topology, technical-debt | 2026-06-10 07:46 UTC |
 | [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from…]] | github | adam-tornhill, behavioral-code-analysis, clojure, code-churn, git-log-analysis, logical-coupling, ownership-metrics, repo, repository-mining, technical-debt, version-control-mining | 2026-06-10 07:45 UTC |
 | [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from…]] | github | diagrams-as-code, documentation, flowchart, gantt, github-markdown, javascript, mermaid, mindmap, npm, obsidian, repo, sequence-diagram, typescript, uml, visualization | 2026-06-10 07:45 UTC |

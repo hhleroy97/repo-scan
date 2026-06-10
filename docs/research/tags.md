@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 07:47 UTC_
+_Rebuilt 2026-06-10 07:51 UTC_
 
 ## 12-factor-agents
 
@@ -136,6 +136,10 @@ _Rebuilt 2026-06-10 07:47 UTC_
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 
+## code-level-migration
+
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
+
 ## code-organization
 
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
@@ -200,6 +204,7 @@ _Rebuilt 2026-06-10 07:47 UTC_
 
 ## dependencies
 
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
 ## dependency-breaking
@@ -532,11 +537,16 @@ _Rebuilt 2026-06-10 07:47 UTC_
 
 ## microservices
 
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## migration
 
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
+
+## migration-automation
+
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 
 ## mindmap
 
@@ -553,6 +563,10 @@ _Rebuilt 2026-06-10 07:47 UTC_
 ## module-resolution
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## monolith-decomposition
+
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 
 ## multi-agent
 
@@ -601,6 +615,7 @@ _Rebuilt 2026-06-10 07:47 UTC_
 
 ## paper
 
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -721,6 +736,7 @@ _Rebuilt 2026-06-10 07:47 UTC_
 
 ## refactoring
 
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
@@ -827,6 +843,10 @@ _Rebuilt 2026-06-10 07:47 UTC_
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## service-extraction
+
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
+
 ## setup-py
 
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
@@ -847,6 +867,10 @@ _Rebuilt 2026-06-10 07:47 UTC_
 ## snapshot-testing
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
+
+## software-architecture
+
+- [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 
 ## software-engineering
 
