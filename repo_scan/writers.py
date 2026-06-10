@@ -3,9 +3,10 @@
 import json
 from pathlib import Path
 
+from .graphs import coupling_to_mermaid
 from .identity import detect_entry_points, detect_manifests, readme_summary
 from .trends import trend_callout
-from .utils import git_branch, git_last_commit, git_remote_url, now_iso, ok, warn, write_doc
+from .utils import chart_label, git_branch, git_last_commit, git_remote_url, now_iso, ok, warn, write_doc
 
 
 # ---------------------------------------------------------------------------
@@ -19,11 +20,6 @@ def callout(kind: str, title: str, body_lines: list[str] | None = None) -> list[
     for line in body_lines or []:
         lines.append(f"> {line}")
     return lines
-
-
-def _chart_label(text: str, max_len: int = 18) -> str:
-    label = text.split("/")[-1].replace('"', "'")
-    return label if len(label) <= max_len else label[:max_len - 1] + "…"
 
 
 def mermaid_pie(title: str, pairs: list[tuple[str, float]]) -> list[str]:
@@ -41,7 +37,7 @@ def mermaid_bar(title: str, y_title: str, labels: list[str], values: list[float]
     if not labels or not values:
         return []
     top = y_max if y_max is not None else max(values) or 1
-    label_str = ", ".join(f'"{_chart_label(l)}"' for l in labels)
+    label_str = ", ".join(f'"{chart_label(l)}"' for l in labels)
     value_str = ", ".join(f"{v:g}" for v in values)
     return [
         "```mermaid",
@@ -75,7 +71,7 @@ def mermaid_quadrant(title: str, x_axis: str, y_axis: str,
     ]
     seen: set[str] = set()
     for label, x, y in points:
-        name = _chart_label(label)
+        name = chart_label(label)
         while name in seen:
             name += "·"
         seen.add(name)
@@ -213,11 +209,20 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
     write_doc(root / cfg["docs_dir"] / "reports" / "health.md", "\n".join(lines), root)
 
 
-def write_coupling_report(root: Path, cfg: dict, coupling: list[dict], seams: list[dict]):
-    """Change coupling: files that move together in commits."""
+def write_coupling_report(root: Path, cfg: dict, coupling: list[dict], seams: list[dict],
+                          py_edges: list[tuple[str, str]] | None = None,
+                          ts_edges: list[tuple[str, str]] | None = None,
+                          line_counts: dict | None = None):
+    """Change coupling: files that move together in commits.
+
+    When ``line_counts`` is provided, prepends a Mermaid network of the top
+    coupled pairs (capped by ``diagram_max_coupling_edges``); the table uses
+    the same cap.
+    """
     docs = root / cfg["docs_dir"]
     min_shared = cfg.get("coupling_min_shared", 4)
     min_degree = cfg.get("coupling_min_degree", 50)
+    max_edges = cfg.get("diagram_max_coupling_edges", 20)
     seam_keys = {(s["a"], s["b"]) for s in seams}
 
     lines = [
@@ -229,6 +234,12 @@ def write_coupling_report(root: Path, cfg: dict, coupling: list[dict], seams: li
         "contract the dependency graph can't see.",
         "",
     ]
+    if coupling and line_counts is not None:
+        import_edges = (py_edges or []) + (ts_edges or [])
+        chart = coupling_to_mermaid(coupling, seams, import_edges, line_counts,
+                                    max_edges=max_edges)
+        if chart:
+            lines += ["```mermaid", chart, "```", ""]
     if seams:
         lines += callout(
             "warning",
@@ -241,7 +252,7 @@ def write_coupling_report(root: Path, cfg: dict, coupling: list[dict], seams: li
             "| File A | File B | Shared commits | Degree | Import edge |",
             "|--------|--------|----------------|--------|-------------|",
         ]
-        for c in coupling[:20]:
+        for c in coupling[:max_edges]:
             seam = (c["a"], c["b"]) in seam_keys
             lines.append(f"| `{c['a']}` | `{c['b']}` | {c['shared']} | {c['degree']}% | "
                          f"{'**none — seam**' if seam else 'yes'} |")

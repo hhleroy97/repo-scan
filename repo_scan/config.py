@@ -31,6 +31,9 @@ DEFAULT_CONFIG = {
     # auto-generated tickets
     "tickets_enabled": True,
     "tickets_max_new_per_scan": 5,
+    "ticket_diagrams_enabled": True,
+    "diagram_max_coupling_edges": 20,
+    "diagram_max_ticket_neighbors": 4,
 }
 
 # Keys owned by radar (B-phases) — valid in .repo-scan.json, unused by scan.

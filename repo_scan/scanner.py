@@ -160,7 +160,8 @@ def _write_reports(ctx: ScanContext) -> None:
     ctx.seams = hidden_seams(ctx.behavior["coupling"], all_edges)
     write_health_report(ctx.root, ctx.cfg, ctx.line_counts, ctx.churn, ctx.complexity,
                         behavior=ctx.behavior)
-    write_coupling_report(ctx.root, ctx.cfg, ctx.behavior["coupling"], ctx.seams)
+    write_coupling_report(ctx.root, ctx.cfg, ctx.behavior["coupling"], ctx.seams,
+                          ctx.py_edges, ctx.ts_edges, ctx.line_counts)
     write_dep_report(ctx.root, ctx.cfg, ctx.ts_deps, ctx.py_deps, ctx.ts_reason)
     write_call_report(ctx.root, ctx.cfg, ctx.c_calls)
     write_index(ctx.root, ctx.cfg, ctx.line_counts, ctx.languages, ctx.ranking, ctx.tree,
@@ -187,7 +188,7 @@ def _maybe_run_tickets(ctx: ScanContext) -> None:
     created, resolved = generate_tickets(ctx.root, ctx.cfg, {
         "line_counts": ctx.line_counts, "ranking": ctx.ranking, "churn": ctx.churn,
         "complexity": ctx.complexity, "tested": ctx.tested, "behavior": ctx.behavior,
-        "seams": ctx.seams,
+        "seams": ctx.seams, "py_edges": ctx.py_edges, "ts_edges": ctx.ts_edges,
     })
     if ctx.quiet:
         return

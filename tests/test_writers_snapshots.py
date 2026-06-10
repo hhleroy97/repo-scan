@@ -87,7 +87,9 @@ def test_index_snapshot(fixture_repo: Path, snapshot):
 
 
 def test_coupling_report_snapshot(fixture_repo: Path, snapshot):
-    writers.write_coupling_report(fixture_repo, CFG, COUPLING, SEAMS)
+    writers.write_coupling_report(fixture_repo, CFG, COUPLING, SEAMS,
+                                  py_edges=[("pkg.mod", "pkg.util")],
+                                  ts_edges=[], line_counts=LINE_COUNTS)
     assert (fixture_repo / "docs" / "reports" / "coupling.md").read_text() == snapshot
 
 
