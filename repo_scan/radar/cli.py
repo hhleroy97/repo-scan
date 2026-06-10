@@ -74,6 +74,12 @@ def main():
     p_full.add_argument("--approve", action="append", default=[], metavar="GATE")
     p_full.add_argument("--gates", choices=["prompt", "auto", "deny"])
 
+    p_act = sub.add_parser("act", help="Implement an approved spec (tests as hard gate)")
+    p_act.add_argument("--ticket", default=None, metavar="TKT-ID",
+                       help="Target ticket (default: highest-priority in-progress with approved spec)")
+    p_act.add_argument("--approve", action="append", default=[], metavar="GATE",
+                       help="Pre-approve a gate (pre_implement, post_implement); repeatable")
+
     p_daemon = sub.add_parser("daemon", help="Resident runner: scans, loops, gate resume")
     p_daemon.add_argument("--poll", type=int, default=None, metavar="SECONDS")
 
@@ -106,6 +112,10 @@ def main():
     if args.command == "full":
         from .pipeline import cmd_full
         sys.exit(cmd_full(root, cfg, approve=args.approve, gates_override=args.gates))
+
+    if args.command == "act":
+        from .act import cmd_act
+        sys.exit(cmd_act(root, cfg, ticket_id=args.ticket, approve=args.approve))
 
     if args.command == "daemon":
         from ..hub.daemon import cmd_daemon

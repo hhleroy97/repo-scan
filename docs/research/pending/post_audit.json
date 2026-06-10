@@ -1,0 +1,22 @@
+{
+  "gate": "post_audit",
+  "written_at": "2026-06-10 03:20 UTC",
+  "payload": {
+    "problem": "Refactor repo_scan/scanner.py (CC 27, 8 commits, untested). `repo_scan/scanner.py` is both high-churn (8 commits) and high-complexity (total CC 27) with no matching test file. Research current best practices and draft a spec for this work.",
+    "summary": "audit revise: The phased snapshot-then-extract shape matches the writers precedent and scanner hotspots, but the spec needs reconciled metrics, a feasible writers-parity test design, and aligned Phase 2 extraction rules before human review. \u2014 [[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec]]",
+    "detail": {
+      "audit_verdict": "revise",
+      "issues": [
+        "Phase 2 requires one helper per existing `step()` label with no merge/split, but `_post_scan_actions` bundles radar, tickets, handoff, and quiet-output branches that have no `step()` label\u2014an internal contradiction.",
+        "Writers-golden comparison for `write_*` artifacts is unjustified without a defined mechanism (e.g., shared payload constants and coordinated upstream stubs) to make the scanner E2E pipeline emit the same inputs as `tests/test_writers_snapshots.py`; those tests call `write_*` directly with synthetic dicts, not a full `scan()` run.",
+        "Phase 2 defers conditional relocation while Phase 3 requires every function at rank B (CC \u226410); verbatim extraction of post-write branches into `_post_scan_actions` can leave a high-CC helper with no planned follow-on split, conflicting with research finding that CC only drops when branches move out of `scan()`.",
+        "Goal cites CC 27 and 8 commits, but current evidence (`health.md`, `scan.json`, radon) shows `scan()` at CC 28 and 10 churn commits for `repo_scan/scanner.py`\u2014stale metrics relative to findings.",
+        "Phase 1 centers E2E `scan()` but lists `docs/digest.md` among orchestration snapshots; `scan()` never calls `run_digest()`, so digest snapshot scope is only covered by separate unit tests\u2014the Phase 1 oracle description is inconsistent.",
+        "Goal/problem frames the module as untested, contradicting ingested analysis finding #3 and existing `tests/test_scan.py` coverage that invokes `scan()` (existence/wikilink checks on minimal `tmp_repo`).",
+        "Phase 3 rank-B gate (CC \u226410) is stricter than tkt-0002 acceptance ('below rank C') without justification\u2014scope creep beyond ticket criteria.",
+        "Phase 3 dogfood trend verification lacks baseline discipline: Phase 1 snapshots and any re-scan mutate `docs/scan.json` and `reports/trend.md`, confounding before/after `cc_by_file` comparison for `scanner.py`."
+      ],
+      "doc": "specs/2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec.md"
+    }
+  }
+}

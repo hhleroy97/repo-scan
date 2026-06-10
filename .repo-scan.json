@@ -1,3 +1,5 @@
 {
-  "radar_enabled": true
+  "radar_enabled": true,
+  "act_enabled": true,
+  "test_cmd": "python3 -m pytest -q"
 }

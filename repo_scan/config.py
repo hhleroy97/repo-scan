@@ -39,6 +39,8 @@ RADAR_CONFIG_KEYS = {
     # hub (daemon + dashboard)
     "serve_host", "serve_port", "daemon_poll_seconds", "daemon_scan_hours",
     "ntfy_topic", "ntfy_server", "dashboard_url",
+    # act stage (spec implementation)
+    "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
 }
 
 

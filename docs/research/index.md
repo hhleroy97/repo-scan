@@ -1,8 +1,11 @@
 # Research index
-_Rebuilt 2026-06-10 01:54 UTC — 9 source(s)_
+_Rebuilt 2026-06-10 03:15 UTC — 12 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]] | url | ai-assisted-refactoring, article, behavior-preservation, characterization-tests, legacy-code, mutation-testing, refactoring, safety-net, technical-debt, test-coverage, test-then-refactor | 2026-06-10 03:15 UTC |
+| [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]] | arxiv | arxiv, code-quality, empirical-evaluation, extract-method, hallucination-filtering, intellij-plugin, llm, long-methods, paper, program-slicing, refactoring, static-analysis | 2026-06-10 03:14 UTC |
+| [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]] | github | characterization-tests, dependency-breaking, java, legacy-code, michael-feathers, refactoring, repo, safe-change-algorithm, seams, technical-debt, testability, testing | 2026-06-10 03:14 UTC |
 | [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]] | url | article, code-readability, extract-function, extract-method, inline-function, martin-fowler, refactoring, separation-of-concerns | 2026-06-10 01:53 UTC |
 | [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]] | github | ci-artifacts, html, pytest, pytest-plugin, python, repo, reporting, test-results, testing | 2026-06-10 01:50 UTC |
 | [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]] | github | cli, pytest, python, regression-testing, repo, serialization, snapshot-testing, syrupy, test-fixtures, testing | 2026-06-10 01:50 UTC |

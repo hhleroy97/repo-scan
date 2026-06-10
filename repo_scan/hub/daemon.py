@@ -83,6 +83,38 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
     return rc
 
 
+def _run_act(root: Path, cfg: dict, run: dict) -> int:
+    """Execute/resume one act run and translate the outcome into run state."""
+    from ..radar.act import cmd_act
+
+    update_run(root, cfg, run["id"], "running")
+    rc = cmd_act(root, cfg, ticket_id=run.get("ticket"))
+
+    if rc == 0:
+        update_run(root, cfg, run["id"], "done")
+        notify(cfg, "RADAR: implementation committed",
+               f"{run.get('ticket')}: review the branch and merge.",
+               tags=["white_check_mark"], click=_dashboard_url(cfg))
+        return rc
+    if rc == 2:
+        gate_name = _pending_gate_for(root, cfg, run["problem"])
+        if gate_name:
+            update_run(root, cfg, run["id"], "waiting-on-gate", gate=gate_name)
+            notify(cfg, f"RADAR: gate {gate_name} needs you",
+                   run["problem"][:160], priority="high",
+                   tags=["raised_hand"], click=_dashboard_url(cfg))
+        else:
+            update_run(root, cfg, run["id"], "stopped")
+            notify(cfg, "RADAR: act run stopped",
+                   f"{run.get('ticket')}: rejected or tests failing — branch kept for review.",
+                   priority="high", tags=["x"], click=_dashboard_url(cfg))
+        return rc
+    update_run(root, cfg, run["id"], "failed")
+    notify(cfg, "RADAR: act run failed", run["problem"][:160],
+           priority="high", tags=["rotating_light"], click=_dashboard_url(cfg))
+    return rc
+
+
 def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
     actions: list[str] = []
@@ -92,7 +124,10 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
     if run and run["status"] == "waiting-on-gate":
         if run.get("gate") and peek_decision(root, cfg, run["gate"], run["problem"]):
             info(f"decision arrived for gate {run['gate']} — resuming run {run['id']}")
-            _run_loop(root, cfg, run)
+            if run.get("kind") == "act":
+                _run_act(root, cfg, run)
+            else:
+                _run_loop(root, cfg, run)
             actions.append(f"resumed:{run['id']}")
         return actions  # while waiting, don't start anything else
 
@@ -122,7 +157,22 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
                    tags=["ticket"], click=_dashboard_url(cfg))
         return actions
 
-    # 3 — start a loop for the next approved ticket
+    # 3 — act on an approved spec (finish started work before starting new)
+    if cfg.get("act_enabled"):
+        from ..radar.act import act_problem, find_act_ticket
+        picked = find_act_ticket(root, cfg)
+        if picked:
+            ticket, spec_stem = picked
+            problem = act_problem(ticket["id"], spec_stem)
+            run = create_run(root, cfg, problem, ticket=ticket["id"])
+            update_run(root, cfg, run["id"], "queued", kind="act")
+            run["kind"] = "act"
+            info(f"starting act run {run['id']} for ticket {ticket['id']}")
+            _run_act(root, cfg, run)
+            actions.append(f"act-started:{run['id']}")
+            return actions
+
+    # 4 — start a research loop for the next approved ticket
     if cfg.get("radar_enabled"):
         from ..radar.pipeline import ticket_problem
         from ..tickets import pick_approved_ticket

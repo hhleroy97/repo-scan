@@ -42,9 +42,11 @@ def available_backend(cfg: dict) -> list[str] | None:
     return None
 
 
-def complete(prompt: str, cfg: dict, timeout: int | None = None) -> str:
+def complete(prompt: str, cfg: dict, timeout: int | None = None,
+             cwd: str | None = None) -> str:
     # agent CLIs have highly variable latency (cold starts, thinking time);
-    # default is generous and overridable per repo via "llm_timeout"
+    # default is generous and overridable per repo via "llm_timeout".
+    # `cwd` matters for act-mode invocations where the agent edits files.
     if timeout is None:
         timeout = int(cfg.get("llm_timeout", LLM_TIMEOUT))
     cmd = available_backend(cfg)
@@ -54,7 +56,7 @@ def complete(prompt: str, cfg: dict, timeout: int | None = None) -> str:
     try:
         result = subprocess.run(
             cmd + [prompt], capture_output=True, text=True, timeout=timeout,
-            stdin=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL, cwd=cwd,
         )
     except subprocess.TimeoutExpired:
         raise LLMError(f"{cmd[0]} timed out after {timeout}s")

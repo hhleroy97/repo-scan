@@ -21,7 +21,7 @@ from pathlib import Path
 
 from ..utils import info, now_iso, ok, warn
 
-GATE_NAMES = ("post_analyze", "post_audit")
+GATE_NAMES = ("post_analyze", "post_audit", "pre_implement", "post_implement")
 DEFAULT_GATES = {name: "prompt" for name in GATE_NAMES}
 
 

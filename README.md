@@ -155,7 +155,8 @@ radar ingest arxiv:2210.03629         #   also: url:https://...  file:./paper.pd
 radar research "how do X loops work?" # LLM proposes sources, radar ingests them
 radar loop "should we adopt X?"       # full pipeline, pauses at gates for approval
 radar full                            # metric-triggered: top churn x complexity file
-radar daemon                          # resident runner: scans, loops, gate resume
+radar act                             # implement an approved spec (tests = hard gate)
+radar daemon                          # resident runner: scans, loops, acts, gate resume
 radar serve                           # mobile dashboard + daemon (port 8800)
 ```
 
@@ -168,10 +169,39 @@ No API keys. `radar` shells out to an agent CLI on PATH — `cursor-agent` or
 { "llm_cli": ["cursor-agent -p --output-format text", "claude -p"] }
 ```
 
+### The Act stage — from approved spec to reviewed commit
+
+With `"act_enabled": true`, `radar act` takes the highest-priority in-progress
+ticket whose spec was approved at Gate 2 and implements it: the agent CLI
+edits the repo on an isolated `radar/<ticket-id>` branch, the test suite must
+pass (failures are fed back for bounded fix rounds, `act_fix_rounds`, default
+2), and two new gates bracket the work — `pre_implement` before anything
+runs, `post_implement` showing the diff stat before the commit lands. You
+review and merge the branch; the next scan's metric fingerprints confirm the
+fix. The daemon picks up act candidates automatically, so a full
+ticket-to-commit cycle can run from your phone.
+
+Safety: refuses dirty trees, never touches your branch, excludes vault churn
+from the implementation commit, and a failed run leaves the branch for human
+review with a note on the ticket.
+
+```json
+{
+  "act_enabled": true,
+  "test_cmd": "python3 -m pytest -q",
+  "act_timeout": 1800,
+  "act_fix_rounds": 2
+}
+```
+
+(`test_cmd` is auto-detected — pytest if `tests/` exists, `npm test` if
+`package.json` — but pin it explicitly for anything real.)
+
 ### Gates (progressive autonomy)
 
 ```json
-{ "gates": { "post_analyze": "prompt", "post_audit": "prompt" } }
+{ "gates": { "post_analyze": "prompt", "post_audit": "prompt",
+             "pre_implement": "prompt", "post_implement": "prompt" } }
 ```
 
 - `prompt` — CLI y/n; non-interactive runs pause to `docs/research/pending/`
@@ -245,6 +275,7 @@ docs/
     decisions.md            # append-only gate decision trail
   specs/                    # drafted + audited implementation specs
   changelog/{date}-loop.md  # loop outcomes
+  changelog/{date}-act.md   # act outcomes (branch, commit, tests, diff)
   .radar/                   # hub runtime state (gitignored): token, runs,
                             #   decision inbox, loop checkpoints
 ```
