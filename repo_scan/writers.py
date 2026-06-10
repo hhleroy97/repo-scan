@@ -102,7 +102,8 @@ def churn_complexity_quadrant(rows: list[dict], title: str = "Churn vs complexit
     )
 
 
-def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, complexity: list):
+def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, complexity: list,
+                        behavior: dict | None = None):
     ts = now_iso()
     warn_n = cfg["line_warn"]
     crit_n = cfg["line_crit"]
@@ -166,6 +167,29 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
             lines.append(f"| `{item['file']}` | {item['commits']} |")
         lines.append("")
 
+    if behavior and behavior.get("ownership"):
+        silo_share = cfg.get("silo_min_share", 0.9)
+        stale_days = cfg.get("stale_days", 180)
+        age = behavior.get("age_days", {})
+        lines += [
+            "## Knowledge map (bus factor)",
+            "",
+            "_Top-author share near 100% on an active file = knowledge silo._",
+            "",
+            "| File | Commits | Authors | Top author share | Age (days) | Flag |",
+            "|------|---------|---------|------------------|------------|------|",
+        ]
+        for o in behavior["ownership"][:15]:
+            flags = []
+            if o["top_share"] >= silo_share and o["commits"] >= 5 and o["authors"] == 1:
+                flags.append("silo")
+            if age.get(o["file"], 0) >= stale_days:
+                flags.append("stale")
+            lines.append(f"| `{o['file']}` | {o['commits']} | {o['authors']} | "
+                         f"{o['top_share']:.0%} | {age.get(o['file'], '?')} | "
+                         f"{', '.join(flags) or '—'} |")
+        lines.append("")
+
     alerts = [f for f, s in line_counts.items() if s["lines"] >= crit_n]
     if alerts:
         lines += ["## Action items", ""]
@@ -177,6 +201,44 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
         lines.append("")
 
     write_doc(docs / "reports" / "health.md", "\n".join(lines), root)
+
+
+def write_coupling_report(root: Path, cfg: dict, coupling: list[dict], seams: list[dict]):
+    """Change coupling: files that move together in commits."""
+    docs = root / cfg["docs_dir"]
+    min_shared = cfg.get("coupling_min_shared", 4)
+    min_degree = cfg.get("coupling_min_degree", 50)
+    seam_keys = {(s["a"], s["b"]) for s in seams}
+
+    lines = [
+        "# Change coupling",
+        f"_Generated {now_iso()}_",
+        "",
+        f"Files that change together (≥{min_shared} shared commits, ≥{min_degree}% degree).",
+        "Coupled pairs **without** an import edge are hidden seams — an implicit",
+        "contract the dependency graph can't see.",
+        "",
+    ]
+    if seams:
+        lines += callout(
+            "warning",
+            f"{len(seams)} hidden seam(s): coupled in history, no import edge",
+            [f"- `{s['a']}` ↔ `{s['b']}` ({s['degree']}% over {s['shared']} commits)"
+             for s in seams[:5]],
+        ) + [""]
+    if coupling:
+        lines += [
+            "| File A | File B | Shared commits | Degree | Import edge |",
+            "|--------|--------|----------------|--------|-------------|",
+        ]
+        for c in coupling[:20]:
+            seam = (c["a"], c["b"]) in seam_keys
+            lines.append(f"| `{c['a']}` | `{c['b']}` | {c['shared']} | {c['degree']}% | "
+                         f"{'**none — seam**' if seam else 'yes'} |")
+    else:
+        lines += callout("tip", "No significant change coupling at current thresholds")
+    lines.append("")
+    write_doc(docs / "reports" / "coupling.md", "\n".join(lines), root)
 
 
 def write_dep_report(root: Path, cfg: dict, ts_mermaid: str | None, py_mermaid: str | None,
@@ -348,7 +410,7 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
 
 def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
                     churn: list, complexity: list, ranking: list,
-                    py_edges: list, ts_edges: list):
+                    py_edges: list, ts_edges: list, behavior: dict | None = None):
     """Machine-readable sidecar so agents don't have to parse markdown."""
     docs = root / cfg["docs_dir"]
     payload = {
@@ -370,6 +432,11 @@ def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
         "dependency_edges": {
             "python": [list(e) for e in py_edges],
             "typescript": [list(e) for e in ts_edges],
+        },
+        "behavior": {
+            "coupling": (behavior or {}).get("coupling", [])[:20],
+            "ownership": (behavior or {}).get("ownership", [])[:20],
+            "age_days": (behavior or {}).get("age_days", {}),
         },
         "config": cfg,
     }

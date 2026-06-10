@@ -22,6 +22,15 @@ DEFAULT_CONFIG = {
     "tree_depth": 3,
     "rank_top_n": 15,
     "digest_tokens": 4000,
+    # behavioral analysis (change coupling / ownership / age)
+    "coupling_min_shared": 4,
+    "coupling_min_degree": 50,
+    "coupling_max_changeset": 30,
+    "silo_min_share": 0.9,
+    "stale_days": 180,
+    # auto-generated tickets
+    "tickets_enabled": True,
+    "tickets_max_new_per_scan": 5,
 }
 
 # Keys owned by radar (B-phases) — valid in .repo-scan.json, unused by scan.

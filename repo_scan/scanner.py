@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from .behavior import analyze_history, hidden_seams
 from .churn import get_git_churn
 from .complexity import get_complexity, get_python_complexity
 from .config import load_config
@@ -17,6 +18,7 @@ from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
 from .writers import (
     write_call_report,
     write_candidates,
+    write_coupling_report,
     write_dep_report,
     write_health_report,
     write_index,
@@ -63,6 +65,11 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     churn = get_git_churn(root, cfg)
     ok(f"{len(churn)} files in history")
 
+    step("Behavioral analysis (git history)")
+    behavior = analyze_history(root, cfg, set(line_counts))
+    ok(f"{len(behavior['coupling'])} coupled pairs, "
+       f"{len(behavior['ownership'])} files with ownership data")
+
     step("Analyzing complexity")
     complexity = get_complexity(root, languages["py"], cfg)
     if complexity:
@@ -103,12 +110,14 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     curr_summary = summarize_metrics(line_counts, complexity, cfg)
     delta = compute_delta(prev_summary, curr_summary)
 
-    write_health_report(root, cfg, line_counts, churn, complexity)
+    seams = hidden_seams(behavior["coupling"], all_edges)
+    write_health_report(root, cfg, line_counts, churn, complexity, behavior=behavior)
+    write_coupling_report(root, cfg, behavior["coupling"], seams)
     write_dep_report(root, cfg, ts_deps, py_deps, ts_reason)
     write_call_report(root, cfg, c_calls)
     write_index(root, cfg, line_counts, languages, ranking, tree, delta=delta)
     write_scan_json(root, cfg, line_counts, languages, churn, complexity,
-                    ranking, py_edges, ts_edges)
+                    ranking, py_edges, ts_edges, behavior=behavior)
     append_trend_log(root, cfg, curr_summary, delta)
 
     if cfg.get("radar_enabled"):
