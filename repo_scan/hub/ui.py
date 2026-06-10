@@ -111,7 +111,8 @@ function esc(s){return String(s??'').replace(/[&<>"]/g,
 function toast(m){const t=document.getElementById('toast');t.textContent=m;
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 async function api(path,opts){const r=await fetch(path,opts);
-  if(!r.ok)throw new Error((await r.json()).error||r.status);return r.json()}
+  if(!r.ok){const j=await r.json().catch(()=>({}));
+    throw new Error(j.error||j.message||r.status)}return r.json()}
 
 async function refresh(){
   try{S=await api('/api/state');render()}
@@ -197,6 +198,7 @@ function rNow(){
         <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`}).join('')+
       `</div>`;
   }
+  h+=rPRs();
   h+=rFeed();
   h+=rUsage();
   h+=`<div class="dim small" style="text-align:center;margin-top:14px">
@@ -204,6 +206,40 @@ function rNow(){
   return h;
 }
 function tok(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'k':String(n??0)}
+function rPRs(){
+  const prs=S.prs||[];if(!prs.length)return '';
+  const ck={passing:['ok','checks passing'],failing:['bad','checks FAILING'],
+            pending:['warn','checks running'],none:['','no checks']};
+  return `<div class="section">Pull requests</div>`+prs.map(p=>{
+    const [cls,label]=ck[p.checks]||['',p.checks];
+    const conflict=p.mergeable==='CONFLICTING';
+    let btns=`<a class="ghost" style="text-decoration:none;text-align:center" href="${esc(p.url)}" target="_blank" rel="noopener">View</a>`;
+    if(p.checks==='failing'||conflict)
+      btns+=`<button class="ghost" onclick="prAct('update',${p.number},this)">Update branch</button>`;
+    btns+=`<button class="approve" ${conflict?'disabled':''} onclick="prMerge(${p.number},'${esc(p.ticket||'')}',this)">Merge</button>`;
+    return `<div class="card" ${p.checks==='failing'?'style="border-color:var(--bad)"':''}>
+      <span class="badge ${cls}">${label}</span>
+      ${p.ticket?`<span class="badge">${esc(p.ticket)}</span>`:''}
+      ${conflict?`<span class="badge bad">conflicts</span>`:''}
+      ${p.draft?`<span class="badge">draft</span>`:''}
+      <div class="title" style="margin-top:8px">#${p.number} ${esc(p.title)}</div>
+      <div class="dim small">${esc(p.branch)}</div>
+      <div class="btnrow">${btns}</div></div>`}).join('');
+}
+function prMerge(number,ticket,btn){
+  const failing=(S.prs.find(p=>p.number===number)||{}).checks==='failing';
+  if(!confirm(`Squash-merge PR #${number}${ticket?' ('+ticket+')':''}`
+    +(failing?' — CHECKS ARE FAILING':'')+'?'))return;
+  prAct('merge',number,btn);
+}
+async function prAct(op,number,btn){
+  btn.disabled=true;btn.textContent=op==='merge'?'Merging…':'Updating…';
+  try{const r=await api('/api/pr/'+op,{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({number})});
+    toast(r.message||'done');setTimeout(refresh,800)}
+  catch(e){toast('Failed: '+e.message);btn.disabled=false;
+    btn.textContent=op==='merge'?'Merge':'Update branch'}
+}
 function rFeed(){
   const ev=S.events||[];if(!ev.length)return '';
   const icon={stage:'&#9654;',llm:'&#9889;',run:'&#10003;',scan:'&#8635;'};
