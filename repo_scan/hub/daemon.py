@@ -24,6 +24,7 @@ import time
 from pathlib import Path
 
 from ..utils import header, info, now_date, ok, warn
+from .act_run import run_act
 from .notify import notify
 from .settings import cfg_hub
 from .state import (active_runs, append_event, create_run, load_meta,
@@ -109,41 +110,15 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
 
 
 def _run_act(root: Path, cfg: dict, run: dict) -> int:
-    """Execute/resume one act run and translate the outcome into run state."""
-    from ..radar.act import cmd_act
-
-    update_run(root, cfg, run["id"], "running")
-    try:
-        rc = cmd_act(root, cfg, ticket_id=run.get("ticket"), worktree=True)
-    finally:
-        commit_vault(root, cfg,
-                     f"vault: act trail — {run.get('ticket') or run['problem'][:60]}")
-
-    if rc == 0:
-        update_run(root, cfg, run["id"], "done")
-        append_event(root, cfg, "run",
-                     f"implementation committed on radar/{run.get('ticket')} — review and merge")
-        notify(cfg, "RADAR: implementation committed",
-               f"{run.get('ticket')}: review the branch and merge.",
-               tags=["white_check_mark"], click=_dashboard_url(cfg))
-        return rc
-    if rc == 2:
-        gate_name = _pending_gate_for(root, cfg, run["problem"])
-        if gate_name:
-            update_run(root, cfg, run["id"], "waiting-on-gate", gate=gate_name)
-            notify(cfg, f"RADAR: gate {gate_name} needs you",
-                   run["problem"][:160], priority="high",
-                   tags=["raised_hand"], click=_dashboard_url(cfg))
-        else:
-            update_run(root, cfg, run["id"], "stopped")
-            notify(cfg, "RADAR: act run stopped",
-                   f"{run.get('ticket')}: rejected or tests failing — branch kept for review.",
-                   priority="high", tags=["x"], click=_dashboard_url(cfg))
-        return rc
-    update_run(root, cfg, run["id"], "failed")
-    notify(cfg, "RADAR: act run failed", run["problem"][:160],
-           priority="high", tags=["rotating_light"], click=_dashboard_url(cfg))
-    return rc
+    """Daemon entry point; orchestration lives in ``act_run.run_act``."""
+    return run_act(
+        root,
+        cfg,
+        run,
+        pending_gate_for=_pending_gate_for,
+        dashboard_url=_dashboard_url,
+        commit_vault=commit_vault,
+    )
 
 
 def _spawn(root: Path, cfg: dict, run: dict, runner, parallel: bool) -> None:

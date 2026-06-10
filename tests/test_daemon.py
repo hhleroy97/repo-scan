@@ -20,6 +20,8 @@ from repo_scan.radar.pipeline import ticket_problem
 from repo_scan.tickets import (append_ticket_note, load_tickets, set_ticket_status,
                                write_ticket)
 
+from tests.support.act_fixtures import (IMPLEMENT_AGENT, act_repo, feature_act_repo,
+                                        stub_agent)
 from tests.test_radar_pipeline import FAKE_LLM, happy_path_responses, queue_responses
 
 PROBLEM = "how should gates work?"
@@ -29,19 +31,6 @@ def _git(root: Path, *args: str) -> str:
     r = subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
     return r.stdout.strip()
 
-
-def _stub_agent(tmp_path: Path, script: str) -> str:
-    path = tmp_path / "agent.py"
-    path.write_text(script)
-    return f"{sys.executable} {path}"
-
-
-IMPLEMENT_AGENT = """\
-import sys
-from pathlib import Path
-Path("impl.py").write_text("VALUE = 42\\n")
-print("Implemented the spec: created impl.py with VALUE = 42.")
-"""
 
 TESTS_ON_RETRY_AGENT = """\
 from pathlib import Path
@@ -73,51 +62,6 @@ def loop_env(tmp_repo, tmp_path, monkeypatch):
     cfg = load_config(tmp_repo)
     cfg["llm_cli"] = [FAKE_LLM]
     return tmp_repo, cfg, note, queue
-
-
-@pytest.fixture
-def act_repo(tmp_repo: Path, tmp_path: Path):
-    specs = tmp_repo / "docs" / "specs"
-    specs.mkdir(parents=True, exist_ok=True)
-    (specs / "2026-01-01-fix-the-thing-spec.md").write_text(
-        '---\ntype: "spec"\nstatus: "approved"\n---\n\n# Spec\n\n'
-        "## Goal\nCreate impl.py with VALUE = 42.\n")
-    write_ticket(tmp_repo, DEFAULT_CONFIG,
-                 {"id": "tkt-0001", "title": "Fix the thing", "priority": "high",
-                  "fingerprint": "x:1", "why": "w", "criteria": ["c"]})
-    set_ticket_status(tmp_repo, DEFAULT_CONFIG, "tkt-0001", "in-progress")
-    append_ticket_note(tmp_repo, DEFAULT_CONFIG, "tkt-0001",
-                       "radar spec approved: [[2026-01-01-fix-the-thing-spec]]")
-    subprocess.run(["git", "add", "-A"], cwd=tmp_repo, capture_output=True)
-    subprocess.run(["git", "commit", "-qm", "setup"], cwd=tmp_repo, capture_output=True)
-    cfg = load_config(tmp_repo)
-    cfg["act_enabled"] = True
-    cfg["test_cmd"] = f"{sys.executable} -c \"import impl; assert impl.VALUE == 42\""
-    return tmp_repo, cfg
-
-
-@pytest.fixture
-def feature_act_repo(tmp_repo: Path):
-    specs = tmp_repo / "docs" / "specs"
-    specs.mkdir(parents=True, exist_ok=True)
-    (specs / "2026-01-01-csv-spec.md").write_text(
-        '---\ntype: "spec"\nstatus: "approved"\n---\n\n# Spec\n\n'
-        "## Goal\nCreate impl.py with VALUE = 42.\n\n"
-        "## Tests\n- tests/test_impl.py::test_v — exports all rows\n")
-    write_ticket(tmp_repo, DEFAULT_CONFIG,
-                 {"id": "tkt-0001", "title": "Add CSV export", "priority": "high",
-                  "fingerprint": "feature:add-csv-export", "why": "w",
-                  "criteria": ["exports all rows"]})
-    set_ticket_status(tmp_repo, DEFAULT_CONFIG, "tkt-0001", "in-progress")
-    append_ticket_note(tmp_repo, DEFAULT_CONFIG, "tkt-0001",
-                       "radar spec approved: [[2026-01-01-csv-spec]]")
-    subprocess.run(["git", "add", "-A"], cwd=tmp_repo, capture_output=True)
-    subprocess.run(["git", "commit", "-qm", "setup"], cwd=tmp_repo, capture_output=True)
-    cfg = load_config(tmp_repo)
-    cfg["act_enabled"] = True
-    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
-    cfg["test_cmd"] = f"{sys.executable} -c \"import impl; assert impl.VALUE == 42\""
-    return tmp_repo, cfg
 
 
 def _approved_ticket(root: Path) -> dict:
@@ -177,7 +121,7 @@ def test_daemon_scheduled_scan(tmp_repo: Path):
 def test_reclaim_orphan_runs_resurrects_work(act_repo, tmp_path):
     from repo_scan.radar.act import act_problem
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["max_parallel_acts"] = 1
     save_meta(root, cfg, {"last_scan": time.time()})
@@ -257,7 +201,7 @@ def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):
     subprocess.run(["git", "add", "-A"], cwd=root, capture_output=True)
     subprocess.run(["git", "commit", "-qm", "more"], cwd=root, capture_output=True)
 
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["max_parallel_acts"] = 2
     save_meta(root, cfg, {"last_scan": time.time()})
@@ -278,7 +222,7 @@ def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):
 
 def test_daemon_runs_act_for_inprogress_ticket(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["max_parallel_acts"] = 1
     save_meta(root, cfg, {"last_scan": time.time()})
@@ -320,7 +264,7 @@ def test_over_budget_acts_per_day(tmp_repo):
 
 def test_daemon_blocks_new_work_when_over_budget(feature_act_repo, tmp_path):
     root, cfg = feature_act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, TESTS_ON_RETRY_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, TESTS_ON_RETRY_AGENT)]
     cfg["max_parallel_acts"] = 1
     cfg["budget_daily_tokens"] = 1
     record_usage(root, cfg, {"ts": time.time(), "role": "act", "model": "m",
@@ -430,7 +374,7 @@ def test_act_fanout_skips_loop_same_tick(loop_env, tmp_path):
     cfg["act_enabled"] = True
     cfg["max_parallel_loops"] = 1
     cfg["max_parallel_acts"] = 1
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["test_cmd"] = f"{sys.executable} -c \"import impl; assert impl.VALUE == 42\""
     save_meta(root, cfg, {"last_scan": time.time()})
