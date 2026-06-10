@@ -36,6 +36,8 @@ def parse_ticket(path: Path) -> dict | None:
     meta.setdefault("id", path.stem)
     meta["title"] = meta.get("title") or title
     meta["path"] = path
+    m = re.search(r"^## Why\n+(.+?)(?:\n##|\Z)", text, re.S | re.M)
+    meta["why"] = m.group(1).strip() if m else ""
     return meta
 
 
@@ -205,27 +207,85 @@ def propose_from_scan(cfg: dict, *, line_counts: dict, ranking: list,
     return proposals
 
 
-def generate_tickets(root: Path, cfg: dict, signals: dict) -> int:
+OPEN_STATUSES = {"proposed", "approved", "in-progress"}
+
+
+def set_ticket_status(root: Path, cfg: dict, ticket_id: str, status: str) -> dict:
+    """Update a ticket's frontmatter status and rebuild the board."""
+    if status not in STATUSES:
+        raise ValueError(f"invalid status {status!r} — one of {', '.join(STATUSES)}")
+    tickets = load_tickets(root, cfg)
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if ticket is None:
+        raise KeyError(f"no ticket with id {ticket_id!r}")
+    path: Path = ticket["path"]
+    text = path.read_text(encoding="utf-8")
+    new_text, n = re.subn(r'^status: ".*?"', f'status: "{status}"', text,
+                          count=1, flags=re.M)
+    if n == 0:
+        raise ValueError(f"{path.name} has no status frontmatter line")
+    path.write_text(new_text, encoding="utf-8")
+    ticket["status"] = status
+    write_board(root, cfg, tickets)
+    return ticket
+
+
+def append_ticket_note(root: Path, cfg: dict, ticket_id: str, note: str):
+    """Append a line under the ticket's ## Notes section."""
+    tickets = load_tickets(root, cfg)
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if ticket is None:
+        return
+    path: Path = ticket["path"]
+    text = path.read_text(encoding="utf-8")
+    if "## Notes" in text:
+        text = text.rstrip() + f"\n- {note}\n"
+    else:
+        text = text.rstrip() + f"\n\n## Notes\n\n- {note}\n"
+    path.write_text(text, encoding="utf-8")
+
+
+def pick_approved_ticket(root: Path, cfg: dict) -> dict | None:
+    """Highest-priority approved ticket — the radar loop's work queue."""
+    order = {"high": 0, "medium": 1, "low": 2}
+    approved = [t for t in load_tickets(root, cfg) if t.get("status") == "approved"]
+    approved.sort(key=lambda t: (order.get(t.get("priority", "medium"), 1), t["id"]))
+    return approved[0] if approved else None
+
+
+def generate_tickets(root: Path, cfg: dict, signals: dict) -> tuple[int, list[dict]]:
     """Dedup proposals against every existing fingerprint (any status,
-    including rejected) and write the top N new tickets. Returns count."""
+    including rejected) and write the top N new tickets.
+
+    Returns (created_count, metrics_resolved) where metrics_resolved are open
+    tickets whose fingerprint no longer triggers — the underlying metric
+    cleared, so they're likely ready to close."""
     existing = load_tickets(root, cfg)
     known = {t.get("fingerprint") for t in existing if t.get("fingerprint")}
-    proposals = [p for p in propose_from_scan(cfg, **signals)
-                 if p["fingerprint"] not in known]
+    proposals = propose_from_scan(cfg, **signals)
+    current_fps = {p["fingerprint"] for p in proposals}
+    fresh = [p for p in proposals if p["fingerprint"] not in known]
     cap = cfg.get("tickets_max_new_per_scan", 5)
     num = next_ticket_num(existing)
     created = 0
-    for p in proposals[:cap]:
+    for p in fresh[:cap]:
         p["id"] = f"tkt-{num + created:04d}"
         write_ticket(root, cfg, p)
         created += 1
+
+    resolved = [t for t in existing
+                if t.get("status") in OPEN_STATUSES
+                and t.get("fingerprint") and t["fingerprint"] not in current_fps]
     if created or existing:
-        write_board(root, cfg, load_tickets(root, cfg))
-    return created
+        write_board(root, cfg, load_tickets(root, cfg),
+                    resolved_ids={t["id"] for t in resolved})
+    return created, resolved
 
 
-def write_board(root: Path, cfg: dict, tickets: list[dict]):
+def write_board(root: Path, cfg: dict, tickets: list[dict],
+                resolved_ids: set | None = None):
     """Obsidian Kanban-plugin board — review tickets by dragging cards."""
+    resolved_ids = resolved_ids or set()
     lines = ["---", "", "kanban-plugin: board", "", "---", ""]
     for column, status in BOARD_COLUMNS:
         lines.append(f"## {column}")
@@ -233,9 +293,58 @@ def write_board(root: Path, cfg: dict, tickets: list[dict]):
         for t in tickets:
             if t.get("status") == status:
                 done = "x" if status in ("done", "rejected") else " "
-                lines.append(f"- [{done}] [[{t['id']}|{t['title']}]]")
+                note = " — **metrics resolved, ready to close**" if t["id"] in resolved_ids else ""
+                lines.append(f"- [{done}] [[{t['id']}|{t['title']}]]{note}")
         lines.append("")
     lines += ["%% kanban:settings", "```", '{"kanban-plugin":"board"}', "```", "%%", ""]
     path = tickets_dir(root, cfg) / "board.md"
     path.parent.mkdir(parents=True, exist_ok=True)
     write_doc(path, "\n".join(lines), root)
+
+
+def tickets_main(argv: list[str]) -> int:
+    """`repo-scan tickets [list|approve|start|reject|done] [id]`"""
+    import argparse
+
+    from .config import load_config
+
+    parser = argparse.ArgumentParser(
+        prog="repo-scan tickets",
+        description="Review scan-generated tickets from the terminal",
+    )
+    parser.add_argument("action", nargs="?", default="list",
+                        choices=["list", "approve", "start", "reject", "done"])
+    parser.add_argument("ticket_id", nargs="?", help="e.g. tkt-0001")
+    parser.add_argument("--repo", default=".", help="Repo root (default: cwd)")
+    args = parser.parse_args(argv)
+
+    root = Path(args.repo).resolve()
+    cfg = load_config(root)
+    status_for = {"approve": "approved", "start": "in-progress",
+                  "reject": "rejected", "done": "done"}
+
+    if args.action == "list":
+        tickets = load_tickets(root, cfg)
+        if not tickets:
+            print("no tickets — run repo-scan to propose some")
+            return 0
+        order = {s: i for i, (_, s) in enumerate(BOARD_COLUMNS)}
+        prio = {"high": 0, "medium": 1, "low": 2}
+        tickets.sort(key=lambda t: (order.get(t.get("status"), 9),
+                                    prio.get(t.get("priority", "medium"), 1), t["id"]))
+        for t in tickets:
+            title = t["title"] if len(t["title"]) <= 70 else t["title"][:69] + "…"
+            print(f"{t['id']:<10} {t.get('status', '?'):<12} "
+                  f"{t.get('priority', '?'):<7} {t.get('origin', '?'):<6} {title}")
+        return 0
+
+    if not args.ticket_id:
+        parser.error(f"'{args.action}' requires a ticket id")
+    try:
+        ticket = set_ticket_status(root, cfg, args.ticket_id, status_for[args.action])
+    except (KeyError, ValueError) as e:
+        ok_or_err = str(e).strip("'")
+        print(f"error: {ok_or_err}")
+        return 1
+    ok(f"{ticket['id']} -> {status_for[args.action]}  ({ticket['title']})")
+    return 0

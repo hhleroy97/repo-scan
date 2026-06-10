@@ -325,10 +325,34 @@ def cmd_full(root: Path, cfg: dict, approve: list[str] | None = None,
     if not cfg.get("radar_enabled"):
         warn('radar full requires "radar_enabled": true in .repo-scan.json')
         return 1
+
+    # the approved-ticket queue is the work source of record; raw metric
+    # candidates are the fallback when nothing has been approved yet
+    from ..tickets import append_ticket_note, pick_approved_ticket, set_ticket_status
+    ticket = pick_approved_ticket(root, cfg)
+    if ticket:
+        problem = f"{ticket['title']}. {ticket['why']} " \
+                  "Research current best practices and draft a spec for this work."
+        info(f"working approved ticket {ticket['id']}: {ticket['title'][:80]}")
+        rc = cmd_loop(root, cfg, problem, approve=approve, gates_override=gates_override)
+        if rc == 0:
+            set_ticket_status(root, cfg, ticket["id"], "in-progress")
+            spec = _latest_spec(root, cfg)
+            note = f"radar spec approved{f': [[{spec}]]' if spec else ''} — status moved to in-progress"
+            append_ticket_note(root, cfg, ticket["id"], note)
+            ok(f"{ticket['id']} -> in-progress")
+        return rc
+
     problem = pick_candidate(root, cfg)
     if not problem:
-        info("no metric-triggered candidates (need scan.json with churn x complexity overlap) "
-             "— run repo-scan first")
+        info("no approved tickets and no metric-triggered candidates — "
+             "run repo-scan, then approve a ticket (`repo-scan tickets`)")
         return 1
     info(f"triggered: {problem[:100]}")
     return cmd_loop(root, cfg, problem, approve=approve, gates_override=gates_override)
+
+
+def _latest_spec(root: Path, cfg: dict) -> str | None:
+    specs = sorted((root / cfg["docs_dir"] / "specs").glob("*.md"),
+                   key=lambda p: p.stat().st_mtime)
+    return specs[-1].stem if specs else None

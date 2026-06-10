@@ -57,12 +57,13 @@ def test_silo_proposals_require_multiple_repo_authors():
 
 def test_generate_dedup_and_cap(tmp_repo: Path):
     cfg = dict(DEFAULT_CONFIG, tickets_max_new_per_scan=2)
-    created = generate_tickets(tmp_repo, cfg, _signals(
-        seams=[{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80}]))
+    seams = [{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80}]
+    created, _ = generate_tickets(tmp_repo, cfg, _signals(seams=seams))
     assert created == 2  # capped (3 proposals available)
-    assert generate_tickets(tmp_repo, cfg, _signals(
-        seams=[{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80}])) == 1  # third one now
-    assert generate_tickets(tmp_repo, cfg, _signals()) == 0  # everything known
+    created, _ = generate_tickets(tmp_repo, cfg, _signals(seams=seams))
+    assert created == 1  # third one now
+    created, _ = generate_tickets(tmp_repo, cfg, _signals(seams=seams))
+    assert created == 0  # everything known
 
 
 def test_rejected_fingerprint_never_reproposed(tmp_repo: Path):
@@ -72,7 +73,8 @@ def test_rejected_fingerprint_never_reproposed(tmp_repo: Path):
                   if t["fingerprint"] == "refactor:hot.py")
     text = ticket["path"].read_text().replace('status: "proposed"', 'status: "rejected"')
     ticket["path"].write_text(text)
-    assert generate_tickets(tmp_repo, cfg, _signals(line_counts={})) == 0
+    created, _ = generate_tickets(tmp_repo, cfg, _signals(line_counts={}))
+    assert created == 0
     files = list((tmp_repo / "docs" / "tickets").glob("tkt-*.md"))
     assert len(files) == 2  # refactor (rejected) + size, nothing recreated
 

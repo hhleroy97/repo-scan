@@ -129,13 +129,18 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
             info("RADAR candidates detected — run `radar full` to research the top one")
 
     if cfg.get("tickets_enabled", True):
-        created = generate_tickets(root, cfg, {
+        created, resolved = generate_tickets(root, cfg, {
             "line_counts": line_counts, "ranking": ranking, "churn": churn,
             "complexity": complexity, "tested": tested, "behavior": behavior,
             "seams": seams,
         })
-        if created and not quiet:
-            info(f"{created} ticket(s) proposed — review {cfg['docs_dir']}/tickets/board.md")
+        if not quiet:
+            if created:
+                info(f"{created} ticket(s) proposed — review {cfg['docs_dir']}/tickets/board.md "
+                     f"or `repo-scan tickets`")
+            for t in resolved:
+                info(f"{t['id']} looks resolved (metric cleared) — "
+                     f"`repo-scan tickets done {t['id']}`")
 
     if include_handoff:
         write_handoff(root, cfg, languages, line_counts)

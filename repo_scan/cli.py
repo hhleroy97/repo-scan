@@ -29,6 +29,12 @@ def check_deps():
 
 
 def main():
+    # `repo-scan tickets ...` is a subcommand with its own parser; everything
+    # else stays the original flag-based interface.
+    if len(sys.argv) > 1 and sys.argv[1] == "tickets":
+        from .tickets import tickets_main
+        sys.exit(tickets_main(sys.argv[2:]))
+
     parser = argparse.ArgumentParser(
         description="repo-scan — repo intelligence tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,

@@ -90,6 +90,20 @@ never re-proposed. Humans add tickets the same way — any `.md` file with a
 `status` in its frontmatter. Disable with `"tickets_enabled": false`; cap new
 tickets per scan with `tickets_max_new_per_scan`.
 
+Review from the terminal too:
+
+```bash
+repo-scan tickets                  # list, sorted by status then priority
+repo-scan tickets approve tkt-0001
+repo-scan tickets start | reject | done <id>
+```
+
+The loop closes itself: `radar full` works the highest-priority **approved**
+ticket (falling back to raw metric candidates), moves it to `in-progress` with
+a spec wikilink when the loop's gates pass, and when a later scan sees the
+ticket's underlying metric has cleared, the board flags it
+"metrics resolved, ready to close".
+
 Plain Markdown + Mermaid. Point Obsidian at the repo root — everything renders natively.
 
 ---
