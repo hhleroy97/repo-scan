@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested). `repo_scan/hub/daemon.py` is both high-churn (11 commits) and high-complexity (total CC 38) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-hub-daemon-py-cc-38-1-analysis]]"
-drafted_at: "2026-06-10 13:26 UTC"
+drafted_at: "2026-06-10 13:38 UTC"
 ---
 
 # Spec — Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested). `repo_scan/hub/daemon.py` is both high-churn (11 commits) and high-complexity (total CC 38) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 13:26 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 13:38 UTC by radar — **status: approved**_
 
 I'll read `daemon.py`, related tests, and existing refactor specs so the revised spec matches repo patterns and fixes the audit issues.
 ## Goal

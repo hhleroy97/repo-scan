@@ -99,3 +99,5 @@
 | 2026-06-10 13:31 UTC | post_audit | approved (dashboard) | audit revise: The dual-track approach matches the codebase (live 53%/5 shared, relative-import bug, existing snapshot ha |
 | 2026-06-10 13:32 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-repo-scan-scanner-py-repo-sc-spec]] on branch radar/tkt-0008 for tkt-0008 |
 | 2026-06-10 13:36 UTC | post_implement | auto | tests passed; 2 files changed, 72 insertions(+), 31 deletions(-) on radar/tkt-0008 — commit? |
+| 2026-06-10 13:38 UTC | post_analyze | approved (dashboard) | Follow the repo's characterization-then-extract playbook: snapshot radon output and a copy of `docs/scan.json`, then add |
+| 2026-06-10 13:38 UTC | post_audit | approved (dashboard) | audit revise: Radon baselines, test migration inventory, and Fowler decomposition direction match the repo and code, but |
