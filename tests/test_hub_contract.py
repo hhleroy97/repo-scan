@@ -26,7 +26,7 @@ from repo_scan.tickets import STATUSES
 
 _PKG = "repo_scan/hub"
 _SERVER = f"{_PKG}/server.py"
-_UI = f"{_PKG}/ui.py"
+_UI = f"{_PKG}/ui/__init__.py"
 _CONTRACT = f"{_PKG}/contract.py"
 
 
@@ -76,7 +76,7 @@ def test_server_imports_contract_for_routes_and_actions():
 def test_ui_imports_contract_for_dashboard_html():
     """Dashboard HTML injects js_contract_block(); ui does not import server."""
     mods = _import_from_modules(
-        Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui.py"
+        Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui" / "__init__.py"
     )
     assert "server" not in mods
     assert js_contract_block() in ui.DASHBOARD_HTML
