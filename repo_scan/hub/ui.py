@@ -2,7 +2,8 @@
 
 No build step, no framework, no CDN — everything inline so it works on a
 phone over Tailscale with zero external requests. The page polls /api/state
-and renders four tabs: Now (stats + runs), Gates, Tickets, Activity.
+and renders four tabs: Now (open-ticket summary, stats, runs, agent feed),
+Gates, Tickets, Activity.
 """
 
 DASHBOARD_HTML = r"""<!DOCTYPE html>
@@ -147,20 +148,45 @@ function render(force){
 function badge(id,n){const e=document.getElementById(id);
   e.hidden=!n;e.textContent=n}
 
+// Keep OPEN_TICKET_STATUSES aligned with repo_scan.tickets.OPEN_STATUSES.
+const OPEN_TICKET_STATUSES=new Set(['proposed','approved','in-progress']);
+const TICKET_STATUS_ORDER={proposed:0,approved:1,'in-progress':2,done:3,rejected:4};
+const TICKET_BADGE_CLS={proposed:'warn',approved:'info','in-progress':'info',done:'ok',rejected:'bad'};
+function filterOpenTickets(tickets){return tickets.filter(t=>OPEN_TICKET_STATUSES.has(t.status))}
+function sortTickets(tickets){
+  return [...tickets].sort((a,b)=>(TICKET_STATUS_ORDER[a.status]??9)-(TICKET_STATUS_ORDER[b.status]??9))}
+
+function rOpenTickets(){
+  const open=sortTickets(filterOpenTickets(S.tickets));
+  if(!open.length)return '';
+  let h=`<div class="section">Open tickets (${open.length})</div><div class="card">`;
+  h+=open.map(t=>`<div class="run">
+    <span class="badge ${TICKET_BADGE_CLS[t.status]||''}">${esc(t.status)}</span>
+    ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
+    ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
+    <span style="flex:1"><span class="dim small">${esc(t.id)}</span> ${esc(t.title).slice(0,90)}</span>
+    </div>`).join('');
+  h+=`</div><div class="btnrow"><button class="ghost" onclick="setTab('tickets')">View all</button></div>`;
+  return h;
+}
+
 function rNow(){
   const sc=S.scan||{};
   let h='';
-  if(S.gates.length)
+  if(S.gates.length){
     h+=`<div class="card" style="border-color:var(--warn)">
       <div class="title">${S.gates.length} gate(s) waiting on you</div>
       <div class="dim">${esc(S.gates[0].summary).slice(0,140)}</div>
       <div class="btnrow"><button class="ghost" onclick="setTab('gates')">Review</button></div></div>`;
+    h+=rOpenTickets();
+  }
   h+=`<div class="grid">
     ${stat(sc.files??'–','Source files')}
     ${stat((sc.lines??0).toLocaleString(),'Lines')}
     ${stat(sc.hotspots??'–','CC hotspots')}
     ${stat(sc.critical??'–','Critical files')}
   </div>`;
+  if(!S.gates.length)h+=rOpenTickets();
   if(S.runs.length){
     h+=`<div class="section">Runs</div><div class="card">`+
       S.runs.map(r=>{
@@ -239,9 +265,7 @@ async function gateDecide(gate,btn,decision){
 }
 
 function rTickets(){
-  const order={proposed:0,approved:1,'in-progress':2,done:3,rejected:4};
-  const ts=[...S.tickets].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9));
-  const cls={proposed:'warn',approved:'info','in-progress':'info',done:'ok',rejected:'bad'};
+  const ts=sortTickets(S.tickets);
   let h=`<div class="card">
     <div class="title">New idea</div>
     <input id="nt-title" placeholder="What should be built or changed?" style="width:100%;margin:8px 0;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px">
@@ -255,7 +279,7 @@ function rTickets(){
     </div></div>`;
   if(!ts.length)return h+`<div class="empty">No tickets yet — run a scan or capture an idea above.</div>`;
   h+=ts.map(t=>`<div class="card">
-    <span class="badge ${cls[t.status]||''}">${esc(t.status)}</span>
+    <span class="badge ${TICKET_BADGE_CLS[t.status]||''}">${esc(t.status)}</span>
     ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
     ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
     <div class="title" style="margin-top:8px">${esc(t.title)}</div>

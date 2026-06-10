@@ -295,9 +295,11 @@ Autonomy is granted in policy, not all at once:
 
 `radar serve` runs a zero-dependency stdlib HTTP server (plus the daemon in a
 background thread) and prints a tokenized URL. The dashboard is one
-self-contained mobile-first page: live stats and runs, pending gates with
-**Approve / Reject** buttons and the full analysis one tap away, the ticket
-board, and the decision trail. Decisions land in a file-backed inbox
+self-contained mobile-first page: the **Now** tab shows open tickets (status,
+priority, kind, id, title) with a link to the full **Tickets** tab — approve
+and create actions stay on Tickets (and in `radar top` for terminal use); live
+stats and runs; pending gates with **Approve / Reject** buttons and the full
+analysis one tap away; the ticket board; and the decision trail. Decisions land in a file-backed inbox
 (`docs/.radar/decisions/`); the daemon resumes paused loops on its next poll.
 Loops checkpoint per stage, so a resume skips completed LLM calls.
 
