@@ -125,3 +125,5 @@
 | 2026-06-10 17:31 UTC | post_analyze | approved (dashboard) | Extract hub-owned defaults and key names into repo_scan/hub/settings.py (HUB_DEFAULTS + HUB_CONFIG_KEYS), have daemon.py |
 | 2026-06-10 17:31 UTC | post_audit | approved (dashboard) | audit revise: The shared-module direction, 56%/7-shared baseline, degree formula, and tkt-0008 AC1 reinterpretation matc |
 | 2026-06-10 17:31 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-spec]] on branch radar/tkt-0014 for tkt-0014 |
+| 2026-06-10 17:32 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-repo-scan-config-py-repo-sca-spec]] on branch radar/tkt-0016 for tkt-0016 |
+| 2026-06-10 17:32 UTC | post_analyze | paused | Add `from .gates import GATE_NAMES` (and a small GATE_MODES or `gate_arg_parser()` helper colocated in gates.py) and ref |
