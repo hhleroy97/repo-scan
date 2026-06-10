@@ -4,7 +4,12 @@ import json
 from pathlib import Path
 
 import repo_scan
-from repo_scan.graphs import edges_to_mermaid
+from repo_scan.graphs import (
+    coupling_to_mermaid,
+    edges_to_mermaid,
+    refactor_ego_mermaid,
+    seam_pair_mermaid,
+)
 from repo_scan.utils import strip_emoji
 from repo_scan.writers import (
     callout,
@@ -105,6 +110,59 @@ def test_health_has_pie_and_warning_callout(tmp_repo_with_imports: Path):
     assert "Split `big.py`" in health
     index = (tmp_repo_with_imports / "docs" / "index.md").read_text()
     assert "> [!warning]" in index
+
+
+def test_coupling_to_mermaid_styles_seam_edges():
+    coupling = [
+        {"a": "a.py", "b": "b.py", "shared": 5, "degree": 80},
+        {"a": "c.py", "b": "d.py", "shared": 4, "degree": 60},
+    ]
+    seams = [{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80}]
+    line_counts = {"a.py": {"lines": 10}, "b.py": {"lines": 10},
+                   "c.py": {"lines": 10}, "d.py": {"lines": 10}}
+    text = coupling_to_mermaid(coupling, seams, [("c", "d")], line_counts, max_edges=10)
+    assert text is not None
+    assert "graph TD" in text
+    assert "linkStyle 0" in text and "stroke-dasharray" in text
+    assert "linkStyle 1" in text and "#95a5a6" in text
+
+
+def test_coupling_to_mermaid_respects_max_edges():
+    coupling = [
+        {"a": f"f{i}.py", "b": f"g{i}.py", "shared": 4, "degree": 50 + i}
+        for i in range(5)
+    ]
+    line_counts = {f: {"lines": 1} for pair in coupling for f in (pair["a"], pair["b"])}
+    text = coupling_to_mermaid(coupling, [], [], line_counts, max_edges=2)
+    assert text is not None
+    assert text.count(" --> ") == 2
+    assert "linkStyle 0" in text
+    assert "linkStyle 1" in text
+    assert "linkStyle 2" not in text
+
+
+def test_refactor_ego_mermaid_highlights_file():
+    coupling = [
+        {"a": "hub.py", "b": "a.py", "shared": 6, "degree": 90},
+        {"a": "hub.py", "b": "b.py", "shared": 4, "degree": 70},
+        {"a": "hub.py", "b": "c.py", "shared": 3, "degree": 50},
+    ]
+    text = refactor_ego_mermaid("hub.py", coupling, [], max_neighbors=2)
+    assert text is not None
+    assert "classDef focal" in text
+    assert "class hub_py focal" in text
+    assert "hub_py -->|90%| a_py" in text
+    assert "hub_py -->|70%| b_py" in text
+    assert "c_py" not in text
+
+
+def test_ticket_seam_subgraph():
+    line_counts = {"x.py": {"lines": 10}, "y.py": {"lines": 10}, "z.py": {"lines": 5}}
+    text = seam_pair_mermaid("x.py", "y.py", 75, [("x", "z")], line_counts, max_import_edges=4)
+    assert text is not None
+    assert "graph TD" in text
+    assert "75% coupled" in text
+    assert "stroke-dasharray" in text
 
 
 def test_dep_report_has_color_legend(tmp_repo_with_imports: Path):

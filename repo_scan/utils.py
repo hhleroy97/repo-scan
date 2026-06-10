@@ -47,6 +47,12 @@ def strip_emoji(text: str) -> str:
     return re.sub(r"  +", " ", _EMOJI_RE.sub("", text)).strip()
 
 
+def chart_label(text: str, max_len: int = 18) -> str:
+    """Basename label for Mermaid nodes (truncated, quote-safe)."""
+    label = text.split("/")[-1].replace('"', "'")
+    return label if len(label) <= max_len else label[:max_len - 1] + "…"
+
+
 def ok(msg: str):    print(fmt(f"  ✓ {msg}", GREEN))
 def warn(msg: str):  print(fmt(f"  ⚠ {msg}", YELLOW))
 def err(msg: str):   print(fmt(f"  ✗ {msg}", RED))

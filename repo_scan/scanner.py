@@ -192,7 +192,7 @@ def _maybe_run_tickets(ctx: ScanContext) -> None:
     created, resolved = generate_tickets(ctx.root, ctx.cfg, {
         "line_counts": ctx.line_counts, "ranking": ctx.ranking, "churn": ctx.churn,
         "complexity": ctx.complexity, "tested": ctx.tested, "behavior": ctx.behavior,
-        "seams": ctx.seams,
+        "seams": ctx.seams, "py_edges": ctx.py_edges, "ts_edges": ctx.ts_edges,
     })
     if ctx.quiet:
         return

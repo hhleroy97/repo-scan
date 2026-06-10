@@ -25,8 +25,13 @@ rejected — is never re-proposed, so saying no sticks.
 import re
 from pathlib import Path
 
+from .graphs import refactor_ego_mermaid, seam_pair_mermaid
 from .radar.sources import frontmatter, parse_frontmatter
 from .utils import now_date, ok, write_doc
+
+_SCAN_PROPOSAL_KEYS = (
+    "line_counts", "ranking", "churn", "complexity", "tested", "behavior", "seams",
+)
 
 STATUSES = ["proposed", "approved", "in-progress", "done", "rejected"]
 BOARD_COLUMNS = [("Proposed", "proposed"), ("Approved", "approved"),
@@ -195,14 +200,71 @@ def next_ticket_num(tickets: list[dict]) -> int:
     return max(nums, default=0) + 1
 
 
-def write_ticket(root: Path, cfg: dict, ticket: dict) -> Path:
-    """Write a new ticket file. Never overwrites an existing one."""
+def ticket_evidence_diagrams(fingerprint: str, signals: dict, cfg: dict) -> list[str]:
+    """Mermaid blocks and callouts for auto-ticket Evidence sections.
+
+    Maps fingerprint prefix to diagram kind: ``refactor:{file}`` ego subgraph,
+    ``seam:{a}+{b}`` pair subgraph, ``size:{file}`` health-report callout only.
+    ``stale:`` and ``silo:`` tickets get no body diagrams. Returns empty when
+    ``ticket_diagrams_enabled`` is false. Diagrams are frozen at ticket creation.
+    """
+    if not cfg.get("ticket_diagrams_enabled", True):
+        return []
+    if ":" not in fingerprint:
+        return []
+    kind, target = fingerprint.split(":", 1)
+    coupling = signals.get("behavior", {}).get("coupling", [])
+    ranking = signals.get("ranking", [])
+    line_counts = signals.get("line_counts", {})
+    py_edges = signals.get("py_edges", [])
+    ts_edges = signals.get("ts_edges", [])
+    import_edges = py_edges + ts_edges
+    max_neighbors = cfg.get("diagram_max_ticket_neighbors", 4)
+    lines: list[str] = []
+
+    if kind == "refactor":
+        chart = refactor_ego_mermaid(target, coupling, ranking, max_neighbors=max_neighbors)
+        if chart:
+            lines += ["```mermaid", chart, "```", ""]
+    elif kind == "seam" and "+" in target:
+        a, b = target.split("+", 1)
+        degree = next(
+            (c["degree"] for c in coupling if {c["a"], c["b"]} == {a, b}),
+            0,
+        )
+        chart = seam_pair_mermaid(
+            a, b, degree, import_edges, line_counts,
+            max_import_edges=max_neighbors * 2,
+        )
+        if chart:
+            lines += ["```mermaid", chart, "```", ""]
+    elif kind == "size":
+        lines += [
+            f"> [!note] Oversized file — see [[reports/health#file-sizes]] "
+            f"for `{target}` size and thresholds.",
+            "",
+        ]
+    return lines
+
+
+def write_ticket(root: Path, cfg: dict, ticket: dict,
+                 signals: dict | None = None) -> Path:
+    """Write a new ticket file. Never overwrites an existing one.
+
+    When ``signals`` is provided for scan-origin tickets, inserts a ``## Evidence``
+    section (Mermaid diagrams keyed by fingerprint) before ``## Notes``.
+    """
     tdir = tickets_dir(root, cfg)
     tdir.mkdir(parents=True, exist_ok=True)
     path = tdir / f"{ticket['id']}.md"
     if path.exists():
         return path
     criteria = ticket.get("criteria", [])
+    evidence_body: list[str] = []
+    if signals and ticket.get("origin", "auto") != "human":
+        fp = ticket.get("fingerprint", "")
+        if fp:
+            evidence_body = ticket_evidence_diagrams(fp, signals, cfg)
     lines = [
         frontmatter({
             "id": ticket["id"],
@@ -227,6 +289,9 @@ def write_ticket(root: Path, cfg: dict, ticket: dict) -> Path:
         "",
     ]
     lines += [f"- [ ] {c}" for c in criteria] or ["- [ ] define done"]
+    if evidence_body:
+        lines += ["", "## Evidence", "", f"_Created {now_date()} from scan data_", ""]
+        lines += evidence_body
     lines += ["", "## Notes", "", "_yours to annotate_", ""]
     write_doc(path, "\n".join(lines), root)
     return path
@@ -470,7 +535,8 @@ def generate_tickets(root: Path, cfg: dict, signals: dict) -> tuple[int, list[di
     cleared, so they're likely ready to close."""
     existing = load_tickets(root, cfg)
     known = {t.get("fingerprint") for t in existing if t.get("fingerprint")}
-    proposals = propose_from_scan(cfg, **signals)
+    scan_kw = {k: signals[k] for k in _SCAN_PROPOSAL_KEYS if k in signals}
+    proposals = propose_from_scan(cfg, **scan_kw)
     current_fps = {p["fingerprint"] for p in proposals}
     fresh = [p for p in proposals if p["fingerprint"] not in known]
     cap = cfg.get("tickets_max_new_per_scan", 5)
@@ -478,7 +544,7 @@ def generate_tickets(root: Path, cfg: dict, signals: dict) -> tuple[int, list[di
     created = 0
     for p in fresh[:cap]:
         p["id"] = f"tkt-{num + created:04d}"
-        write_ticket(root, cfg, p)
+        write_ticket(root, cfg, p, signals=signals)
         created += 1
 
     resolved = [t for t in existing

@@ -51,7 +51,11 @@ def write_scan_reports(root: Path, cfg: dict, payload: ReportPayload) -> None:
         root, cfg, payload.line_counts, payload.churn, payload.complexity,
         behavior=payload.behavior,
     )
-    write_coupling_report(root, cfg, payload.coupling, payload.seams)
+    write_coupling_report(
+        root, cfg, payload.coupling, payload.seams,
+        py_edges=payload.py_edges, ts_edges=payload.ts_edges,
+        line_counts=payload.line_counts,
+    )
     write_dep_report(root, cfg, payload.ts_mermaid, payload.py_mermaid, payload.ts_reason)
     write_call_report(root, cfg, payload.c_mermaid)
     write_index(

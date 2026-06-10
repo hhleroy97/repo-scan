@@ -55,7 +55,7 @@ docs/
     health.md                 # file sizes, complexity, churn, knowledge map (bus factor)
     dependencies.md           # Mermaid dep graphs (TS + Python), PageRank-tinted
     calls.md                  # Mermaid call graphs (C)
-    coupling.md               # change coupling + hidden seams (coupled, no import edge)
+    coupling.md               # coupling network diagram + table; hidden seams flagged
     trend.md                  # scan-over-scan metric history (capped log)
   tickets/
     tkt-NNNN.md               # auto-proposed + human tickets (YAML frontmatter)
@@ -79,18 +79,26 @@ Java/Go and friends on the same A–F rank scale. Untested candidates get a 2x
 priority boost in the RADAR trigger feed.
 
 Behavioral analysis (one `git log --numstat` pass) adds change coupling, per-file
-ownership/bus-factor, and code age. Coupled pairs with no import edge are flagged
-as hidden seams in `reports/coupling.md`.
+ownership/bus-factor, and code age. `reports/coupling.md` renders the top coupled
+pairs as a Mermaid network (dashed red edges = hidden seams with no import link;
+gray = import-backed). Coupled pairs with no import edge are also listed in the
+table below the diagram.
 
 ## Tickets
 
 Every scan auto-proposes tickets (refactor, hidden seam, oversized file, stale
 hub, knowledge silo) into `docs/tickets/` — one markdown file each, with YAML
-frontmatter (Dataview-queryable) and acceptance criteria. Review them in
-Obsidian: edit `status` (`proposed → approved → in-progress → done`/`rejected`)
-or drag cards on the generated Kanban `board.md`. Rejected fingerprints are
-never re-proposed. Humans add tickets the same way — any `.md` file with a
-`status` in its frontmatter. Disable with `"tickets_enabled": false`; cap new
+frontmatter (Dataview-queryable) and acceptance criteria. Auto-tickets include a
+`## Evidence` section with Mermaid diagrams (coupling ego graph, seam pair, or
+size callout) frozen at creation time. `reports/coupling.md` opens with a
+coupling network diagram (dashed red = hidden seam, gray = import-backed).
+Disable ticket diagrams with `"ticket_diagrams_enabled": false`; cap coupling
+edges with `diagram_max_coupling_edges` and refactor neighbors with
+`diagram_max_ticket_neighbors`. Review tickets in Obsidian: edit `status`
+(`proposed → approved → in-progress → done`/`rejected`) or drag cards on the
+generated Kanban `board.md`. Rejected fingerprints are never re-proposed.
+Humans add tickets the same way — any `.md` file with a `status` in its
+frontmatter. Disable auto-tickets with `"tickets_enabled": false`; cap new
 tickets per scan with `tickets_max_new_per_scan`.
 
 Review from the terminal too:

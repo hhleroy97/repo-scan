@@ -1,13 +1,137 @@
-"""Dependency and call graph generation (Mermaid output)."""
+"""Dependency and call graph generation (Mermaid output).
+
+Coupling subgraph builders normalize paths with ``behavior._norm_node`` and
+resolve import edges via ``ranking._module_to_file`` — the same rules as
+``hidden_seams``. ``linkStyle`` indices are assigned after pairs are sorted
+and capped so they stay aligned with rendered edges.
+"""
 
 import json
 from pathlib import Path
 
-from .utils import run, tool_available
+from .behavior import _norm_node
+from .ranking import _module_to_file
+from .utils import chart_label, run, tool_available
 
 
 def _node_id(name: str) -> str:
     return name.replace(".", "_").replace("/", "_").replace("-", "_")
+
+
+def _seam_key(a: str, b: str) -> frozenset[str]:
+    return frozenset((_norm_node(a), _norm_node(b)))
+
+
+def _seam_keys(seams: list[dict]) -> set[frozenset[str]]:
+    return {_seam_key(s["a"], s["b"]) for s in seams}
+
+
+def _resolved_file_edges(import_edges: list[tuple[str, str]],
+                         line_counts: dict) -> list[tuple[str, str]]:
+    """Map module/path import edges to repo-relative file paths."""
+    resolved: list[tuple[str, str]] = []
+    for src, dst in import_edges:
+        src_f = _module_to_file(src, line_counts)
+        dst_f = _module_to_file(dst, line_counts)
+        if src_f and dst_f and src_f != dst_f:
+            resolved.append((src_f, dst_f))
+    return resolved
+
+
+def _one_hop_import_edges(files: set[str], file_edges: list[tuple[str, str]],
+                          *, max_edges: int) -> list[tuple[str, str]]:
+    """Import edges touching any file in ``files`` (1-hop around the set)."""
+    targets = {_norm_node(f) for f in files}
+    seen: set[tuple[str, str]] = set()
+    out: list[tuple[str, str]] = []
+    for src, dst in file_edges:
+        if _norm_node(src) in targets or _norm_node(dst) in targets:
+            key = (src, dst)
+            if key not in seen:
+                seen.add(key)
+                out.append(key)
+                if len(out) >= max_edges:
+                    break
+    return out
+
+
+def coupling_to_mermaid(coupling: list[dict], seams: list[dict],
+                        import_edges: list[tuple[str, str]], line_counts: dict,
+                        *, max_edges: int) -> str | None:
+    """Top-N change-coupling pairs as ``graph TD``.
+
+    Seam pairs (no import edge) get dashed red ``linkStyle``; import-backed
+    pairs use solid gray. Node IDs from ``_node_id``; labels from ``chart_label``.
+    """
+    pairs = coupling[:max_edges]
+    if not pairs:
+        return None
+    seam_set = _seam_keys(seams)
+    nodes = sorted({n for c in pairs for n in (c["a"], c["b"])})
+    lines = ["graph TD"]
+    for n in nodes:
+        lines.append(f'  {_node_id(n)}["{chart_label(n)}"]')
+    for c in pairs:
+        na, nb = _node_id(c["a"]), _node_id(c["b"])
+        lines.append(f"  {na} --> {nb}")
+    for i, c in enumerate(pairs):
+        if _seam_key(c["a"], c["b"]) in seam_set:
+            lines.append(f"linkStyle {i} stroke:#c0392b,stroke-width:2px,stroke-dasharray: 5 5")
+        else:
+            lines.append(f"linkStyle {i} stroke:#95a5a6,stroke-width:1px")
+    return "\n".join(lines)
+
+
+def seam_pair_mermaid(a: str, b: str, degree: int,
+                      import_edges: list[tuple[str, str]], line_counts: dict,
+                      *, max_import_edges: int = 8) -> str | None:
+    """Two-node coupling subgraph for a hidden seam ticket.
+
+    The coupling edge is styled as a seam; optional 1-hop import edges from
+    resolved ``py_edges``/``ts_edges`` are drawn in gray (capped).
+    """
+    file_edges = _resolved_file_edges(import_edges, line_counts)
+    hop = _one_hop_import_edges({a, b}, file_edges, max_edges=max_import_edges)
+    lines = [
+        "graph TD",
+        f'  {_node_id(a)}["{chart_label(a)}"]',
+        f'  {_node_id(b)}["{chart_label(b)}"]',
+        f"  {_node_id(a)} -->|{degree}% coupled| {_node_id(b)}",
+    ]
+    edge_idx = 0
+    lines.append(f"linkStyle {edge_idx} stroke:#c0392b,stroke-width:2px,stroke-dasharray: 5 5")
+    for src, dst in hop:
+        edge_idx += 1
+        lines.append(f"  {_node_id(src)} --> {_node_id(dst)}")
+        lines.append(f"linkStyle {edge_idx} stroke:#95a5a6,stroke-width:1px")
+    return "\n".join(lines)
+
+
+def refactor_ego_mermaid(file: str, coupling: list[dict], ranking: list[dict],
+                         *, max_neighbors: int) -> str | None:
+    """Ego subgraph for a refactor ticket: focal file plus top coupled neighbors."""
+    neighbors: list[tuple[str, int]] = []
+    for c in coupling:
+        if c["a"] == file:
+            neighbors.append((c["b"], c["degree"]))
+        elif c["b"] == file:
+            neighbors.append((c["a"], c["degree"]))
+    neighbors.sort(key=lambda x: (-x[1], x[0]))
+    picked = neighbors[:max_neighbors]
+    if not picked and file not in {r["file"] for r in ranking}:
+        return None
+    nodes = [file] + [n for n, _ in picked]
+    lines = [
+        "graph TD",
+        "  classDef focal fill:#3498db,stroke:#2980b9,color:#fff",
+    ]
+    for n in nodes:
+        lines.append(f'  {_node_id(n)}["{chart_label(n)}"]')
+    for i, (neighbor, deg) in enumerate(picked):
+        lines.append(f"  {_node_id(file)} -->|{deg}%| {_node_id(neighbor)}")
+        lines.append(f"linkStyle {i} stroke:#95a5a6,stroke-width:1px")
+    lines.append(f"  class {_node_id(file)} focal")
+    return "\n".join(lines)
 
 
 def edges_to_mermaid(edges: list[tuple[str, str]],

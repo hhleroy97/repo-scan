@@ -50,7 +50,9 @@ def _build_writers_golden(repo: Path, cfg: dict) -> dict[str, str]:
 
     ranking = [dict(r) for r in RANKING]
     writers.write_health_report(repo, cfg, LINE_COUNTS, CHURN, COMPLEXITY, behavior=BEHAVIOR)
-    writers.write_coupling_report(repo, cfg, COUPLING, SEAMS)
+    writers.write_coupling_report(repo, cfg, COUPLING, SEAMS,
+                                py_edges=PY_EDGES, ts_edges=TS_EDGES,
+                                line_counts=LINE_COUNTS)
     writers.write_dep_report(repo, cfg, TS_MERMAID, PY_MERMAID)
     writers.write_call_report(repo, cfg, C_MERMAID)
     writers.write_index(repo, cfg, LINE_COUNTS, LANGUAGES, ranking, TREE, delta=DELTA)

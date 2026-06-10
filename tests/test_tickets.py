@@ -14,6 +14,7 @@ from repo_scan.tickets import (
     parse_ticket,
     propose_from_scan,
     set_ticket_status,
+    ticket_evidence_diagrams,
     write_board,
     write_ticket,
 )
@@ -21,7 +22,10 @@ from repo_scan.tickets import (
 
 def _signals(**overrides) -> dict:
     base = {
-        "line_counts": {"big.py": {"lines": 700, "bytes": 20000}},
+        "line_counts": {"big.py": {"lines": 700, "bytes": 20000},
+                        "hot.py": {"lines": 100, "bytes": 3000},
+                        "a.py": {"lines": 50, "bytes": 1500},
+                        "b.py": {"lines": 50, "bytes": 1500}},
         "ranking": [],
         "churn": [{"file": "hot.py", "commits": 12}],
         "complexity": [{"file": "hot.py", "name": "f", "rank": "D", "complexity": 25, "lineno": 1}],
@@ -163,6 +167,90 @@ def test_approve_blocked_without_valid_criteria(tmp_repo: Path):
     })
     with pytest.raises(ValueError, match="acceptance criteria"):
         set_ticket_status(tmp_repo, cfg, "tkt-0001", "approved")
+
+
+def test_write_ticket_evidence_diagrams(tmp_repo: Path):
+    cfg = dict(DEFAULT_CONFIG)
+    signals = _signals(
+        seams=[{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80}],
+        behavior={"coupling": [{"a": "hot.py", "b": "a.py", "shared": 4, "degree": 70}],
+                  "ownership": [], "age_days": {}},
+        py_edges=[],
+        ts_edges=[],
+        line_counts={"hot.py": {"lines": 100}, "a.py": {"lines": 50},
+                     "b.py": {"lines": 50}, "big.py": {"lines": 700}},
+    )
+    write_ticket(tmp_repo, cfg, {
+        "id": "tkt-0001",
+        "title": "Refactor hot.py",
+        "fingerprint": "refactor:hot.py",
+        "why": "hot",
+        "criteria": ["done"],
+    }, signals=signals)
+    text = (tmp_repo / "docs" / "tickets" / "tkt-0001.md").read_text()
+    assert "## Evidence" in text
+    assert "```mermaid" in text
+    assert "graph TD" in text
+    assert "class hot_py focal" in text
+
+    disabled = dict(cfg, ticket_diagrams_enabled=False)
+    write_ticket(tmp_repo, disabled, {
+        "id": "tkt-0002",
+        "title": "Seam",
+        "fingerprint": "seam:a.py+b.py",
+        "why": "seam",
+        "criteria": ["done"],
+    }, signals=signals)
+    no_ev = (tmp_repo / "docs" / "tickets" / "tkt-0002.md").read_text()
+    assert "## Evidence" not in no_ev
+
+
+def test_size_ticket_evidence_callout_only(tmp_repo: Path):
+    cfg = dict(DEFAULT_CONFIG)
+    signals = _signals(line_counts={"big.py": {"lines": 700}})
+    write_ticket(tmp_repo, cfg, {
+        "id": "tkt-0003",
+        "title": "Split big.py",
+        "fingerprint": "size:big.py",
+        "why": "big",
+        "criteria": ["done"],
+    }, signals=signals)
+    text = (tmp_repo / "docs" / "tickets" / "tkt-0003.md").read_text()
+    assert "## Evidence" in text
+    assert "[[reports/health#file-sizes]]" in text
+    assert "```mermaid" not in text
+
+
+def test_evidence_no_quadrant_chart(tmp_repo: Path):
+    cfg = dict(DEFAULT_CONFIG)
+    signals = _signals()
+    for fp in ("refactor:hot.py", "seam:a.py+b.py"):
+        tid = "tkt-0101" if fp.startswith("refactor") else "tkt-0102"
+        write_ticket(tmp_repo, cfg, {
+            "id": tid,
+            "title": fp,
+            "fingerprint": fp,
+            "why": "w",
+            "criteria": ["done"],
+        }, signals={**signals, "seams": [{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80}],
+                    "behavior": {"coupling": [{"a": "a.py", "b": "b.py", "shared": 5, "degree": 80},
+                                              {"a": "hot.py", "b": "a.py", "shared": 4, "degree": 70}],
+                                 "ownership": [], "age_days": {}}})
+    for tid in ("tkt-0101", "tkt-0102"):
+        body = (tmp_repo / "docs" / "tickets" / f"{tid}.md").read_text()
+        evidence = body.split("## Evidence", 1)[1].split("## Notes", 1)[0]
+        assert "quadrantChart" not in evidence
+        assert "xychart-beta" not in evidence
+
+
+def test_ticket_evidence_diagrams_unit():
+    signals = _signals(
+        behavior={"coupling": [{"a": "hot.py", "b": "n.py", "shared": 4, "degree": 60}],
+                  "ownership": [], "age_days": {}},
+    )
+    lines = ticket_evidence_diagrams("refactor:hot.py", signals, DEFAULT_CONFIG)
+    assert any("graph TD" in l for l in lines)
+    assert ticket_evidence_diagrams("stale:x.py", signals, DEFAULT_CONFIG) == []
 
 
 def test_scan_proposes_tickets_end_to_end(tmp_repo_with_imports: Path):

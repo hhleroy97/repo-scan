@@ -58,6 +58,14 @@
   Coupled pairs **without** an import edge are hidden seams — an implicit
   contract the dependency graph can't see.
   
+  ```mermaid
+  graph TD
+    src_app_py["app.py"]
+    src_util_py["util.py"]
+    src_app_py --> src_util_py
+  linkStyle 0 stroke:#c0392b,stroke-width:2px,stroke-dasharray: 5 5
+  ```
+  
   > [!warning] 1 hidden seam(s): coupled in history, no import edge
   > - `src/app.py` ↔ `src/util.py` (67% over 4 commits)
   
@@ -408,7 +416,10 @@
       "silo_min_share": 0.9,
       "stale_days": 180,
       "tickets_enabled": true,
-      "tickets_max_new_per_scan": 5
+      "tickets_max_new_per_scan": 5,
+      "ticket_diagrams_enabled": true,
+      "diagram_max_coupling_edges": 20,
+      "diagram_max_ticket_neighbors": 4
     }
   }
   
