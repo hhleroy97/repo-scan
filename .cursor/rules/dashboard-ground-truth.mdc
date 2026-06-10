@@ -1,0 +1,59 @@
+---
+description: Keep hub Dashboard in sync with canonical RADAR loop, rules, and vault metrics
+alwaysApply: true
+---
+
+# Dashboard ground-truth sync
+
+The mobile hub **Dashboard** is a **derived view** of canonical docs — not a second source of truth. When loop design, gates, explicit rules, or valuable metrics change, update the dashboard in the same change (or immediately after).
+
+## Canonical sources (edit these first)
+
+| Topic | Ground truth |
+|-------|----------------|
+| Agentic loop, stages, gates | `docs/architecture/agentic-loop.md` |
+| Strategy, hierarchy, balance metrics | `docs/NORTH_STAR.md` |
+| Vault provenance contract (E/L/C/F) | `docs/planning/phase-5-week5.md`, provenance module |
+| Hub graph roadmap | `docs/architecture/graph-viewer-roadmap.md` |
+
+## Dashboard surfaces (must stay aligned)
+
+| Surface | Implementation |
+|---------|----------------|
+| Mermaid agentic loop | `repo_scan/hub/agentic_loop.py` → `agentic_loop_mermaid` in `build_state()` |
+| Loop render + live highlight | `repo_scan/hub/ui/_graph_loop.py` (`_STAGE_MARKS` / gate keys) |
+| Vault audit panels | `repo_scan/hub/ui/_graph_dashboard.py`, `repo_scan/provenance.py` |
+| Graph controls stack | `repo_scan/hub/ui/_graph.py` (`rGraphControlsStack`, `.graph-controls-stack`) |
+| Context panels (loop + untracked) | `repo_scan/hub/ui/_graph.py` (`rGraphContextPanels`, `.graph-context-panels`) |
+| Graph API scores / chain | `repo_scan/hub/graph.py` |
+| State contract | `repo_scan/hub/contract.py` (`HUB_STATE_KEYS`) |
+| Trends / scan.json metrics | `repo_scan/trends.py`, `repo_scan/writers.py` (`vault_health`) |
+
+## When ground truth shifts — checklist
+
+1. **Update canonical doc** (agentic-loop, NORTH_STAR, or planning spec).
+2. **Mirror in dashboard code** — stages, gate names, lifecycle steps, metric names must match docs verbatim (e.g. `post_analyze`, not informal aliases).
+3. **Extend Mermaid** in `agentic_loop.py` if stages/subgraphs change; keep `graph TD` vertical.
+4. **Sync live-highlight maps** in `_graph_loop.py` stage/gate matchers with `progress()` strings in `radar/pipeline.py` and `radar/act.py`.
+5. **Add or update tests**: `tests/test_agentic_loop_mermaid.py`, `tests/test_hub_ui.py` (byte parity hash), `tests/test_provenance.py` as applicable.
+6. **Bump `tests/test_hub_ui.py` `_DASHBOARD_HTML_SHA256`** after UI fragment changes.
+7. **Restart `radar serve`** so `boot` id refreshes client JS/HTML.
+
+## Valuable metrics to surface on Dashboard
+
+Keep these visible when they exist in `scan.json` / `vault_health`:
+
+- Vault coverage %, score histogram, orphans by kind
+- Signal matrix (evidence / linked / cited / fresh) per doc kind
+- Untracked ranked code (inverse audit queue)
+- Trend deltas (`vault_coverage_pct`, `untracked_code_count`)
+- Live run stage, pending gates, telemetry burn (Activity tab)
+
+Do not add dashboard-only metrics without a `scan.json` or `vault_health` backing field.
+
+## Anti-patterns
+
+- Documenting a new gate only in UI, not in `agentic-loop.md`
+- Changing `progress()` stage labels without updating `_STAGE_MARKS`
+- Editing `docs/reports/*.md` or PM cards to “fix” truth instead of upstream vault docs
+- CDN for Mermaid — vendored `repo_scan/hub/static/mermaid.min.js` only

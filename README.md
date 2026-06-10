@@ -337,13 +337,19 @@ Autonomy is granted in policy, not all at once:
 
 `radar serve` runs a zero-dependency stdlib HTTP server (plus the daemon in a
 background thread) and prints a tokenized URL. The dashboard is one
-self-contained mobile-first page: the **Now** tab shows open tickets as PM
-glance rows (`card.outcome`, why line, criteria count) with a link to the full
-**Tickets** tab — three-tier cards there (expand for checklist, edit criteria
-when not ready, **View ticket** for full markdown); approve and create actions
-stay on Tickets (and in `radar top` for terminal use); live
-stats and runs; pending gates with **Approve / Reject** buttons and the full
-analysis one tap away; the ticket board; and the decision trail. Decisions land in a file-backed inbox
+self-contained mobile-first page with five tabs: the **Now** tab shows open
+tickets as PM glance rows (`card.outcome`, why line, criteria count) with a
+link to the full **Tickets** tab — three-tier cards there (expand for
+checklist, edit criteria when not ready, **View ticket** for full markdown);
+approve and create actions stay on Tickets (and in `radar top` for terminal
+use); live stats and runs; **Gates** for pending approvals with **Approve /
+Reject** buttons and the full analysis one tap away; **Activity** for the
+decision trail and LLM burn; and **Dashboard** for vault audit from
+`scan.json` (coverage %, knowledge debt, E/L/C/F signal matrix, score
+histogram, ranked untracked code), a vendored Mermaid agentic-loop diagram
+with live run highlighting, and a pan/zoom provenance canvas (`GET /api/graph`;
+tap a node for `/api/graph/chain`). The legacy `#graph` hash redirects to
+`#dashboard`. Decisions land in a file-backed inbox
 (`docs/.radar/decisions/`); the daemon resumes paused loops on its next poll.
 Loops checkpoint per stage, so a resume skips completed LLM calls.
 

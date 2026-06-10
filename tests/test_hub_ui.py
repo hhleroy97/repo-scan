@@ -184,8 +184,147 @@ def test_badge_cls_injected_from_contract(contract_block):
     assert "TICKET_BADGE_CLS" in DASHBOARD_HTML
 
 
+def test_dashboard_has_knowledge_tab():
+    assert 'data-tab="dashboard"' in DASHBOARD_HTML
+    assert "Knowledge dashboard" in DASHBOARD_HTML
+    assert "function rGraph()" in DASHBOARD_HTML
+    assert "function mountGraph()" in DASHBOARD_HTML
+    assert "API_GRAPH" in DASHBOARD_HTML
+    assert "graph-wrap" in DASHBOARD_HTML
+
+
+def test_dashboard_has_audit_panels():
+    assert "function rGraphDashboard()" in DASHBOARD_HTML
+    assert "Signal coverage" in DASHBOARD_HTML
+    assert "function signalGlyphs(" in DASHBOARD_HTML
+    assert "dash-matrix" in DASHBOARD_HTML
+    assert "Score distribution" in DASHBOARD_HTML
+    assert "Untracked code" in DASHBOARD_HTML
+    assert "graphLayer==='coverage'" in DASHBOARD_HTML
+    assert "scoreRingColor" in DASHBOARD_HTML
+    assert "function graphEdgeStyle(" in DASHBOARD_HTML
+
+
+def test_dashboard_has_mermaid_agentic_loop():
+    assert "function rGraphPipeline()" in DASHBOARD_HTML
+    assert "function renderAgenticLoopMermaid()" in DASHBOARD_HTML
+    assert "agentic-loop-host" in DASHBOARD_HTML
+    assert "agentic_loop_mermaid" in DASHBOARD_HTML
+    assert "/static/mermaid.min.js" in DASHBOARD_HTML
+    assert "mermaid-wrap" in DASHBOARD_HTML
+
+
+def test_dashboard_has_chain_panel():
+    assert "function openGraphChain(" in DASHBOARD_HTML
+    assert "API_GRAPH_CHAIN" in DASHBOARD_HTML
+    assert "graph-chain" in DASHBOARD_HTML
+    assert "dash-sigs" in DASHBOARD_HTML
+
+
+def test_dashboard_has_sparkline_and_delta():
+    assert "function sparkSVG(" in DASHBOARD_HTML
+    assert "function deltaTag(" in DASHBOARD_HTML
+    assert "trend_sparkline" in DASHBOARD_HTML
+    assert "vault_delta" in DASHBOARD_HTML
+
+
+def test_dashboard_has_knowledge_debt_card():
+    assert "knowledge debt" in DASHBOARD_HTML
+    assert "knowledge_debt" in DASHBOARD_HTML
+
+
+def test_dashboard_has_approved_unhealthy_badge():
+    assert "approved_unhealthy" in DASHBOARD_HTML
+    assert "approved unhealthy" in DASHBOARD_HTML
+
+
+def test_dashboard_has_thin_links_section():
+    assert "function rDashThinLinks()" in DASHBOARD_HTML
+    assert "thin_citations" in DASHBOARD_HTML
+    assert "Fragile code links" in DASHBOARD_HTML
+
+
+def test_dashboard_has_trend_chart():
+    assert "function rDashTrendChart()" in DASHBOARD_HTML
+    assert "Scan trend" in DASHBOARD_HTML
+    assert "viewBox" in DASHBOARD_HTML
+
+
+def test_dashboard_matrix_cells_are_clickable():
+    start = DASHBOARD_HTML.index("function rDashMatrix()")
+    end = DASHBOARD_HTML.index("function rDashHistogram()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "onclick" in src
+    assert "setGraphMissFilter" in src
+
+
+def test_graph_controls_stack_contiguous():
+    start = DASHBOARD_HTML.index("function rGraph()")
+    end = DASHBOARD_HTML.index("function setGraphLayer(", start)
+    src = DASHBOARD_HTML[start:end]
+    ctx_idx = src.index("rGraphContextPanels()")
+    stack_idx = src.index("rGraphControlsStack()")
+    wrap_idx = src.index("graph-wrap")
+    assert ctx_idx < stack_idx < wrap_idx
+    between_ctx_stack = src[ctx_idx:stack_idx]
+    between_stack_wrap = src[stack_idx:wrap_idx]
+    assert "Provenance graph" not in between_ctx_stack
+    assert "Provenance graph" not in between_stack_wrap
+    assert '<div class="section"' not in between_stack_wrap
+
+
+def test_graph_controls_stack_markup():
+    start = DASHBOARD_HTML.index("function rGraphControlsStack()")
+    end = DASHBOARD_HTML.index("function rGraph()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "graph-controls-stack" in src
+    tabs_idx = src.index("graph-tabs")
+    toolbar_idx = src.index("graph-toolbar")
+    assert tabs_idx < toolbar_idx
+    filters_idx = src.find("dash-filters")
+    if filters_idx >= 0:
+        assert filters_idx < tabs_idx
+
+
+def test_graph_context_panels_above_controls():
+    rgraph_start = DASHBOARD_HTML.index("function rGraph()")
+    rgraph_end = DASHBOARD_HTML.index("function setGraphLayer(", rgraph_start)
+    rgraph_src = DASHBOARD_HTML[rgraph_start:rgraph_end]
+    assert rgraph_src.index("rGraphContextPanels()") < rgraph_src.index(
+        "rGraphControlsStack()"
+    )
+    ctx_start = DASHBOARD_HTML.index("function rGraphContextPanels()")
+    ctx_end = DASHBOARD_HTML.index("function rGraphControlsStack()", ctx_start)
+    ctx_src = DASHBOARD_HTML[ctx_start:ctx_end]
+    assert ctx_src.index("rGraphPipeline()") < ctx_src.index("rDashUntracked()")
+    pipe_start = DASHBOARD_HTML.index("function rGraphPipeline()")
+    pipe_end = DASHBOARD_HTML.index("function rGraphContextPanels()", pipe_start)
+    untr_start = DASHBOARD_HTML.index("function rDashUntracked()")
+    untr_end = DASHBOARD_HTML.index("function rDashThinLinks()", untr_start)
+    assert "agentic-loop-host" in DASHBOARD_HTML[pipe_start:pipe_end]
+    assert "Untracked code" in DASHBOARD_HTML[untr_start:untr_end]
+
+
+def test_graph_controls_stack_css():
+    css_start = DASHBOARD_HTML.index("<style>")
+    css_end = DASHBOARD_HTML.index("</style>", css_start)
+    css = DASHBOARD_HTML[css_start:css_end]
+    assert ".graph-controls-stack" in css
+    assert "flex-direction:column" in css
+    assert ".graph-controls-stack .dash-filters" in css
+    assert "margin-bottom:0" in css
+
+
+def test_untracked_summary_opens_panel():
+    start = DASHBOARD_HTML.index("function rDashSummary()")
+    end = DASHBOARD_HTML.index("function rDashMatrix()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "openUntrackedPanel()" in src
+    assert 'id="dash-untracked-panel"' in DASHBOARD_HTML
+
+
 _DASHBOARD_HTML_SHA256 = (
-    "e22715fbac1e95a79ff7942dd4ee8392ad95463f4a369b00f264836dc158a542"
+    "085332bd7f3361f1699e2e799ed009d91368de02f3eb327bb2e06526af537070"
 )
 _UI_PACKAGE = Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui"
 _UI_LINE_CAP = 300

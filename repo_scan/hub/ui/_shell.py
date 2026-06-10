@@ -11,6 +11,7 @@ _FRAGMENT = r"""</head>
   <a href="#gates" data-tab="gates">Gates<span class="n" id="ngates" hidden></span></a>
   <a href="#tickets" data-tab="tickets">Tickets<span class="n" id="ntickets" hidden></span></a>
   <a href="#activity" data-tab="activity">Activity</a>
+  <a href="#dashboard" data-tab="dashboard">Dashboard</a>
 </nav>
 <div id="viewer"><div class="bar">
   <button class="ghost" style="flex:none;padding:7px 14px" onclick="closeDoc()">Close</button>

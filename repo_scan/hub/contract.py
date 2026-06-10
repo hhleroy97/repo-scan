@@ -16,6 +16,8 @@ from ..tickets import OPEN_STATUSES, STATUSES
 # --- HTTP routes (server handlers and embedded dashboard fetch paths) --------
 
 API_STATE = "/api/state"
+API_GRAPH = "/api/graph"
+API_GRAPH_CHAIN = "/api/graph/chain"
 API_EVENTS = "/api/events"
 API_DOC = "/api/doc"
 API_GATE = "/api/gate"
@@ -135,6 +137,8 @@ def js_contract_block() -> str:
         f"const TICKET_STATUS_ORDER={json.dumps(TICKET_STATUS_ORDER, separators=(',', ':'))};",
         f"const TICKET_BADGE_CLS={json.dumps(TICKET_BADGE_CLS, separators=(',', ':'))};",
         f"const API_STATE={json.dumps(API_STATE)};",
+        f"const API_GRAPH={json.dumps(API_GRAPH)};",
+        f"const API_GRAPH_CHAIN={json.dumps(API_GRAPH_CHAIN)};",
         f"const API_EVENTS={json.dumps(API_EVENTS)};",
         f"const API_DOC={json.dumps(API_DOC)};",
         f"const API_GATE={json.dumps(API_GATE)};",
