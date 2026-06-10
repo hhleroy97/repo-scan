@@ -7,6 +7,7 @@
     "act_fix": "composer-2.5"
   },
   "max_parallel_acts": 2,
+  "max_parallel_loops": 3,
   "act_open_pr": true,
   "gates": { "pre_implement": "auto", "post_implement": "auto" },
   "max_acts_per_day": 50,
