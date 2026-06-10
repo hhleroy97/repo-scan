@@ -118,6 +118,10 @@ def update_pr_branch(root: Path, number: int) -> tuple[bool, str]:
         return False, "gh CLI not found on the hub machine"
     try:
         r = _gh(root, "pr", "update-branch", str(number), timeout=60)
+        if r.returncode != 0 and "unknown command" in (r.stderr or ""):
+            # gh < 2.56 has no `pr update-branch` — same operation via REST
+            r = _gh(root, "api", "-X", "PUT",
+                    f"repos/:owner/:repo/pulls/{number}/update-branch", timeout=60)
     except subprocess.TimeoutExpired:
         return False, "gh pr update-branch timed out"
     invalidate_cache()

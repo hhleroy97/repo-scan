@@ -109,6 +109,28 @@ def test_update_pr_branch(tmp_repo, fake_gh):
     assert "pr update-branch 7" in fake_gh.read_text()
 
 
+def test_update_pr_branch_falls_back_to_rest_on_old_gh(tmp_repo, tmp_path, monkeypatch):
+    """gh < 2.56 lacks `pr update-branch`; the REST endpoint does the same."""
+    argv_file = tmp_path / "old-gh-argv.txt"
+    bindir = tmp_path / "bin-old"
+    bindir.mkdir()
+    gh = bindir / "gh"
+    gh.write_text(f"""#!/bin/sh
+echo "$@" >> {argv_file}
+case "$1 $2" in
+  "pr update-branch") echo 'unknown command "update-branch" for "gh pr"' >&2; exit 1 ;;
+  "api -X") echo '{{"message":"Updating pull request branch."}}' ;;
+esac
+""")
+    gh.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
+    prs.invalidate_cache()
+    done, msg = update_pr_branch(tmp_repo, 5)
+    assert done and "checks re-running" in msg
+    argv = argv_file.read_text()
+    assert "pulls/5/update-branch" in argv
+
+
 def test_no_gh_degrades_quietly(tmp_repo, monkeypatch, tmp_path):
     empty = tmp_path / "empty-path"
     empty.mkdir()
