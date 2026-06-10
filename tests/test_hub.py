@@ -255,6 +255,21 @@ def test_server_gate_decision_roundtrip(hub_server):
     assert code == 400
 
 
+def test_build_state_live_runs(hub_server):
+    root, cfg, token, base = hub_server
+    create_run(root, cfg, PROBLEM, ticket="tkt-0001")
+    update_run(root, cfg, problem_key(PROBLEM), "running",
+               stage="[3/7] Draft", stage_detail="composer-2.5 · still working")
+    code, state = _get(f"{base}/api/state", token)
+    assert code == 200
+    assert len(state["live_runs"]) == 1
+    live = state["live_runs"][0]
+    assert live["status"] == "running"
+    assert live["stage"] == "[3/7] Draft"
+    assert "still working" in live["stage_detail"]
+    assert live["ticket"] == "tkt-0001"
+
+
 def test_build_state_includes_ticket_card_fields(hub_server):
     root, cfg, token, base = hub_server
     write_ticket(root, DEFAULT_CONFIG, {

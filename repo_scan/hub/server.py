@@ -99,6 +99,11 @@ def build_state(root: Path, cfg: dict) -> dict:
 
     from ..radar.llm import usage_summary
     from .prs import list_open_prs
+    from .state import active_runs
+    all_runs = load_runs(root, cfg)[::-1]
+    live = [{k: r.get(k) for k in ("id", "problem", "ticket", "kind", "status",
+                                    "stage", "stage_detail", "gate", "updated_at")}
+            for r in active_runs(root, cfg)]
     return {
         "version": VERSION,
         "boot": BOOT_ID,
@@ -107,11 +112,12 @@ def build_state(root: Path, cfg: dict) -> dict:
         "scan": summary,
         "gates": gates,
         "tickets": tickets,
-        "runs": load_runs(root, cfg)[::-1][:10],
+        "runs": all_runs[:10],
+        "live_runs": live,
         "activity": activity,
         "events": load_events(root, cfg, limit=15)[::-1],
         "usage": usage_summary(root, cfg),
-        "prs": list_open_prs(root),
+        "prs": list_open_prs(root, cfg),
     }
 
 
@@ -223,16 +229,18 @@ def make_handler(root: Path, cfg: dict, token: str):
                                   200 if done else 502)
 
             if url.path == "/api/pr/update":
-                from .prs import update_pr_branch
+                from .prs import remediate_pr
                 try:
                     number = int(body.get("number", 0))
                 except (TypeError, ValueError):
                     number = 0
                 if not number:
                     return self._json({"error": "number required"}, 400)
-                done, msg = update_pr_branch(root, number)
-                return self._json({"ok": done, "message": msg},
-                                  200 if done else 502)
+                result = remediate_pr(root, cfg, number)
+                # always 200 when we have a body — ok means merge-ready, not
+                # request failure; the phone needs diagnosis either way
+                return self._json(result, 200 if result.get("diagnosis") is not None
+                                  or result.get("message") else 502)
 
             if url.path == "/api/ticket/new":
                 from ..tickets import new_ticket

@@ -8,8 +8,9 @@ import pytest
 
 from repo_scan.config import load_config
 from repo_scan.hub import prs
-from repo_scan.hub.prs import (checks_state, list_open_prs, merge_pr,
-                               update_pr_branch)
+from repo_scan.hub.prs import (_probe_merge_conflicts, checks_state,
+                               invalidate_cache, list_open_prs, merge_pr,
+                               remediate_pr, update_pr_branch)
 
 PR_LIST = [
     {"number": 7, "title": "radar: implement tkt-0002", "headRefName": "radar/tkt-0002",
@@ -41,7 +42,7 @@ esac
     gh.chmod(0o755)
     (tmp_path / "prlist.json").write_text(json.dumps(PR_LIST))
     monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
-    prs.invalidate_cache()
+    invalidate_cache()
     return argv_file
 
 
@@ -134,7 +135,7 @@ def test_merge_pr_failure_propagates_message(tmp_repo, tmp_path, monkeypatch):
     gh.write_text("#!/bin/sh\necho 'GraphQL: not mergeable' >&2\nexit 1\n")
     gh.chmod(0o755)
     monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
-    prs.invalidate_cache()
+    invalidate_cache()
     done, msg = merge_pr(tmp_repo, load_config(tmp_repo), 7)
     assert not done and "not mergeable" in msg
 
@@ -160,18 +161,39 @@ esac
 """)
     gh.chmod(0o755)
     monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
-    prs.invalidate_cache()
+    invalidate_cache()
     done, msg = update_pr_branch(tmp_repo, 5)
     assert done and "checks re-running" in msg
     argv = argv_file.read_text()
     assert "pulls/5/update-branch" in argv
 
 
+def test_update_branch_fallback_when_error_on_stdout(tmp_repo, tmp_path, monkeypatch):
+    """Ubuntu gh 2.4 prints 'unknown command' on stdout, not stderr."""
+    argv_file = tmp_path / "gh24-argv.txt"
+    bindir = tmp_path / "bin-gh24"
+    bindir.mkdir()
+    gh = bindir / "gh"
+    gh.write_text(f"""#!/bin/sh
+echo "$@" >> {argv_file}
+case "$1 $2" in
+  "pr update-branch") echo 'unknown command "update-branch" for "gh pr"'; exit 1 ;;
+  "api -X") echo '{{"message":"Updating pull request branch."}}' ;;
+esac
+""")
+    gh.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
+    invalidate_cache()
+    done, msg = update_pr_branch(tmp_repo, 5)
+    assert done and "checks re-running" in msg
+    assert "pulls/5/update-branch" in argv_file.read_text()
+
+
 def test_no_gh_degrades_quietly(tmp_repo, monkeypatch, tmp_path):
     empty = tmp_path / "empty-path"
     empty.mkdir()
     monkeypatch.setenv("PATH", str(empty))
-    prs.invalidate_cache()
+    invalidate_cache()
     assert list_open_prs(tmp_repo) == []
     done, msg = merge_pr(tmp_repo, load_config(tmp_repo), 1)
     assert not done and "gh CLI" in msg
@@ -182,3 +204,81 @@ def test_build_state_includes_prs(tmp_repo, fake_gh):
     state = build_state(tmp_repo, load_config(tmp_repo))
     assert len(state["prs"]) == 3
     assert state["prs"][0]["checks"] in ("passing", "failing", "pending", "none")
+
+
+def test_probe_merge_conflicts_detects_files(tmp_repo):
+    """Local merge probe finds the file that actually conflicts."""
+    import subprocess
+
+    def run(args, cwd=tmp_repo):
+        subprocess.run(args, cwd=cwd, check=True, capture_output=True)
+
+    run(["git", "checkout", "-b", "feature/pr-probe"])
+    (tmp_repo / "clash.py").write_text("ours = 1\n")
+    run(["git", "add", "clash.py"])
+    run(["git", "commit", "-qm", "feature side"])
+    run(["git", "checkout", "main"])
+    (tmp_repo / "clash.py").write_text("theirs = 2\n")
+    run(["git", "add", "clash.py"])
+    run(["git", "commit", "-qm", "main side"])
+    remote = tmp_repo.parent / "origin.git"
+    run(["git", "clone", "--bare", "-q", str(tmp_repo), str(remote)],
+        cwd=tmp_repo.parent)
+    run(["git", "remote", "add", "origin", str(remote)])
+    run(["git", "push", "-q", "origin", "main", "feature/pr-probe"])
+
+    probe = _probe_merge_conflicts(tmp_repo, "feature/pr-probe", "main")
+    assert "clash.py" in probe["files"]
+    assert probe["excerpt"]
+    assert not probe["merged_clean"]
+
+
+def test_remediate_pr_captures_ci_log(tmp_repo, tmp_path, monkeypatch):
+    """Failing checks -> update branch + CI log diagnosis persisted on the PR."""
+    argv_file = tmp_path / "remediate-gh.txt"
+    bindir = tmp_path / "bin-rem"
+    bindir.mkdir()
+    pr_view = {
+        "number": 7, "title": "radar: implement tkt-0002",
+        "headRefName": "radar/tkt-0002", "baseRefName": "main",
+        "url": "https://github.com/x/y/pull/7", "mergeable": "MERGEABLE",
+        "isDraft": False,
+        "statusCheckRollup": [{"conclusion": "FAILURE"}],
+    }
+    run_log = [{"databaseId": 99, "conclusion": "failure", "name": "pytest",
+                "workflowName": "CI", "url": "https://github.com/x/y/actions/runs/99"}]
+    gh = bindir / "gh"
+    gh.write_text(f"""#!/bin/sh
+echo "$@" >> {argv_file}
+case "$1" in
+  pr)
+    case "$2" in
+      list) cat {tmp_path / "prlist.json"} ;;
+      view) echo '{json.dumps(pr_view)}' ;;
+      update-branch) echo done ;;
+    esac ;;
+  run)
+    case "$2" in
+      list) echo '{json.dumps(run_log)}' ;;
+      view) echo "FAILED tests/test_foo.py::test_bar" ;;
+    esac ;;
+esac
+""")
+    gh.chmod(0o755)
+    (tmp_path / "prlist.json").write_text(json.dumps(PR_LIST))
+    monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
+    invalidate_cache()
+
+    cfg = load_config(tmp_repo)
+    cfg["act_enabled"] = False  # diagnosis only — no background agent
+    result = remediate_pr(tmp_repo, cfg, 7)
+    assert not result["ok"]  # still failing — not merge-ready
+    assert result["diagnosis"]["kind"] == "tests"
+    assert result["diagnosis"]["status_note"]
+    assert "FAILED" in result["diagnosis"]["log_tail"]
+    assert "pr update-branch 7" in argv_file.read_text()
+
+    diag_path = tmp_repo / "docs" / ".radar" / "pr-diagnosis" / "7.json"
+    assert diag_path.exists()
+    saved = json.loads(diag_path.read_text())
+    assert saved["kind"] == "tests"

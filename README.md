@@ -356,9 +356,15 @@ lists every open PR with its CI verdict (checks passing / running /
 **failing**, plus merge conflicts), read via the `gh` CLI and cached for a
 minute. One tap to **Merge** (squash + delete branch, confirm dialog warns
 if checks are failing) — the matching ticket is auto-noted and moved to
-done. **Update branch** appears on failing/conflicting PRs: it merges the
-base branch in so CI re-runs against current main — the usual cure when a
-PR fails on something already fixed upstream.
+done.
+
+**Fix & update** on failing/conflicting PRs does more than merge base into
+the branch: it updates the branch, diagnoses the blocker (conflicting files
+via a local merge probe, or the failed CI log via `gh run view --log-failed`),
+shows that diagnosis inline on the card, and when `pr_auto_remediate` is on
+(default) spawns a background `act_fix` agent on the PR branch — merge
+conflicts, CI failures, then local tests, commit, and push. Diagnosis persists
+at `docs/.radar/pr-diagnosis/<pr-number>.json` so it survives refresh.
 
 Remote access, the low-friction way: install [Tailscale](https://tailscale.com)
 on this machine and your phone, then open

@@ -126,12 +126,23 @@ async function api(path,opts){const r=await fetch(path,opts);
   if(!r.ok){const j=await r.json().catch(()=>({}));
     throw new Error(j.error||j.message||r.status)}return r.json()}
 
+let pollMs=12000,pollTimer=null;
+function schedulePoll(){
+  const live=(S&&S.live_runs)||[];
+  const next=live.length?3000:12000;
+  if(next===pollMs&&pollTimer)return;
+  pollMs=next;
+  if(pollTimer)clearInterval(pollTimer);
+  pollTimer=setInterval(refresh,pollMs);
+}
 async function refresh(){
   try{S=await api('/api/state');
     // hub restarted with new code -> pull fresh HTML/JS (unless mid-form)
     if(S.boot&&window._boot&&window._boot!==S.boot&&!formBusy()){location.reload();return}
     window._boot=S.boot;
-    render()}
+    applyPrLast();
+    render();
+    schedulePoll()}
   catch(e){document.getElementById('main').innerHTML=
     `<div class="empty">Cannot reach hub (${esc(e.message)})</div>`}
 }
@@ -196,9 +207,34 @@ function rOpenTickets(){
   return h;
 }
 
+function rLiveRuns(){
+  const live=S.live_runs||[];
+  if(!live.length)return '';
+  let h=`<div class="section">Live now (${live.length})</div>`;
+  live.forEach(r=>{
+    const gate=r.status==='waiting-on-gate'&&r.gate
+      ?`<div class="btnrow" style="margin-top:8px"><button class="ghost" onclick="setTab('gates')">Gate: ${esc(r.gate)}</button></div>`:'';
+    const ev=(S.events||[]).find(e=>r.problem&&e.summary&&e.summary.includes(r.problem.slice(0,40)));
+    const evLine=ev?`<div class="dim small">${esc(ev.summary).slice(0,100)}</div>`:'';
+    h+=`<div class="card" style="border-color:var(--accent)">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span class="dot ${r.status}" style="width:12px;height:12px;margin-top:4px;flex:none"></span>
+        <div style="flex:1">
+          <div class="title">${esc(r.stage||r.status)}</div>
+          ${r.ticket?`<span class="badge info">${esc(r.ticket)}</span>`:''}
+          <span class="badge">${esc(r.kind||'run')}</span>
+          ${r.stage_detail?`<div class="dim small" style="margin-top:6px">${esc(r.stage_detail)}</div>`:''}
+          <div class="dim small" style="margin-top:4px">${esc(r.problem).slice(0,90)}</div>
+          ${evLine}${gate}
+        </div>
+      </div></div>`;
+  });
+  return h;
+}
+
 function rNow(){
   const sc=S.scan||{};
-  let h='';
+  let h=rLiveRuns();
   if(S.gates.length){
     h+=`<div class="card" style="border-color:var(--warn)">
       <div class="title">${S.gates.length} gate(s) waiting on you</div>
@@ -231,6 +267,54 @@ function rNow(){
   return h;
 }
 function tok(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'k':String(n??0)}
+const prLast={};
+function mergePrResult(number,j){
+  if(!j)return;
+  prLast[number]={message:j.message||'',diagnosis:j.diagnosis||{},
+    fix_started:!!j.fix_started,at:Date.now()};
+  const pr=(S.prs||[]).find(p=>p.number===number);
+  if(!pr)return;
+  pr.diagnosis={...(pr.diagnosis||{}),...(j.diagnosis||{})};
+  if(j.fix_started&&pr.diagnosis)pr.diagnosis.fix_started=true;
+  if(j.message)pr.diagnosis.status_note=j.message;
+}
+function applyPrLast(){
+  (S.prs||[]).forEach(p=>{
+    const last=prLast[p.number];if(!last)return;
+    p.diagnosis={...(p.diagnosis||{}),...last.diagnosis};
+    if(!p.diagnosis.status_note)p.diagnosis.status_note=last.message;
+    if(last.fix_started)p.diagnosis.fix_started=true;
+  });
+}
+function prDiagBlock(d){
+  if(!d)return '';
+  let h='';
+  if(d.status_note)
+    h+=`<div class="small" style="margin-top:6px;color:var(--accent)">${esc(d.status_note)}</div>`;
+  if(!d.kind)return h;
+  h+=`<div class="dim small" style="margin-top:8px;white-space:pre-wrap;max-height:120px;overflow:auto">`;
+  if(d.kind==='conflict'){
+    const files=(d.conflict_files||[]).join(', ')||'(probing…)';
+    h+=`<strong>Conflicts</strong> in ${esc(files)}`;
+    if(d.excerpt)h+=`\n${esc(d.excerpt.slice(0,600))}`;
+  }else if(d.kind==='tests'){
+    const names=(d.failed_checks||[]).map(c=>c.name).filter(Boolean).join(', ');
+    h+=`<strong>CI failing</strong>${names?' — '+esc(names):''}`;
+    if(d.run_url)h+=` <a href="${esc(d.run_url)}" target="_blank" rel="noopener">run</a>`;
+    if(d.log_tail)h+=`\n${esc(d.log_tail.slice(-800))}`;
+    if(d.fix_status==='pushed')h+=`\n✓ fix pushed (${esc(d.fix_commit||'')})`;
+    else if(d.fix_started)h+=`\n agent fixing…`;
+  }
+  if(d.updated_at)h+=`\n<span class="dim">${esc(d.updated_at)}</span>`;
+  return h+`</div>`;
+}
+function prShowFixBtn(p){
+  const d=p.diagnosis||{};
+  if(p.checks==='failing'||p.mergeable==='CONFLICTING')return true;
+  if(d.fix_started&&d.fix_status!=='pushed')return true;
+  if(d.kind&&(Date.now()-(prLast[p.number]?.at||0)<300000))return true;
+  return false;
+}
 function rPRs(){
   const prs=S.prs||[];if(!prs.length)return '';
   const ck={passing:['ok','checks passing'],failing:['bad','checks FAILING'],
@@ -238,17 +322,20 @@ function rPRs(){
   return `<div class="section">Pull requests</div>`+prs.map(p=>{
     const [cls,label]=ck[p.checks]||['',p.checks];
     const conflict=p.mergeable==='CONFLICTING';
+    const d=p.diagnosis||{};
     let btns=`<a class="ghost" style="text-decoration:none;text-align:center" href="${esc(p.url)}" target="_blank" rel="noopener">View</a>`;
-    if(p.checks==='failing'||conflict)
-      btns+=`<button class="ghost" onclick="prAct('update',${p.number},this)">Update branch</button>`;
+    if(prShowFixBtn(p))
+      btns+=`<button class="ghost" onclick="prAct('update',${p.number},this)">Fix &amp; update</button>`;
     btns+=`<button class="approve" ${conflict?'disabled':''} onclick="prMerge(${p.number},'${esc(p.ticket||'')}',this)">Merge</button>`;
-    return `<div class="card" ${p.checks==='failing'?'style="border-color:var(--bad)"':''}>
+    const border=p.checks==='failing'||conflict?'style="border-color:var(--bad)"':'';
+    return `<div class="card" ${border} id="pr-${p.number}">
       <span class="badge ${cls}">${label}</span>
       ${p.ticket?`<span class="badge">${esc(p.ticket)}</span>`:''}
       ${conflict?`<span class="badge bad">conflicts</span>`:''}
       ${p.draft?`<span class="badge">draft</span>`:''}
       <div class="title" style="margin-top:8px">#${p.number} ${esc(p.title)}</div>
       <div class="dim small">${esc(p.branch)}</div>
+      ${prDiagBlock(d)}
       <div class="btnrow">${btns}</div></div>`}).join('');
 }
 function prMerge(number,ticket,btn){
@@ -258,12 +345,20 @@ function prMerge(number,ticket,btn){
   prAct('merge',number,btn);
 }
 async function prAct(op,number,btn){
-  btn.disabled=true;btn.textContent=op==='merge'?'Merging…':'Updating…';
-  try{const r=await api('/api/pr/'+op,{method:'POST',
-    headers:{'Content-Type':'application/json'},body:JSON.stringify({number})});
-    toast(r.message||'done');setTimeout(refresh,800)}
-  catch(e){toast('Failed: '+e.message);btn.disabled=false;
-    btn.textContent=op==='merge'?'Merge':'Update branch'}
+  btn.disabled=true;btn.textContent=op==='merge'?'Merging…':'Diagnosing…';
+  try{
+    const r=await fetch('/api/pr/'+op,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({number})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok&&!j.message&&!j.diagnosis)
+      throw new Error(j.error||r.status);
+    mergePrResult(number,j);
+    toast(j.message||(j.ok?'done':'see PR card'));
+    render(true);
+    setTimeout(refresh,2500);
+  }catch(e){toast('Failed: '+e.message);btn.disabled=false;
+    btn.textContent=op==='merge'?'Merge':'Fix & update'}
 }
 function rFeed(){
   const ev=S.events||[];if(!ev.length)return '';
@@ -433,7 +528,7 @@ async function openDoc(rel){
 }
 function closeDoc(){document.getElementById('viewer').classList.remove('open')}
 
-refresh();setInterval(refresh,12000);
+refresh();
 </script>
 </body>
 </html>
