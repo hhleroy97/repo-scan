@@ -35,6 +35,10 @@ def _pending_gate_for(root: Path, cfg: dict, problem: str) -> str | None:
 
 
 def _dashboard_url(cfg: dict) -> str | None:
+    # explicit override wins — needed when a proxy (e.g. `tailscale serve`)
+    # fronts the hub at a different scheme/host than the bind address
+    if cfg.get("dashboard_url"):
+        return str(cfg["dashboard_url"])
     host = cfg.get("serve_host")
     port = cfg.get("serve_port", 8800)
     return f"http://{host}:{port}/" if host else None
