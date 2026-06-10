@@ -1,0 +1,134 @@
+"""Hub dashboard UI: open-ticket helpers embedded in DASHBOARD_HTML."""
+
+import re
+
+import pytest
+
+from repo_scan.hub.ui import DASHBOARD_HTML
+from repo_scan.tickets import OPEN_STATUSES
+
+# --- helpers mirroring client-side filter/sort (constants parsed from source) ---
+
+_OPEN_STATUSES_RE = re.compile(
+    r"OPEN_TICKET_STATUSES=new Set\(\[([^\]]+)\]\)"
+)
+_STATUS_ORDER_RE = re.compile(
+    r"TICKET_STATUS_ORDER=\{([^}]+)\}"
+)
+
+
+def _parse_open_statuses(html: str) -> set[str]:
+    m = _OPEN_STATUSES_RE.search(html)
+    assert m, "OPEN_TICKET_STATUSES Set definition missing from dashboard"
+    return {s.strip().strip("'\"") for s in m.group(1).split(",")}
+
+
+def _parse_status_order(html: str) -> dict[str, int]:
+    m = _STATUS_ORDER_RE.search(html)
+    assert m, "TICKET_STATUS_ORDER map missing from dashboard"
+    pairs = re.findall(r"([\w-]+):(\d+)", m.group(1))
+    return {k: int(v) for k, v in pairs}
+
+
+def _filter_open(tickets: list[dict], open_statuses: set[str]) -> list[dict]:
+    return [t for t in tickets if t.get("status") in open_statuses]
+
+
+def _sort_tickets(tickets: list[dict], order: dict[str, int]) -> list[dict]:
+    return sorted(tickets, key=lambda t: order.get(t.get("status", ""), 9))
+
+
+@pytest.fixture
+def open_statuses() -> set[str]:
+    return _parse_open_statuses(DASHBOARD_HTML)
+
+
+@pytest.fixture
+def status_order() -> dict[str, int]:
+    return _parse_status_order(DASHBOARD_HTML)
+
+
+@pytest.fixture
+def all_status_tickets() -> list[dict]:
+    return [
+        {"id": "tkt-0001", "status": "proposed", "title": "P", "priority": "high", "kind": "feature"},
+        {"id": "tkt-0002", "status": "approved", "title": "A", "priority": "medium", "kind": "fix"},
+        {"id": "tkt-0003", "status": "in-progress", "title": "I", "priority": "low", "kind": "feature"},
+        {"id": "tkt-0004", "status": "done", "title": "D", "priority": "medium", "kind": "feature"},
+        {"id": "tkt-0005", "status": "rejected", "title": "R", "priority": "low", "kind": "fix"},
+    ]
+
+
+def test_open_tickets_helpers_defined_in_source():
+    for name in (
+        "OPEN_TICKET_STATUSES",
+        "TICKET_STATUS_ORDER",
+        "TICKET_BADGE_CLS",
+        "filterOpenTickets",
+        "sortTickets",
+        "rOpenTickets",
+    ):
+        assert name in DASHBOARD_HTML, f"{name} missing from dashboard source"
+
+
+def test_open_ticket_statuses_match_python_contract(open_statuses):
+    assert open_statuses == OPEN_STATUSES
+
+
+def test_open_tickets_filter_includes_only_non_terminal(
+    open_statuses, all_status_tickets,
+):
+    filtered = _filter_open(all_status_tickets, open_statuses)
+    assert {t["status"] for t in filtered} == {"proposed", "approved", "in-progress"}
+    assert {t["id"] for t in filtered} == {"tkt-0001", "tkt-0002", "tkt-0003"}
+
+
+def test_open_tickets_sort_follows_workflow_order(open_statuses, status_order):
+    tickets = [
+        {"id": "tkt-0003", "status": "in-progress", "title": "I"},
+        {"id": "tkt-0001", "status": "proposed", "title": "P"},
+        {"id": "tkt-0002", "status": "approved", "title": "A"},
+    ]
+    ordered = _sort_tickets(_filter_open(tickets, open_statuses), status_order)
+    assert [t["status"] for t in ordered] == ["proposed", "approved", "in-progress"]
+
+
+def test_rnow_open_tickets_renders_rows_for_fixture():
+    """Row template includes status badge, kind, priority, id, and title."""
+    start = DASHBOARD_HTML.index("function rOpenTickets()")
+    end = DASHBOARD_HTML.index("function rNow()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "TICKET_BADGE_CLS[t.status]" in src
+    assert "t.kind" in src and "t.priority" in src
+    assert "t.id" in src and "t.title" in src
+    assert "Open tickets" in src
+    assert "setTab('tickets')" in src
+
+
+def test_open_tickets_section_omitted_when_empty():
+    """rOpenTickets returns early when the filtered list is empty."""
+    assert re.search(
+        r"function rOpenTickets\(\)\{[^}]*if\(!open\.length\)return ''",
+        DASHBOARD_HTML,
+        re.DOTALL,
+    ), "rOpenTickets must omit markup when no open tickets"
+
+
+def test_rnow_places_open_tickets_after_gates_or_stats():
+    start = DASHBOARD_HTML.index("function rNow()")
+    end = DASHBOARD_HTML.index("function tok", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "h+=rOpenTickets();" in src
+    assert "if(S.gates.length){" in src
+    assert "if(!S.gates.length)h+=rOpenTickets()" in src
+    gates_idx = src.index("if(S.gates.length){")
+    open_after_gates = src.index("h+=rOpenTickets();", gates_idx)
+    stats_idx = src.index('<div class="grid">')
+    open_no_gates = src.index("if(!S.gates.length)h+=rOpenTickets()")
+    assert open_after_gates < stats_idx
+    assert stats_idx < open_no_gates
+
+
+def test_rtickets_uses_shared_sort_helpers():
+    assert "sortTickets(S.tickets)" in DASHBOARD_HTML
+    assert "TICKET_BADGE_CLS[t.status]" in DASHBOARD_HTML
