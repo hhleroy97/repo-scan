@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled). `repo_scan/radar/cli.py` and `repo_scan/radar/gates.py` changed together in 4 commits (80% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-hidden-seam-repo-scan-radar-cli-py-repo-analysis]]"
-drafted_at: "2026-06-10 17:41 UTC"
+drafted_at: "2026-06-10 17:42 UTC"
 ---
 
 # Spec — Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled). `repo_scan/radar/cli.py` and `repo_scan/radar/gates.py` changed together in 4 commits (80% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 17:41 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 17:42 UTC by radar — **status: approved**_
 
 Grounding the revision in the codebase and the audit findings.
 ## Goal
