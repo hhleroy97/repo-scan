@@ -1,8 +1,10 @@
 # Research index
-_Rebuilt 2026-06-10 07:58 UTC — 36 source(s)_
+_Rebuilt 2026-06-10 13:15 UTC — 38 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]] | url | article, clean-code, conditionals, consolidate-duplicate-conditio, control-flow, deduplication, readability, refactoring, slide-statements | 2026-06-10 13:15 UTC |
+| [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]] | url | article, clean-code, conditionals, decompose-conditional, extract-method, readability, refactoring, self-documenting-code | 2026-06-10 13:14 UTC |
 | [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]] | arxiv | code-level-migration, dependencies, microservices, migration-automation, monolith-decomposition, paper, refactoring, service-extraction, software-architecture | 2026-06-10 07:51 UTC |
 | [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]] | url | architecture-analysis, article, change-coupling, codescene, git-history, logical-dependencies, microservices, retrospectives, sum-of-couplings, team-topology, technical-debt | 2026-06-10 07:46 UTC |
 | [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from…]] | github | adam-tornhill, behavioral-code-analysis, clojure, code-churn, git-log-analysis, logical-coupling, ownership-metrics, repo, repository-mining, technical-debt, version-control-mining | 2026-06-10 07:45 UTC |

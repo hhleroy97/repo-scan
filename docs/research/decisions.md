@@ -87,3 +87,6 @@
 | 2026-06-10 13:10 UTC | pre_implement | auto | implement [[2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-spec]] on branch radar/tkt-0005 for tkt-0005 |
 | 2026-06-10 13:11 UTC | post_analyze | approved (dashboard) | Extract `repo_scan/report_pipeline.py` with a typed `ReportPayload` (or reuse `ScanContext` read-only view) and a single |
 | 2026-06-10 13:14 UTC | post_implement | auto | tests passed; 2 files changed, 42 insertions(+), 112 deletions(-) on radar/tkt-0005 — commit? |
+| 2026-06-10 13:14 UTC | post_analyze | approved (dashboard) | Extend the existing Markdown+Mermaid pipeline with auto-generated, ticket-scoped diagrams sourced from scan.json: add a  |
+| 2026-06-10 13:15 UTC | post_analyze | approved (dashboard) | Introduce a private `RadarLoopRunner` (Replace Function with Command) that holds `root`, `cfg`, `problem`, `ckpt`, `resu |
+| 2026-06-10 13:16 UTC | post_analyze | paused | Follow the repo's characterization-then-extract playbook: snapshot radon output and a copy of `docs/scan.json`, then add |

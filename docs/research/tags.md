@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 07:58 UTC_
+_Rebuilt 2026-06-10 13:15 UTC_
 
 ## 12-factor-agents
 
@@ -47,6 +47,8 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 ## article
 
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
@@ -119,6 +121,8 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 ## clean-code
 
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
 ## cli
@@ -195,12 +199,22 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## conditionals
+
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
+
+## consolidate-duplicate-conditio
+
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+
 ## context-engineering
 
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## control-flow
 
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
 ## css-preprocessors
@@ -210,6 +224,14 @@ _Rebuilt 2026-06-10 07:58 UTC_
 ## dataview
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+
+## decompose-conditional
+
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
+
+## deduplication
+
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 
 ## dependencies
 
@@ -295,6 +317,7 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 ## extract-method
 
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
@@ -749,6 +772,8 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 ## readability
 
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
 ## readme
@@ -761,6 +786,8 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 ## refactoring
 
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
@@ -852,6 +879,10 @@ _Rebuilt 2026-06-10 07:58 UTC_
 
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
+## self-documenting-code
+
+- [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
+
 ## self-hosting
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
@@ -884,6 +915,10 @@ _Rebuilt 2026-06-10 07:58 UTC_
 ## single-source-of-truth
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+
+## slide-statements
+
+- [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 
 ## sloc
 
