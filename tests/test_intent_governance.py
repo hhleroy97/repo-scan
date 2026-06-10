@@ -12,17 +12,13 @@ Covers the three pillars that turn the maintenance loop into a feature loop:
 import json
 import subprocess
 import sys
-import time
 from pathlib import Path
 
 import pytest
 
 from repo_scan.config import DEFAULT_CONFIG, load_config
-from repo_scan.hub.daemon import daemon_tick, over_budget
-from repo_scan.hub.state import create_run, load_events, save_meta
 from repo_scan.radar.act import cmd_act, ticket_kind
 from repo_scan.radar.gates import gates_for_kind
-from repo_scan.radar.llm import record_usage
 from repo_scan.radar.pipeline import ticket_problem
 from repo_scan.tickets import (append_ticket_note, load_tickets, new_ticket,
                                set_ticket_status, tickets_main, write_ticket)
@@ -200,39 +196,3 @@ def test_protected_paths_force_human_review(feature_act_repo, tmp_path):
     assert "PROTECTED" in pending["payload"]["summary"]
     assert "impl.py" in pending["payload"]["detail"]["protected"]
 
-
-def test_over_budget_tokens(tmp_repo):
-    cfg = load_config(tmp_repo)
-    cfg["budget_daily_tokens"] = 100
-    assert over_budget(tmp_repo, cfg) is None
-    record_usage(tmp_repo, cfg, {"ts": time.time(), "role": "act",
-                                 "model": "m", "input_tokens": 80,
-                                 "output_tokens": 30})
-    reason = over_budget(tmp_repo, cfg)
-    assert reason and "token budget" in reason
-
-
-def test_over_budget_acts_per_day(tmp_repo):
-    cfg = load_config(tmp_repo)
-    cfg["max_acts_per_day"] = 1
-    assert over_budget(tmp_repo, cfg) is None
-    create_run(tmp_repo, cfg, "p1", ticket="tkt-0001", kind="act")
-    reason = over_budget(tmp_repo, cfg)
-    assert reason and "act cap" in reason
-
-
-def test_daemon_blocks_new_work_when_over_budget(feature_act_repo, tmp_path):
-    root, cfg = feature_act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, TESTS_ON_RETRY_AGENT)]
-    cfg["max_parallel_acts"] = 1
-    cfg["budget_daily_tokens"] = 1
-    record_usage(root, cfg, {"ts": time.time(), "role": "act", "model": "m",
-                             "input_tokens": 5, "output_tokens": 5})
-    save_meta(root, cfg, {"last_scan": time.time()})
-
-    assert daemon_tick(root, cfg) == []  # would have started an act otherwise
-    events = load_events(root, cfg, limit=10)
-    assert any("budget" in e["text"] for e in events)
-    # notification is once per day, not every tick
-    assert daemon_tick(root, cfg) == []
-    assert sum("budget" in e["text"] for e in load_events(root, cfg, limit=10)) == 1

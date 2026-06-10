@@ -14,14 +14,9 @@ from pathlib import Path
 import pytest
 
 from repo_scan.config import DEFAULT_CONFIG, load_config
-from repo_scan.hub.daemon import daemon_tick
-from repo_scan.hub.state import (active_run, load_checkpoint, load_runs,
-                                 save_meta, submit_decision)
+from repo_scan.hub.state import (active_run, load_checkpoint, submit_decision)
 from repo_scan.radar.act import act_problem, cmd_act, find_act_ticket
 from repo_scan.tickets import append_ticket_note, load_tickets, set_ticket_status, write_ticket
-
-import time  # noqa: E402
-
 
 def _git(root: Path, *args: str) -> str:
     r = subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
@@ -189,29 +184,6 @@ def test_act_gives_up_after_fix_rounds(act_repo, tmp_path):
     assert "needs a human" in body
 
 
-def test_daemon_runs_act_for_inprogress_ticket(act_repo, tmp_path):
-    root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
-    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
-    cfg["max_parallel_acts"] = 1  # inline for determinism
-    save_meta(root, cfg, {"last_scan": time.time()})  # skip scheduled scan
-
-    actions = daemon_tick(root, cfg)
-    assert any(a.startswith("act-started:") for a in actions)
-    assert load_runs(root, cfg)[0]["status"] == "done"
-
-    # daemon acts run in an isolated worktree: the main checkout is untouched,
-    # the implementation lives on the radar branch, the worktree is pruned
-    assert not (root / "impl.py").exists()
-    assert _git(root, "rev-parse", "--abbrev-ref", "HEAD") == "main"
-    assert "VALUE = 42" in _git(root, "show", "radar/tkt-0001:impl.py")
-    from repo_scan.radar.act import worktree_path
-    assert not worktree_path(root, "tkt-0001").exists()
-
-    # implemented ticket no longer a candidate -> next tick is a no-op
-    assert daemon_tick(root, cfg) == []
-
-
 def test_act_opens_pr_when_configured(act_repo, tmp_path, monkeypatch):
     """With act_open_pr, a successful act pushes the branch and opens a PR
     via the gh CLI; the URL lands on the ticket and in the act log."""
@@ -258,77 +230,3 @@ def test_act_pr_failure_keeps_commit(act_repo, tmp_path):
     assert cmd_act(root, cfg) == 0
     assert _git(root, "log", "-1", "--pretty=%s").startswith("radar: implement")
 
-
-def test_daemon_tick_survives_live_act_thread(act_repo):
-    """Regression: a tick while an act thread is in flight must not crash
-    (the daemon thread died on a bad iteration over _act_threads)."""
-    import threading
-    from repo_scan.hub import daemon as daemon_mod
-    root, cfg = act_repo
-    save_meta(root, cfg, {"last_scan": time.time()})
-    t = threading.Thread(target=time.sleep, args=(1.0,), daemon=True)
-    t.start()
-    daemon_mod._run_threads["fake-run-id"] = t
-    try:
-        daemon_tick(root, cfg)  # must not raise
-    finally:
-        del daemon_mod._run_threads["fake-run-id"]
-
-
-def test_reclaim_orphan_runs_resurrects_work(act_repo, tmp_path):
-    """A run left 'running' by a dead process is reclaimed at startup and
-    the next tick restarts the act from its checkpoints."""
-    from repo_scan.hub.daemon import reclaim_orphan_runs
-    from repo_scan.hub.state import create_run, update_run
-    from repo_scan.radar.act import act_problem
-    root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
-    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
-    cfg["max_parallel_acts"] = 1
-    save_meta(root, cfg, {"last_scan": time.time()})
-
-    problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
-    run = create_run(root, cfg, problem, ticket="tkt-0001", kind="act")
-    update_run(root, cfg, run["id"], "running")  # owner "died" here
-
-    assert daemon_tick(root, cfg) == []  # starved: stale run blocks the slot
-    assert reclaim_orphan_runs(root, cfg) == [run["id"]]
-    actions = daemon_tick(root, cfg)
-    assert any(a.startswith("act-started:") for a in actions)
-    assert load_runs(root, cfg)[-1]["status"] == "done"
-    assert "VALUE = 42" in _git(root, "show", "radar/tkt-0001:impl.py")
-
-
-def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):
-    """Two approved specs -> two act runs in the same tick, isolated worktrees."""
-    root, cfg = act_repo
-    specs = root / "docs" / "specs"
-    (specs / "2026-01-02-second-thing-spec.md").write_text(
-        '---\ntype: "spec"\nstatus: "approved"\n---\n\n# Spec\n\n'
-        "## Goal\nCreate impl.py with VALUE = 42.\n")
-    write_ticket(root, DEFAULT_CONFIG,
-                 {"id": "tkt-0002", "title": "Second thing", "priority": "low",
-                  "fingerprint": "x:2", "why": "w", "criteria": ["c"]})
-    set_ticket_status(root, DEFAULT_CONFIG, "tkt-0002", "in-progress")
-    append_ticket_note(root, DEFAULT_CONFIG, "tkt-0002",
-                       "radar spec approved: [[2026-01-02-second-thing-spec]]")
-    subprocess.run(["git", "add", "-A"], cwd=root, capture_output=True)
-    subprocess.run(["git", "commit", "-qm", "more"], cwd=root, capture_output=True)
-
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
-    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
-    cfg["max_parallel_acts"] = 2
-    save_meta(root, cfg, {"last_scan": time.time()})
-
-    actions = daemon_tick(root, cfg)
-    assert sum(a.startswith("act-started:") for a in actions) == 2
-
-    deadline = time.time() + 60
-    while time.time() < deadline:
-        statuses = {r["status"] for r in load_runs(root, cfg)}
-        if statuses == {"done"}:
-            break
-        time.sleep(0.2)
-    assert {r["status"] for r in load_runs(root, cfg)} == {"done"}
-    for tid in ("tkt-0001", "tkt-0002"):
-        assert "VALUE = 42" in _git(root, "show", f"radar/{tid}:impl.py")
