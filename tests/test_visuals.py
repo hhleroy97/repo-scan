@@ -5,6 +5,7 @@ from pathlib import Path
 
 import repo_scan
 from repo_scan.graphs import edges_to_mermaid
+from repo_scan.utils import strip_emoji
 from repo_scan.writers import (
     callout,
     churn_complexity_quadrant,
@@ -12,6 +13,22 @@ from repo_scan.writers import (
     mermaid_pie,
     mermaid_quadrant,
 )
+
+
+def test_strip_emoji():
+    assert strip_emoji("\U0001F4E6 Repomix packs your repo") == "Repomix packs your repo"
+    assert strip_emoji("plain text") == "plain text"
+    assert strip_emoji("star \u2B50 and check \u2705 ok") == "star and check ok"
+
+
+def test_health_status_column_is_plain_text(tmp_repo_with_imports):
+    big = tmp_repo_with_imports / "big.py"
+    big.write_text("\n".join(f"x{i} = {i}" for i in range(700)))
+    repo_scan.scan(tmp_repo_with_imports, quiet=True)
+    health = (tmp_repo_with_imports / "docs" / "reports" / "health.md").read_text()
+    assert "**critical**" in health
+    assert not any(ord(ch) > 0x2000 and ord(ch) not in (0x2014, 0x2026) for ch in health), \
+        "generated health.md should contain no emoji/pictographs"
 
 
 def test_callout_format():

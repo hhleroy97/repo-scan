@@ -1,28 +1,28 @@
 # repo-scan — repo digest
-_Generated 2026-06-10 00:09 UTC by repo-scan 0.2.0. Single-file context for LLM use._
+_Generated 2026-06-10 00:12 UTC by repo-scan 0.2.0. Single-file context for LLM use._
 
-**Remote:** https://github.com/hhleroy97/repo-scan.git  |  **Branch:** main  |  **Last commit:** c7c69a2 feat: PageRank centrality in file ranking — first RADAR-loop-driven change (spec approved at Gate 2)
-**Files:** 36  |  **Lines:** 3,279  |  **Languages:** PY: 34
+**Remote:** https://github.com/hhleroy97/repo-scan.git  |  **Branch:** main  |  **Last commit:** 5abf40e feat: visual layer for generated docs — Mermaid charts, callouts, PageRank-tinted dep graphs
+**Files:** 36  |  **Lines:** 3,305  |  **Languages:** PY: 34
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
 ## Most important files
 
-- `repo_scan/writers.py` (score 55.4, pagerank 0.0497, 393 lines, imported by 1, 2 commits)
-- `repo_scan/ranking.py` (score 45.7, pagerank 0.0552, 106 lines, imported by 1, 2 commits)
-- `repo_scan/graphs.py` (score 44.3, pagerank 0.0497, 137 lines, imported by 1, 0 commits)
-- `repo_scan/utils.py` (score 36.7, pagerank 0.1101, 67 lines, imported by 4, 0 commits)
-- `repo_scan/config.py` (score 33.5, pagerank 0.1019, 42 lines, imported by 5, 0 commits)
-- `repo_scan/radar/pipeline.py` (score 33.5, pagerank 0.0662, 292 lines, imported by 2, 0 commits)
-- `repo_scan/radar/sources.py` (score 29.0, pagerank 0.0580, 166 lines, imported by 2, 0 commits)
-- `repo_scan/radar/llm.py` (score 27.2, pagerank 0.0470, 91 lines, imported by 1, 2 commits)
-- `tests/test_phase_a.py` (score 25.4, pagerank 0.0388, 123 lines, imported by 0, 2 commits)
-- `pyproject.toml` (score 25.4, pagerank 0.0000, 14 lines, imported by 0, 5 commits)
-- `setup.py` (score 25.3, pagerank 0.0000, 13 lines, imported by 0, 5 commits)
-- `README.md` (score 25.0, pagerank 0.0000, 0 lines, imported by 0, 5 commits)
-- `tests/test_radar_pipeline.py` (score 23.8, pagerank 0.0388, 113 lines, imported by 0, 0 commits)
-- `repo_scan/radar/fetchers.py` (score 20.1, pagerank 0.0497, 170 lines, imported by 1, 0 commits)
-- `repo_scan/radar/gates.py` (score 19.7, pagerank 0.0552, 85 lines, imported by 1, 0 commits)
+- `repo_scan/writers.py` (score 57.7, pagerank 0.0452, 393 lines, imported by 1, 3 commits)
+- `repo_scan/graphs.py` (score 52.4, pagerank 0.0452, 137 lines, imported by 1, 2 commits)
+- `repo_scan/radar/pipeline.py` (score 46.9, pagerank 0.0637, 292 lines, imported by 2, 3 commits)
+- `tests/test_radar_pipeline.py` (score 37.0, pagerank 0.0373, 113 lines, imported by 0, 3 commits)
+- `repo_scan/ranking.py` (score 36.2, pagerank 0.0532, 106 lines, imported by 1, 0 commits)
+- `repo_scan/complexity.py` (score 35.7, pagerank 0.1034, 29 lines, imported by 4, 0 commits)
+- `repo_scan/config.py` (score 34.3, pagerank 0.0981, 42 lines, imported by 5, 0 commits)
+- `repo_scan/radar/sources.py` (score 29.5, pagerank 0.0558, 166 lines, imported by 2, 0 commits)
+- `repo_scan/scanner.py` (score 25.0, pagerank 0.0000, 118 lines, imported by 0, 3 commits)
+- `setup.py` (score 21.8, pagerank 0.0000, 13 lines, imported by 0, 5 commits)
+- `pyproject.toml` (score 21.8, pagerank 0.0000, 14 lines, imported by 0, 5 commits)
+- `README.md` (score 21.4, pagerank 0.0000, 0 lines, imported by 0, 5 commits)
+- `repo_scan/radar/fetchers.py` (score 20.5, pagerank 0.0479, 170 lines, imported by 1, 0 commits)
+- `repo_scan/radar/gates.py` (score 20.2, pagerank 0.0532, 85 lines, imported by 1, 0 commits)
+- `repo_scan/radar/research.py` (score 18.8, pagerank 0.0452, 136 lines, imported by 1, 0 commits)
 
 ## Structure
 
@@ -40,7 +40,8 @@ repo-scan/
 │   │   ├── 2026-06-09-phase-b1-ingest.md
 │   │   ├── 2026-06-09-phase-b2-research.md
 │   │   ├── 2026-06-09-phase-b3-loop.md
-│   │   └── 2026-06-09-phase-b4-autonomy.md
+│   │   ├── 2026-06-09-phase-b4-autonomy.md
+│   │   └── 2026-06-09-visual-layer.md
 │   ├── reports/
 │   │   ├── calls.md
 │   │   ├── dependencies.md
@@ -123,11 +124,11 @@ repo-scan/
 
 ## Most changed files
 
-- `docs/architecture/dependency-graph.md` (6 commits)
-- `docs/index.md` (6 commits)
-- `docs/reports/calls.md` (6 commits)
-- `docs/reports/dependencies.md` (6 commits)
-- `docs/reports/health.md` (6 commits)
+- `docs/architecture/dependency-graph.md` (7 commits)
+- `docs/index.md` (7 commits)
+- `docs/reports/calls.md` (7 commits)
+- `docs/reports/dependencies.md` (7 commits)
+- `docs/reports/health.md` (7 commits)
+- `docs/scan.json` (6 commits)
 - `README.md` (5 commits)
-- `docs/scan.json` (5 commits)
 - `pyproject.toml` (5 commits)

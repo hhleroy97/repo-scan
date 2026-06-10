@@ -9,11 +9,11 @@ relevance: ""
 ingested_at: "2026-06-09 23:11 UTC"
 ---
 
-# yamadashy/repomix — 📦 Repomix is a powerful tool that packs your entire repository into a single,…
+# yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…
 
 ## Summary
 
-📦 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
+Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
 
 ## Key claims
 

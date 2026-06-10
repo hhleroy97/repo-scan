@@ -9,7 +9,7 @@ import re
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
-from ..utils import now_iso, ok, write_doc
+from ..utils import now_iso, ok, strip_emoji, write_doc
 
 
 # ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ def write_source(root: Path, cfg: dict, source: Source) -> Path:
             "ingested_at": source.ingested_at,
         }),
         "",
-        f"# {source.title}",
+        f"# {strip_emoji(source.title)}",
         "",
         "## Summary",
         "",
@@ -146,7 +146,7 @@ def parse_source_file(path: Path) -> dict:
         return meta
     title = next((line[2:].strip() for line in text.splitlines() if line.startswith("# ")),
                  path.stem)
-    meta["title"] = title
+    meta["title"] = strip_emoji(title)
     return meta
 
 

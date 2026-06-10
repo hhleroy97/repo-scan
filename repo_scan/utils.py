@@ -1,5 +1,6 @@
 """Shared helpers: subprocess, terminal output, git metadata."""
 
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -27,6 +28,25 @@ def fmt(text: str, *codes: str) -> str:
     return "".join(codes) + text + RESET
 
 def info(msg: str):  print(fmt(f"  {msg}", DIM))
+# Pictographs/emoji render as tofu boxes in many Obsidian/WSL font setups,
+# so generated markdown must stay emoji-free. External text (GitHub repo
+# descriptions etc.) is sanitized with this before it enters the docs.
+_EMOJI_RE = re.compile(
+    "["
+    "\U0001F000-\U0001FAFF"   # pictographs, emoticons, symbols
+    "\U00002600-\U000027BF"   # misc symbols + dingbats
+    "\U0001F1E6-\U0001F1FF"   # regional indicators (flags)
+    "\U00002B00-\U00002BFF"   # arrows/stars block (⭐ etc.)
+    "\U0000FE00-\U0000FE0F"   # variation selectors
+    "\U0000200D"              # zero-width joiner
+    "]+"
+)
+
+
+def strip_emoji(text: str) -> str:
+    return re.sub(r"  +", " ", _EMOJI_RE.sub("", text)).strip()
+
+
 def ok(msg: str):    print(fmt(f"  ✓ {msg}", GREEN))
 def warn(msg: str):  print(fmt(f"  ⚠ {msg}", YELLOW))
 def err(msg: str):   print(fmt(f"  ✗ {msg}", RED))

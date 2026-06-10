@@ -1,5 +1,5 @@
 # Research index
-_Rebuilt 2026-06-09 23:46 UTC — 6 source(s)_
+_Rebuilt 2026-06-10 00:12 UTC — 6 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
@@ -8,4 +8,4 @@ _Rebuilt 2026-06-09 23:46 UTC — 6 source(s)_
 | [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]] | arxiv | arxiv, dependency-graph, documentation, module-prioritization, pagerank, paper, software-quality, unsupervised-learning | 2026-06-09 23:40 UTC |
 | [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]] | github | codebase-analysis, dependency-cruiser, dependency-graph, file-ranking, javascript, migration, pagerank, repo, static-analysis, typescript | 2026-06-09 23:40 UTC |
 | [[sources/gh-Aider-AI-aider\|Aider-AI/aider — aider is AI pair programming in your terminal]] | github | repo, python | 2026-06-09 23:37 UTC |
-| [[sources/gh-yamadashy-repomix\|yamadashy/repomix — 📦 Repomix is a powerful tool that packs your entire repository into a…]] | github | repo, typescript | 2026-06-09 23:11 UTC |
+| [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a…]] | github | repo, typescript | 2026-06-09 23:11 UTC |

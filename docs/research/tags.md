@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-09 23:46 UTC_
+_Rebuilt 2026-06-10 00:12 UTC_
 
 ## arxiv
 
@@ -85,7 +85,7 @@ _Rebuilt 2026-06-09 23:46 UTC_
 - [[sources/gh-phoenix-assistant-impact-graph\|phoenix-assistant/impact-graph — If I change this function, what breaks? Change impact analysis with call graphs…]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 - [[sources/gh-Aider-AI-aider\|Aider-AI/aider — aider is AI pair programming in your terminal]]
-- [[sources/gh-yamadashy-repomix\|yamadashy/repomix — 📦 Repomix is a powerful tool that packs your entire repository into a single,…]]
+- [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]
 
 ## software-quality
 
@@ -99,7 +99,7 @@ _Rebuilt 2026-06-09 23:46 UTC_
 
 - [[sources/gh-phoenix-assistant-impact-graph\|phoenix-assistant/impact-graph — If I change this function, what breaks? Change impact analysis with call graphs…]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
-- [[sources/gh-yamadashy-repomix\|yamadashy/repomix — 📦 Repomix is a powerful tool that packs your entire repository into a single,…]]
+- [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]
 
 ## unsupervised-learning
 

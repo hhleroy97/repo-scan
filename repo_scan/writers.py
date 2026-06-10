@@ -134,7 +134,7 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
     for rel, stats in sorted(line_counts.items(), key=lambda x: x[1]["lines"], reverse=True)[:40]:
         n = stats["lines"]
         kb = stats["bytes"] / 1024
-        status = "🔴 critical" if n >= crit_n else ("🟡 large" if n >= warn_n else "✅")
+        status = "**critical**" if n >= crit_n else ("*large*" if n >= warn_n else "ok")
         lines.append(f"| `{rel}` | {n} | {kb:.1f} KB | {status} |")
     lines.append("")
 
