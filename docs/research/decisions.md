@@ -140,3 +140,5 @@
 | 2026-06-10 18:28 UTC | post_analyze | paused | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |
 | 2026-06-10 18:29 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |
 | 2026-06-10 18:33 UTC | post_audit | paused | audit revise: The package/concat/contract-injection approach is sound and line caps are achievable, but fragment boundar |
+| 2026-06-10 18:35 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |
+| 2026-06-10 18:35 UTC | post_audit | approved (dashboard) | audit revise: The package/concat/contract-injection approach is sound and line caps are achievable, but fragment boundar |
