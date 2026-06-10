@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-06-10 00:38 UTC",
+  "generated_at": "2026-06-10 01:21 UTC",
   "repo": {
     "name": "repo-scan",
     "remote": "https://github.com/hhleroy97/repo-scan.git",
     "branch": "main",
-    "last_commit": "6942774 feat: test-presence mapping \u2014 ranking Tests column, untested candidates get 2x priority",
+    "last_commit": "2bc8811 feat: C1 behavioral metrics \u2014 change coupling, bus-factor map, code age from one git pass",
     "manifests": [
       "pyproject.toml",
       "setup.py"
@@ -16,68 +16,80 @@
     ]
   },
   "languages": {
-    "py": 39
+    "py": 43
   },
   "files": {
     "README.md": {
       "lines": 0,
-      "bytes": 6130
+      "bytes": 6623
     },
-    "tests/conftest.py": {
-      "lines": 28,
-      "bytes": 1117
+    "tests/fake_llm.py": {
+      "lines": 27,
+      "bytes": 903
     },
     "setup.py": {
       "lines": 13,
       "bytes": 311
     },
-    "repo_scan/churn.py": {
-      "lines": 14,
-      "bytes": 588
-    },
-    "tests/test_radar_full.py": {
-      "lines": 83,
-      "bytes": 4046
-    },
-    "tests/test_tests_map.py": {
-      "lines": 40,
-      "bytes": 2130
-    },
-    "tests/test_radar_llm.py": {
-      "lines": 95,
-      "bytes": 4666
+    "tests/conftest.py": {
+      "lines": 28,
+      "bytes": 1117
     },
     "tests/test_portability.py": {
       "lines": 55,
       "bytes": 2801
     },
+    "tests/test_radar_llm.py": {
+      "lines": 95,
+      "bytes": 4666
+    },
     "tests/test_radar_gates.py": {
       "lines": 46,
       "bytes": 2442
     },
-    "repo_scan/config.py": {
-      "lines": 42,
-      "bytes": 1624
-    },
-    "tests/test_scan.py": {
-      "lines": 80,
-      "bytes": 3934
-    },
-    "tests/test_radar_pipeline.py": {
-      "lines": 113,
-      "bytes": 6055
+    "tests/test_tickets.py": {
+      "lines": 99,
+      "bytes": 4996
     },
     "tests/test_radar_ingest.py": {
       "lines": 141,
       "bytes": 6094
     },
+    "tests/test_visuals.py": {
+      "lines": 89,
+      "bytes": 4500
+    },
+    "tests/test_radar_full.py": {
+      "lines": 83,
+      "bytes": 4046
+    },
+    "repo_scan/churn.py": {
+      "lines": 14,
+      "bytes": 588
+    },
+    "tests/test_tests_map.py": {
+      "lines": 40,
+      "bytes": 2130
+    },
     "tests/test_phase_a.py": {
       "lines": 123,
       "bytes": 7000
     },
-    "repo_scan/complexity.py": {
-      "lines": 91,
-      "bytes": 3802
+    "tests/test_trends.py": {
+      "lines": 61,
+      "bytes": 2884
+    },
+    "repo_scan/config.py": {
+      "lines": 49,
+      "bytes": 1924
+    },
+    "tests/test_radar_pipeline.py": {
+      "lines": 113,
+      "bytes": 6055
+    },
+    "repo_scan/hooks.py": {
+      "lines": 37,
+      "bytes": 1271
     },
     "repo_scan/handoff.py": {
       "lines": 156,
@@ -87,37 +99,41 @@
       "lines": 106,
       "bytes": 4965
     },
-    "repo_scan/hooks.py": {
-      "lines": 37,
-      "bytes": 1271
+    "repo_scan/complexity.py": {
+      "lines": 91,
+      "bytes": 3802
     },
     "repo_scan/radar/__init__.py": {
       "lines": 5,
       "bytes": 254
     },
-    "tests/test_visuals.py": {
-      "lines": 89,
-      "bytes": 4500
-    },
-    "repo_scan/utils.py": {
-      "lines": 80,
-      "bytes": 3996
-    },
-    "repo_scan/graphs.py": {
-      "lines": 140,
-      "bytes": 6111
+    "repo_scan/behavior.py": {
+      "lines": 102,
+      "bytes": 4461
     },
     "repo_scan/__init__.py": {
       "lines": 64,
       "bytes": 1495
     },
-    "repo_scan/radar/llm.py": {
-      "lines": 91,
-      "bytes": 3683
+    "tests/test_scan.py": {
+      "lines": 80,
+      "bytes": 3934
     },
     "repo_scan/identity.py": {
       "lines": 81,
       "bytes": 3786
+    },
+    "repo_scan/radar/llm.py": {
+      "lines": 91,
+      "bytes": 3683
+    },
+    "repo_scan/graphs.py": {
+      "lines": 140,
+      "bytes": 6111
+    },
+    "repo_scan/utils.py": {
+      "lines": 80,
+      "bytes": 3996
     },
     "repo_scan/trends.py": {
       "lines": 99,
@@ -127,57 +143,57 @@
       "lines": 85,
       "bytes": 3991
     },
-    "repo_scan/tests_map.py": {
-      "lines": 37,
-      "bytes": 1664
-    },
     "repo_scan/radar/cli.py": {
       "lines": 80,
       "bytes": 3898
     },
-    "tests/fake_llm.py": {
-      "lines": 27,
-      "bytes": 903
-    },
-    "repo_scan/digest.py": {
-      "lines": 46,
-      "bytes": 2347
+    "repo_scan/tests_map.py": {
+      "lines": 37,
+      "bytes": 1664
     },
     "repo_scan/radar/research.py": {
       "lines": 136,
       "bytes": 5460
     },
-    "repo_scan/cli.py": {
-      "lines": 64,
-      "bytes": 2666
-    },
     "repo_scan/languages.py": {
       "lines": 66,
       "bytes": 2821
     },
-    "repo_scan/radar/fetchers.py": {
-      "lines": 170,
-      "bytes": 7763
+    "repo_scan/digest.py": {
+      "lines": 46,
+      "bytes": 2347
     },
     "repo_scan/radar/sources.py": {
       "lines": 166,
       "bytes": 6910
     },
+    "repo_scan/cli.py": {
+      "lines": 64,
+      "bytes": 2666
+    },
+    "repo_scan/radar/fetchers.py": {
+      "lines": 170,
+      "bytes": 7763
+    },
     "repo_scan/scanner.py": {
-      "lines": 129,
-      "bytes": 6243
-    },
-    "tests/test_trends.py": {
-      "lines": 61,
-      "bytes": 2884
-    },
-    "repo_scan/writers.py": {
-      "lines": 406,
-      "bytes": 17205
+      "lines": 146,
+      "bytes": 7162
     },
     "repo_scan/radar/pipeline.py": {
       "lines": 292,
       "bytes": 12701
+    },
+    "tests/test_behavior.py": {
+      "lines": 72,
+      "bytes": 3754
+    },
+    "repo_scan/tickets.py": {
+      "lines": 210,
+      "bytes": 10189
+    },
+    "repo_scan/writers.py": {
+      "lines": 469,
+      "bytes": 20193
     },
     "pyproject.toml": {
       "lines": 14,
@@ -187,46 +203,46 @@
   "churn": [
     {
       "file": "docs/architecture/dependency-graph.md",
-      "commits": 9
+      "commits": 10
     },
     {
       "file": "docs/index.md",
-      "commits": 9
+      "commits": 10
     },
     {
       "file": "docs/reports/calls.md",
-      "commits": 9
+      "commits": 10
     },
     {
       "file": "docs/reports/dependencies.md",
-      "commits": 9
+      "commits": 10
     },
     {
       "file": "docs/reports/health.md",
-      "commits": 9
+      "commits": 10
     },
     {
       "file": "docs/scan.json",
-      "commits": 8
+      "commits": 9
     },
     {
       "file": "repo_scan/scanner.py",
-      "commits": 7
+      "commits": 8
     },
     {
       "file": "repo_scan/writers.py",
-      "commits": 6
+      "commits": 7
     },
     {
       "file": "README.md",
-      "commits": 6
-    },
-    {
-      "file": "docs/digest.md",
-      "commits": 6
+      "commits": 7
     },
     {
       "file": "docs/research/candidates.md",
+      "commits": 7
+    },
+    {
+      "file": "docs/digest.md",
       "commits": 6
     },
     {
@@ -268,25 +284,32 @@
   ],
   "complexity": [
     {
+      "file": "repo_scan/writers.py",
+      "name": "write_health_report",
+      "rank": "D",
+      "complexity": 28,
+      "lineno": 105
+    },
+    {
       "file": "repo_scan/scanner.py",
       "name": "scan",
       "rank": "D",
-      "complexity": 24,
-      "lineno": 43
+      "complexity": 27,
+      "lineno": 46
     },
     {
       "file": "repo_scan/writers.py",
       "name": "write_index",
       "rank": "D",
       "complexity": 24,
-      "lineno": 232
+      "lineno": 294
     },
     {
-      "file": "repo_scan/writers.py",
-      "name": "write_health_report",
+      "file": "repo_scan/tickets.py",
+      "name": "propose_from_scan",
       "rank": "C",
-      "complexity": 20,
-      "lineno": 105
+      "complexity": 19,
+      "lineno": 107
     },
     {
       "file": "repo_scan/graphs.py",
@@ -373,6 +396,13 @@
       "lineno": 134
     },
     {
+      "file": "repo_scan/behavior.py",
+      "name": "analyze_history",
+      "rank": "C",
+      "complexity": 12,
+      "lineno": 42
+    },
+    {
       "file": "repo_scan/complexity.py",
       "name": "get_lizard_complexity",
       "rank": "C",
@@ -390,18 +420,18 @@
   "ranking": [
     {
       "file": "repo_scan/writers.py",
-      "score": 61.3,
-      "pagerank": 0.033356,
+      "score": 60.4,
+      "pagerank": 0.029537,
       "imported_by": 1,
-      "commits": 6,
-      "complexity": 44,
-      "lines": 406,
+      "commits": 7,
+      "complexity": 52,
+      "lines": 469,
       "tested": false
     },
     {
       "file": "repo_scan/graphs.py",
-      "score": 51.7,
-      "pagerank": 0.038033,
+      "score": 44.0,
+      "pagerank": 0.033678,
       "imported_by": 2,
       "commits": 3,
       "complexity": 56,
@@ -409,9 +439,29 @@
       "tested": false
     },
     {
+      "file": "repo_scan/scanner.py",
+      "score": 39.2,
+      "pagerank": 0.0,
+      "imported_by": 0,
+      "commits": 8,
+      "complexity": 27,
+      "lines": 146,
+      "tested": false
+    },
+    {
+      "file": "repo_scan/config.py",
+      "score": 36.0,
+      "pagerank": 0.167235,
+      "imported_by": 18,
+      "commits": 0,
+      "complexity": 0,
+      "lines": 49,
+      "tested": false
+    },
+    {
       "file": "repo_scan/radar/pipeline.py",
-      "score": 38.5,
-      "pagerank": 0.046997,
+      "score": 28.8,
+      "pagerank": 0.041616,
       "imported_by": 2,
       "commits": 3,
       "complexity": 11,
@@ -419,29 +469,9 @@
       "tested": true
     },
     {
-      "file": "repo_scan/scanner.py",
-      "score": 37.2,
-      "pagerank": 0.0,
-      "imported_by": 0,
-      "commits": 7,
-      "complexity": 24,
-      "lines": 129,
-      "tested": false
-    },
-    {
-      "file": "repo_scan/cli.py",
-      "score": 36.6,
-      "pagerank": 0.10039,
-      "imported_by": 7,
-      "commits": 0,
-      "complexity": 0,
-      "lines": 64,
-      "tested": false
-    },
-    {
       "file": "repo_scan/radar/sources.py",
-      "score": 34.7,
-      "pagerank": 0.041151,
+      "score": 26.4,
+      "pagerank": 0.036439,
       "imported_by": 2,
       "commits": 3,
       "complexity": 14,
@@ -450,8 +480,8 @@
     },
     {
       "file": "repo_scan/ranking.py",
-      "score": 31.5,
-      "pagerank": 0.039202,
+      "score": 24.7,
+      "pagerank": 0.034714,
       "imported_by": 1,
       "commits": 0,
       "complexity": 34,
@@ -460,8 +490,8 @@
     },
     {
       "file": "repo_scan/languages.py",
-      "score": 30.9,
-      "pagerank": 0.032187,
+      "score": 24.4,
+      "pagerank": 0.028502,
       "imported_by": 1,
       "commits": 3,
       "complexity": 18,
@@ -469,19 +499,29 @@
       "tested": false
     },
     {
-      "file": "repo_scan/config.py",
-      "score": 30.6,
-      "pagerank": 0.084801,
-      "imported_by": 7,
-      "commits": 0,
+      "file": "README.md",
+      "score": 21.0,
+      "pagerank": 0.0,
+      "imported_by": 0,
+      "commits": 7,
       "complexity": 0,
-      "lines": 42,
+      "lines": 0,
       "tested": false
     },
     {
+      "file": "repo_scan/tickets.py",
+      "score": 19.5,
+      "pagerank": 0.031263,
+      "imported_by": 1,
+      "commits": 0,
+      "complexity": 19,
+      "lines": 210,
+      "tested": true
+    },
+    {
       "file": "tests/test_radar_pipeline.py",
-      "score": 20.9,
-      "pagerank": 0.02751,
+      "score": 16.0,
+      "pagerank": 0.024361,
       "imported_by": 0,
       "commits": 0,
       "complexity": 19,
@@ -489,38 +529,8 @@
       "tested": true
     },
     {
-      "file": "README.md",
-      "score": 20.0,
-      "pagerank": 0.0,
-      "imported_by": 0,
-      "commits": 6,
-      "complexity": 0,
-      "lines": 0,
-      "tested": false
-    },
-    {
-      "file": "repo_scan/complexity.py",
-      "score": 18.4,
-      "pagerank": 0.032187,
-      "imported_by": 1,
-      "commits": 0,
-      "complexity": 11,
-      "lines": 91,
-      "tested": false
-    },
-    {
-      "file": "tests/test_trends.py",
-      "score": 17.3,
-      "pagerank": 0.02751,
-      "imported_by": 0,
-      "commits": 0,
-      "complexity": 14,
-      "lines": 61,
-      "tested": true
-    },
-    {
       "file": "setup.py",
-      "score": 17.0,
+      "score": 15.3,
       "pagerank": 0.0,
       "imported_by": 0,
       "commits": 5,
@@ -530,12 +540,32 @@
     },
     {
       "file": "pyproject.toml",
-      "score": 17.0,
+      "score": 15.3,
       "pagerank": 0.0,
       "imported_by": 0,
       "commits": 5,
       "complexity": 0,
       "lines": 14,
+      "tested": false
+    },
+    {
+      "file": "repo_scan/behavior.py",
+      "score": 14.1,
+      "pagerank": 0.031263,
+      "imported_by": 1,
+      "commits": 0,
+      "complexity": 12,
+      "lines": 102,
+      "tested": true
+    },
+    {
+      "file": "repo_scan/complexity.py",
+      "score": 12.8,
+      "pagerank": 0.028502,
+      "imported_by": 1,
+      "commits": 0,
+      "complexity": 11,
+      "lines": 91,
       "tested": false
     }
   ],
@@ -543,7 +573,7 @@
     "python": [
       [
         "tests.test_phase_a",
-        "repo_scan.cli"
+        "repo_scan.config"
       ],
       [
         "tests.test_phase_a",
@@ -563,7 +593,7 @@
       ],
       [
         "tests.test_visuals",
-        "repo_scan.cli"
+        "repo_scan.config"
       ],
       [
         "tests.test_visuals",
@@ -579,7 +609,7 @@
       ],
       [
         "tests.test_trends",
-        "repo_scan.cli"
+        "repo_scan.config"
       ],
       [
         "tests.test_trends",
@@ -591,7 +621,7 @@
       ],
       [
         "tests.test_scan",
-        "repo_scan.cli"
+        "repo_scan.config"
       ],
       [
         "tests.test_radar_pipeline",
@@ -600,6 +630,18 @@
       [
         "tests.test_radar_pipeline",
         "repo_scan.radar.pipeline"
+      ],
+      [
+        "tests.test_behavior",
+        "repo_scan.config"
+      ],
+      [
+        "tests.test_behavior",
+        "repo_scan.behavior"
+      ],
+      [
+        "tests.test_behavior",
+        "repo_scan.config"
       ],
       [
         "tests.test_radar_llm",
@@ -627,7 +669,7 @@
       ],
       [
         "tests.test_portability",
-        "repo_scan.cli"
+        "repo_scan.config"
       ],
       [
         "tests.test_portability",
@@ -646,8 +688,20 @@
         "repo_scan.languages"
       ],
       [
+        "tests.test_tickets",
+        "repo_scan.config"
+      ],
+      [
+        "tests.test_tickets",
+        "repo_scan.config"
+      ],
+      [
+        "tests.test_tickets",
+        "repo_scan.tickets"
+      ],
+      [
         "tests.test_tests_map",
-        "repo_scan.cli"
+        "repo_scan.config"
       ],
       [
         "tests.test_tests_map",
@@ -663,10 +717,213 @@
       ],
       [
         "tests.test_radar_full",
-        "repo_scan.cli"
+        "repo_scan.config"
       ]
     ],
     "typescript": []
+  },
+  "behavior": {
+    "coupling": [
+      {
+        "a": "pyproject.toml",
+        "b": "setup.py",
+        "shared": 5,
+        "degree": 100
+      },
+      {
+        "a": "repo_scan/scanner.py",
+        "b": "repo_scan/writers.py",
+        "shared": 5,
+        "degree": 67
+      }
+    ],
+    "ownership": [
+      {
+        "file": "repo_scan/scanner.py",
+        "commits": 8,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/writers.py",
+        "commits": 7,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "README.md",
+        "commits": 7,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "pyproject.toml",
+        "commits": 5,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "setup.py",
+        "commits": 5,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/graphs.py",
+        "commits": 3,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/languages.py",
+        "commits": 3,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/radar/sources.py",
+        "commits": 3,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/radar/pipeline.py",
+        "commits": 3,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "tests/test_radar_pipeline.py",
+        "commits": 3,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/config.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/__init__.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/complexity.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "tests/test_portability.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/utils.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "tests/test_visuals.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/digest.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/radar/llm.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "repo_scan/ranking.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      },
+      {
+        "file": "tests/test_phase_a.py",
+        "commits": 2,
+        "authors": 1,
+        "top_author": "hartley.leroy1997@gmail.com",
+        "top_share": 1.0
+      }
+    ],
+    "age_days": {
+      "repo_scan/behavior.py": 0,
+      "repo_scan/config.py": 0,
+      "repo_scan/scanner.py": 0,
+      "repo_scan/writers.py": 0,
+      "tests/test_behavior.py": 0,
+      "README.md": 0,
+      "repo_scan/tests_map.py": 0,
+      "tests/test_tests_map.py": 0,
+      "repo_scan/trends.py": 0,
+      "tests/test_trends.py": 0,
+      "repo_scan/__init__.py": 0,
+      "repo_scan/complexity.py": 0,
+      "tests/test_portability.py": 0,
+      "repo_scan/graphs.py": 0,
+      "repo_scan/languages.py": 0,
+      "repo_scan/radar/sources.py": 0,
+      "repo_scan/utils.py": 0,
+      "tests/test_visuals.py": 0,
+      "repo_scan/radar/pipeline.py": 0,
+      "tests/test_radar_pipeline.py": 0,
+      "repo_scan/digest.py": 0,
+      "repo_scan/radar/llm.py": 0,
+      "repo_scan/ranking.py": 0,
+      "tests/test_phase_a.py": 0,
+      "repo_scan/radar/fetchers.py": 0,
+      "repo_scan/radar/research.py": 0,
+      "tests/test_radar_ingest.py": 0,
+      "tests/test_radar_full.py": 0,
+      "repo_scan/radar/cli.py": 0,
+      "repo_scan/radar/gates.py": 0,
+      "tests/test_radar_gates.py": 0,
+      "tests/fake_llm.py": 0,
+      "tests/test_radar_llm.py": 0,
+      "pyproject.toml": 0,
+      "repo_scan/radar/__init__.py": 0,
+      "setup.py": 0,
+      "repo_scan/churn.py": 0,
+      "repo_scan/cli.py": 0,
+      "repo_scan/handoff.py": 0,
+      "repo_scan/hooks.py": 0,
+      "repo_scan/identity.py": 0,
+      "tests/conftest.py": 0,
+      "tests/test_scan.py": 0
+    }
   },
   "config": {
     "line_warn": 300,
@@ -693,6 +950,13 @@
     "radar_enabled": true,
     "tree_depth": 3,
     "rank_top_n": 15,
-    "digest_tokens": 4000
+    "digest_tokens": 4000,
+    "coupling_min_shared": 4,
+    "coupling_min_degree": 50,
+    "coupling_max_changeset": 30,
+    "silo_min_share": 0.9,
+    "stale_days": 180,
+    "tickets_enabled": true,
+    "tickets_max_new_per_scan": 5
   }
 }

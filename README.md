@@ -49,10 +49,14 @@ docs/
   scan.json                   # machine-readable sidecar for agents (same data)
   digest.md                   # token-budgeted single-file LLM context (--digest)
   reports/
-    health.md                 # file sizes, complexity, git churn
+    health.md                 # file sizes, complexity, churn, knowledge map (bus factor)
     dependencies.md           # Mermaid dep graphs (TS + Python), PageRank-tinted
     calls.md                  # Mermaid call graphs (C)
+    coupling.md               # change coupling + hidden seams (coupled, no import edge)
     trend.md                  # scan-over-scan metric history (capped log)
+  tickets/
+    tkt-NNNN.md               # auto-proposed + human tickets (YAML frontmatter)
+    board.md                  # Obsidian Kanban board, columns per status
   architecture/
     dependency-graph.md       # stable dep graph for Obsidian linking
   research/
@@ -70,6 +74,21 @@ directory tree. One read orients a human or an agent. PageRank is computed inlin
 Complexity covers every language: radon scores Python, lizard scores TS/TSX/JS/C/
 Java/Go and friends on the same A–F rank scale. Untested candidates get a 2x
 priority boost in the RADAR trigger feed.
+
+Behavioral analysis (one `git log --numstat` pass) adds change coupling, per-file
+ownership/bus-factor, and code age. Coupled pairs with no import edge are flagged
+as hidden seams in `reports/coupling.md`.
+
+## Tickets
+
+Every scan auto-proposes tickets (refactor, hidden seam, oversized file, stale
+hub, knowledge silo) into `docs/tickets/` — one markdown file each, with YAML
+frontmatter (Dataview-queryable) and acceptance criteria. Review them in
+Obsidian: edit `status` (`proposed → approved → in-progress → done`/`rejected`)
+or drag cards on the generated Kanban `board.md`. Rejected fingerprints are
+never re-proposed. Humans add tickets the same way — any `.md` file with a
+`status` in its frontmatter. Disable with `"tickets_enabled": false`; cap new
+tickets per scan with `tickets_max_new_per_scan`.
 
 Plain Markdown + Mermaid. Point Obsidian at the repo root — everything renders natively.
 

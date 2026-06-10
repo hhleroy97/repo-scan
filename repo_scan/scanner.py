@@ -13,6 +13,7 @@ from .identity import get_directory_tree
 from .languages import detect_languages, get_line_counts
 from .ranking import rank_files
 from .tests_map import find_tested_files, is_test_file
+from .tickets import generate_tickets
 from .trends import append_trend_log, compute_delta, load_previous_summary, summarize_metrics
 from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
 from .writers import (
@@ -126,6 +127,15 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
         cc_files = {item["file"] for item in complexity}
         if churn_files & cc_files and not quiet:
             info("RADAR candidates detected — run `radar full` to research the top one")
+
+    if cfg.get("tickets_enabled", True):
+        created = generate_tickets(root, cfg, {
+            "line_counts": line_counts, "ranking": ranking, "churn": churn,
+            "complexity": complexity, "tested": tested, "behavior": behavior,
+            "seams": seams,
+        })
+        if created and not quiet:
+            info(f"{created} ticket(s) proposed — review {cfg['docs_dir']}/tickets/board.md")
 
     if include_handoff:
         write_handoff(root, cfg, languages, line_counts)
