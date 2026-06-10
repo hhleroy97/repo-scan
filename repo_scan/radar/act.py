@@ -30,6 +30,11 @@ ACT_PROMPT = """You are implementing an approved specification in this repositor
 Work autonomously: read code as needed, make the changes, keep edits minimal
 and consistent with existing conventions.
 
+Pre-act context (fresh at implement time):
+---
+{context_bundle}
+---
+
 Documentation must evolve with the implementation:
 - update docstrings on every function/module you change so they describe the
   new shape, not the old one
@@ -73,6 +78,51 @@ Failing output (truncated):
 def _git(root: Path, *args: str, timeout: int = 60) -> subprocess.CompletedProcess:
     return subprocess.run(["git", *args], cwd=root, capture_output=True,
                           text=True, timeout=timeout)
+
+
+def _recent_act_changelog(root: Path, cfg: dict, ticket_id: str,
+                          limit: int = 5) -> list[str]:
+    """Last N act changelog headings mentioning this ticket."""
+    changelog = root / cfg["docs_dir"] / "changelog"
+    if not changelog.is_dir():
+        return []
+    hits: list[str] = []
+    for path in sorted(changelog.glob("*-act.md"), reverse=True):
+        for ln in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+            if ln.startswith("## ") and ticket_id in ln:
+                hits.append(ln[3:].strip())
+                if len(hits) >= limit:
+                    return hits
+    return hits
+
+
+def build_act_context(root: Path, cfg: dict, ticket: dict, spec_text: str,
+                      work: Path, branch: str) -> str:
+    """Bundle diff stat, spec excerpt, criteria, repo snapshot, recent act log."""
+    from .research import repo_snapshot
+
+    lines = []
+    if branch:
+        for base in ("main", "master"):
+            if _git(work, "rev-parse", "--verify", "--quiet", base).returncode == 0:
+                stat = _git(work, "diff", "--stat", f"{base}...HEAD")
+                if stat.returncode == 0 and stat.stdout.strip():
+                    lines += ["Branch diff stat (" + base + "...HEAD):",
+                              stat.stdout.strip()[:1500], ""]
+                break
+
+    lines += ["Spec excerpt:", spec_text[:2000].strip(), ""]
+    criteria = ticket.get("criteria") or []
+    if criteria:
+        lines.append("Acceptance criteria:")
+        lines.extend(f"- {c}" for c in criteria[:12])
+        lines.append("")
+    lines += [repo_snapshot(root, cfg), ""]
+    recent = _recent_act_changelog(root, cfg, ticket["id"])
+    if recent:
+        lines.append("Recent act runs for this ticket:")
+        lines.extend(f"- {h}" for h in recent)
+    return "\n".join(lines)[:12000]
 
 
 def _tree_dirty(root: Path, docs_dir: str) -> bool:
@@ -370,8 +420,11 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
         if ckpt.get("implemented"):
             info("resumed from checkpoint")
         else:
+            context = build_act_context(root, cfg, ticket, spec_text, work, branch)
             summary = complete(
-                ACT_PROMPT.format(spec=spec_text[:14000], docs_dir=cfg["docs_dir"]),
+                ACT_PROMPT.format(context_bundle=context,
+                                  spec=spec_text[:14000],
+                                  docs_dir=cfg["docs_dir"]),
                 cfg, timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)), cwd=str(work),
                 role="act", root=root)
             ckpt["implemented"] = True

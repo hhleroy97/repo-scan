@@ -22,6 +22,7 @@ Dedup: every auto-ticket carries a content-stable `fingerprint`
 rejected — is never re-proposed, so saying no sticks.
 """
 
+import json
 import re
 from pathlib import Path
 
@@ -32,6 +33,8 @@ from .utils import now_date, ok, write_doc
 _SCAN_PROPOSAL_KEYS = (
     "line_counts", "ranking", "churn", "complexity", "tested", "behavior", "seams",
 )
+
+METRIC_FINGERPRINT_PREFIXES = ("refactor:", "seam:", "size:", "stale:", "silo:")
 
 STATUSES = ["proposed", "approved", "in-progress", "done", "rejected"]
 BOARD_COLUMNS = [("Proposed", "proposed"), ("Approved", "approved"),
@@ -553,7 +556,102 @@ def generate_tickets(root: Path, cfg: dict, signals: dict) -> tuple[int, list[di
     if created or existing:
         write_board(root, cfg, load_tickets(root, cfg),
                     resolved_ids={t["id"] for t in resolved})
+    auto_close_resolved_proposed(root, cfg, resolved)
     return created, resolved
+
+
+def is_metric_fingerprint(fingerprint: str) -> bool:
+    return any(fingerprint.startswith(p) for p in METRIC_FINGERPRINT_PREFIXES)
+
+
+def auto_close_resolved_proposed(root: Path, cfg: dict,
+                                 resolved: list[dict]) -> list[str]:
+    """Close proposed tickets whose scan metric fingerprint no longer triggers."""
+    closed = []
+    for t in resolved:
+        if t.get("status") != "proposed":
+            continue
+        if not is_metric_fingerprint(str(t.get("fingerprint", ""))):
+            continue
+        set_ticket_status(root, cfg, t["id"], "done")
+        append_ticket_note(root, cfg, t["id"],
+                           "auto-closed: metric fingerprint cleared on scan")
+        closed.append(t["id"])
+    if closed:
+        write_board(root, cfg, load_tickets(root, cfg))
+    return closed
+
+
+def signals_from_scan_json(data: dict) -> dict:
+    """Rebuild proposal inputs from a scan.json payload."""
+    behavior = data.get("behavior") or {}
+    return {
+        "line_counts": data.get("files", {}),
+        "ranking": data.get("ranking", []),
+        "churn": data.get("churn", []),
+        "complexity": data.get("complexity", []),
+        "tested": {r["file"] for r in data.get("ranking", []) if r.get("tested")},
+        "behavior": behavior,
+        "seams": behavior.get("seams") or data.get("seams") or [],
+    }
+
+
+def fingerprint_still_triggers(root: Path, cfg: dict, fingerprint: str) -> bool:
+    """True when scan would still propose this metric fingerprint."""
+    if not fingerprint or not is_metric_fingerprint(fingerprint):
+        return False
+    scan_json = root / cfg["docs_dir"] / "scan.json"
+    if not scan_json.exists():
+        return True
+    try:
+        data = json.loads(scan_json.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return True
+    proposals = propose_from_scan(cfg, **signals_from_scan_json(data))
+    return fingerprint in {p["fingerprint"] for p in proposals}
+
+
+def record_merge_verification(root: Path, cfg: dict, ticket_id: str,
+                              pr_number: int) -> None:
+    """Rescan after merge and note whether the ticket's metric fingerprint cleared."""
+    from .scanner import scan
+    from .trends import trend_callout, summarize_metrics, load_previous_summary, compute_delta
+
+    prev = load_previous_summary(root, cfg)
+    scan(root, quiet=True)
+    ticket = next((t for t in load_tickets(root, cfg) if t["id"] == ticket_id), None)
+    if not ticket:
+        return
+    fp = str(ticket.get("fingerprint", ""))
+    delta_note = ""
+    scan_json = root / cfg["docs_dir"] / "scan.json"
+    if scan_json.exists():
+        try:
+            data = json.loads(scan_json.read_text(encoding="utf-8"))
+            curr = summarize_metrics(data.get("files", {}), data.get("complexity", []), cfg)
+            delta = compute_delta(prev, curr)
+            callout = trend_callout(delta)
+            if callout:
+                delta_note = " ".join(ln.lstrip("> ") for ln in callout if ln.startswith("> "))
+        except (json.JSONDecodeError, KeyError, TypeError):
+            pass
+
+    if not is_metric_fingerprint(fp):
+        append_ticket_note(root, cfg, ticket_id,
+                           f"PR #{pr_number} merged — intent ticket marked done"
+                           + (f" ({delta_note})" if delta_note else ""))
+        set_ticket_status(root, cfg, ticket_id, "done")
+        return
+
+    if fingerprint_still_triggers(root, cfg, fp):
+        append_ticket_note(root, cfg, ticket_id,
+                           f"PR #{pr_number} merged — rescan: metric still active"
+                           + (f" ({delta_note})" if delta_note else ""))
+    else:
+        append_ticket_note(root, cfg, ticket_id,
+                           f"PR #{pr_number} merged — rescan: metric fingerprint cleared"
+                           + (f" ({delta_note})" if delta_note else ""))
+        set_ticket_status(root, cfg, ticket_id, "done")
 
 
 def write_board(root: Path, cfg: dict, tickets: list[dict],
