@@ -1,4 +1,8 @@
-"""Scan pipeline orchestration."""
+"""Scan pipeline orchestration.
+
+Report writes delegate to ``report_pipeline.write_scan_reports``; this module
+no longer imports ``writers`` directly.
+"""
 
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,17 +19,10 @@ from .languages import detect_languages, get_line_counts
 from .ranking import rank_files
 from .tests_map import find_tested_files, is_test_file
 from .tickets import generate_tickets
-from .trends import append_trend_log, compute_delta, load_previous_summary, summarize_metrics
+from .report_pipeline import ReportPayload, write_scan_reports
+from .trends import compute_delta, load_previous_summary, summarize_metrics
 from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
-from .writers import (
-    write_call_report,
-    write_candidates,
-    write_coupling_report,
-    write_dep_report,
-    write_health_report,
-    write_index,
-    write_scan_json,
-)
+from .writers import write_candidates
 
 
 def ranking_node_scores(ranking: list[dict]) -> dict[str, float]:
@@ -158,17 +155,25 @@ def _write_reports(ctx: ScanContext) -> None:
 
     all_edges = ctx.py_edges + ctx.ts_edges
     ctx.seams = hidden_seams(ctx.behavior["coupling"], all_edges)
-    write_health_report(ctx.root, ctx.cfg, ctx.line_counts, ctx.churn, ctx.complexity,
-                        behavior=ctx.behavior)
-    write_coupling_report(ctx.root, ctx.cfg, ctx.behavior["coupling"], ctx.seams)
-    write_dep_report(ctx.root, ctx.cfg, ctx.ts_deps, ctx.py_deps, ctx.ts_reason)
-    write_call_report(ctx.root, ctx.cfg, ctx.c_calls)
-    write_index(ctx.root, ctx.cfg, ctx.line_counts, ctx.languages, ctx.ranking, ctx.tree,
-                delta=ctx.delta)
-    write_scan_json(ctx.root, ctx.cfg, ctx.line_counts, ctx.languages, ctx.churn,
-                    ctx.complexity, ctx.ranking, ctx.py_edges, ctx.ts_edges,
-                    behavior=ctx.behavior)
-    append_trend_log(ctx.root, ctx.cfg, ctx.curr_summary, ctx.delta)
+    payload = ReportPayload(
+        line_counts=ctx.line_counts,
+        languages=ctx.languages,
+        churn=ctx.churn,
+        complexity=ctx.complexity,
+        ranking=ctx.ranking,
+        tree=ctx.tree,
+        behavior=ctx.behavior,
+        seams=ctx.seams,
+        ts_mermaid=ctx.ts_deps,
+        py_mermaid=ctx.py_deps,
+        ts_reason=ctx.ts_reason,
+        c_mermaid=ctx.c_calls,
+        py_edges=ctx.py_edges,
+        ts_edges=ctx.ts_edges,
+        curr_summary=ctx.curr_summary,
+        delta=ctx.delta,
+    )
+    write_scan_reports(ctx.root, ctx.cfg, payload)
 
 
 def _maybe_run_radar(ctx: ScanContext) -> None:
