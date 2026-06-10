@@ -101,3 +101,6 @@
 | 2026-06-10 13:36 UTC | post_implement | auto | tests passed; 2 files changed, 72 insertions(+), 31 deletions(-) on radar/tkt-0008 — commit? |
 | 2026-06-10 13:38 UTC | post_analyze | approved (dashboard) | Follow the repo's characterization-then-extract playbook: snapshot radon output and a copy of `docs/scan.json`, then add |
 | 2026-06-10 13:38 UTC | post_audit | approved (dashboard) | audit revise: Radon baselines, test migration inventory, and Fowler decomposition direction match the repo and code, but |
+| 2026-06-10 13:38 UTC | pre_implement | auto | implement [[2026-06-10-refactor-repo-scan-hub-daemon-py-cc-38-1-spec]] on branch radar/tkt-0013 for tkt-0013 |
+| 2026-06-10 13:43 UTC | post_analyze | approved (dashboard) | Extend the existing Markdown+Mermaid pipeline with auto-generated, ticket-scoped diagrams sourced from scan.json: add a  |
+| 2026-06-10 13:43 UTC | post_audit | approved (dashboard) | audit revise: The spec aligns well with existing Mermaid writers, coupling/seam signals, and fingerprinted tickets, but  |

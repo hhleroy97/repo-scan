@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "I want to add a more robust way to visualize changes out ogther a list of low hanging options we could include in the tickets such as simple visual diagrams as aid or soemthinf. _captured from intent — refine before approving_ Acceptance criteria: Tbd. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-i-want-to-add-a-more-robust-way-to-visua-analysis]]"
-drafted_at: "2026-06-10 13:20 UTC"
+drafted_at: "2026-06-10 13:43 UTC"
 ---
 
 # Spec — I want to add a more robust way to visualize changes out ogther a list of low hanging options we could include in the tickets such as simple visual diagrams as aid or soemthinf. _captured from intent — refine before approving_ Acceptance criteria: Tbd. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 13:20 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 13:43 UTC by radar — **status: approved**_
 
 I'll check the codebase for how signals, edges, and writers are wired so the revised spec matches reality.
 ## Goal
