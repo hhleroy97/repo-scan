@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled). `repo_scan/hub/daemon.py` and `tests/test_act.py` changed together in 7 commits (70% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-hidden-seam-repo-scan-hub-daemon-py-test-analysis]]"
-drafted_at: "2026-06-10 19:23 UTC"
+drafted_at: "2026-06-10 19:25 UTC"
 ---
 
 # Spec — Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled). `repo_scan/hub/daemon.py` and `tests/test_act.py` changed together in 7 commits (70% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 19:23 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 19:25 UTC by radar — **status: approved**_
 
 Verifying key facts in the codebase so the revised spec matches reality.
 ## Goal
