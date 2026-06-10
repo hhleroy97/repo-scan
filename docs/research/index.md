@@ -1,8 +1,16 @@
 # Research index
-_Rebuilt 2026-06-10 16:21 UTC — 43 source(s)_
+_Rebuilt 2026-06-10 17:16 UTC — 51 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]] | github | architecture, ci, dependencies, imports, linter, module-boundaries, pypi, python, repo, static-analysis | 2026-06-10 17:16 UTC |
+| [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]] | github | bytecode, cloud-systems, configuration, csv-output, dependency-analysis, distributed-systems, fse-2020, hadoop, html, java, repo, research-artifact, static-analysis, taint-tracking | 2026-06-10 17:15 UTC |
+| [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys |…]] | url | article, json, pep, pep-589, python, standards-track, static-analysis, structured-data, type-hints, typeddict, typing | 2026-06-10 17:14 UTC |
+| [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]] | url | article, code-quality, connascence, coupling, dry, enums, magic-values, rails, refactoring, software-design, vocabulary | 2026-06-10 17:14 UTC |
+| [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]] | url | api-design, api-evolution, article, backward-compatibility, builder-pattern, configuration-object, cumulative-factory, java, java-beans, javascript, options-object | 2026-06-10 17:14 UTC |
+| [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]] | arxiv | change-proneness, co-change-analysis, dependency-analysis, large-active-files, paper, refactoring, revision-history, software-architecture, technical-debt | 2026-06-10 17:13 UTC |
+| [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract…]] | github | api-testing, ci-cd, consumer-driven-contracts, contract-testing, integration-testing, microservices, mock-server, pact, pact-broker, python, repo | 2026-06-10 17:06 UTC |
+| [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]] | url | api-design, article, backward-compatibility, encapsulation, interface-contract, martin-fowler, published-interface, refactoring | 2026-06-10 17:06 UTC |
 | [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]] | url | context-engineering, repo-map, graph-ranking, token-budget, agents, repo-scan | 2026-06-10 16:00 UTC |
 | [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]] | url | mermaid, coupling, subgraph, tickets, visualization | 2026-06-10 16:00 UTC |
 | [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]] | url | context-engineering, token-budget, snapshot, deduplication, agents | 2026-06-10 16:00 UTC |

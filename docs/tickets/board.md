@@ -6,8 +6,6 @@ kanban-plugin: board
 
 ## Proposed
 
-- [ ] [[tkt-0015|Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled)]]
-- [ ] [[tkt-0016|Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled)]]
 - [ ] [[tkt-0017|Hidden seam: repo_scan/radar/gates.py <-> repo_scan/radar/pipeline.py (53% coupled)]]
 - [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
 - [ ] [[tkt-0019|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_hub.py (60% coupled)]]
@@ -18,6 +16,8 @@ kanban-plugin: board
 ## Approved
 
 - [ ] [[tkt-0014|Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled)]]
+- [ ] [[tkt-0015|Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled)]]
+- [ ] [[tkt-0016|Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled)]]
 
 ## In progress
 

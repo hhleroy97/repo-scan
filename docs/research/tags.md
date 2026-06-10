@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 16:21 UTC_
+_Rebuilt 2026-06-10 17:16 UTC_
 
 ## 12-factor-agents
 
@@ -47,12 +47,33 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## api-design
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
+
+## api-evolution
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+
+## api-testing
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
+
+## architecture
+
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+
 ## architecture-analysis
 
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## article
 
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 - [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
@@ -79,6 +100,11 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 
+## backward-compatibility
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
+
 ## behavior-preservation
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -96,6 +122,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
+## builder-pattern
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+
+## bytecode
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
 ## caching
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
@@ -108,14 +142,26 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
+## change-proneness
+
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
+
 ## characterization-tests
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
+## ci
+
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+
 ## ci-artifacts
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
+
+## ci-cd
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 
 ## circular-dependencies
 
@@ -147,6 +193,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 
+## cloud-systems
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
+## co-change-analysis
+
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
+
 ## code-churn
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
@@ -161,6 +215,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## code-quality
 
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
@@ -210,9 +265,25 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 - [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 
+## configuration
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
+## configuration-object
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+
+## connascence
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+
 ## consolidate-duplicate-conditio
 
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+
+## consumer-driven-contracts
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 
 ## context-engineering
 
@@ -221,6 +292,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
+## contract-testing
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
+
 ## control-flow
 
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
@@ -228,11 +303,20 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## coupling
 
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 
 ## css-preprocessors
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## csv-output
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
+## cumulative-factory
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 
 ## dashboard
 
@@ -257,8 +341,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## dependencies
 
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## dependency-analysis
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 
 ## dependency-breaking
 
@@ -291,6 +381,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
+## distributed-systems
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
 ## distribution
 
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
@@ -312,6 +406,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## dry
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+
 ## early-return
 
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
@@ -320,6 +418,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
+
+## encapsulation
+
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
+
+## enums
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
 ## es6-modules
 
@@ -359,6 +465,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
+
+## fse-2020
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 
 ## gantt
 
@@ -420,6 +530,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
+## hadoop
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
 ## hallucination-filtering
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -430,6 +544,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## html
 
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 
 ## hub
@@ -454,6 +569,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 
+## imports
+
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+
 ## indexing
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
@@ -470,6 +589,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
+## integration-testing
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
+
 ## intellij-plugin
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -478,17 +601,28 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## interface-contract
+
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
+
 ## issue-tracker
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## java
 
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
+## java-beans
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+
 ## javascript
 
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
@@ -504,6 +638,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## jira-alternative
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## json
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 
 ## json-output
 
@@ -530,6 +668,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
+## large-active-files
+
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
+
 ## learnability
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
@@ -551,6 +693,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## linear
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## linter
+
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 
 ## live-updates
 
@@ -581,6 +727,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 
+## magic-values
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+
 ## markdown
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
@@ -589,6 +739,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## martin-fowler
 
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
@@ -613,6 +764,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## microservices
 
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
@@ -631,6 +783,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## mobile-design
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## mock-server
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
+
+## module-boundaries
+
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 
 ## module-prioritization
 
@@ -673,6 +833,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
+## options-object
+
+- [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
+
 ## ownership-metrics
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
@@ -687,6 +851,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
+## pact
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
+
+## pact-broker
+
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
+
 ## pagerank
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
@@ -695,6 +867,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## paper
 
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
@@ -708,6 +881,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## parametrization
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## pep
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
+
+## pep-589
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 
 ## performance-tradeoff
 
@@ -750,6 +931,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
+## published-interface
+
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
+
 ## pycharm
 
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
@@ -760,6 +945,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## pypi
 
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
@@ -782,6 +968,9 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## python
 
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
@@ -801,6 +990,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## quick-fix
 
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
+
+## rails
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
 ## react
 
@@ -822,6 +1015,9 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## refactoring
 
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
+- [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 - [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
@@ -840,6 +1036,9 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## repo
 
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+- [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
@@ -884,6 +1083,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 
+## research-artifact
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+
 ## research-plan-implement
 
 - [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
@@ -895,6 +1098,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## retrospectives
 
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
+## revision-history
+
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 
 ## roadmaps
 
@@ -984,7 +1191,12 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## software-architecture
 
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
+
+## software-design
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
 ## software-engineering
 
@@ -1006,8 +1218,15 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## standards-track
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
+
 ## static-analysis
 
+- [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
@@ -1022,6 +1241,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## stdlib
 
 - [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
+
+## structured-data
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 
 ## subgraph
 
@@ -1038,6 +1261,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 ## syrupy
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
+
+## taint-tracking
+
+- [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 
 ## task-analysis
 
@@ -1057,6 +1284,7 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 ## technical-debt
 
+- [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -1114,6 +1342,14 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
 - [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
 
+## type-hints
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
+
+## typeddict
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
+
 ## typescript
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
@@ -1125,6 +1361,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 - [[sources/gh-phoenix-assistant-impact-graph\|phoenix-assistant/impact-graph — If I change this function, what breaks? Change impact analysis with call graphs…]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 - [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]
+
+## typing
+
+- [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 
 ## uml
 
@@ -1175,6 +1415,10 @@ _Rebuilt 2026-06-10 16:21 UTC_
 
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
+## vocabulary
+
+- [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
 ## wizards
 
