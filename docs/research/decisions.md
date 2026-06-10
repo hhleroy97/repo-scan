@@ -138,3 +138,5 @@
 | 2026-06-10 17:43 UTC | post_implement | approved (dashboard) | PROTECTED paths touched (repo_scan/config.py) — tests passed; 6 files changed, 38 insertions(+), 23 deletions(-) on rada |
 | 2026-06-10 17:45 UTC | post_implement | auto | tests passed; 6 files changed, 142 insertions(+), 17 deletions(-) on radar/tkt-0015 — commit? |
 | 2026-06-10 18:28 UTC | post_analyze | paused | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |
+| 2026-06-10 18:29 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |
+| 2026-06-10 18:33 UTC | post_audit | paused | audit revise: The package/concat/contract-injection approach is sound and line caps are achievable, but fragment boundar |
