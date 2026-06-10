@@ -143,3 +143,41 @@ def test_scanner_writers_degree_below_threshold(tmp_path: Path):
         assert degree < DEFAULT_CONFIG["coupling_min_degree"]
     else:
         assert seam_pair not in pair_keys
+
+
+def test_cli_gates_degree_below_threshold(tmp_path: Path):
+    """After decoupling history, cli↔gates coupling drops below 50%."""
+    repo = tmp_path / "cli-gates-repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True, capture_output=True)
+    pkg = "repo_scan/radar"
+    cli = f"{pkg}/cli.py"
+    gates = f"{pkg}/gates.py"
+
+    for i in range(4):
+        _commit(
+            repo,
+            {
+                cli: f"# pair {i}\n",
+                gates: f"# pair {i}\n",
+            },
+            f"pair {i}",
+        )
+    for i in range(3):
+        _commit(repo, {gates: f"# gates solo {i}\n"}, f"gates {i}")
+    for i in range(6):
+        _commit(repo, {cli: f"# cli solo {i}\n"}, f"cli {i}")
+
+    tracked = {cli, gates}
+    result = analyze_history(repo, DEFAULT_CONFIG, tracked)
+    pair_keys = {frozenset((c["a"], c["b"])) for c in result["coupling"]}
+    seam_pair = frozenset((cli, gates))
+    if seam_pair in pair_keys:
+        degree = next(
+            c["degree"]
+            for c in result["coupling"]
+            if frozenset((c["a"], c["b"])) == seam_pair
+        )
+        assert degree < DEFAULT_CONFIG["coupling_min_degree"]
+    else:
+        assert seam_pair not in pair_keys

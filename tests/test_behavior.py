@@ -75,9 +75,13 @@ def test_mass_changesets_excluded(tmp_path: Path):
 def test_hidden_seams_excludes_imported_pairs():
     coupling = [
         {"a": "repo_scan/scanner.py", "b": "repo_scan/writers.py", "shared": 5, "degree": 80},
+        {"a": "repo_scan/radar/cli.py", "b": "repo_scan/radar/gates.py", "shared": 4, "degree": 80},
         {"a": "src/api.ts", "b": "src/billing.ts", "shared": 6, "degree": 90},
     ]
-    edges = [("repo_scan.scanner", "repo_scan.writers")]  # python dotted-module edge
+    edges = [
+        ("repo_scan.scanner", "repo_scan.writers"),
+        ("repo_scan.radar.cli", "repo_scan.radar.gates"),
+    ]
     seams = hidden_seams(coupling, edges)
     assert len(seams) == 1
     assert seams[0]["a"] == "src/api.ts"
