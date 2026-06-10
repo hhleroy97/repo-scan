@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 07:51 UTC_
+_Rebuilt 2026-06-10 07:58 UTC_
 
 ## 12-factor-agents
 
@@ -49,6 +49,7 @@ _Rebuilt 2026-06-10 07:51 UTC_
 
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
@@ -115,6 +116,10 @@ _Rebuilt 2026-06-10 07:51 UTC_
 ## claude-code
 
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## clean-code
+
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
 ## cli
 
@@ -194,6 +199,10 @@ _Rebuilt 2026-06-10 07:51 UTC_
 
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
+## control-flow
+
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
+
 ## css-preprocessors
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
@@ -258,6 +267,10 @@ _Rebuilt 2026-06-10 07:51 UTC_
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
+
+## early-return
+
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
 ## empirical-evaluation
 
@@ -353,6 +366,10 @@ _Rebuilt 2026-06-10 07:51 UTC_
 ## graphviz
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## guard-clauses
+
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
 ## hallucination-filtering
 
@@ -576,6 +593,10 @@ _Rebuilt 2026-06-10 07:51 UTC_
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## nested-conditionals
+
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
+
 ## nngroup
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
@@ -726,6 +747,10 @@ _Rebuilt 2026-06-10 07:51 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## readability
+
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
+
 ## readme
 
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
@@ -738,6 +763,7 @@ _Rebuilt 2026-06-10 07:51 UTC_
 
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
+- [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
