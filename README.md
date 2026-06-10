@@ -216,7 +216,12 @@ when a scan proposes tickets — tapping the notification opens the dashboard
 (set `"serve_host"` to your tailnet name so the link resolves).
 
 Hub config keys (all optional): `serve_host`, `serve_port`,
-`daemon_poll_seconds`, `daemon_scan_hours`, `ntfy_topic`, `ntfy_server`.
+`daemon_poll_seconds`, `daemon_scan_hours`, `ntfy_topic`, `ntfy_server`,
+`dashboard_url` (overrides notification links when a proxy fronts the hub).
+
+Machine-private values (the ntfy topic is effectively a credential) belong in
+`.repo-scan.local.json` — same format, merged after `.repo-scan.json`, and
+should be gitignored.
 
 ### Obsidian graph + Dataview
 

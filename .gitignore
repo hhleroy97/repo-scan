@@ -6,3 +6,6 @@ dist/
 
 # hub runtime state (tokens, checkpoints, decision inbox)
 .radar/
+
+# machine-private config (ntfy topic, hosts) — never commit
+.repo-scan.local.json

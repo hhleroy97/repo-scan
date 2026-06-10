@@ -44,16 +44,20 @@ RADAR_CONFIG_KEYS = {
 
 def load_config(root: Path) -> dict:
     cfg = DEFAULT_CONFIG.copy()
-    config_file = root / ".repo-scan.json"
-    if config_file.exists():
+    # .repo-scan.local.json: machine-private overrides (ntfy topic, hosts)
+    # that must never be committed — merged after the shared config
+    for name in (".repo-scan.json", ".repo-scan.local.json"):
+        config_file = root / name
+        if not config_file.exists():
+            continue
         try:
             overrides = json.loads(config_file.read_text())
             unknown = set(overrides) - set(DEFAULT_CONFIG) - RADAR_CONFIG_KEYS
             if unknown:
-                warn(f".repo-scan.json unknown keys ignored by scan: {', '.join(sorted(unknown))}")
+                warn(f"{name} unknown keys ignored by scan: {', '.join(sorted(unknown))}")
             cfg.update(overrides)
         except json.JSONDecodeError as e:
-            warn(f".repo-scan.json parse error: {e} — using defaults")
+            warn(f"{name} parse error: {e} — ignoring it")
     return cfg
 
 

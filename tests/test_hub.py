@@ -308,6 +308,19 @@ def test_dashboard_html_served(hub_server):
     assert "repo-scan hub" in html and "/api/state" in html
 
 
+# --- local (machine-private) config overrides ------------------------------------
+
+def test_local_config_merges_after_shared(tmp_repo: Path):
+    (tmp_repo / ".repo-scan.json").write_text(
+        json.dumps({"radar_enabled": True, "serve_port": 9000}))
+    (tmp_repo / ".repo-scan.local.json").write_text(
+        json.dumps({"ntfy_topic": "secret-topic", "serve_port": 9100}))
+    cfg = load_config(tmp_repo)
+    assert cfg["radar_enabled"] is True
+    assert cfg["ntfy_topic"] == "secret-topic"
+    assert cfg["serve_port"] == 9100  # local wins over shared
+
+
 # --- notify ----------------------------------------------------------------------
 
 def test_notify_disabled_without_topic():
