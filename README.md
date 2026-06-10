@@ -205,7 +205,10 @@ an act-model touches code, and tests are the backstop:
 ```
 
 Roles: `research`, `analyze`, `draft`, `audit`, `act`, `act_fix`. Any role
-without an override uses the backend default.
+without an override falls back to `llm_roles["default"]` if set, otherwise
+the backend's own default. `{ "llm_roles": { "default": "composer-2.5" } }`
+is the one-knob way to pin every operation to a cheap model when the API
+budget runs dry.
 
 Every LLM call is appended to `docs/<docs_dir>/.radar/usage.jsonl` with real
 token counts (parsed from the agent CLI's JSON envelope; plain-text backends
