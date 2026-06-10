@@ -48,6 +48,8 @@ RADAR_CONFIG_KEYS = {
     # governance: budgets, path policy, per-kind autonomy, acceptance tests
     "budget_daily_tokens", "max_acts_per_day", "protected_paths",
     "gates_by_kind", "require_tests_for_kinds",
+    # vault auto-commit after runs/scans (default on)
+    "vault_autocommit",
 }
 
 

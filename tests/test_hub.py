@@ -194,6 +194,46 @@ def test_daemon_full_cycle(loop_env, monkeypatch):
     assert "-spec]]" in body
 
 
+def test_commit_vault_commits_docs_only(tmp_repo):
+    """Vault churn lands in a commit; human code work is never swept in."""
+    import subprocess
+    from repo_scan.hub.daemon import commit_vault
+    cfg = load_config(tmp_repo)
+    (tmp_repo / "docs").mkdir(exist_ok=True)
+    (tmp_repo / "docs" / "new-artifact.md").write_text("# spec\n")
+    (tmp_repo / "wip.py").write_text("# human's half-done work\n")
+    subprocess.run(["git", "add", "wip.py"], cwd=tmp_repo, capture_output=True)
+
+    assert commit_vault(tmp_repo, cfg, "vault: test artifacts") is True
+    show = subprocess.run(["git", "show", "--name-only", "--pretty=%s", "HEAD"],
+                          cwd=tmp_repo, capture_output=True, text=True).stdout
+    assert "vault: test artifacts" in show
+    assert "docs/new-artifact.md" in show
+    assert "wip.py" not in show  # staged human work untouched
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=tmp_repo,
+                            capture_output=True, text=True).stdout
+    assert "wip.py" in status  # still pending for the human
+
+    from repo_scan.hub.state import load_events
+    assert any("vault committed" in e["text"] for e in load_events(tmp_repo, cfg))
+
+
+def test_commit_vault_noop_when_clean_or_disabled(tmp_repo):
+    import subprocess
+    from repo_scan.hub.daemon import commit_vault
+    cfg = load_config(tmp_repo)
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_repo,
+                          capture_output=True, text=True).stdout
+    assert commit_vault(tmp_repo, cfg, "vault: nothing") is False  # clean tree
+    (tmp_repo / "docs").mkdir(exist_ok=True)
+    (tmp_repo / "docs" / "x.md").write_text("x\n")
+    cfg2 = dict(cfg, vault_autocommit=False)
+    assert commit_vault(tmp_repo, cfg2, "vault: disabled") is False
+    head2 = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_repo,
+                           capture_output=True, text=True).stdout
+    assert head == head2  # no commits made either way
+
+
 def test_event_feed_append_load_and_cap(tmp_repo: Path):
     from repo_scan.hub.state import EVENTS_KEEP, append_event, load_events
     cfg = DEFAULT_CONFIG

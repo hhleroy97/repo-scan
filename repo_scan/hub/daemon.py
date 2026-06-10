@@ -27,6 +27,9 @@ from .state import (active_runs, append_event, create_run, load_meta,
 # run id -> thread, for in-flight act runs owned by this process
 _act_threads: dict[str, threading.Thread] = {}
 
+# parallel acts must not race each other (or a human) on the git index
+_VAULT_LOCK = threading.Lock()
+
 
 def _pending_gate_for(root: Path, cfg: dict, problem: str) -> str | None:
     """Which gate (if any) is currently paused for this problem."""
@@ -57,7 +60,11 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
     from ..tickets import append_ticket_note, set_ticket_status
 
     update_run(root, cfg, run["id"], "running")
-    rc = cmd_loop(root, cfg, run["problem"])
+    try:
+        rc = cmd_loop(root, cfg, run["problem"])
+    finally:
+        commit_vault(root, cfg,
+                     f"vault: loop artifacts — {run.get('ticket') or run['problem'][:60]}")
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
@@ -100,7 +107,11 @@ def _run_act(root: Path, cfg: dict, run: dict) -> int:
     from ..radar.act import cmd_act
 
     update_run(root, cfg, run["id"], "running")
-    rc = cmd_act(root, cfg, ticket_id=run.get("ticket"), worktree=True)
+    try:
+        rc = cmd_act(root, cfg, ticket_id=run.get("ticket"), worktree=True)
+    finally:
+        commit_vault(root, cfg,
+                     f"vault: act trail — {run.get('ticket') or run['problem'][:60]}")
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
@@ -138,6 +149,52 @@ def _spawn_act(root: Path, cfg: dict, run: dict, parallel: bool) -> None:
                          name=f"act-{run['id']}", daemon=True)
     _act_threads[run["id"]] = t
     t.start()
+
+
+def commit_vault(root: Path, cfg: dict, message: str) -> bool:
+    """Auto-commit vault churn so agentic history is never lost.
+
+    Loops and scans write artifacts (specs, analyses, sources, tickets,
+    logs) continuously, but nothing committed them — humans periodically
+    rescued them in catch-up commits. The daemon now commits docs/ after
+    every run and scan, pathspec-scoped so a human's staged code work is
+    never swept in. Push is best-effort (fast-forward sync first); offline
+    just means the commits accumulate locally. Disable with
+    "vault_autocommit": false.
+    """
+    import subprocess
+    if not cfg.get("vault_autocommit", True):
+        return False
+    docs = cfg["docs_dir"]
+
+    def _git(*args: str, timeout: int = 60) -> subprocess.CompletedProcess:
+        return subprocess.run(["git", *args], cwd=root, capture_output=True,
+                              text=True, timeout=timeout)
+    try:
+        with _VAULT_LOCK:
+            return _commit_vault_locked(root, cfg, message, _git)
+    except (subprocess.TimeoutExpired, OSError) as e:
+        warn(f"vault commit skipped: {e}")
+        return False
+
+
+def _commit_vault_locked(root: Path, cfg: dict, message: str, _git) -> bool:
+    docs = cfg["docs_dir"]
+    _git("add", "-A", "--", docs)
+    if _git("diff", "--cached", "--quiet", "--", docs).returncode == 0:
+        return False  # nothing new in the vault
+    # pathspec commit: only docs/ lands, whatever else is in the index
+    r = _git("commit", "-m", message, "--", docs)
+    if r.returncode != 0:
+        warn(f"vault commit failed: {r.stderr.strip()[:120]}")
+        return False
+    append_event(root, cfg, "run", f"vault committed: {message[:80]}")
+    from .prs import sync_local
+    sync_local(root)  # ff first so the push isn't rejected
+    r = _git("push", "origin", "HEAD", timeout=120)
+    if r.returncode != 0:
+        info(f"vault commit kept locally (push: {r.stderr.strip()[:80]})")
+    return True
 
 
 def over_budget(root: Path, cfg: dict) -> str | None:
@@ -233,6 +290,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
                 actions.append("scan-failed")
             meta["last_scan"] = time.time()
             save_meta(root, cfg, meta)
+            commit_vault(root, cfg, "vault: scheduled scan")
             from ..tickets import load_tickets
             proposed = [t for t in load_tickets(root, cfg) if t["status"] == "proposed"]
             if proposed:
