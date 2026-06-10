@@ -6,7 +6,6 @@ kanban-plugin: board
 
 ## Proposed
 
-- [ ] [[tkt-0013|Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested)]]
 - [ ] [[tkt-0014|Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled)]]
 - [ ] [[tkt-0015|Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled)]]
 - [ ] [[tkt-0016|Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled)]]
@@ -14,13 +13,14 @@ kanban-plugin: board
 
 ## Approved
 
-- [ ] [[tkt-0005|Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested)]] — **metrics resolved, ready to close**
 - [ ] [[tkt-0006|Refactor repo_scan/radar/pipeline.py (CC 11, 3 commits)]]
 - [ ] [[tkt-0008|Hidden seam: repo_scan/scanner.py <-> repo_scan/writers.py (67% coupled)]]
-- [ ] [[tkt-0012|I want to add a more robust way to visualize changes out ogther a list of low hanging options we could include in the tickets such as simple visual diagrams as aid or soemthinf]] — **metrics resolved, ready to close**
+- [ ] [[tkt-0012|I want to add a more robust way to visualize changes out ogther a list of low hanging options we could include in the tickets such as simple visual diagrams as aid or soemthinf]]
+- [ ] [[tkt-0013|Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested)]]
 
 ## In progress
 
+- [ ] [[tkt-0005|Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested)]]
 
 ## Done
 
