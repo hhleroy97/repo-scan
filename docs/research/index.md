@@ -1,8 +1,11 @@
 # Research index
-_Rebuilt 2026-06-10 06:59 UTC — 27 source(s)_
+_Rebuilt 2026-06-10 07:32 UTC — 30 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]] | url | aggregation, article, code-readability, loop-optimization, martin-fowler, performance-tradeoff, refactoring, separation-of-concerns, split-loop | 2026-06-10 07:32 UTC |
+| [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for…]] | github | dataview, frontmatter, indexing, inline-fields, knowledge-base, markdown, metadata, obsidian, obsidian-plugin, query-language, repo, tasks, typescript, yaml | 2026-06-10 07:23 UTC |
+| [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]] | github | document-parsing, frontmatter, markdown, metadata, pypi, python, repo, round-trip, static-site, yaml | 2026-06-10 07:21 UTC |
 | [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]] | arxiv | arxiv, automated-refactoring, chain-of-thought, empirical-evaluation, java, llm, paper, refactoring, test-smells, testing, unit-testing | 2026-06-10 06:59 UTC |
 | [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]] | github | ide-plugin, jetbrains, kotlin, pycharm, pytest, python, quick-fix, repo, static-analysis, test-smells, testing, unittest | 2026-06-10 06:58 UTC |
 | [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]] | github | distribution, metadata, packaging, pypa, pypi, pyproject-toml, python, readme, repo, sample-project | 2026-06-10 06:45 UTC |

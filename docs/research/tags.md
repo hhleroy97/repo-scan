@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 06:59 UTC_
+_Rebuilt 2026-06-10 07:32 UTC_
 
 ## 12-factor-agents
 
@@ -12,6 +12,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 ## agentic-development
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## aggregation
+
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 
 ## agpl
 
@@ -35,6 +39,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## article
 
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
@@ -112,6 +117,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## code-readability
 
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
 ## code-statistics
@@ -149,6 +155,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 ## css-preprocessors
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## dataview
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
 ## dependencies
 
@@ -189,6 +199,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## document-parsing
+
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
+
 ## documentation
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
@@ -222,6 +236,11 @@ _Rebuilt 2026-06-10 06:59 UTC_
 ## fixtures
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## frontmatter
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 
 ## generated-code
 
@@ -288,9 +307,17 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 
+## indexing
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+
 ## information-architecture
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## inline-fields
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
 ## inline-function
 
@@ -339,6 +366,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## knowledge-base
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+
 ## kotlin
 
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
@@ -386,16 +417,25 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
+## loop-optimization
+
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
+
 ## markdown
 
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 
 ## martin-fowler
 
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
 ## metadata
 
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 
 ## michael-feathers
@@ -430,6 +470,14 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## obsidian
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+
+## obsidian-plugin
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+
 ## package-metadata
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
@@ -460,6 +508,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 ## parametrization
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## performance-tradeoff
+
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 
 ## pip
 
@@ -508,6 +560,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## pypi
 
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
@@ -529,6 +582,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## python
 
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
@@ -539,6 +593,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/gh-Aider-AI-aider\|Aider-AI/aider — aider is AI pair programming in your terminal]]
+
+## query-language
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
 ## quick-fix
 
@@ -558,6 +616,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## refactoring
 
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -570,6 +629,8 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## repo
 
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
@@ -605,6 +666,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## round-trip
+
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
+
 ## ruby
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
@@ -635,6 +700,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## separation-of-concerns
 
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
 ## serialization
@@ -670,6 +736,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## split-loop
+
+- [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
+
 ## staged-disclosure
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
@@ -683,6 +753,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## static-site
+
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
+
 ## sync
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
@@ -694,6 +768,10 @@ _Rebuilt 2026-06-10 06:59 UTC_
 ## task-analysis
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## tasks
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
 ## team-workflows
 
@@ -749,6 +827,7 @@ _Rebuilt 2026-06-10 06:59 UTC_
 
 ## typescript
 
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
@@ -797,6 +876,11 @@ _Rebuilt 2026-06-10 06:59 UTC_
 ## wizards
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## yaml
+
+- [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+- [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 
 ## yaml-output
 

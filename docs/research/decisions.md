@@ -74,3 +74,4 @@
 | 2026-06-10 07:17 UTC | pre_implement | auto | implement [[2026-06-10-refactor-tests-test-radar-pipeline-py-cc-spec]] on branch radar/tkt-0009 for tkt-0009 |
 | 2026-06-10 07:18 UTC | pre_implement | auto | implement [[2026-06-10-refactor-tests-test-radar-pipeline-py-cc-spec]] on branch radar/tkt-0009 for tkt-0009 |
 | 2026-06-10 07:21 UTC | post_implement | auto | tests passed; 1 file changed, 59 insertions(+), 18 deletions(-) on radar/tkt-0009 — commit? |
+| 2026-06-10 07:35 UTC | post_analyze | paused | Create `tests/test_sources.py` by migrating and extending existing `test_radar_ingest.py` source tests (add title-trunca |
