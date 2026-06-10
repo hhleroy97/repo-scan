@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled). `repo_scan/hub/server.py` and `repo_scan/hub/ui.py` changed together in 7 commits (88% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-analysis]]"
-drafted_at: "2026-06-10 17:29 UTC"
+drafted_at: "2026-06-10 17:30 UTC"
 ---
 
 # Spec — Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled). `repo_scan/hub/server.py` and `repo_scan/hub/ui.py` changed together in 7 commits (88% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 17:29 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 17:30 UTC by radar — **status: approved**_
 
 Verifying a few codebase facts so the revised spec matches the audit and implementation.
 ---
