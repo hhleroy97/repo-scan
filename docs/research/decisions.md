@@ -182,3 +182,5 @@
 | 2026-06-10 19:25 UTC | post_audit | approved (dashboard) | audit revise: The spec tracks live scan data (7 shared, 64%, daemon≈13/test_act≈9) and tkt-0016 AC1/AC2 split well, but  |
 | 2026-06-10 21:14 UTC | post_analyze | paused | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
 | 2026-06-10 21:14 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
+| 2026-06-10 21:18 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
+| 2026-06-10 21:20 UTC | post_analyze | paused | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
