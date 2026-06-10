@@ -3,8 +3,8 @@
 One row per scan — the long-term memory that makes interventions
 measurable. Newest at the bottom.
 
-| When | Files | Lines | Hotspot fns | Critical | Δ lines | Δ hotspots |
-|------|-------|-------|-------------|----------|---------|------------|
+| When | Files | Lines | Hotspot fns | Critical | Δ lines | Δ hotspots | Vault % | Δ vault |
+|------|-------|-------|-------------|----------|---------|------------|---------|---------|
 | 2026-06-10 00:38 UTC | 41 | 3691 | 17 | 0 | +348 | +2 |
 | 2026-06-10 00:38 UTC | 41 | 3691 | 17 | 0 | 0 | 0 |
 | 2026-06-10 01:21 UTC | 45 | 4261 | 19 | 0 | +570 | +2 |
@@ -17,3 +17,4 @@ measurable. Newest at the bottom.
 | 2026-06-10 17:47 UTC | 79 | 12002 | 40 | 2 | +269 | 0 |
 | 2026-06-10 17:51 UTC | 80 | 12163 | 41 | 2 | +161 | +1 |
 | 2026-06-10 18:45 UTC | 84 | 12935 | 43 | 2 | +772 | +2 |
+| 2026-06-10 21:18 UTC | 122 | 17778 | 54 | 1 | +4843 | +11 | 0% | — |

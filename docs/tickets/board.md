@@ -6,12 +6,14 @@ kanban-plugin: board
 
 ## Proposed
 
-- [ ] [[tkt-0019|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_hub.py (60% coupled)]]
 - [ ] [[tkt-0021|Knowledge silo: repo_scan/radar/llm.py (hartley.leroy1997@gmail.com owns 100%)]]
-- [ ] [[tkt-0023|Hidden seam: repo_scan/hub/ui.py <-> tests/test_hub.py (52% coupled)]]
 - [ ] [[tkt-0027|Knowledge silo: repo_scan/radar/act.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0028|Refactor repo_scan/hub/server.py (CC 21, 11 commits, untested)]]
 - [ ] [[tkt-0029|Knowledge silo: pyproject.toml (hartley.leroy1997@gmail.com owns 100%)]]
+- [ ] [[tkt-0033|Hidden seam: repo_scan/radar/gates.py <-> tests/test_radar_pipeline.py (53% coupled)]]
+- [ ] [[tkt-0034|Split repo_scan/hub/static/mermaid.min.js (2028 lines)]]
+- [ ] [[tkt-0035|Knowledge silo: repo_scan/hub/state.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [ ] [[tkt-0036|Knowledge silo: repo_scan/radar/research.py (hartley.leroy1997@gmail.com owns 100%)]]
 
 ## Approved
 
@@ -42,8 +44,10 @@ kanban-plugin: board
 - [x] [[tkt-0015|Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled)]]
 - [x] [[tkt-0016|Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled)]]
 - [x] [[tkt-0017|Hidden seam: repo_scan/radar/gates.py <-> repo_scan/radar/pipeline.py (53% coupled)]]
+- [x] [[tkt-0019|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_hub.py (60% coupled)]]
 - [x] [[tkt-0020|Knowledge silo: repo_scan/config.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [x] [[tkt-0022|Knowledge silo: repo_scan/writers.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [x] [[tkt-0023|Hidden seam: repo_scan/hub/ui.py <-> tests/test_hub.py (52% coupled)]]
 - [x] [[tkt-0024|Hidden seam: README.md <-> repo_scan/config.py (50% coupled)]]
 - [x] [[tkt-0030|Knowledge silo: repo_scan/radar/gates.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [x] [[tkt-0031|Knowledge silo: repo_scan/radar/cli.py (hartley.leroy1997@gmail.com owns 100%)]]

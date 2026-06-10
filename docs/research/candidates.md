@@ -1,5 +1,5 @@
 # RADAR candidates
-_Generated 2026-06-10 18:45 UTC_
+_Generated 2026-06-10 21:18 UTC_
 
 Files that are both high-churn and high-complexity — the most valuable
 targets for external research. Consumed by `radar` as a trigger feed.
@@ -18,4 +18,4 @@ quadrantChart
 
 | File | Commits | Complexity | Tests | Priority |
 |------|---------|------------|-------|----------|
-| `repo_scan/hub/server.py` | 12 | 21 | **no** (2x) | 504 |
+| `repo_scan/hub/server.py` | 13 | 27 | **no** (2x) | 702 |
