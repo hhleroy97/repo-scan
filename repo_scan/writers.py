@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from .identity import detect_entry_points, detect_manifests, readme_summary
+from .trends import trend_callout
 from .utils import git_branch, git_last_commit, git_remote_url, now_iso, ok, warn, write_doc
 
 
@@ -229,7 +230,8 @@ def write_call_report(root: Path, cfg: dict, c_mermaid: str | None):
 
 
 def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
-                ranking: list[dict] | None = None, tree: str = ""):
+                ranking: list[dict] | None = None, tree: str = "",
+                delta: dict | None = None):
     ts = now_iso()
     docs = root / cfg["docs_dir"]
     warn_n = cfg["line_warn"]
@@ -266,6 +268,8 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
         ) + [""]
     else:
         lines += callout("tip", f"Healthy: every file is under {warn_n} lines") + [""]
+
+    lines += trend_callout(delta)
 
     lines += [
         "## Overview",

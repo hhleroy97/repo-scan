@@ -11,6 +11,7 @@ from .handoff import write_handoff
 from .identity import get_directory_tree
 from .languages import detect_languages, get_line_counts
 from .ranking import rank_files
+from .trends import append_trend_log, compute_delta, load_previous_summary, summarize_metrics
 from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
 from .writers import (
     write_call_report,
@@ -93,12 +94,17 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     py_deps = edges_to_mermaid(py_edges, node_scores)
 
     step("Writing docs")
+    prev_summary = load_previous_summary(root, cfg)
+    curr_summary = summarize_metrics(line_counts, complexity, cfg)
+    delta = compute_delta(prev_summary, curr_summary)
+
     write_health_report(root, cfg, line_counts, churn, complexity)
     write_dep_report(root, cfg, ts_deps, py_deps, ts_reason)
     write_call_report(root, cfg, c_calls)
-    write_index(root, cfg, line_counts, languages, ranking, tree)
+    write_index(root, cfg, line_counts, languages, ranking, tree, delta=delta)
     write_scan_json(root, cfg, line_counts, languages, churn, complexity,
                     ranking, py_edges, ts_edges)
+    append_trend_log(root, cfg, curr_summary, delta)
 
     if cfg.get("radar_enabled"):
         write_candidates(root, cfg, churn, complexity)
