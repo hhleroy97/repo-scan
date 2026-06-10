@@ -2,36 +2,37 @@
 type: "analysis"
 problem: "Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled). `repo_scan/hub/daemon.py` and `tests/test_act.py` changed together in 7 commits (70% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work."
 confidence: "high"
-sources: ["arxiv-2411.19099", "gh-zyskarch-pytestarch", "url-deviq-com-principles-explicit-dependencies-principle"]
-generated_at: "2026-06-10 18:50 UTC"
+sources: ["url-www-ime-usp-br-gerosa-papers-changecoupling-pdf", "url-docs-pytest-org-en-stable-reference-fixtures-html"]
+generated_at: "2026-06-10 21:14 UTC"
 ---
 
 # Analysis — Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled). `repo_scan/hub/daemon.py` and `tests/test_act.py` changed together in 7 commits (70% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.
-_Generated 2026-06-10 18:50 UTC — confidence: high_
+_Generated 2026-06-10 21:14 UTC — confidence: high_
 
 ## Findings
 
-- The 64–70% co-change between daemon.py and test_act.py reflects an implicit orchestration contract: daemon._run_act invokes cmd_act with worktree=True and maps return codes (0/2/other) to run state, gates, vault commits, and notifications, while test_act.py exercises cmd_act in isolation with no import path to that orchestration layer.
-- test_daemon.py already owns daemon↔act integration (daemon_tick fan-out, act-started actions, gate resume) but duplicates act_repo fixtures and stub-agent helpers from test_act.py, so feature work on the act pipeline tends to land in the same commits as daemon orchestration changes even when the production import graph shows daemon→act←test_act only.
-- Per the tkt-0016 precedent in this repo, AC1 is satisfied by a shared production module with visible import edges (e.g. hub.act_run imported by daemon and test_act), not a direct daemon↔test_act import; AC2 requires the pair be absent from coupling.md (degree strictly below 50%), which may need post-merge divergent solo-side commits after any co-touching refactor.
-- The Explicit Dependencies Principle and pytestarch both argue against hiding the daemon→act collaboration inside _run_act: publish the act-run lifecycle (RC semantics, state transitions, vault hook) as an explicit hub-owned API that tests can target without reaching into daemon internals.
-- Co-change analysis research (arxiv-2411.19099) frames this as evolutionary coupling without structural edges—accurate for alerting but the fix is to extract and name the real contract, then separate test ownership so scheduling changes touch test_daemon.py and cmd_act behavior touches test_act.py, reducing future shared commits.
+- Change-coupling research (Gerosa/Oliva) frames the daemon.py↔test_act.py pair as an evolutionary/logical dependency invisible to static import graphs—consistent with repo-scan's hidden-seam detector and the 64–70% degree over 7 shared commits.
+- The implicit contract is daemon act orchestration: invoke cmd_act with worktree=True, commit vault artifacts in finally, and map RC 0/2/other to run state, gates, events, and notifications—behavior test_act.py exercises only at the cmd_act layer without any import path to that hub adapter.
+- Co-change is amplified by duplicated act scaffolding: test_act.py and test_daemon.py both carry act_repo/stub-agent fixtures and evolve together when act pipeline behavior changes, even though production edges are daemon→act_run→radar.act and radar.act←test_act.
+- Partial remediation already exists: hub.act_run.py extracts the orchestration contract, daemon delegates to run_act, tests/test_hub_act_run.py asserts import edges and RC semantics, and tests/support/act_fixtures.py consolidates shared fixtures—but test_act.py still has no import edge to act_run, so the direct daemon↔test_act hidden seam remains in coupling.md.
+- Per repo precedent (tkt-0016), AC1 (explicit dependency) and AC2 (degree below coupling_min_degree 50%) are separable: a shared production module with import edges satisfies structural explicitness; clearing the coupling table row requires post-refactor divergent history (~9+ test_act-only commits after any co-touching refactor on live history, per degree formula round(100*shared/avg_revs)).
+- Pytest fixture guidance supports consolidating act_repo/stub-agent setup into tests/support/ (or conftest) so daemon scheduling changes land in test_daemon.py and cmd_act behavior changes land in test_act.py, reducing future shared commits without conflating test ownership.
+- Change-coupling literature warns that tangled or oversized commits can inflate co-change signals; fixture and refactor work should avoid single commits touching daemon.py, test_act.py, and test_daemon.py together.
 
 ## Recommendation
 
-Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, vault commit wrapper) and have daemon import it; add a small contract test in test_act.py that imports act_run constants/helpers so the dependency graph shows test_act→act_run←daemon. Consolidate duplicated act fixtures into tests/support/act_fixtures.py, keep integration scenarios in test_daemon.py, and add a coupling-degree fixture test mirroring tkt-0016; optionally encode layer rules with pytestarch once the shared module lands.
+Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a minimal test_act.py import of act_run RC constants or a shared contract helper so the dependency graph shows test_act→act_run←daemon rather than an orphan pair. Keep cmd_act integration in test_daemon.py and cmd_act unit coverage in test_act.py, with shared fixtures in tests/support/act_fixtures.py. AC2 closes only after enough solo-side commits accumulate and a rescan removes the pair from coupling.md—do not expect the hidden-seam banner to clear at merge time.
 
 ## Risks
 
-- A refactor commit touching daemon.py and test_act.py together will temporarily worsen coupling math until enough solo-side commits accumulate.
-- Extracting too much logic into act_run.py may duplicate act.py concerns or blur hub vs radar layering boundaries.
-- test_act importing a hub module for contract tests inverts the usual production dependency direction (hub depends on radar, not vice versa) unless act_run is kept as a thin adapter over cmd_act.
-- Clearing the hidden-seam warning in coupling.md depends on import-graph analysis semantics—shared-module edges may not remove the daemon↔test_act row until co-change degree actually drops below 50%.
-- Adding pytestarch introduces a new dev dependency the project does not yet use; contract tests in existing test files may suffice per repo precedent.
+- A co-touching refactor commit (daemon.py + test_act.py) temporarily worsens coupling math until sufficient solo-side commits accumulate.
+- Wiring test_act→hub.act_run inverts the production hub→radar direction unless act_run stays a thin adapter; over-extraction blurs hub vs radar.act boundaries.
+- AC1 via test_hub_act_run.py alone may not satisfy ticket wording that names the daemon↔test_act pair specifically—reviewer may require test_act.py to import the shared module.
+- Clearing coupling.md depends on git history, not import edges alone; act_run.py-only or fixture-only commits do not reduce the daemon↔test_act pair degree.
+- Consolidating fixtures in the same PR as act_run extraction can produce a large co-touch commit unless changes are split across follow-up commits.
 
 ## Evidence
 
-- [[arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
-- [[gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
-- [[url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
+- [[url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
+- [[url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 - research run: [[2026-06-10-hidden-seam-repo-scan-hub-daemon-py-test]]

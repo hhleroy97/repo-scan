@@ -1,8 +1,13 @@
 # Research index
-_Rebuilt 2026-06-10 18:50 UTC — 60 source(s)_
+_Rebuilt 2026-06-10 21:11 UTC — 65 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]] | url | article, conftest, dependency-injection, execution-order, fixtures, monkeypatch, plugin-fixtures, pytest, test-isolation, test-scoping, tmp-path | 2026-06-10 21:10 UTC |
+| [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]] | github | cytoscape, cytoscapejs, dependency-graph, force-layout, graph-theory, graph-visualization, interactive-graph, javascript, mit-license, network-analysis, npm, pan-zoom, repo, visualization | 2026-06-10 21:08 UTC |
+| [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]] | url | architecture-analysis, article, association-rules, change-coupling, connascence, empirical-software-engineering, git-history, hidden-dependencies, impact-analysis, logical-dependencies, refactoring, software-evolution | 2026-06-10 21:08 UTC |
+| [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]] | url | article, form-design, gestalt-principles, grouping, information-architecture, mobile-ux, proximity, responsive-design, ui-design, usability, visual-design, whitespace | 2026-06-10 21:08 UTC |
+| [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]] | url | accessibility, article, focus-management, keyboard-navigation, roving-tabindex, screen-readers, toolbar, ui-patterns, wai-aria | 2026-06-10 21:08 UTC |
 | [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method…]] | arxiv | arxiv, change-impact-analysis, co-change-analysis, dependency-prediction, java, learning-to-rank, paper, pull-requests, random-forest, software-maintenance | 2026-06-10 18:49 UTC |
 | [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between…]] | github | architecture-testing, archunit-inspired, dependency-rules, import-analysis, module-boundaries, plantuml, pytest, pytestarch, python, repo, static-analysis | 2026-06-10 18:49 UTC |
 | [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]] | url | article, constructor-injection, coupling, dependency-injection, dependency-inversion, design-principles, explicit-dependencies, maintainability, solid, testability | 2026-06-10 18:49 UTC |

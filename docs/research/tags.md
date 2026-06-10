@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 18:50 UTC_
+_Rebuilt 2026-06-10 21:11 UTC_
 
 ## 12-factor-agents
 
@@ -8,6 +8,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## acceptance-criteria
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## accessibility
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
 
 ## adam-tornhill
 
@@ -68,6 +72,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## architecture-analysis
 
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## architecture-testing
@@ -80,6 +85,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## article
 
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
 - [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 - [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 - [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
@@ -107,6 +116,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
+
+## association-rules
+
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 
 ## atlassian
 
@@ -160,6 +173,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## change-coupling
 
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## change-impact-analysis
@@ -312,8 +326,13 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 
+## conftest
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
+
 ## connascence
 
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
 ## consolidate-duplicate-conditio
@@ -369,6 +388,14 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 
+## cytoscape
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
+
+## cytoscapejs
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
+
 ## dashboard
 
 - [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
@@ -415,6 +442,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## dependency-graph
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
@@ -422,6 +450,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## dependency-injection
 
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 - [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 
 ## dependency-inversion
@@ -498,6 +527,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
+## empirical-software-engineering
+
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
+
 ## encapsulation
 
 - [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
@@ -514,6 +547,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## evaluation
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## execution-order
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 
 ## explicit-dependencies
 
@@ -540,11 +577,24 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## fixtures
 
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 
 ## flowchart
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
+## focus-management
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
+
+## force-layout
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
+
+## form-design
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 
 ## frontmatter
 
@@ -563,12 +613,17 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
+## gestalt-principles
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
+
 ## git
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
 ## git-history
 
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## git-log-analysis
@@ -601,15 +656,21 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## graph-theory
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 
 ## graph-visualization
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 
 ## graphviz
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## grouping
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 
 ## guard-clauses
 
@@ -626,6 +687,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## heroku
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## hidden-dependencies
+
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 
 ## html
 
@@ -650,6 +715,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 
+## impact-analysis
+
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
+
 ## import-analysis
 
 - [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
@@ -670,6 +739,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## information-architecture
 
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## inline-class
@@ -695,6 +765,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## interaction-design
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## interactive-graph
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 
 ## interface-contract
 
@@ -722,6 +796,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## javascript
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
@@ -751,6 +826,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## kanban
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## keyboard-navigation
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
 
 ## knowledge-base
 
@@ -833,6 +912,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## logical-dependencies
 
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## long-methods
@@ -907,9 +987,17 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
+## mit-license
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
+
 ## mobile-design
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## mobile-ux
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 
 ## mock-server
 
@@ -932,6 +1020,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 - [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+
+## monkeypatch
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 
 ## monolith-decomposition
 
@@ -965,12 +1057,17 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
+## network-analysis
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
+
 ## nngroup
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## npm
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## object-oriented-design
@@ -1022,6 +1119,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## pan-zoom
+
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
+
 ## paper
 
 - [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
@@ -1069,6 +1170,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 
+## plugin-fixtures
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
+
 ## plugins
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
@@ -1101,6 +1206,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## prompt-engineering
 
 - [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
+
+## proximity
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 
 ## public-api
 
@@ -1137,6 +1246,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## pytest
 
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 - [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -1207,6 +1317,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## refactoring
 
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 - [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
@@ -1234,6 +1345,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## repo
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
@@ -1291,6 +1403,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
 
+## responsive-design
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
+
 ## rest-api
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
@@ -1311,6 +1427,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 
+## roving-tabindex
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
+
 ## ruby
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
@@ -1330,6 +1450,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## sample-project
 
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
+
+## screen-readers
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
 
 ## seams
 
@@ -1406,6 +1530,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## software-engineering
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## software-evolution
+
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]]
 
 ## software-maintenance
 
@@ -1527,6 +1655,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## test-isolation
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
+
 ## test-results
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -1534,6 +1666,10 @@ _Rebuilt 2026-06-10 18:50 UTC_
 ## test-runner
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
+
+## test-scoping
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
 
 ## test-smells
 
@@ -1563,10 +1699,18 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 
+## tmp-path
+
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]]
+
 ## token-budget
 
 - [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
 - [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
+
+## toolbar
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
 
 ## type-hints
 
@@ -1592,6 +1736,14 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 
+## ui-design
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
+
+## ui-patterns
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
+
 ## uml
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
@@ -1611,6 +1763,7 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 ## usability
 
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
 ## user-stories
@@ -1637,14 +1790,27 @@ _Rebuilt 2026-06-10 18:50 UTC_
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 
+## visual-design
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
+
 ## visualization
 
+- [[sources/gh-cytoscape-cytoscape.js\|cytoscape/cytoscape.js — Graph theory (network) library for visualisation and analysis]]
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## vocabulary
 
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+
+## wai-aria
+
+- [[sources/url-www-w3-org-wai-aria-apg-patterns-toolbar\|Toolbar Pattern]]
+
+## whitespace
+
+- [[sources/url-www-nngroup-com-articles-gestalt-proximity\|Proximity Principle in Visual Design]]
 
 ## wildcard-imports
 

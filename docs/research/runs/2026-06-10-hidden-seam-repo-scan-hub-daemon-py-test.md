@@ -1,17 +1,20 @@
 ---
 type: "research-run"
 question: "Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled). `repo_scan/hub/daemon.py` and `tests/test_act.py` changed together in 7 commits (70% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work."
-sources: ["arxiv-2411.19099", "gh-zyskarch-pytestarch", "url-deviq-com-principles-explicit-dependencies-principle"]
-run_at: "2026-06-10 18:50 UTC"
+sources: ["url-www-ime-usp-br-gerosa-papers-changecoupling-pdf", "url-docs-pytest-org-en-stable-reference-fixtures-html"]
+run_at: "2026-06-10 21:11 UTC"
 ---
 
 # Research run — Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled). `repo_scan/hub/daemon.py` and `tests/test_act.py` changed together in 7 commits (70% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.
-_Run 2026-06-10 18:50 UTC_
+_Run 2026-06-10 21:11 UTC_
 
-**Strategy:** Treat the 70% co-change as evidence of a missing published contract at the daemon→act orchestration boundary; the spec should separate concerns (daemon tests import daemon, act tests stay on act), optionally extract a shared integration module, and add an architecture test that pins the import edge so coupling.md and the dependency graph agree.
+**Strategy:** Pair foundational change-coupling measurement (why the seam alerts) with two explicit-boundary tactics: a production ACL adapter for orchestration semantics and a pytest fixture-support module for test-side decoupling—matching the spec’s dual AC1 (import graph) and AC2 (historical degree) requirements.
 
 ## Ingested
 
-- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]] — Frames co-changing artifacts without structural import edges as implicit evolutionary coupling and argues they should be surfaced and reduced for maintainability—the exact failure mode repo-scan flags as a hidden seam.
-- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]] — Provides a pytest-native pattern for encoding required import relationships as architecture rules, turning an invisible temporal contract into an explicit, CI-enforced dependency edge.
-- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]] — States that collaborators hidden inside implementation are harder to test and analyze than dependencies declared in public interfaces—direct guidance for choosing a shared module or direct import over co-change-only coupling.
+- [[sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf\|https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf]] — Foundational change-coupling reference that defines implicit evolutionary dependencies invisible to static analysis and quantifies them with support/confidence—the same metrics repo-scan uses for coupling.md degree thresholds and hidden-seam detection.
+- [[sources/url-docs-pytest-org-en-stable-reference-fixtures-html\|Fixtures reference¶]] — Official pytest guidance on `conftest.py`, `pytest_plugins`, and fixture decomposition supports consolidating duplicated `act_repo`/stub-agent helpers into `tests/support/act_fixtures.py` so `test_act.py` and `test_daemon.py` stop co-changing without a shared import edge.
+
+## Failed
+
+- `url:https://martinfowler.com/eaaCatalog/antiCorruptionLayer.html` — fetch failed for https://martinfowler.com/eaaCatalog/antiCorruptionLayer.html: HTTP Error 404: Not Found

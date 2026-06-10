@@ -180,3 +180,4 @@
 | 2026-06-10 19:23 UTC | post_audit | paused | audit revise: The spec tracks live scan data (7 shared, 64%, daemon≈13/test_act≈9) and tkt-0016 AC1/AC2 split well, but  |
 | 2026-06-10 19:25 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
 | 2026-06-10 19:25 UTC | post_audit | approved (dashboard) | audit revise: The spec tracks live scan data (7 shared, 64%, daemon≈13/test_act≈9) and tkt-0016 AC1/AC2 split well, but  |
+| 2026-06-10 21:14 UTC | post_analyze | paused | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
