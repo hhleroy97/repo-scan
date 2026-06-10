@@ -232,15 +232,38 @@ async function gateDecide(gate,btn,decision){
 function rTickets(){
   const order={proposed:0,approved:1,'in-progress':2,done:3,rejected:4};
   const ts=[...S.tickets].sort((a,b)=>(order[a.status]??9)-(order[b.status]??9));
-  if(!ts.length)return `<div class="empty">No tickets yet — run a scan.</div>`;
   const cls={proposed:'warn',approved:'info','in-progress':'info',done:'ok',rejected:'bad'};
-  return ts.map(t=>`<div class="card">
+  let h=`<div class="card">
+    <div class="title">New idea</div>
+    <input id="nt-title" placeholder="What should be built or changed?" style="width:100%;margin:8px 0;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px">
+    <textarea id="nt-why" placeholder="Why? (optional)" rows="2" style="width:100%;margin-bottom:8px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit"></textarea>
+    <textarea id="nt-criteria" placeholder="Acceptance criteria, one per line (drive the spec + tests)" rows="2" style="width:100%;margin-bottom:8px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit"></textarea>
+    <div class="btnrow">
+      <select id="nt-priority" style="flex:1;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px;font-size:14px">
+        <option value="medium">medium</option><option value="high">high</option><option value="low">low</option>
+      </select>
+      <button class="approve" onclick="newTicket(this)">Create ticket</button>
+    </div></div>`;
+  if(!ts.length)return h+`<div class="empty">No tickets yet — run a scan or capture an idea above.</div>`;
+  h+=ts.map(t=>`<div class="card">
     <span class="badge ${cls[t.status]||''}">${esc(t.status)}</span>
     ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
     ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
     <div class="title" style="margin-top:8px">${esc(t.title)}</div>
     ${t.why?`<div class="dim small">${esc(t.why).slice(0,180)}</div>`:''}
     ${actions(t)}</div>`).join('');
+  return h;
+}
+async function newTicket(btn){
+  const title=document.getElementById('nt-title').value.trim();
+  if(!title){toast('Title required');return}
+  const criteria=document.getElementById('nt-criteria').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  btn.disabled=true;
+  try{const r=await api('/api/ticket/new',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({title,why:document.getElementById('nt-why').value,
+      priority:document.getElementById('nt-priority').value,criteria})});
+    toast(`${r.id} created — approve it to start the loop`);setTimeout(refresh,500)}
+  catch(e){toast('Failed: '+e.message);btn.disabled=false}
 }
 function actions(t){
   const b=(a,l,c)=>`<button class="${c||'ghost'}" onclick="ticketAct('${t.id}','${a}',this)">${l}</button>`;

@@ -98,6 +98,21 @@ repo-scan tickets approve tkt-0001
 repo-scan tickets start | reject | done <id>
 ```
 
+**Intent intake.** Your ideas enter the same pipeline as scan signals — as
+`feature` tickets that the loop researches, specs, implements, and PRs like
+any other work:
+
+```bash
+repo-scan tickets new "Add CSV export" --why "users asked" \
+  --criterion "exports all rows" --criterion "handles utf-8" --approve
+```
+
+The dashboard's Tickets tab has the same composer ("New idea"), so intent can
+be captured from your phone. Acceptance criteria matter: they ride into the
+spec (which must map each criterion to a concrete automated test) and the act
+stage refuses to commit `feature` work that ships without tests. Re-submitting
+the same title dedups against the existing ticket instead of duplicating.
+
 The loop closes itself: `radar full` works the highest-priority **approved**
 ticket (falling back to raw metric candidates), moves it to `in-progress` with
 a spec wikilink when the loop's gates pass, and when a later scan sees the
@@ -237,6 +252,35 @@ commit; failed ones are kept for inspection.
 Every decision is appended to `docs/research/decisions.md`. Loop runs are
 recorded to `docs/changelog/{date}-loop.md`; specs land in `docs/specs/`
 (`status: draft` → `status: approved` after Gate 2).
+
+### Governance — budgets, protected paths, per-kind autonomy
+
+Autonomy is granted in policy, not all at once:
+
+```json
+{
+  "budget_daily_tokens": 2000000,
+  "max_acts_per_day": 6,
+  "protected_paths": [".github/*", "repo_scan/config.py"],
+  "gates_by_kind": { "refactor": { "pre_implement": "auto" } },
+  "require_tests_for_kinds": ["feature"]
+}
+```
+
+- **Budgets** — when the day's LLM tokens (from the usage ledger) or act-run
+  count hit their cap, the daemon stops *starting* new work (one notification,
+  one event); runs already mid-flight finish so spent tokens aren't wasted.
+- **Protected paths** — if an implementation touches a matching file
+  (fnmatch globs), the `post_implement` gate is forced to `prompt` even if
+  you've set it to `auto`: sensitive areas always face a human.
+- **Per-kind autonomy** (`gates_by_kind`) — trust is earned per work type.
+  Keyed by the ticket's fingerprint prefix (`refactor:`, `feature:`,
+  `seam:`...), merged over `gates` for that act run only — e.g. let refactors
+  start unattended while features still ask first.
+- **Acceptance tests** — for kinds in `require_tests_for_kinds` (default
+  `["feature"]`), an implementation that changes no test files gets one
+  dedicated round to add the spec's acceptance tests; still none and the run
+  stops with `no-acceptance-tests`, branch kept for review.
 
 ### The hub — approve from your phone
 

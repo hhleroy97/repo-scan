@@ -30,6 +30,19 @@ def gate_mode(name: str, cfg: dict) -> str:
     return mode if mode in ("prompt", "auto", "deny") else "prompt"
 
 
+def gates_for_kind(cfg: dict, kind: str) -> dict:
+    """Per-kind autonomy: trust earned per work type, not globally.
+
+        "gates_by_kind": { "refactor": { "pre_implement": "auto" } }
+
+    Returns a cfg copy whose gates merge the kind's overrides; unknown kinds
+    pass through untouched."""
+    overrides = cfg.get("gates_by_kind", {}).get(kind)
+    if not overrides:
+        return cfg
+    return {**cfg, "gates": {**cfg.get("gates", {}), **overrides}}
+
+
 def _pending_dir(root: Path, cfg: dict) -> Path:
     return root / cfg["docs_dir"] / "research" / "pending"
 

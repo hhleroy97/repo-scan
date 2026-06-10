@@ -199,6 +199,24 @@ def make_handler(root: Path, cfg: dict, token: str):
                                 comment=comment, source="dashboard")
                 return self._json({"ok": True})
 
+            if url.path == "/api/ticket/new":
+                from ..tickets import new_ticket
+                title = str(body.get("title", "")).strip()
+                if not title:
+                    return self._json({"error": "title required"}, 400)
+                criteria = [str(c).strip() for c in body.get("criteria", [])
+                            if str(c).strip()]
+                try:
+                    t = new_ticket(
+                        root, cfg, title,
+                        why=str(body.get("why", ""))[:2000],
+                        priority=str(body.get("priority", "medium")),
+                        criteria=criteria,
+                        kind=str(body.get("kind", "feature"))[:30] or "feature")
+                except ValueError as e:
+                    return self._json({"error": str(e)[:200]}, 400)
+                return self._json({"ok": True, "id": t["id"], "status": t["status"]})
+
             if url.path == "/api/ticket":
                 from ..tickets import set_ticket_status
                 tid = str(body.get("id", ""))

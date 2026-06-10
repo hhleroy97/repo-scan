@@ -47,6 +47,17 @@ Specification:
 {spec}
 ---"""
 
+ACCEPTANCE_PROMPT = """You implemented a spec in this repository but added or
+changed NO test files. The spec's ## Tests section maps acceptance criteria
+to concrete automated tests — those tests are the definition of done. Add
+them now (and only them; keep the implementation as is unless a test exposes
+a bug). Do NOT commit or create branches. Reply with a one-paragraph summary.
+
+Specification:
+---
+{spec}
+---"""
+
 FIX_PROMPT = """Your implementation of a spec in this repository has failing tests.
 Fix the failures. Keep changes minimal. Do NOT commit or create branches.
 Reply with a one-paragraph summary of the fix.
@@ -69,6 +80,38 @@ def _tree_dirty(root: Path, docs_dir: str) -> bool:
     docs/ constantly and the agent is forbidden from touching it anyway."""
     out = _git(root, "status", "--porcelain", "--", f":(exclude){docs_dir}").stdout
     return bool(out.strip())
+
+
+def _changed_files(work: Path, docs_dir: str) -> list[str]:
+    """Paths the agent touched (staged or not), vault excluded."""
+    out = _git(work, "status", "--porcelain", "--", f":(exclude){docs_dir}").stdout
+    files = []
+    for line in out.splitlines():
+        p = line[3:].strip().strip('"')
+        if " -> " in p:  # renames report "old -> new"
+            p = p.split(" -> ")[-1].strip('"')
+        if p:
+            files.append(p)
+    return files
+
+
+def _is_test_file(path: str) -> bool:
+    name = path.rsplit("/", 1)[-1]
+    return (path.startswith("tests/") or "/tests/" in path or "/test/" in path
+            or name.startswith("test_") or name.endswith("_test.py")
+            or ".test." in name or ".spec." in name)
+
+
+def _protected_hits(files: list[str], patterns: list[str]) -> list[str]:
+    """Files matching any protected glob (fnmatch: `*` crosses slashes)."""
+    import fnmatch
+    return [f for f in files if any(fnmatch.fnmatch(f, p) for p in patterns)]
+
+
+def ticket_kind(ticket: dict) -> str:
+    """Work type from the fingerprint prefix: refactor:, feature:, seam:..."""
+    fp = str(ticket.get("fingerprint", ""))
+    return fp.split(":", 1)[0] if ":" in fp else "task"
 
 
 def _current_branch(root: Path) -> str:
@@ -243,6 +286,10 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             return 1
         ticket, spec_stem = picked
 
+    from .gates import gates_for_kind
+    kind = ticket_kind(ticket)
+    cfg = gates_for_kind(cfg, kind)  # per-kind autonomy (governance)
+
     spec_path = root / cfg["docs_dir"] / "specs" / f"{spec_stem}.md"
     spec_text = spec_path.read_text(encoding="utf-8")
     problem = act_problem(ticket["id"], spec_stem)
@@ -332,6 +379,30 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             save_checkpoint(root, cfg, problem, ckpt)
             ok("agent finished")
 
+        # -- acceptance tests (hard requirement for intent-driven kinds) -------------
+        require_kinds = set(cfg.get("require_tests_for_kinds", ["feature"]))
+        if kind in require_kinds and not ckpt.get("acceptance_ok"):
+            if not any(_is_test_file(f) for f in _changed_files(work, cfg["docs_dir"])):
+                progress(root, cfg, problem, "[3/5] Implement",
+                         f"no tests written — acceptance round ({act_model})",
+                         banner=False)
+                complete(ACCEPTANCE_PROMPT.format(spec=spec_text[:14000]), cfg,
+                         timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)),
+                         cwd=str(work), role="act_fix", root=root)
+                if not any(_is_test_file(f)
+                           for f in _changed_files(work, cfg["docs_dir"])):
+                    err(f"{kind} ticket but the agent wrote no tests — "
+                        f"branch {branch} left for human review")
+                    result["outcome"] = "no-acceptance-tests"
+                    _finish_loop(root, cfg, problem)
+                    record_act(root, cfg, ticket["id"], spec_stem, result)
+                    append_ticket_note(
+                        root, cfg, ticket["id"],
+                        f"act run stopped: no acceptance tests written on {branch}")
+                    return 2
+            ckpt["acceptance_ok"] = True
+            save_checkpoint(root, cfg, problem, ckpt)
+
         # -- test (hard gate, bounded fix rounds) -----------------------------------
         progress(root, cfg, problem, "[4/5] Test",
                  cfg.get("test_cmd") or default_test_cmd(work) or "no suite detected")
@@ -378,7 +449,20 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
                 "doc": f"specs/{spec_path.name}",
             },
         }
-        if not gate("post_implement", payload, cfg, root, approved):
+        # governance: edits under protected paths always face a human,
+        # regardless of how much autonomy this gate has earned
+        gate_cfg = cfg
+        protected = _protected_hits(_changed_files(work, cfg["docs_dir"]),
+                                    cfg.get("protected_paths", []))
+        if protected:
+            payload["summary"] = (f"PROTECTED paths touched "
+                                  f"({', '.join(protected[:3])}) — " + payload["summary"])
+            payload["detail"]["protected"] = protected
+            if gate_mode("post_implement", cfg) == "auto":
+                warn(f"protected paths touched ({len(protected)}) — forcing human review")
+                gate_cfg = {**cfg, "gates": {**cfg.get("gates", {}),
+                                             "post_implement": "prompt"}}
+        if not gate("post_implement", payload, gate_cfg, root, approved):
             if not _gate_paused(root, cfg, "post_implement", problem):
                 result["outcome"] = "rejected"
                 _finish_loop(root, cfg, problem)

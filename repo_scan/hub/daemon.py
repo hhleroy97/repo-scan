@@ -19,10 +19,10 @@ import threading
 import time
 from pathlib import Path
 
-from ..utils import header, info, ok, warn
+from ..utils import header, info, now_date, ok, warn
 from .notify import notify
 from .state import (active_runs, append_event, create_run, load_meta,
-                    peek_decision, save_meta, update_run)
+                    load_runs, peek_decision, save_meta, update_run)
 
 # run id -> thread, for in-flight act runs owned by this process
 _act_threads: dict[str, threading.Thread] = {}
@@ -140,6 +140,32 @@ def _spawn_act(root: Path, cfg: dict, run: dict, parallel: bool) -> None:
     t.start()
 
 
+def over_budget(root: Path, cfg: dict) -> str | None:
+    """Governance: daily spend caps. Returns the reason if a cap is hit.
+
+        "budget_daily_tokens": 2000000,   # in+out tokens per day (usage ledger)
+        "max_acts_per_day": 6             # act runs started per day
+
+    Caps block STARTING new work; runs already mid-flight (paused at a gate,
+    resuming from checkpoints) finish normally so spent tokens aren't wasted.
+    """
+    cap_tokens = int(cfg.get("budget_daily_tokens", 0))
+    if cap_tokens:
+        from ..radar.llm import usage_summary
+        today = usage_summary(root, cfg).get("today", {})
+        used = int(today.get("input_tokens", 0)) + int(today.get("output_tokens", 0))
+        if used >= cap_tokens:
+            return f"daily token budget reached ({used:,}/{cap_tokens:,})"
+    cap_acts = int(cfg.get("max_acts_per_day", 0))
+    if cap_acts:
+        started = [r for r in load_runs(root, cfg)
+                   if r.get("kind") == "act"
+                   and str(r.get("created_at", "")).startswith(now_date())]
+        if len(started) >= cap_acts:
+            return f"daily act cap reached ({len(started)}/{cap_acts})"
+    return None
+
+
 def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
     """Mark queued/running runs with no owning thread as stopped.
 
@@ -214,6 +240,19 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
                        "; ".join(t["title"][:60] for t in proposed[:3]),
                        tags=["ticket"], click=_dashboard_url(cfg))
             return actions
+
+    # budgets gate NEW work only — resumes above already ran
+    budget_reason = over_budget(root, cfg)
+    if budget_reason:
+        meta = load_meta(root, cfg)
+        if meta.get("budget_notified") != now_date():
+            warn(f"budget: {budget_reason} — not starting new runs")
+            append_event(root, cfg, "run", f"budget: {budget_reason}")
+            notify(cfg, "RADAR: daily budget reached", budget_reason,
+                   tags=["money_with_wings"], click=_dashboard_url(cfg))
+            meta["budget_notified"] = now_date()
+            save_meta(root, cfg, meta)
+        return actions
 
     # 3 — fan out acts on approved specs, up to max_parallel_acts
     if cfg.get("act_enabled"):

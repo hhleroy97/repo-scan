@@ -45,6 +45,9 @@ RADAR_CONFIG_KEYS = {
     "llm_roles", "max_parallel_acts",
     # PR workflow
     "act_open_pr",
+    # governance: budgets, path policy, per-kind autonomy, acceptance tests
+    "budget_daily_tokens", "max_acts_per_day", "protected_paths",
+    "gates_by_kind", "require_tests_for_kinds",
 }
 
 

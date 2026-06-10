@@ -40,6 +40,9 @@ Write a concise implementation spec in markdown (no JSON). Sections:
 ## Goal, ## Approach, ## Changes (bulleted, by file/module), ## Tests,
 ## Documentation (docstrings/README sections that must change with the
 implementation), ## Risks, ## Out of scope.
+If the problem lists acceptance criteria, the ## Tests section MUST map each
+criterion to a concrete automated test (file + test name) — those tests are
+the definition of done for the implementation stage.
 Keep it under 90 lines. Do not include a top-level title heading."""
 
 AUDIT_PROMPT = """You are auditing an implementation spec before it reaches a human reviewer.
@@ -402,8 +405,14 @@ def pick_candidate(root: Path, cfg: dict) -> str | None:
 
 def ticket_problem(ticket: dict) -> str:
     """Canonical problem string for a ticket — must be stable, it keys
-    checkpoints and gate decisions across pauses/resumes."""
-    return (f"{ticket['title']}. {ticket['why']} "
+    checkpoints and gate decisions across pauses/resumes.
+
+    Acceptance criteria ride along: they are the contract the spec's
+    Tests/Documentation sections and the act stage must satisfy."""
+    criteria = ticket.get("criteria") or []
+    crit = (" Acceptance criteria: " + "; ".join(c.strip() for c in criteria) + ".") \
+        if criteria else ""
+    return (f"{ticket['title']}. {ticket['why']}{crit} "
             "Research current best practices and draft a spec for this work.")
 
 
