@@ -7,5 +7,7 @@
     "act_fix": "composer-2.5"
   },
   "max_parallel_acts": 2,
-  "act_open_pr": true
+  "act_open_pr": true,
+  "max_acts_per_day": 10,
+  "protected_paths": [".github/*", "repo_scan/config.py"]
 }
