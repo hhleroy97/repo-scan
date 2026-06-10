@@ -27,15 +27,17 @@ def notify(cfg: dict, title: str, message: str, priority: str = "default",
         body["tags"] = tags
     if click:
         body["click"] = click
-    try:
-        req = urllib.request.Request(
-            server,
-            data=json.dumps(body).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return 200 <= resp.status < 300
-    except Exception as e:
-        info(f"ntfy notification failed (ignored): {e}")
-        return False
+    data = json.dumps(body).encode("utf-8")
+    last_err = None
+    for attempt in (1, 2):  # one retry: transient TLS/connect hiccups are common
+        try:
+            req = urllib.request.Request(
+                server, data=data,
+                headers={"Content-Type": "application/json"}, method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return 200 <= resp.status < 300
+        except Exception as e:
+            last_err = e
+    info(f"ntfy notification failed (ignored): {last_err}")
+    return False
