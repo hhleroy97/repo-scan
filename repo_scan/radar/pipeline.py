@@ -98,43 +98,71 @@ def run_analyze(root: Path, cfg: dict, problem: str, ingested: list[dict]) -> di
     return analysis
 
 
-def write_analysis(root: Path, cfg: dict, problem: str, analysis: dict,
-                   ingested: list[dict] | None = None,
-                   run_log_path: Path | None = None) -> Path:
-    """Analysis note. Wikilinks its evidence (sources + run log) so each loop
-    forms a connected provenance cluster in Obsidian's graph view. The
-    `-analysis` filename suffix keeps bare wikilinks unambiguous vs the spec
-    and run log, which share the same date-slug."""
-    out_dir = root / cfg["docs_dir"] / "research" / "analysis"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / f"{now_date()}-{slugify(problem, 40)}-analysis.md"
-    ingested = ingested or []
-    lines = [
-        frontmatter({
-            "type": "analysis",
-            "problem": problem,
-            "confidence": analysis["confidence"],
-            "sources": [item["id"] for item in ingested],
-            "generated_at": now_iso(),
-        }),
-        "",
-        f"# Analysis — {problem}",
-        f"_Generated {now_iso()} — confidence: {analysis['confidence']}_",
-        "",
-        "## Findings",
-        "",
-    ]
-    lines += [f"- {f}" for f in analysis["findings"]] or ["_none_"]
-    lines += ["", "## Recommendation", "", analysis["recommendation"] or "_none_", ""]
-    if analysis["risks"]:
-        lines += ["## Risks", ""] + [f"- {r}" for r in analysis["risks"]] + [""]
-    lines += ["## Evidence", ""]
+def _analysis_frontmatter(problem: str, analysis: dict, ingested: list[dict]) -> str:
+    """YAML frontmatter for an analysis note."""
+    return frontmatter({
+        "type": "analysis",
+        "problem": problem,
+        "confidence": analysis["confidence"],
+        "sources": [item["id"] for item in ingested],
+        "generated_at": now_iso(),
+    })
+
+
+def _analysis_findings_block(analysis: dict) -> list[str]:
+    """Findings section; empty list yields the ``_none_`` sentinel."""
+    lines = ["## Findings", ""]
+    if analysis["findings"]:
+        lines += [f"- {f}" for f in analysis["findings"]]
+    else:
+        lines.append("_none_")
+    return lines
+
+
+def _analysis_risks_block(analysis: dict) -> list[str]:
+    """Optional risks section; omitted when there are no risks."""
+    if not analysis["risks"]:
+        return []
+    return ["## Risks", ""] + [f"- {r}" for r in analysis["risks"]] + [""]
+
+
+def _analysis_evidence_block(ingested: list[dict], run_log_path: Path | None) -> list[str]:
+    """Evidence wikilinks to ingested sources and the research run log."""
+    lines = ["## Evidence", ""]
     for item in ingested:
         lines.append(f"- [[{item['id']}\\|{item['title']}]]")
     if not ingested:
         lines.append("_no sources ingested_")
     if run_log_path is not None:
         lines.append(f"- research run: [[{run_log_path.stem}]]")
+    return lines
+
+
+def write_analysis(root: Path, cfg: dict, problem: str, analysis: dict,
+                   ingested: list[dict] | None = None,
+                   run_log_path: Path | None = None) -> Path:
+    """Write an analysis note; section builders own markdown shape.
+
+    Wikilinks its evidence (sources + run log) so each loop forms a connected
+    provenance cluster in Obsidian's graph view. The ``-analysis`` filename
+    suffix keeps bare wikilinks unambiguous vs the spec and run log, which share
+    the same date-slug.
+    """
+    out_dir = root / cfg["docs_dir"] / "research" / "analysis"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{now_date()}-{slugify(problem, 40)}-analysis.md"
+    ingested = ingested or []
+    lines = [
+        _analysis_frontmatter(problem, analysis, ingested),
+        "",
+        f"# Analysis — {problem}",
+        f"_Generated {now_iso()} — confidence: {analysis['confidence']}_",
+        "",
+    ]
+    lines += _analysis_findings_block(analysis)
+    lines += ["", "## Recommendation", "", analysis["recommendation"] or "_none_", ""]
+    lines += _analysis_risks_block(analysis)
+    lines += _analysis_evidence_block(ingested, run_log_path)
     lines.append("")
     write_doc(path, "\n".join(lines), root)
     return path
@@ -234,151 +262,223 @@ def _finish_loop(root: Path, cfg: dict, problem: str):
     clear_decisions(root, cfg, problem)
 
 
+class _RadarLoopRunner:
+    """Seven-stage RADAR command object; resume via checkpoint guard clauses.
+
+    Holds loop state (checkpoint, gates log, result dict) and runs each stage
+    in order. ``cmd_loop`` constructs a runner and maps exceptions to return
+    codes; checkpoint key names and gate semantics are unchanged.
+    """
+
+    def __init__(self, root: Path, cfg: dict, problem: str,
+                 approve: list[str] | None = None,
+                 gates_override: str | None = None,
+                 max_sources: int = 3):
+        from ..hub.state import load_checkpoint
+        if gates_override:
+            cfg = {**cfg, "gates": {"post_analyze": gates_override, "post_audit": gates_override}}
+        self.root = root
+        self.cfg = cfg
+        self.problem = problem
+        self.approved = set(approve or [])
+        self.max_sources = max_sources
+        self.gates_log: list[str] = []
+        self.result = {"outcome": "stopped", "sources": 0, "confidence": "?", "spec": "—"}
+        self.ckpt = load_checkpoint(root, cfg, problem)
+        self.ingested: list[dict] = []
+        self.run_log_path: Path | None = None
+        self.analysis: dict = {}
+        self.analysis_path: Path | None = None
+        self.spec_text: str = ""
+        self.audit: dict = {}
+
+    def run(self) -> int:
+        from ..hub.progress import progress
+        from ..hub.state import save_checkpoint
+        self._progress = progress
+        self._save_checkpoint = save_checkpoint
+        try:
+            if (rc := self._stage_research()) is not None:
+                return rc
+            if (rc := self._stage_analyze()) is not None:
+                return rc
+            if (rc := self._stage_gate1()) is not None:
+                return rc
+            if (rc := self._stage_draft()) is not None:
+                return rc
+            if (rc := self._stage_audit()) is not None:
+                return rc
+            if (rc := self._stage_gate2()) is not None:
+                return rc
+            return self._stage_record()
+        except LLMError as e:
+            err(f"loop needs an LLM backend: {e}")
+            self.result["outcome"] = f"failed ({e})"
+            self.result["gates"] = "; ".join(self.gates_log) or "—"
+            record_loop(self.root, self.cfg, self.problem, self.result)
+            return 1
+
+    def _run_or_resume_research(self) -> None:
+        if "ingested" in self.ckpt:
+            self.ingested = self.ckpt["ingested"]
+            self.run_log_path = Path(self.ckpt["run_log"]) if self.ckpt.get("run_log") else None
+            info("resumed from checkpoint")
+            return
+        research = run_research(self.root, self.cfg, self.problem, self.max_sources)
+        self.run_log_path = write_run_log(self.root, self.cfg, research)
+        self.ingested = research["ingested"]
+        self.ckpt["ingested"] = self.ingested
+        self.ckpt["run_log"] = str(self.run_log_path)
+        self._save_checkpoint(self.root, self.cfg, self.problem, self.ckpt)
+
+    def _stage_research(self) -> int | None:
+        self._progress(self.root, self.cfg, self.problem, "[1/7] Research",
+                       "proposing + ingesting sources")
+        self._run_or_resume_research()
+        self.result["sources"] = len(self.ingested)
+        ok(f"{self.result['sources']} source(s) ingested")
+        return None
+
+    def _run_or_resume_analyze(self) -> None:
+        if "analysis" in self.ckpt:
+            self.analysis = self.ckpt["analysis"]
+            self.analysis_path = Path(self.ckpt["analysis_path"])
+            info("resumed from checkpoint")
+            return
+        self.analysis = run_analyze(self.root, self.cfg, self.problem, self.ingested)
+        self.analysis_path = write_analysis(self.root, self.cfg, self.problem, self.analysis,
+                                            self.ingested, self.run_log_path)
+        self.ckpt["analysis"] = self.analysis
+        self.ckpt["analysis_path"] = str(self.analysis_path)
+        self._save_checkpoint(self.root, self.cfg, self.problem, self.ckpt)
+
+    def _stage_analyze(self) -> int | None:
+        self._progress(self.root, self.cfg, self.problem, "[2/7] Analyze",
+                       f"synthesizing {self.result['sources']} source(s) against the repo")
+        self._run_or_resume_analyze()
+        self.result["confidence"] = self.analysis["confidence"]
+        ok(f"{len(self.analysis['findings'])} finding(s), confidence {self.analysis['confidence']}")
+        return None
+
+    def _gate1_payload(self) -> dict:
+        return {
+            "problem": self.problem,
+            "summary": (f"{self.analysis['recommendation']} — "
+                        f"[[{self.analysis_path.stem}]]"),
+            "detail": {
+                "confidence": self.analysis["confidence"],
+                "findings": self.analysis["findings"][:6],
+                "risks": self.analysis["risks"][:4],
+                "doc": f"research/analysis/{self.analysis_path.name}",
+            },
+        }
+
+    def _stop_at_gate(self, name: str) -> int:
+        self.gates_log.append(f"{name}: stopped")
+        self.result["gates"] = "; ".join(self.gates_log)
+        if not _gate_paused(self.root, self.cfg, name, self.problem):
+            _finish_loop(self.root, self.cfg, self.problem)
+        record_loop(self.root, self.cfg, self.problem, self.result)
+        return 2
+
+    def _stage_gate1(self) -> int | None:
+        self._progress(self.root, self.cfg, self.problem, "[3/7] Gate 1 (post-analyze)",
+                       "waiting on human" if gate_mode("post_analyze", self.cfg) == "prompt" else "")
+        if not gate("post_analyze", self._gate1_payload(), self.cfg, self.root, self.approved):
+            return self._stop_at_gate("post_analyze")
+        self.gates_log.append("post_analyze: passed")
+        return None
+
+    def _run_or_resume_draft(self) -> None:
+        if "spec_text" in self.ckpt:
+            self.spec_text = self.ckpt["spec_text"]
+            info("resumed from checkpoint")
+            return
+        self.spec_text = run_draft(self.root, self.cfg, self.problem, self.analysis)
+        ok(f"spec drafted ({len(self.spec_text.splitlines())} lines)")
+
+    def _stage_draft(self) -> int | None:
+        self._progress(self.root, self.cfg, self.problem, "[4/7] Draft",
+                       "writing the implementation spec")
+        self._run_or_resume_draft()
+        return None
+
+    def _audit_with_revision(self) -> dict:
+        audit = run_audit(self.cfg, self.problem, self.spec_text, root=self.root)
+        if audit["verdict"] == "pass" or not audit["issues"]:
+            return audit
+        self._progress(self.root, self.cfg, self.problem, "[5/7] Audit",
+                       f"revising: {len(audit['issues'])} issue(s)", banner=False)
+        self.spec_text = complete(REVISE_PROMPT.format(
+            spec=self.spec_text,
+            issues="\n".join(f"- {i}" for i in audit["issues"]),
+        ), self.cfg, role="draft", root=self.root)
+        return run_audit(self.cfg, self.problem, self.spec_text, root=self.root)
+
+    def _run_or_resume_audit(self) -> None:
+        if "audit" in self.ckpt:
+            self.audit = self.ckpt["audit"]
+            self.spec_text = self.ckpt["spec_text"]
+            info("resumed from checkpoint")
+            return
+        self.audit = self._audit_with_revision()
+        self.ckpt["spec_text"] = self.spec_text
+        self.ckpt["audit"] = self.audit
+        self._save_checkpoint(self.root, self.cfg, self.problem, self.ckpt)
+
+    def _stage_audit(self) -> int | None:
+        self._progress(self.root, self.cfg, self.problem, "[5/7] Audit",
+                       "adversarial review of the spec")
+        self._run_or_resume_audit()
+        ok(f"audit verdict: {self.audit['verdict']}")
+        return None
+
+    def _gate2_payload(self, spec_path: Path) -> dict:
+        return {
+            "problem": self.problem,
+            "summary": (f"audit {self.audit['verdict']}: {self.audit['notes']} — "
+                        f"[[{spec_path.stem}]]"),
+            "detail": {
+                "audit_verdict": self.audit["verdict"],
+                "issues": self.audit["issues"][:8],
+                "doc": f"specs/{spec_path.name}",
+            },
+        }
+
+    def _stage_gate2(self) -> int | None:
+        self._progress(self.root, self.cfg, self.problem, "[6/7] Gate 2 (post-audit)",
+                       "waiting on human" if gate_mode("post_audit", self.cfg) == "prompt" else "")
+        spec_path = write_spec(self.root, self.cfg, self.problem, self.spec_text, self.audit,
+                               status="draft", analysis_path=self.analysis_path)
+        self.result["spec"] = f"[[{spec_path.stem}]]"
+        if not gate("post_audit", self._gate2_payload(spec_path), self.cfg, self.root,
+                    self.approved):
+            return self._stop_at_gate("post_audit")
+        self.gates_log.append("post_audit: passed")
+        return None
+
+    def _stage_record(self) -> int:
+        self._progress(self.root, self.cfg, self.problem, "[7/7] Record", "spec approved")
+        write_spec(self.root, self.cfg, self.problem, self.spec_text, self.audit,
+                   status="approved", analysis_path=self.analysis_path)
+        self.result["outcome"] = "approved"
+        self.result["gates"] = "; ".join(self.gates_log)
+        _finish_loop(self.root, self.cfg, self.problem)
+        record_loop(self.root, self.cfg, self.problem, self.result)
+        return 0
+
+
 def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = None,
              gates_override: str | None = None, max_sources: int = 3) -> int:
     """Returns 0 done, 1 error, 2 stopped (paused at a gate or rejected).
 
-    Stages checkpoint to docs/<docs_dir>/.radar/checkpoints/ so resuming a
-    paused loop (same problem) skips completed LLM stages instead of paying
-    for them again.
+    Stage orchestration lives on ``_RadarLoopRunner``; checkpoint keys and
+    return codes are unchanged.
     """
-    from ..hub.state import load_checkpoint, save_checkpoint
     header(f"radar loop")
     info(problem)
     ensure_dirs(root, cfg)
-
-    if gates_override:
-        cfg = {**cfg, "gates": {"post_analyze": gates_override, "post_audit": gates_override}}
-    approved = set(approve or [])
-    gates_log: list[str] = []
-    result = {"outcome": "stopped", "sources": 0, "confidence": "?", "spec": "—"}
-    ckpt = load_checkpoint(root, cfg, problem)
-
-    from ..hub.progress import progress
-    try:
-        # 1 — Research
-        progress(root, cfg, problem, "[1/7] Research", "proposing + ingesting sources")
-        if "ingested" in ckpt:
-            ingested = ckpt["ingested"]
-            run_log_path = Path(ckpt["run_log"]) if ckpt.get("run_log") else None
-            info("resumed from checkpoint")
-        else:
-            research = run_research(root, cfg, problem, max_sources)
-            run_log_path = write_run_log(root, cfg, research)
-            ingested = research["ingested"]
-            ckpt["ingested"] = ingested
-            ckpt["run_log"] = str(run_log_path)
-            save_checkpoint(root, cfg, problem, ckpt)
-        result["sources"] = len(ingested)
-        ok(f"{result['sources']} source(s) ingested")
-
-        # 2 — Analyze
-        progress(root, cfg, problem, "[2/7] Analyze",
-                 f"synthesizing {result['sources']} source(s) against the repo")
-        if "analysis" in ckpt:
-            analysis = ckpt["analysis"]
-            analysis_path = Path(ckpt["analysis_path"])
-            info("resumed from checkpoint")
-        else:
-            analysis = run_analyze(root, cfg, problem, ingested)
-            analysis_path = write_analysis(root, cfg, problem, analysis,
-                                           ingested, run_log_path)
-            ckpt["analysis"] = analysis
-            ckpt["analysis_path"] = str(analysis_path)
-            save_checkpoint(root, cfg, problem, ckpt)
-        result["confidence"] = analysis["confidence"]
-        ok(f"{len(analysis['findings'])} finding(s), confidence {analysis['confidence']}")
-
-        # 3 — Gate 1
-        progress(root, cfg, problem, "[3/7] Gate 1 (post-analyze)",
-                 "waiting on human" if gate_mode("post_analyze", cfg) == "prompt" else "")
-        gate1_payload = {
-            "problem": problem,
-            "summary": f"{analysis['recommendation']} — [[{analysis_path.stem}]]",
-            "detail": {
-                "confidence": analysis["confidence"],
-                "findings": analysis["findings"][:6],
-                "risks": analysis["risks"][:4],
-                "doc": f"research/analysis/{analysis_path.name}",
-            },
-        }
-        if not gate("post_analyze", gate1_payload, cfg, root, approved):
-            gates_log.append("post_analyze: stopped")
-            result["gates"] = "; ".join(gates_log)
-            if not _gate_paused(root, cfg, "post_analyze", problem):
-                _finish_loop(root, cfg, problem)
-            record_loop(root, cfg, problem, result)
-            return 2
-        gates_log.append("post_analyze: passed")
-
-        # 4 — Draft
-        progress(root, cfg, problem, "[4/7] Draft", "writing the implementation spec")
-        if "spec_text" in ckpt:
-            spec_text = ckpt["spec_text"]
-            info("resumed from checkpoint")
-        else:
-            spec_text = run_draft(root, cfg, problem, analysis)
-            ok(f"spec drafted ({len(spec_text.splitlines())} lines)")
-
-        # 5 — Audit (one revision round if needed)
-        progress(root, cfg, problem, "[5/7] Audit", "adversarial review of the spec")
-        if "audit" in ckpt:
-            audit = ckpt["audit"]
-            info("resumed from checkpoint")
-        else:
-            audit = run_audit(cfg, problem, spec_text, root=root)
-            if audit["verdict"] != "pass" and audit["issues"]:
-                progress(root, cfg, problem, "[5/7] Audit",
-                         f"revising: {len(audit['issues'])} issue(s)", banner=False)
-                spec_text = complete(REVISE_PROMPT.format(
-                    spec=spec_text, issues="\n".join(f"- {i}" for i in audit["issues"]),
-                ), cfg, role="draft", root=root)
-                audit = run_audit(cfg, problem, spec_text, root=root)
-            ckpt["spec_text"] = spec_text
-            ckpt["audit"] = audit
-            save_checkpoint(root, cfg, problem, ckpt)
-        ok(f"audit verdict: {audit['verdict']}")
-
-        # 6 — Gate 2
-        progress(root, cfg, problem, "[6/7] Gate 2 (post-audit)",
-                 "waiting on human" if gate_mode("post_audit", cfg) == "prompt" else "")
-        spec_path = write_spec(root, cfg, problem, spec_text, audit,
-                               status="draft", analysis_path=analysis_path)
-        result["spec"] = f"[[{spec_path.stem}]]"
-        payload = {
-            "problem": problem,
-            "summary": f"audit {audit['verdict']}: {audit['notes']} — [[{spec_path.stem}]]",
-            "detail": {
-                "audit_verdict": audit["verdict"],
-                "issues": audit["issues"][:8],
-                "doc": f"specs/{spec_path.name}",
-            },
-        }
-        if not gate("post_audit", payload, cfg, root, approved):
-            gates_log.append("post_audit: stopped")
-            result["gates"] = "; ".join(gates_log)
-            if not _gate_paused(root, cfg, "post_audit", problem):
-                _finish_loop(root, cfg, problem)
-            record_loop(root, cfg, problem, result)
-            return 2
-        gates_log.append("post_audit: passed")
-
-        # 7 — Record
-        progress(root, cfg, problem, "[7/7] Record", "spec approved")
-        write_spec(root, cfg, problem, spec_text, audit,
-                   status="approved", analysis_path=analysis_path)
-        result["outcome"] = "approved"
-        result["gates"] = "; ".join(gates_log)
-        _finish_loop(root, cfg, problem)
-        record_loop(root, cfg, problem, result)
-        return 0
-
-    except LLMError as e:
-        err(f"loop needs an LLM backend: {e}")
-        result["outcome"] = f"failed ({e})"
-        result["gates"] = "; ".join(gates_log) or "—"
-        record_loop(root, cfg, problem, result)
-        return 1
+    return _RadarLoopRunner(root, cfg, problem, approve, gates_override, max_sources).run()
 
 
 def pick_candidate(root: Path, cfg: dict) -> str | None:

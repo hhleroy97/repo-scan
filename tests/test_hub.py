@@ -1,22 +1,20 @@
-"""Hub: run state, decision inbox, checkpointed resume, daemon, server."""
+"""Hub: run state, decision inbox, checkpointed resume, server."""
 
 import json
 import threading
-import time
 import urllib.request
 from pathlib import Path
 
 import pytest
 
 from repo_scan.config import DEFAULT_CONFIG, load_config
-from repo_scan.hub.daemon import daemon_tick
 from repo_scan.hub.server import build_state, make_handler
 from repo_scan.hub.state import (active_run, clear_decisions, create_run,
                                  get_token, load_checkpoint, load_runs,
                                  peek_decision, problem_key, save_checkpoint,
-                                 save_meta, submit_decision, update_run)
+                                 submit_decision, update_run)
 from repo_scan.radar.gates import gate
-from repo_scan.radar.pipeline import cmd_loop, ticket_problem
+from repo_scan.radar.pipeline import cmd_loop
 from repo_scan.tickets import load_tickets, set_ticket_status, write_ticket
 
 from tests.test_radar_pipeline import FAKE_LLM, happy_path_responses, queue_responses
@@ -145,135 +143,12 @@ def test_inbox_rejection_ends_loop_and_clears_state(loop_env):
     assert load_checkpoint(root, cfg, PROBLEM) == {}  # rejection is terminal
 
 
-# --- daemon --------------------------------------------------------------------
-
 def _approved_ticket(root: Path) -> dict:
     ticket = {"id": "tkt-0001", "title": "Fix the thing", "priority": "high",
               "fingerprint": "x:1", "why": "It is broken.", "criteria": ["fixed"]}
     write_ticket(root, DEFAULT_CONFIG, ticket)
     set_ticket_status(root, DEFAULT_CONFIG, "tkt-0001", "approved")
     return ticket
-
-
-def test_daemon_full_cycle(loop_env, monkeypatch):
-    root, cfg, note, queue = loop_env
-    cfg["radar_enabled"] = True
-    cfg["max_parallel_loops"] = 1  # inline for determinism
-    save_meta(root, cfg, {"last_scan": time.time()})  # skip the scheduled scan
-    ticket = _approved_ticket(root)
-    problem = ticket_problem({**ticket, "status": "approved"})
-
-    # tick 1: picks up the approved ticket, pauses at gate 1
-    queue_responses(queue, happy_path_responses(note)[:3])
-    actions = daemon_tick(root, cfg)
-    assert any(a.startswith("started:") for a in actions)
-    run = active_run(root, cfg)
-    assert run["status"] == "waiting-on-gate" and run["gate"] == "post_analyze"
-
-    # tick with no decision: nothing happens
-    assert daemon_tick(root, cfg) == []
-
-    # tick 2: approval arrives -> resumes, pauses at gate 2
-    submit_decision(root, cfg, "post_analyze", problem, "approve")
-    queue_responses(queue, happy_path_responses(note)[3:5])
-    actions = daemon_tick(root, cfg)
-    assert any(a.startswith("resumed:") for a in actions)
-    run = active_run(root, cfg)
-    assert run["status"] == "waiting-on-gate" and run["gate"] == "post_audit"
-
-    # tick 3: final approval -> done, ticket moves to in-progress
-    submit_decision(root, cfg, "post_audit", problem, "approve")
-    actions = daemon_tick(root, cfg)
-    assert any(a.startswith("resumed:") for a in actions)
-    assert active_run(root, cfg) is None
-    assert load_runs(root, cfg)[0]["status"] == "done"
-    ticket = load_tickets(root, cfg)[0]
-    assert ticket["status"] == "in-progress"
-    # the note must carry the spec wikilink — it's what makes this ticket
-    # an act candidate for the daemon's fan-out
-    body = Path(ticket["path"]).read_text()
-    assert "-spec]]" in body
-
-
-def test_daemon_fans_out_parallel_loops(loop_env, monkeypatch):
-    """Two approved tickets -> two loop runs in the same tick, on threads,
-    each pausing at its own gate 1."""
-    root, cfg, note, queue = loop_env
-    cfg["radar_enabled"] = True
-    cfg["max_parallel_loops"] = 2
-    save_meta(root, cfg, {"last_scan": time.time()})
-    _approved_ticket(root)
-    write_ticket(root, DEFAULT_CONFIG,
-                 {"id": "tkt-0002", "title": "Second thing", "priority": "low",
-                  "fingerprint": "x:2", "why": "Also broken.", "criteria": ["ok"]})
-    set_ticket_status(root, DEFAULT_CONFIG, "tkt-0002", "approved")
-
-    # threads consume the fake LLM concurrently, so the ordered response queue
-    # would race — one merged response satisfies propose/summarize/analyze
-    monkeypatch.setenv("RADAR_FAKE_RESPONSE", json.dumps({
-        "sources": [{"ref": f"file:{note}", "why": "design note"}],
-        "notes": "use local note",
-        "summary": "Note about gates.", "key_claims": ["file-backed gates"],
-        "tags": ["design"], "relevance": "directly relevant",
-        "findings": ["gates should be file-backed"],
-        "recommendation": "Use pending-state files.",
-        "confidence": "high", "risks": [],
-    }))
-
-    actions = daemon_tick(root, cfg)
-    assert sum(a.startswith("started:") for a in actions) == 2
-
-    deadline = time.time() + 60
-    while time.time() < deadline:
-        runs = load_runs(root, cfg)
-        if len(runs) == 2 and all(r["status"] == "waiting-on-gate" for r in runs):
-            break
-        time.sleep(0.2)
-    runs = load_runs(root, cfg)
-    assert len(runs) == 2
-    assert all(r["status"] == "waiting-on-gate" and r["gate"] == "post_analyze"
-               for r in runs)
-    assert {r["ticket"] for r in runs} == {"tkt-0001", "tkt-0002"}
-
-
-def test_commit_vault_commits_docs_only(tmp_repo):
-    """Vault churn lands in a commit; human code work is never swept in."""
-    import subprocess
-    from repo_scan.hub.daemon import commit_vault
-    cfg = load_config(tmp_repo)
-    (tmp_repo / "docs").mkdir(exist_ok=True)
-    (tmp_repo / "docs" / "new-artifact.md").write_text("# spec\n")
-    (tmp_repo / "wip.py").write_text("# human's half-done work\n")
-    subprocess.run(["git", "add", "wip.py"], cwd=tmp_repo, capture_output=True)
-
-    assert commit_vault(tmp_repo, cfg, "vault: test artifacts") is True
-    show = subprocess.run(["git", "show", "--name-only", "--pretty=%s", "HEAD"],
-                          cwd=tmp_repo, capture_output=True, text=True).stdout
-    assert "vault: test artifacts" in show
-    assert "docs/new-artifact.md" in show
-    assert "wip.py" not in show  # staged human work untouched
-    status = subprocess.run(["git", "status", "--porcelain"], cwd=tmp_repo,
-                            capture_output=True, text=True).stdout
-    assert "wip.py" in status  # still pending for the human
-
-    from repo_scan.hub.state import load_events
-    assert any("vault committed" in e["text"] for e in load_events(tmp_repo, cfg))
-
-
-def test_commit_vault_noop_when_clean_or_disabled(tmp_repo):
-    import subprocess
-    from repo_scan.hub.daemon import commit_vault
-    cfg = load_config(tmp_repo)
-    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_repo,
-                          capture_output=True, text=True).stdout
-    assert commit_vault(tmp_repo, cfg, "vault: nothing") is False  # clean tree
-    (tmp_repo / "docs").mkdir(exist_ok=True)
-    (tmp_repo / "docs" / "x.md").write_text("x\n")
-    cfg2 = dict(cfg, vault_autocommit=False)
-    assert commit_vault(tmp_repo, cfg2, "vault: disabled") is False
-    head2 = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_repo,
-                           capture_output=True, text=True).stdout
-    assert head == head2  # no commits made either way
 
 
 def test_event_feed_append_load_and_cap(tmp_repo: Path):
@@ -300,15 +175,6 @@ def test_set_run_stage_updates_record_and_noops_without_run(tmp_repo: Path):
     run = load_runs(tmp_repo, cfg)[0]
     assert run["stage"] == "[3/5] Implement"
     assert run["stage_detail"] == "composer-2.5 editing"
-
-
-def test_daemon_scheduled_scan(tmp_repo: Path):
-    cfg = load_config(tmp_repo)
-    actions = daemon_tick(tmp_repo, cfg)  # no meta -> scan is due
-    assert "scanned" in actions
-    assert (tmp_repo / "docs" / "scan.json").exists()
-    # immediately after, the scan is fresh -> no rescan
-    assert "scanned" not in daemon_tick(tmp_repo, cfg)
 
 
 # --- server ---------------------------------------------------------------------

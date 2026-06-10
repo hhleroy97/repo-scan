@@ -1,6 +1,6 @@
 """The resident loop runner.
 
-One tick:
+One tick (user-facing phases):
 1. Resume any waiting run whose gate decision arrived (checkpoints make this
    cheap — completed LLM stages skip). Act runs resume on threads.
 2. If the scan is stale and nothing is mid-flight, rescan (proposes tickets).
@@ -9,6 +9,10 @@ One tick:
    radar/<ticket> branch, so agents never collide.
 4. Start a research loop for the next approved ticket (one at a time —
    loops share the vault).
+
+Tick internals also include a mid-flight guard (foreign-owned queued/running
+runs block new work) and a daily budget gate (caps block starting new work
+only; resumes and in-flight runs continue).
 
 All state is file-backed, so the daemon can die and restart at any point;
 the dashboard and CLI keep working against the same files either way.
@@ -225,6 +229,160 @@ def over_budget(root: Path, cfg: dict) -> str | None:
     return None
 
 
+def _prune_finished_threads() -> None:
+    """Drop dead thread handles from the process-local run registry."""
+    for rid in [r for r, t in _run_threads.items() if not t.is_alive()]:
+        del _run_threads[rid]
+
+
+def _resume_gate_waiting_runs(
+    root: Path,
+    cfg: dict,
+    active: list[dict],
+    busy: set[str],
+    parallel_acts: bool,
+    parallel_loops: bool,
+) -> list[str]:
+    """Resume paused runs whose gate decisions arrived."""
+    actions: list[str] = []
+    for run in active:
+        if run["status"] != "waiting-on-gate" or run["id"] in busy:
+            continue
+        if run.get("gate") and peek_decision(root, cfg, run["gate"], run["problem"]):
+            info(f"decision arrived for gate {run['gate']} — resuming run {run['id']}")
+            if run.get("kind") == "act":
+                _spawn(root, cfg, run, _run_act, parallel_acts)
+            else:
+                _spawn(root, cfg, run, _run_loop, parallel_loops)
+            actions.append(f"resumed:{run['id']}")
+    return actions
+
+
+def _tick_midflight_guard(active: list[dict], busy: set[str], actions: list[str]) -> list[str] | None:
+    """Return early when foreign-owned queued/running runs are mid-flight."""
+    mid_flight = [r for r in active
+                  if r["status"] in ("queued", "running") and r["id"] not in busy]
+    if mid_flight:
+        return actions
+    return None
+
+
+def _maybe_run_scheduled_scan(root: Path, cfg: dict, actions: list[str]) -> list[str] | None:
+    """Run a scheduled scan when idle; return immediately (skip budget/act/loop)."""
+    if _run_threads:
+        return None
+    meta = load_meta(root, cfg)
+    scan_interval = float(cfg.get("daemon_scan_hours", 6)) * 3600
+    if time.time() - float(meta.get("last_scan", 0)) < scan_interval:
+        return None
+    from ..scanner import scan
+    info("scheduled scan starting")
+    append_event(root, cfg, "scan", "scheduled scan started")
+    try:
+        scan(root, quiet=True)
+        actions.append("scanned")
+    except Exception as e:
+        warn(f"scheduled scan failed: {e}")
+        actions.append("scan-failed")
+    meta["last_scan"] = time.time()
+    save_meta(root, cfg, meta)
+    commit_vault(root, cfg, "vault: scheduled scan")
+    from ..tickets import load_tickets
+    proposed = [t for t in load_tickets(root, cfg) if t["status"] == "proposed"]
+    if proposed:
+        notify(cfg, f"repo-scan: {len(proposed)} ticket(s) awaiting review",
+               "; ".join(t["title"][:60] for t in proposed[:3]),
+               tags=["ticket"], click=_dashboard_url(cfg))
+    return actions
+
+
+def _apply_budget_gate(root: Path, cfg: dict, actions: list[str]) -> list[str] | None:
+    """Block starting new work when daily budgets are exhausted; notify once/day."""
+    budget_reason = over_budget(root, cfg)
+    if not budget_reason:
+        return None
+    meta = load_meta(root, cfg)
+    if meta.get("budget_notified") != now_date():
+        warn(f"budget: {budget_reason} — not starting new runs")
+        append_event(root, cfg, "run", f"budget: {budget_reason}")
+        notify(cfg, "RADAR: daily budget reached", budget_reason,
+               tags=["money_with_wings"], click=_dashboard_url(cfg))
+        meta["budget_notified"] = now_date()
+        save_meta(root, cfg, meta)
+    return actions
+
+
+def _act_threads_alive(root: Path, cfg: dict) -> int:
+    """Count act runs owned by live threads in this process."""
+    ids = {r["id"] for r in active_runs(root, cfg) if r.get("kind") == "act"}
+    return len(ids & set(_run_threads))
+
+
+def _fan_out_acts(
+    root: Path,
+    cfg: dict,
+    max_acts: int,
+    parallel_acts: bool,
+    actions: list[str],
+) -> list[str] | None:
+    """Start act runs up to max_parallel_acts; return early when actions is non-empty."""
+    if not cfg.get("act_enabled"):
+        return None
+    from ..radar.act import act_problem, find_act_tickets
+    covered = {r.get("ticket") for r in active_runs(root, cfg)}
+    slots = max_acts - _act_threads_alive(root, cfg)
+    for ticket, spec_stem in find_act_tickets(root, cfg):
+        if slots <= 0:
+            break
+        if ticket["id"] in covered:
+            continue
+        problem = act_problem(ticket["id"], spec_stem)
+        run = create_run(root, cfg, problem, ticket=ticket["id"], kind="act")
+        info(f"starting act run {run['id']} for ticket {ticket['id']}")
+        _spawn(root, cfg, run, _run_act, parallel_acts)
+        actions.append(f"act-started:{run['id']}")
+        slots -= 1
+    if actions:
+        return actions
+    return None
+
+
+def _loop_slots_available(root: Path, cfg: dict, max_loops: int) -> int:
+    """Non-act queued/running runs consume loop parallelism slots."""
+    in_flight = len([r for r in active_runs(root, cfg)
+                     if r.get("kind") != "act"
+                     and r["status"] in ("queued", "running")])
+    return max_loops - in_flight
+
+
+def _fan_out_loops(
+    root: Path,
+    cfg: dict,
+    max_loops: int,
+    parallel_loops: bool,
+    actions: list[str],
+) -> list[str]:
+    """Start loop runs up to max_parallel_loops for approved tickets."""
+    if not cfg.get("radar_enabled"):
+        return actions
+    from ..radar.pipeline import ticket_problem
+    from ..tickets import approved_tickets
+    covered = {r.get("ticket") for r in active_runs(root, cfg)}
+    slots = _loop_slots_available(root, cfg, max_loops)
+    for ticket in approved_tickets(root, cfg):
+        if slots <= 0:
+            break
+        if ticket["id"] in covered:
+            continue
+        problem = ticket_problem(ticket)
+        run = create_run(root, cfg, problem, ticket=ticket["id"])
+        info(f"starting run {run['id']} for ticket {ticket['id']}")
+        _spawn(root, cfg, run, _run_loop, parallel_loops)
+        actions.append(f"started:{run['id']}")
+        slots -= 1
+    return actions
+
+
 def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
     """Mark queued/running runs with no owning thread as stopped.
 
@@ -246,120 +404,40 @@ def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
 
 def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
-    actions: list[str] = []
-    for rid in [r for r, t in _run_threads.items() if not t.is_alive()]:
-        del _run_threads[rid]
+    _prune_finished_threads()
 
     max_acts = int(cfg.get("max_parallel_acts", 2))
     max_loops = int(cfg.get("max_parallel_loops", 2))
     parallel_acts = max_acts > 1
     parallel_loops = max_loops > 1
+    actions: list[str] = []
     active = active_runs(root, cfg)
-    busy = set(_run_threads)  # run ids whose threads this process owns
+    busy = set(_run_threads)
 
-    # 1 — resume paused runs whose decisions arrived
-    for run in active:
-        if run["status"] != "waiting-on-gate" or run["id"] in busy:
-            continue
-        if run.get("gate") and peek_decision(root, cfg, run["gate"], run["problem"]):
-            info(f"decision arrived for gate {run['gate']} — resuming run {run['id']}")
-            if run.get("kind") == "act":
-                _spawn(root, cfg, run, _run_act, parallel_acts)
-            else:
-                _spawn(root, cfg, run, _run_loop, parallel_loops)
-            actions.append(f"resumed:{run['id']}")
-    if actions:
+    resumed = _resume_gate_waiting_runs(
+        root, cfg, active, busy, parallel_acts, parallel_loops)
+    actions.extend(resumed)
+    if resumed:
         active = active_runs(root, cfg)
         busy = set(_run_threads)
 
-    mid_flight = [r for r in active
-                  if r["status"] in ("queued", "running") and r["id"] not in busy]
-    if mid_flight:
-        # another tick/process owns these; leave them alone
-        return actions
+    early = _tick_midflight_guard(active, busy, actions)
+    if early is not None:
+        return early
 
-    # 2 — scheduled scan (skip while anything is actively running)
-    if not _run_threads:
-        meta = load_meta(root, cfg)
-        scan_interval = float(cfg.get("daemon_scan_hours", 6)) * 3600
-        if time.time() - float(meta.get("last_scan", 0)) >= scan_interval:
-            from ..scanner import scan
-            info("scheduled scan starting")
-            append_event(root, cfg, "scan", "scheduled scan started")
-            try:
-                scan(root, quiet=True)
-                actions.append("scanned")
-            except Exception as e:
-                warn(f"scheduled scan failed: {e}")
-                actions.append("scan-failed")
-            meta["last_scan"] = time.time()
-            save_meta(root, cfg, meta)
-            commit_vault(root, cfg, "vault: scheduled scan")
-            from ..tickets import load_tickets
-            proposed = [t for t in load_tickets(root, cfg) if t["status"] == "proposed"]
-            if proposed:
-                notify(cfg, f"repo-scan: {len(proposed)} ticket(s) awaiting review",
-                       "; ".join(t["title"][:60] for t in proposed[:3]),
-                       tags=["ticket"], click=_dashboard_url(cfg))
-            return actions
+    early = _maybe_run_scheduled_scan(root, cfg, actions)
+    if early is not None:
+        return early
 
-    # budgets gate NEW work only — resumes above already ran
-    budget_reason = over_budget(root, cfg)
-    if budget_reason:
-        meta = load_meta(root, cfg)
-        if meta.get("budget_notified") != now_date():
-            warn(f"budget: {budget_reason} — not starting new runs")
-            append_event(root, cfg, "run", f"budget: {budget_reason}")
-            notify(cfg, "RADAR: daily budget reached", budget_reason,
-                   tags=["money_with_wings"], click=_dashboard_url(cfg))
-            meta["budget_notified"] = now_date()
-            save_meta(root, cfg, meta)
-        return actions
+    early = _apply_budget_gate(root, cfg, actions)
+    if early is not None:
+        return early
 
-    # 3 — fan out acts on approved specs, up to max_parallel_acts
-    def _alive(kind: str) -> int:
-        ids = {r["id"] for r in active_runs(root, cfg) if r.get("kind") == kind}
-        return len(ids & set(_run_threads))
+    early = _fan_out_acts(root, cfg, max_acts, parallel_acts, actions)
+    if early is not None:
+        return early
 
-    if cfg.get("act_enabled"):
-        from ..radar.act import act_problem, find_act_tickets
-        covered = {r.get("ticket") for r in active_runs(root, cfg)}
-        slots = max_acts - _alive("act")
-        for ticket, spec_stem in find_act_tickets(root, cfg):
-            if slots <= 0:
-                break
-            if ticket["id"] in covered:
-                continue
-            problem = act_problem(ticket["id"], spec_stem)
-            run = create_run(root, cfg, problem, ticket=ticket["id"], kind="act")
-            info(f"starting act run {run['id']} for ticket {ticket['id']}")
-            _spawn(root, cfg, run, _run_act, parallel_acts)
-            actions.append(f"act-started:{run['id']}")
-            slots -= 1
-        if actions:
-            return actions
-
-    # 4 — fan out research loops for approved tickets, up to max_parallel_loops
-    if cfg.get("radar_enabled"):
-        from ..radar.pipeline import ticket_problem
-        from ..tickets import approved_tickets
-        covered = {r.get("ticket") for r in active_runs(root, cfg)}
-        slots = max_loops - len([r for r in active_runs(root, cfg)
-                                 if r.get("kind") != "act"
-                                 and r["status"] in ("queued", "running")])
-        for ticket in approved_tickets(root, cfg):
-            if slots <= 0:
-                break
-            if ticket["id"] in covered:
-                continue
-            problem = ticket_problem(ticket)
-            run = create_run(root, cfg, problem, ticket=ticket["id"])
-            info(f"starting run {run['id']} for ticket {ticket['id']}")
-            _spawn(root, cfg, run, _run_loop, parallel_loops)
-            actions.append(f"started:{run['id']}")
-            slots -= 1
-
-    return actions
+    return _fan_out_loops(root, cfg, max_loops, parallel_loops, actions)
 
 
 def cmd_daemon(root: Path, cfg: dict, poll_seconds: int | None = None) -> int:

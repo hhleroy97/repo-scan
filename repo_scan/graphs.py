@@ -202,8 +202,43 @@ def get_ts_dep_edges(root: Path, ts_files: list[Path]) -> tuple[list[tuple[str, 
     return edges, "" if edges else "no imports between files detected"
 
 
+def _resolve_python_import(src_mod: str, from_init: bool, spec: str) -> str:
+    """Resolve a ``from``/``import`` target to a dotted module name.
+
+  Relative specs (leading dots) are anchored on the source file's package:
+  ``from .writers`` in ``repo_scan.scanner`` → ``repo_scan.writers``;
+  ``from ..pkg`` walks up one package level. Absolute specs pass through."""
+    if not spec.startswith("."):
+        return spec
+    level = len(spec) - len(spec.lstrip("."))
+    rest = spec[level:]
+    parts = src_mod.split(".")
+    pkg_parts = parts if from_init else parts[:-1]
+    up = level - 1
+    if up > len(pkg_parts):
+        return ""
+    base = pkg_parts[: len(pkg_parts) - up] if up else pkg_parts
+    if rest:
+        return ".".join(base + rest.split("."))
+    return ".".join(base) if base else ""
+
+
+def _match_repo_module(imported: str, repo_modules: set[str]) -> str | None:
+    """Return the longest repo module matching an absolute or resolved import."""
+    if imported in repo_modules:
+        return imported
+    for mod in repo_modules:
+        if mod.startswith(imported + "."):
+            return mod
+    return None
+
+
 def get_python_dep_edges(root: Path, py_files: list[Path], cfg: dict) -> list[tuple[str, str]]:
-    """Intra-repo Python import edges as (src_module, dst_module) pairs."""
+    """Intra-repo Python import edges as (src_module, dst_module) pairs.
+
+    Relative imports (``from .writers``, ``from ..pkg``) resolve against the
+    source file's package so dotted targets like ``repo_scan.writers`` match
+    ``repo_modules`` built from repo-relative paths."""
     if not py_files:
         return []
     skip = set(cfg["exclude_dirs"])
@@ -231,23 +266,24 @@ def get_python_dep_edges(root: Path, py_files: list[Path], cfg: dict) -> list[tu
         try:
             rel = f.relative_to(root)
             parts = list(rel.parts)
-            if parts[-1] != "__init__.py":
+            from_init = parts[-1] == "__init__.py"
+            if not from_init:
                 parts[-1] = parts[-1][:-3]
             src_mod = ".".join(parts)
         except ValueError:
             continue
         for line in src.splitlines():
             line = line.strip()
-            imported = None
+            imported: str | None = None
             if line.startswith("from ") and " import " in line:
-                imported = line.split()[1].lstrip(".")
+                spec = line.split()[1]
+                imported = _resolve_python_import(src_mod, from_init, spec)
             elif line.startswith("import "):
-                imported = line.split()[1].split(".")[0]
+                imported = line.split()[1].split(",")[0].split(".")[0]
             if imported:
-                for mod in repo_modules:
-                    if mod == imported or mod.startswith(imported + "."):
-                        edges.append((src_mod, mod))
-                        break
+                target = _match_repo_module(imported, repo_modules)
+                if target:
+                    edges.append((src_mod, target))
     return edges
 
 
