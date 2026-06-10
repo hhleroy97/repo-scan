@@ -108,3 +108,5 @@
 | 2026-06-10 13:44 UTC | post_analyze | approved (dashboard) | Introduce a private `RadarLoopRunner` (Replace Function with Command) that holds `root`, `cfg`, `problem`, `ckpt`, `resu |
 | 2026-06-10 13:44 UTC | post_audit | approved (dashboard) | audit revise: Radon/scan.json baselines (cmd_loop CC 19, write_analysis CC 11, derived cc_by_file 30, churn 10 vs stale  |
 | 2026-06-10 13:44 UTC | post_implement | auto | tests passed; 4 files changed, 184 insertions(+), 382 deletions(-) on radar/tkt-0013 — commit? |
+| 2026-06-10 13:44 UTC | pre_implement | auto | implement [[2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-spec]] on branch radar/tkt-0006 for tkt-0006 |
+| 2026-06-10 13:47 UTC | post_implement | auto | tests passed; 1 file changed, 252 insertions(+), 152 deletions(-) on radar/tkt-0006 — commit? |
