@@ -16,8 +16,11 @@ pip install -e .
 
 Puts `repo-scan` on PATH. Run from any repo. Requires Python 3.10+.
 
-On older pip versions (e.g. pip 22.x on Ubuntu 22.04), the editable install
-may fail with a `setup.py develop` permission error. Use the fallback:
+Packaging metadata lives in `pyproject.toml` only (PEP 517 `setuptools.build_meta`);
+there is no `setup.py`.
+
+On older pip versions (e.g. pip 22.x on Ubuntu 22.04), the editable install may
+need build isolation disabled:
 
 ```bash
 pip install -e . --no-build-isolation
