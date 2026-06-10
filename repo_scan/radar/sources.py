@@ -3,6 +3,7 @@
 Every ingested source normalizes to one Source and one markdown file at
 docs/research/sources/{id}.md with YAML frontmatter, so Obsidian graph view
 and Dataview see real tags and properties instead of opaque code blocks.
+Index and tags markdown are rebuilt from source files via private helpers.
 """
 
 import re
@@ -150,19 +151,25 @@ def parse_source_file(path: Path) -> dict:
     return meta
 
 
-def rebuild_research_index(root: Path, cfg: dict):
-    """Regenerate research/index.md and research/tags.md from source files."""
-    research = root / cfg["docs_dir"] / "research"
-    research.mkdir(parents=True, exist_ok=True)
-    sources_dir = research / "sources"
-    entries = []
-    if sources_dir.is_dir():
-        for f in sorted(sources_dir.glob("*.md")):
-            meta = parse_source_file(f)
-            if meta:
-                entries.append(meta)
-    entries.sort(key=lambda m: m.get("ingested_at", ""), reverse=True)
+def _collect_source_entries(sources_dir: Path) -> list[dict]:
+    """Parse *.md files under sources_dir; return meta dicts newest-first.
 
+    Returns [] when sources_dir is missing or not a directory. Skips files
+    where parse_source_file yields empty meta.
+    """
+    entries: list[dict] = []
+    if not sources_dir.is_dir():
+        return entries
+    for f in sorted(sources_dir.glob("*.md")):
+        meta = parse_source_file(f)
+        if meta:
+            entries.append(meta)
+    entries.sort(key=lambda m: m.get("ingested_at", ""), reverse=True)
+    return entries
+
+
+def _render_index_markdown(entries: list[dict]) -> str:
+    """Build research/index.md body: table of wikilinked sources."""
     lines = [
         "# Research index",
         f"_Rebuilt {now_iso()} — {len(entries)} source(s)_",
@@ -180,13 +187,20 @@ def rebuild_research_index(root: Path, cfg: dict):
     if not entries:
         lines.append("| _none yet — run `radar ingest <ref>`_ | | | |")
     lines.append("")
-    write_doc(research / "index.md", "\n".join(lines), root)
+    return "\n".join(lines)
 
+
+def _build_tag_map(entries: list[dict]) -> dict[str, list[dict]]:
+    """Group source meta dicts by comma-split frontmatter tags."""
     tag_map: dict[str, list[dict]] = {}
     for m in entries:
         for tag in [t.strip() for t in m.get("tags", "").split(",") if t.strip()]:
             tag_map.setdefault(tag, []).append(m)
+    return tag_map
 
+
+def _render_tags_markdown(tag_map: dict[str, list[dict]]) -> str:
+    """Build research/tags.md body: sorted ## sections with wikilink bullets."""
     tag_lines = ["# Research tags", f"_Rebuilt {now_iso()}_", ""]
     for tag in sorted(tag_map):
         tag_lines.append(f"## {tag}")
@@ -196,4 +210,18 @@ def rebuild_research_index(root: Path, cfg: dict):
         tag_lines.append("")
     if not tag_map:
         tag_lines.append("_no tagged sources yet_\n")
-    write_doc(research / "tags.md", "\n".join(tag_lines), root)
+    return "\n".join(tag_lines)
+
+
+def rebuild_research_index(root: Path, cfg: dict):
+    """Regenerate research/index.md and research/tags.md from source files.
+
+    Delegates to _collect_source_entries and markdown render helpers; output
+    paths and Obsidian wikilink format are unchanged.
+    """
+    research = root / cfg["docs_dir"] / "research"
+    research.mkdir(parents=True, exist_ok=True)
+    sources_dir = research / "sources"
+    entries = _collect_source_entries(sources_dir)
+    write_doc(research / "index.md", _render_index_markdown(entries), root)
+    write_doc(research / "tags.md", _render_tags_markdown(_build_tag_map(entries)), root)
