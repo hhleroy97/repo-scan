@@ -130,3 +130,4 @@
 | 2026-06-10 17:34 UTC | post_implement | auto | tests passed; 3 files changed, 74 insertions(+), 64 deletions(-) on radar/tkt-0014 — commit? |
 | 2026-06-10 17:35 UTC | post_analyze | approved (dashboard) | Add `from .gates import GATE_NAMES` (and a small GATE_MODES or `gate_arg_parser()` helper colocated in gates.py) and ref |
 | 2026-06-10 17:39 UTC | post_implement | paused | PROTECTED paths touched (repo_scan/config.py) — tests passed; 6 files changed, 38 insertions(+), 23 deletions(-) on rada |
+| 2026-06-10 17:41 UTC | post_audit | paused | audit revise: The spec is well-grounded in live coupling.md (4 shared, 80%, no edge) and the right remediation (cli→gate |
