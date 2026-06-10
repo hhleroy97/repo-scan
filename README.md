@@ -58,8 +58,9 @@ docs/
 ```
 
 `index.md` opens with the repo identity (manifests, entry points, README summary),
-a "start here" table ranking files by import centrality x churn x complexity, and a
-depth-capped directory tree — one read orients a human or an agent.
+a "start here" table ranking files by import-graph PageRank x churn x complexity x
+size, and a depth-capped directory tree — one read orients a human or an agent.
+PageRank is computed inline (no networkx); "imported by" stays the direct count.
 
 Plain Markdown + Mermaid. Point Obsidian at the repo root — everything renders natively.
 

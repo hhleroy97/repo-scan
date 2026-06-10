@@ -43,7 +43,79 @@ def test_rank_files_orders_by_signals():
     ranking = repo_scan.rank_files(line_counts, churn, complexity, edges, top_n=5)
     assert ranking[0]["file"] == "core.py"
     assert ranking[0]["imported_by"] == 1
+    assert "pagerank" in ranking[0]
+    assert ranking[0]["pagerank"] > 0
     assert ranking[0]["score"] > ranking[-1]["score"] or len(ranking) == 1
+
+
+# --- PageRank unit tests (per approved spec docs/specs/...-spec.md) ---------
+
+from repo_scan.ranking import _build_file_adjacency, _pagerank
+
+
+def _lc(*files):
+    return {f: {"lines": 10, "bytes": 1} for f in files}
+
+
+def test_pagerank_star_hub_beats_leaves():
+    adjacency = {"a.py": ["hub.py"], "b.py": ["hub.py"], "c.py": ["hub.py"]}
+    nodes = {"a.py", "b.py", "c.py", "hub.py"}
+    pr = _pagerank(nodes, adjacency)
+    assert pr["hub.py"] > pr["a.py"]
+    assert abs(sum(pr.values()) - 1.0) < 1e-3  # mass conserved
+
+
+def test_pagerank_chain_orders_transitively():
+    # a -> b -> c -> d: equal direct in-degree for b/c/d, but PageRank
+    # accumulates downstream — d above the intermediates.
+    adjacency = {"a.py": ["b.py"], "b.py": ["c.py"], "c.py": ["d.py"]}
+    nodes = {"a.py", "b.py", "c.py", "d.py"}
+    pr = _pagerank(nodes, adjacency)
+    assert pr["d.py"] > pr["c.py"] > pr["b.py"] > pr["a.py"]
+
+
+def test_pagerank_empty_and_dangling():
+    assert _pagerank(set(), {}) == {}
+    # dangling node d has no out-edges; mass must still sum to 1
+    pr = _pagerank({"a.py", "d.py"}, {"a.py": ["d.py"]})
+    assert abs(sum(pr.values()) - 1.0) < 1e-3
+    assert pr["d.py"] > pr["a.py"]
+
+
+def test_pagerank_disconnected_components():
+    # audit issue: claim about disconnected subgraphs must be tested.
+    adjacency = {"a.py": ["b.py"], "x.py": ["y.py"]}
+    nodes = {"a.py", "b.py", "x.py", "y.py"}
+    pr = _pagerank(nodes, adjacency)
+    assert all(pr[n] > 0 for n in nodes)          # nonzero within each component
+    assert pr["b.py"] > pr["a.py"] and pr["y.py"] > pr["x.py"]
+
+
+def test_adjacency_requires_both_endpoints_resolved():
+    # audit issue: stricter than in-degree — unresolved src drops the edge.
+    line_counts = _lc("core.py")
+    adjacency = _build_file_adjacency([("ghost", "core"), ("core", "ghost")], line_counts)
+    assert adjacency == {}
+
+
+def test_rank_files_importer_only_gets_nonzero_centrality():
+    # audit issue: files with outgoing edges but imported_by=0 now get a
+    # nonzero structural term (was always 0 under pure in-degree).
+    line_counts = _lc("app.py", "lib.py", "isolated.py")
+    ranking = repo_scan.rank_files(line_counts, [], [], [("app", "lib")], top_n=5)
+    by_file = {r["file"]: r for r in ranking}
+    assert by_file["app.py"]["imported_by"] == 0
+    assert by_file["app.py"]["pagerank"] > 0
+    assert by_file["lib.py"]["pagerank"] > by_file["app.py"]["pagerank"]
+    assert "isolated.py" not in by_file or by_file["isolated.py"]["pagerank"] == 0
+
+
+def test_rank_files_edgeless_repo_zero_centrality():
+    line_counts = _lc("a.py", "b.py")
+    churn = [{"file": "a.py", "commits": 3}]
+    ranking = repo_scan.rank_files(line_counts, churn, [], [], top_n=5)
+    assert all(r["pagerank"] == 0 for r in ranking)
+    assert ranking[0]["file"] == "a.py"  # churn still differentiates
 
 
 def test_scan_writes_sidecar_json(tmp_repo_with_imports: Path):

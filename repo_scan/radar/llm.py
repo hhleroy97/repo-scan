@@ -16,8 +16,10 @@ from .sources import Source
 LLM_TIMEOUT = 180
 
 # Each candidate is a command template; the prompt is appended as the final arg.
+# cursor-agent needs -f in non-interactive mode, else it exits asking for
+# directory trust (or hangs waiting for the trust prompt if stdin is open).
 DEFAULT_LLM_CLIS = [
-    "cursor-agent -p --output-format text",
+    "cursor-agent -p --output-format text -f",
     "claude -p",
 ]
 
@@ -48,6 +50,7 @@ def complete(prompt: str, cfg: dict, timeout: int = LLM_TIMEOUT) -> str:
     try:
         result = subprocess.run(
             cmd + [prompt], capture_output=True, text=True, timeout=timeout,
+            stdin=subprocess.DEVNULL,
         )
     except subprocess.TimeoutExpired:
         raise LLMError(f"{cmd[0]} timed out after {timeout}s")

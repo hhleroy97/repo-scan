@@ -160,13 +160,15 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
         lines += [
             "## Start here (ranked by importance)",
             "",
-            "_Composite of import centrality × git churn × complexity × size._",
+            "_Composite of import-graph PageRank × git churn × complexity × size._",
+            "_\"Imported by\" counts direct dependents only; PageRank captures transitive importance._",
             "",
-            "| File | Score | Imported by | Commits | CC | Lines |",
-            "|------|-------|-------------|---------|----|-------|",
+            "| File | Score | PageRank | Imported by | Commits | CC | Lines |",
+            "|------|-------|----------|-------------|---------|----|-------|",
         ]
         for r in ranking:
-            lines.append(f"| `{r['file']}` | {r['score']} | {r['imported_by']} | {r['commits']} | {r['complexity']} | {r['lines']} |")
+            lines.append(f"| `{r['file']}` | {r['score']} | {r.get('pagerank', 0):.4f} | "
+                         f"{r['imported_by']} | {r['commits']} | {r['complexity']} | {r['lines']} |")
         lines.append("")
 
     if tree:

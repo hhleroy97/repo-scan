@@ -32,8 +32,8 @@ def write_digest(root: Path, cfg: dict, line_counts: dict, languages: dict,
     if ranking:
         sections += ["", "## Most important files", ""]
         for r in ranking:
-            sections.append(f"- `{r['file']}` (score {r['score']}, {r['lines']} lines, "
-                            f"imported by {r['imported_by']}, {r['commits']} commits)")
+            sections.append(f"- `{r['file']}` (score {r['score']}, pagerank {r.get('pagerank', 0):.4f}, "
+                            f"{r['lines']} lines, imported by {r['imported_by']}, {r['commits']} commits)")
 
     if tree:
         sections += ["", "## Structure", "", "```", tree, "```"]
