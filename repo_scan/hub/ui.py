@@ -121,17 +121,26 @@ async function refresh(){
 function setTab(t){tab=t;
   document.querySelectorAll('nav a').forEach(a=>
     a.classList.toggle('active',a.dataset.tab===t));
-  render()}
+  render(true)}
 document.querySelectorAll('nav a').forEach(a=>
   a.addEventListener('click',e=>setTab(a.dataset.tab)));
 
-function render(){
+function formBusy(){
+  // never repaint over someone mid-thought: a focused field or any
+  // unsubmitted composer text holds the current DOM in place
+  const a=document.activeElement;
+  if(a&&['INPUT','TEXTAREA','SELECT'].includes(a.tagName)&&a.closest('#main'))return true;
+  return ['nt-title','nt-why','nt-criteria'].some(id=>{
+    const e=document.getElementById(id);return e&&e.value.trim()});
+}
+function render(force){
   if(!S)return;
   document.getElementById('repo').textContent=S.repo.name;
   document.getElementById('meta').textContent=
     `${S.repo.branch} · v${S.version}`;
   const open=S.tickets.filter(t=>t.status==='proposed').length;
   badge('ngates',S.gates.length);badge('ntickets',open);
+  if(!force&&formBusy())return;
   const m=document.getElementById('main');
   m.innerHTML={now:rNow,gates:rGates,tickets:rTickets,activity:rActivity}[tab]();
 }
@@ -262,7 +271,9 @@ async function newTicket(btn){
   try{const r=await api('/api/ticket/new',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({title,why:document.getElementById('nt-why').value,
       priority:document.getElementById('nt-priority').value,criteria})});
-    toast(`${r.id} created — approve it to start the loop`);setTimeout(refresh,500)}
+    toast(`${r.id} created — approve it to start the loop`);
+    ['nt-title','nt-why','nt-criteria'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(refresh,500)}
   catch(e){toast('Failed: '+e.message);btn.disabled=false}
 }
 function actions(t){
