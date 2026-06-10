@@ -94,3 +94,4 @@
 | 2026-06-10 13:20 UTC | post_audit | paused | audit revise: The spec aligns well with existing Mermaid writers, coupling/seam signals, and fingerprinted tickets, but  |
 | 2026-06-10 13:21 UTC | post_audit | paused | audit revise: Radon/scan.json baselines (cmd_loop CC 19, write_analysis CC 11, derived cc_by_file 30, churn 10 vs stale  |
 | 2026-06-10 13:23 UTC | post_audit | paused | audit revise: The dual-track approach matches the codebase (live 53%/5 shared, relative-import bug, existing snapshot ha |
+| 2026-06-10 13:26 UTC | post_audit | paused | audit revise: Radon baselines, test migration inventory, and Fowler decomposition direction match the repo and code, but |
