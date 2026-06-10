@@ -246,8 +246,12 @@ def record_loop(root: Path, cfg: dict, problem: str, result: dict):
         f"> - confidence: {result.get('confidence', '?')}",
         f"> - spec: {result.get('spec', '—')}",
         f"> - gates: {result.get('gates', '—')}",
-        "",
     ]
+    timing = result.get("timing")
+    if timing:
+        from ..hub.telemetry import format_timing_changelog
+        entry.extend(format_timing_changelog(timing))
+    entry.append("")
     with path.open("a", encoding="utf-8") as f:
         f.write("\n".join(entry))
     ok(f"recorded to {path.relative_to(root)}")
@@ -320,8 +324,15 @@ class _RadarLoopRunner:
             err(f"loop needs an LLM backend: {e}")
             self.result["outcome"] = f"failed ({e})"
             self.result["gates"] = "; ".join(self.gates_log) or "—"
+            self._attach_timing()
             record_loop(self.root, self.cfg, self.problem, self.result)
             return 1
+
+    def _attach_timing(self) -> None:
+        from ..hub.telemetry import flush_problem, stage_summary_for_problem
+        flush_problem(self.root, self.cfg, self.problem)
+        self.result["timing"] = stage_summary_for_problem(
+            self.root, self.cfg, self.problem)
 
     def _run_or_resume_research(self) -> None:
         if "ingested" in self.ckpt:
@@ -383,6 +394,7 @@ class _RadarLoopRunner:
         self.result["gates"] = "; ".join(self.gates_log)
         if not _gate_paused(self.root, self.cfg, name, self.problem):
             _finish_loop(self.root, self.cfg, self.problem)
+        self._attach_timing()
         record_loop(self.root, self.cfg, self.problem, self.result)
         return 2
 
@@ -469,6 +481,7 @@ class _RadarLoopRunner:
         self.result["outcome"] = "approved"
         self.result["gates"] = "; ".join(self.gates_log)
         _finish_loop(self.root, self.cfg, self.problem)
+        self._attach_timing()
         record_loop(self.root, self.cfg, self.problem, self.result)
         return 0
 

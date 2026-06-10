@@ -40,6 +40,11 @@ class LLMError(Exception):
     pass
 
 
+def _sanitize_subprocess_text(text: str) -> str:
+    """Strip NUL bytes — POSIX forbids them in argv and Popen raises ValueError."""
+    return text.replace("\x00", "")
+
+
 def _candidates(cfg: dict) -> list[list[str]]:
     raw = cfg.get("llm_cli", DEFAULT_LLM_CLIS)
     if isinstance(raw, str):
@@ -146,18 +151,22 @@ def usage_summary(root: Path, cfg: dict) -> dict:
             groups.setdefault(str(e.get(key, "?")), []).append(e)
         return {k: _agg(v) for k, v in sorted(groups.items())}
 
+    by_stage = group("stage_id") if any(e.get("stage_id") for e in events) else {}
+
     return {
         "total": _agg(events),
         "today": _agg(today),
         "by_role": group("role"),
         "by_model": group("model"),
+        "by_stage": by_stage,
         "recent": events[-8:][::-1],
     }
 
 
 def complete(prompt: str, cfg: dict, timeout: int | None = None,
              cwd: str | None = None, role: str | None = None,
-             root: Path | None = None) -> str:
+             root: Path | None = None, stage_id: str | None = None,
+             problem: str | None = None) -> str:
     # agent CLIs have highly variable latency (cold starts, thinking time);
     # default is generous and overridable per repo via "llm_timeout".
     # `cwd` matters for act-mode invocations where the agent edits files.
@@ -176,7 +185,8 @@ def complete(prompt: str, cfg: dict, timeout: int | None = None,
     # emit a periodic event (feed/TUI/dashboard) with elapsed time, so a long
     # call reads as "working" instead of "stuck".
     beat = max(5, int(cfg.get("llm_heartbeat_seconds", 120)))
-    proc = subprocess.Popen(cmd + [prompt], stdout=subprocess.PIPE,
+    safe_prompt = _sanitize_subprocess_text(prompt)
+    proc = subprocess.Popen(cmd + [safe_prompt], stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, text=True,
                             stdin=subprocess.DEVNULL, cwd=cwd)
     while True:
@@ -219,9 +229,21 @@ def complete(prompt: str, cfg: dict, timeout: int | None = None,
             "duration_ms": int((time.time() - started) * 1000),
             "estimated": True,
         }
+    if root is not None and (stage_id is None or problem is None):
+        try:
+            from ..hub.telemetry import get_llm_context
+            ctx_problem, ctx_stage = get_llm_context()
+            problem = problem or ctx_problem
+            stage_id = stage_id or ctx_stage
+        except ImportError:
+            pass
+    if stage_id is None and role:
+        stage_id = role.replace("act_fix", "act")
     record_usage(root, cfg, {
         "ts": int(time.time()),
         "role": role or "general",
+        "stage_id": stage_id,
+        "problem": (problem or "")[:200] or None,
         "backend": cmd[0],
         "model": model or "default",
         **usage,
@@ -257,8 +279,12 @@ def extract_json(text: str) -> dict:
 
 
 def complete_json(prompt: str, cfg: dict, timeout: int | None = None,
-                  role: str | None = None, root: Path | None = None) -> dict:
-    return extract_json(complete(prompt, cfg, timeout, role=role, root=root))
+                  role: str | None = None, root: Path | None = None,
+                  stage_id: str | None = None, problem: str | None = None) -> dict:
+    return extract_json(complete(
+        prompt, cfg, timeout, role=role, root=root,
+        stage_id=stage_id, problem=problem,
+    ))
 
 
 SUMMARIZE_PROMPT = """You are indexing a research source for a software project's knowledge base.

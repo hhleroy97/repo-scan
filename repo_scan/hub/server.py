@@ -118,6 +118,7 @@ def build_state(root: Path, cfg: dict) -> HubState:
     from ..radar.llm import usage_summary
     from .prs import list_open_prs
     from .state import active_runs
+    from .telemetry import burn_summary, stage_burn_chart, stage_burn_views, stage_summary_recent
     all_runs = load_runs(root, cfg)[::-1]
     live = [{k: r.get(k) for k in ("id", "problem", "ticket", "kind", "status",
                                     "stage", "stage_detail", "gate", "updated_at")}
@@ -135,6 +136,12 @@ def build_state(root: Path, cfg: dict) -> HubState:
         "activity": activity,
         "events": load_events(root, cfg, limit=15)[::-1],
         "usage": usage_summary(root, cfg),
+        "telemetry": {
+            "stages": stage_summary_recent(root, cfg),
+            "burn": burn_summary(root, cfg),
+            "chart": stage_burn_chart(root, cfg),
+            "views": stage_burn_views(root, cfg),
+        },
         "prs": list_open_prs(root, cfg),
     }
 

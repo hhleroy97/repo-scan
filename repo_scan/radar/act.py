@@ -297,6 +297,12 @@ def open_pr(root: Path, cfg: dict, ticket: dict, spec_stem: str,
     return url
 
 
+def _attach_act_timing(root: Path, cfg: dict, problem: str, result: dict) -> None:
+    from ..hub.telemetry import flush_problem, stage_summary_for_problem
+    flush_problem(root, cfg, problem)
+    result["timing"] = stage_summary_for_problem(root, cfg, problem)
+
+
 def record_act(root: Path, cfg: dict, ticket_id: str, spec_stem: str, result: dict):
     changelog = root / cfg["docs_dir"] / "changelog"
     changelog.mkdir(parents=True, exist_ok=True)
@@ -314,8 +320,12 @@ def record_act(root: Path, cfg: dict, ticket_id: str, spec_stem: str, result: di
         f"> - tests: {result.get('tests', '—')}",
         f"> - diff: {result.get('diff_stat', '—')}",
         f"> - pr: {result.get('pr', '—')}",
-        "",
     ]
+    timing = result.get("timing")
+    if timing:
+        from ..hub.telemetry import format_timing_changelog
+        entry.extend(format_timing_changelog(timing))
+    entry.append("")
     with path.open("a", encoding="utf-8") as f:
         f.write("\n".join(entry))
     ok(f"recorded to {path.relative_to(root)}")
@@ -392,6 +402,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
     if not gate("pre_implement", payload, cfg, root, approved):
         if not _gate_paused(root, cfg, "pre_implement", problem):
             _finish_loop(root, cfg, problem)
+            _attach_act_timing(root, cfg, problem, result)
             record_act(root, cfg, ticket["id"], spec_stem, result)
         return 2
 
@@ -483,6 +494,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
                         f"branch {branch} left for human review")
                     result["outcome"] = "no-acceptance-tests"
                     _finish_loop(root, cfg, problem)
+                    _attach_act_timing(root, cfg, problem, result)
                     record_act(root, cfg, ticket["id"], spec_stem, result)
                     append_ticket_note(
                         root, cfg, ticket["id"],
@@ -495,7 +507,9 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
         progress(root, cfg, problem, "[4/5] Test",
                  cfg.get("test_cmd") or default_test_cmd(work) or "no suite detected")
         rounds = int(cfg.get("act_fix_rounds", 2))
-        passed, output = run_tests(work, cfg)
+        from ..hub.telemetry import timed_block
+        with timed_block(root, cfg, problem, "test", "[4/5] Test run"):
+            passed, output = run_tests(work, cfg)
         attempt = int(ckpt.get("fix_attempts", 0))
         while not passed and attempt < rounds:
             attempt += 1
@@ -515,6 +529,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
                 f"branch {branch} left for human review")
             result["outcome"] = "tests-failed"
             _finish_loop(root, cfg, problem)
+            _attach_act_timing(root, cfg, problem, result)
             record_act(root, cfg, ticket["id"], spec_stem, result)
             where = f" (worktree: {work})" if worktree else ""
             append_ticket_note(root, cfg, ticket["id"],
@@ -554,6 +569,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             if not _gate_paused(root, cfg, "post_implement", problem):
                 result["outcome"] = "rejected"
                 _finish_loop(root, cfg, problem)
+                _attach_act_timing(root, cfg, problem, result)
                 record_act(root, cfg, ticket["id"], spec_stem, result)
                 append_ticket_note(root, cfg, ticket["id"],
                                    f"act run rejected at post_implement — branch {branch} kept")
@@ -586,6 +602,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
                            f"implemented: {commit} on {branch} (spec [[{spec_stem}]]) "
                            f"— review {where}, merge, then rescan to confirm metrics")
         _finish_loop(root, cfg, problem)
+        _attach_act_timing(root, cfg, problem, result)
         record_act(root, cfg, ticket["id"], spec_stem, result)
         info(f"review: git diff {ckpt.get('base', 'main')}...{branch}")
         return 0
@@ -593,5 +610,6 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
     except LLMError as e:
         err(f"act needs an LLM backend: {e}")
         result["outcome"] = f"failed ({e})"
+        _attach_act_timing(root, cfg, problem, result)
         record_act(root, cfg, ticket["id"], spec_stem, result)
         return 1

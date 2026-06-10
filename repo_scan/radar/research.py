@@ -218,30 +218,33 @@ def existing_source_ids(root: Path, cfg: dict) -> list[str]:
 
 def run_research(root: Path, cfg: dict, question: str, max_sources: int = 3) -> dict:
     """Core research routine. Returns a result dict (also used by the B3 loop)."""
+    from ..hub.telemetry import set_llm_context, timed_block
+    set_llm_context(question, "research")
     proposal = complete_json(PROPOSE_PROMPT.format(
         repo_context=repo_snapshot(root, cfg),
         existing="\n".join(existing_source_ids(root, cfg)) or "(none)",
         question=question,
         max_sources=max_sources,
-    ), cfg, role="research", root=root)
+    ), cfg, role="research", root=root, problem=question, stage_id="research")
 
     proposed = proposal.get("sources", [])[:max_sources]
     ingested, failed = [], []
-    for item in proposed:
-        ref = str(item.get("ref", ""))
-        why = str(item.get("why", ""))
-        try:
-            source, text = fetch(ref)
-        except FetchError as e:
-            failed.append({"ref": ref, "error": str(e)})
-            continue
-        source.relevance = why or source.relevance
-        try:
-            source = summarize_source(source, text, cfg, root=root)
-        except LLMError as e:
-            info(f"summarize failed for {ref} ({e}) — keeping fetched summary")
-        write_source(root, cfg, source)
-        ingested.append({"ref": ref, "id": source.id, "title": source.title, "why": why})
+    with timed_block(root, cfg, question, "research_fetch", "fetch + summarize sources"):
+        for item in proposed:
+            ref = str(item.get("ref", ""))
+            why = str(item.get("why", ""))
+            try:
+                source, text = fetch(ref)
+            except FetchError as e:
+                failed.append({"ref": ref, "error": str(e)})
+                continue
+            source.relevance = why or source.relevance
+            try:
+                source = summarize_source(source, text, cfg, root=root)
+            except LLMError as e:
+                info(f"summarize failed for {ref} ({e}) — keeping fetched summary")
+            write_source(root, cfg, source)
+            ingested.append({"ref": ref, "id": source.id, "title": source.title, "why": why})
 
     rebuild_research_index(root, cfg)
     return {

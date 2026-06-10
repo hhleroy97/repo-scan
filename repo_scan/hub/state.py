@@ -197,6 +197,7 @@ def set_run_stage(root: Path, cfg: dict, problem: str, stage: str, detail: str =
             if r["id"] == rid:
                 r["stage"] = stage
                 r["stage_detail"] = detail[:160]
+                r["stage_started_at"] = now_iso()
                 r["updated_at"] = now_iso()
                 _save_runs(root, cfg, runs)
                 from .events import broadcast

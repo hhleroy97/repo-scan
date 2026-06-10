@@ -26,6 +26,12 @@ def test_complete_uses_configured_cli(llm_cfg, monkeypatch):
     assert complete("prompt", llm_cfg) == "hello from fake"
 
 
+def test_complete_strips_embedded_null_bytes(llm_cfg, monkeypatch):
+    """NUL in prompt must not crash subprocess.Popen (POSIX argv restriction)."""
+    monkeypatch.setenv("RADAR_FAKE_RESPONSE", "ok")
+    assert complete("before\x00after", llm_cfg) == "ok"
+
+
 def test_complete_raises_when_no_backend(tmp_repo):
     cfg = load_config(tmp_repo)
     cfg["llm_cli"] = ["definitely-not-a-real-cli-xyz"]

@@ -174,7 +174,7 @@ def fetch_url(url: str) -> tuple[Source, str]:
         title=title or url,
         tags=["article"],
     )
-    return source, text[:40000]
+    return source, text[:40000].replace("\x00", "")
 
 
 # ---------------------------------------------------------------------------
@@ -203,7 +203,7 @@ def fetch_file(path_str: str) -> tuple[Source, str]:
         title=path.name,
         tags=["local"],
     )
-    return source, text[:40000]
+    return source, text[:40000].replace("\x00", "")
 
 
 # ---------------------------------------------------------------------------

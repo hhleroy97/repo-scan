@@ -54,6 +54,22 @@ def gate_cli_parent(*, approve_help: str | None = None,
     return parser
 
 
+def _flush_stage(root: Path, cfg: dict, problem: str) -> None:
+    try:
+        from ..hub.telemetry import flush_open_stage
+        flush_open_stage(root, cfg, problem)
+    except ImportError:
+        pass
+
+
+def _record_gate_wait(root: Path, cfg: dict, gate_name: str, problem: str) -> None:
+    try:
+        from ..hub.telemetry import record_gate_wait
+        record_gate_wait(root, cfg, problem, gate_name)
+    except ImportError:
+        pass
+
+
 def gate_mode(name: str, cfg: dict) -> str:
     mode = str(cfg.get("gates", {}).get(name, "prompt")).lower()
     return mode if mode in GATE_MODES else "prompt"
@@ -126,6 +142,7 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
     mode = gate_mode(name, cfg)
 
     if approved and name in approved:
+        _record_gate_wait(root, cfg, name, problem)
         clear_pending(root, cfg, name, problem)
         record_decision(root, cfg, name, "approved (--approve)", summary)
         ok(f"gate {name}: pre-approved")
@@ -147,6 +164,7 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
         from ..hub.state import peek_decision
         inbox = peek_decision(root, cfg, name, problem)
         if inbox:
+            _record_gate_wait(root, cfg, name, problem)
             clear_pending(root, cfg, name, problem)
             who = inbox.get("source", "remote")
             note = f" — {inbox['comment'][:80]}" if inbox.get("comment") else ""
@@ -158,6 +176,7 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
             warn(f"gate {name}: rejected via {who}")
             return False
 
+    _flush_stage(root, cfg, problem)
     write_pending(root, cfg, name, payload)
     if not sys.stdin.isatty():
         info(f"gate {name}: paused (non-interactive) — pending state written to "
@@ -169,6 +188,7 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
     print(f"  {summary or '(no summary)'}")
     answer = input("  approve and continue? [y/N] ").strip().lower()
     if answer in ("y", "yes"):
+        _record_gate_wait(root, cfg, name, problem)
         clear_pending(root, cfg, name, problem)
         record_decision(root, cfg, name, "approved", summary)
         return True

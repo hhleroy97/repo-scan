@@ -147,6 +147,22 @@ def frame_lines(state: dict, sel: int, message: str = "") -> list[tuple[int, str
     rows.append((S_ACCENT, " LLM USAGE"))
     rows.extend(_usage_rows(state.get("usage", {})))
 
+    tel = state.get("telemetry", {})
+    stages = tel.get("stages", [])
+    burn = tel.get("burn", {})
+    if stages or burn.get("today", {}).get("tokens"):
+        rows.append((S_ACCENT, " TELEMETRY"))
+        today_b = burn.get("today", {})
+        if today_b.get("tokens"):
+            tpm = today_b.get("tokens_per_min", 0)
+            rows.append((S_TEXT, f"  today burn  {today_b['tokens']:>8,} tok"
+                                 f"  {tpm:>6,} tok/min"))
+        for s in stages[-6:][::-1]:
+            tok = int(s.get("tokens_in", 0)) + int(s.get("tokens_out", 0))
+            dur = int(s.get("duration_ms", 0)) // 1000
+            rows.append((S_DIM, f"    {str(s.get('stage_id', '?'))[:20]:<20}"
+                                f" {dur:>4}s  {tok:>6,} tok"))
+
     acts = state.get("activity", [])
     if acts:
         rows.append((S_ACCENT, " RECENT DECISIONS"))

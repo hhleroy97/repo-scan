@@ -10,7 +10,8 @@ Stage timing and token burn rate are now tracked end-to-end.
 - Gate wait time recorded from `pending/*.json` `written_at` on resume
 - Loop/act changelogs include **Timing** and **Burn rate** callouts
 - Hub Activity tab + TUI show pipeline telemetry
-- Activity **Stage burn (24h)** chart — dual bars per stage (time % blue, tokens % amber)
+- Activity **Stage burn** chart — dual bars per stage (time % blue, tokens % amber)
+- Three views: **Avg / run**, **Total**, **By run** (dropdown to pick a specific run)
 
 ## Strategy docs
 

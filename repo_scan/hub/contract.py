@@ -117,12 +117,13 @@ class HubState(TypedDict, total=False):
     activity: list[dict]
     events: list[dict]
     usage: dict
+    telemetry: dict
     prs: list[dict]
 
 
 HUB_STATE_KEYS = frozenset({
     "version", "boot", "repo", "now", "scan", "gates", "tickets",
-    "runs", "live_runs", "activity", "events", "usage", "prs",
+    "runs", "live_runs", "activity", "events", "usage", "telemetry", "prs",
 })
 
 

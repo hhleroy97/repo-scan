@@ -11,11 +11,13 @@ from pathlib import Path
 
 from ..utils import info, step
 from .state import append_event, set_run_stage
+from .telemetry import transition_stage
 
 
 def progress(root: Path, cfg: dict, problem: str, stage: str,
              detail: str = "", banner: bool = True):
     """Report a stage transition (e.g. "implement", "test: fix round 1/2")."""
+    transition_stage(root, cfg, problem, stage, detail)
     text = f"{stage} — {detail}" if detail else stage
     if banner:
         step(text)

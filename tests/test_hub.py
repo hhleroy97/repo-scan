@@ -255,6 +255,22 @@ def test_server_gate_decision_roundtrip(hub_server):
     assert code == 400
 
 
+def test_build_state_includes_telemetry(hub_server):
+    root, cfg, token, base = hub_server
+    from repo_scan.hub.telemetry import record_stage_done
+    record_stage_done(root, cfg, PROBLEM, "analyze", "[2/7] Analyze", 500, 100, 50)
+    code, state = _get(f"{base}/api/state", token)
+    assert code == 200
+    assert "telemetry" in state
+    assert "burn" in state["telemetry"]
+    assert "stages" in state["telemetry"]
+    assert any(s.get("stage_id") == "analyze" for s in state["telemetry"]["stages"])
+    assert "chart" in state["telemetry"]
+    assert state["telemetry"]["chart"][0]["stage_id"] == "analyze"
+    views = state["telemetry"]["views"]
+    assert "total" in views and "average" in views and "runs" in views
+
+
 def test_build_state_live_runs(hub_server):
     root, cfg, token, base = hub_server
     create_run(root, cfg, PROBLEM, ticket="tkt-0001")

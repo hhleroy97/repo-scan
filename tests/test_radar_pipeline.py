@@ -111,6 +111,7 @@ def assert_loop_changelog(docs: Path) -> None:
     log = loop_logs[0].read_text()
     assert "outcome: **approved**" in log
     assert "post_analyze: passed; post_audit: passed" in log
+    assert "**Timing:**" in log
 
 
 def assert_decisions_auto_rows(docs: Path, count: int = 2) -> None:
