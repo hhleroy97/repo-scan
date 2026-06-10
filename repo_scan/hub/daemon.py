@@ -62,9 +62,13 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
         if run.get("ticket"):
+            # the spec wikilink is what makes this ticket an act candidate
+            from ..radar.pipeline import _latest_spec
             set_ticket_status(root, cfg, run["ticket"], "in-progress")
+            spec = _latest_spec(root, cfg)
+            link = f": [[{spec}]]" if spec else ""
             append_ticket_note(root, cfg, run["ticket"],
-                               "radar spec approved (daemon run) — status moved to in-progress")
+                               f"radar spec approved (daemon run){link} — status moved to in-progress")
         notify(cfg, "RADAR: spec approved",
                f"Loop finished for: {run['problem'][:120]}",
                tags=["white_check_mark"], click=_dashboard_url(cfg))

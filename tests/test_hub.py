@@ -186,7 +186,12 @@ def test_daemon_full_cycle(loop_env, monkeypatch):
     assert any(a.startswith("resumed:") for a in actions)
     assert active_run(root, cfg) is None
     assert load_runs(root, cfg)[0]["status"] == "done"
-    assert load_tickets(root, cfg)[0]["status"] == "in-progress"
+    ticket = load_tickets(root, cfg)[0]
+    assert ticket["status"] == "in-progress"
+    # the note must carry the spec wikilink — it's what makes this ticket
+    # an act candidate for the daemon's fan-out
+    body = Path(ticket["path"]).read_text()
+    assert "-spec]]" in body
 
 
 def test_daemon_scheduled_scan(tmp_repo: Path):
