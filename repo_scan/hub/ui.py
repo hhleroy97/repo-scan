@@ -117,6 +117,12 @@ nav a .n{display:inline-block;min-width:16px;border-radius:8px;font-size:10px;
 .crit-list li:before{content:"☐ ";color:var(--dim)}
 .crit-list li.done:before{content:"☑ ";color:var(--ok)}
 .hint{color:var(--warn);font-size:12px;margin-top:6px}
+.gate-glance{cursor:pointer}
+.gate-drawer{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+pre.excerpt{font-size:11px;line-height:1.4;max-height:220px;overflow:auto;
+  background:var(--panel2);padding:10px;border-radius:8px;margin-top:8px;
+  white-space:pre-wrap;word-break:break-word;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 </style>
 </head>
 <body>
@@ -506,25 +512,52 @@ function rUsage(){
 function stat(v,l){return `<div class="card stat"><div class="v">${v}</div>
   <div class="l">${l}</div></div>`}
 
+function toggleGate(gi){
+  window._gateOpen=window._gateOpen===gi?null:gi;
+  render(true);
+}
+function rGateDrawer(g){
+  const dr=g.drawer||{};
+  if(!dr.excerpt&&!dr.criteria?.length&&!dr.stale_warning&&!dr.analysis_doc)return '';
+  let h='<div class="gate-drawer">';
+  if(dr.stale_warning)h+=`<div class="hint">${esc(dr.stale_warning)}</div>`;
+  if(dr.ticket_id)h+=`<span class="badge info">${esc(dr.ticket_id)}</span> `;
+  if(dr.analysis_doc)
+    h+=`<div class="btnrow"><button class="ghost" onclick="event.stopPropagation();openDoc('${esc(dr.analysis_doc)}')">Analysis</button></div>`;
+  if(dr.criteria?.length){
+    h+=`<div class="section">Acceptance criteria</div><ul class="crit-list">`;
+    h+=dr.criteria.map((x,i)=>`<li class="${dr.criteria_checked?.[i]?'done':''}">${esc(x)}</li>`).join('');
+    h+=`</ul>`;
+  }
+  if(dr.excerpt)h+=`<pre class="excerpt">${esc(dr.excerpt)}</pre>`;
+  return h+`</div>`;
+}
 function rGates(){
   if(!S.gates.length)return `<div class="empty">No gates waiting. All clear.</div>`;
   return S.gates.map((g,gi)=>{
     const d=g.detail||{};
+    const expanded=window._gateOpen===gi;
     let body='';
-    if(d.confidence)body+=`<span class="badge info">confidence: ${esc(d.confidence)}</span> `;
-    if(d.audit_verdict)body+=`<span class="badge ${d.audit_verdict==='pass'?'ok':'warn'}">audit: ${esc(d.audit_verdict)}</span>`;
-    if((d.findings||[]).length)body+=`<div class="section">Findings</div><ul class="plain">`+
-      d.findings.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
-    if((d.issues||[]).length)body+=`<div class="section">Audit issues</div><ul class="plain">`+
-      d.issues.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
-    if((d.risks||[]).length)body+=`<div class="section">Risks</div><ul class="plain">`+
-      d.risks.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+    if(expanded){
+      if(d.confidence)body+=`<span class="badge info">confidence: ${esc(d.confidence)}</span> `;
+      if(d.audit_verdict)body+=`<span class="badge ${d.audit_verdict==='pass'?'ok':'warn'}">audit: ${esc(d.audit_verdict)}</span>`;
+      if((d.findings||[]).length)body+=`<div class="section">Findings</div><ul class="plain">`+
+        d.findings.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+      if((d.issues||[]).length)body+=`<div class="section">Audit issues</div><ul class="plain">`+
+        d.issues.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+      if((d.risks||[]).length)body+=`<div class="section">Risks</div><ul class="plain">`+
+        d.risks.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+      body+=rGateDrawer(g);
+    }
     return `<div class="card" id="gate-${gi}">
-      <span class="badge warn">${esc(g.gate)}</span>
-      <div class="title" style="margin-top:8px">${esc(g.summary).slice(0,200)}</div>
-      <div class="dim small">${esc(g.problem).slice(0,160)}</div>
+      <div class="gate-glance" onclick="toggleGate(${gi})">
+        <span class="badge warn">${esc(g.gate)}</span>
+        <div class="title" style="margin-top:8px">${esc(g.summary).slice(0,200)}</div>
+        <div class="dim small">${esc(g.problem).slice(0,160)}</div>
+        <div class="dim small" style="margin-top:4px">${expanded?'tap to collapse':'tap for spec + criteria'}</div>
+      </div>
       ${body}
-      ${d.doc?`<div class="btnrow"><button class="ghost" onclick="openDoc('${esc(d.doc)}')">Read full document</button></div>`:''}
+      ${expanded&&d.doc?`<div class="btnrow"><button class="ghost" onclick="openDoc('${esc(d.doc)}')">Read full document</button></div>`:''}
       <div class="btnrow">
         <button class="approve" onclick="gateDecide('${esc(g.gate)}',this,'approve')">Approve</button>
         <button class="reject" onclick="gateDecide('${esc(g.gate)}',this,'reject')">Reject</button>

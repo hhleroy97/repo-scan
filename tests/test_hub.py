@@ -403,6 +403,14 @@ def test_sse_streams_connected(hub_server):
     assert b"data:" in chunk and b"connected" in chunk
 
 
+def test_dashboard_has_gate_drawer(hub_server):
+    root, cfg, token, base = hub_server
+    code, html = _get(f"{base}/?token={token}")
+    assert code == 200
+    for needle in ("toggleGate", "rGateDrawer", "gate-drawer", "gate-glance"):
+        assert needle in html, f"missing gate drawer UX: {needle}"
+
+
 def test_dashboard_has_sse_client(hub_server):
     root, cfg, token, base = hub_server
     code, html = _get(f"{base}/?token={token}")

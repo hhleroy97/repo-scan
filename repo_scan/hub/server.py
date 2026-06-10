@@ -89,6 +89,9 @@ def build_state(root: Path, cfg: dict) -> dict:
         row["kind"] = str(t.get("fingerprint", "")).split(":", 1)[0] or None
         tickets.append(row)
 
+    from .gate_drawer import enrich_gate
+    gates = [enrich_gate(root, cfg, g, tickets) for g in gates]
+
     activity = []
     decisions = docs / "research" / "decisions.md"
     if decisions.exists():
