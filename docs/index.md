@@ -1,27 +1,27 @@
 # Repo index
-_Last scan: 2026-06-10 09:06 UTC_
+_Last scan: 2026-06-10 15:07 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
-> [!note] No critical files; 7 file(s) above the 300-line watermark
+> [!note] No critical files; 8 file(s) above the 300-line watermark
 
-> [!warning] Since last scan (2026-06-10 03:06 UTC)
-> lines +3563, files +13, hotspot functions +9, critical files 0
-> - `repo_scan/tickets.py` complexity +55
-> - `repo_scan/radar/act.py` complexity +52
-> - `repo_scan/radar/llm.py` complexity +40
+> [!note] Since last scan (2026-06-10 09:06 UTC)
+> lines +1098, files +5, hotspot functions 0, critical files 0
+> - `repo_scan/hub/prs.py` complexity +75
+> - `repo_scan/hub/daemon.py` complexity -38
+> - `repo_scan/radar/pipeline.py` complexity -30
 
 ## Overview
 
 | Metric | Value |
 |--------|-------|
-| Source files | 65 |
-| Total lines | 9,277 |
-| Languages | PY: 65 |
-| Large files (>300 lines) | 7 |
+| Source files | 70 |
+| Total lines | 10,375 |
+| Languages | PY: 70 |
+| Large files (>300 lines) | 8 |
 | Critical files (>600 lines) | 0 |
 | Branch | main |
-| Last commit | 6a23752 vault: loop artifacts — tkt-0006 |
+| Last commit | 8f5b278 radar: implement tkt-0013 — Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, unteste (#9) |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml` |
 
@@ -37,28 +37,28 @@ _"Imported by" counts direct dependents only; PageRank captures transitive impor
 
 | File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |
 |------|-------|----------|-------------|---------|----|-------|-------|
-| `repo_scan/tickets.py` | 46.7 | 0.0331 | 8 | 0 | 88 | 508 | yes |
-| `repo_scan/config.py` | 45.7 | 0.0732 | 20 | 13 | 0 | 61 | **no** |
-| `repo_scan/radar/gates.py` | 41.1 | 0.0988 | 27 | 0 | 13 | 120 | yes |
-| `repo_scan/radar/pipeline.py` | 39.5 | 0.0244 | 5 | 10 | 30 | 409 | yes |
-| `repo_scan/hub/daemon.py` | 39.4 | 0.0183 | 6 | 11 | 38 | 327 | **no** |
-| `README.md` | 30.0 | 0.0000 | 0 | 21 | 0 | 0 | **no** |
-| `repo_scan/radar/act.py` | 29.6 | 0.0172 | 4 | 0 | 52 | 445 | yes |
-| `repo_scan/hub/ui.py` | 28.0 | 0.0184 | 1 | 9 | 0 | 439 | yes |
-| `repo_scan/graphs.py` | 25.3 | 0.0188 | 3 | 0 | 56 | 140 | **no** |
-| `repo_scan/scanner.py` | 25.0 | 0.0143 | 1 | 11 | 0 | 217 | yes |
-| `repo_scan/radar/llm.py` | 24.2 | 0.0225 | 4 | 0 | 40 | 248 | yes |
-| `repo_scan/ranking.py` | 18.2 | 0.0184 | 1 | 0 | 34 | 106 | **no** |
-| `repo_scan/hub/tui.py` | 16.9 | 0.0156 | 1 | 0 | 25 | 218 | yes |
-| `tests/test_act.py` | 16.8 | 0.0129 | 0 | 0 | 25 | 260 | yes |
-| `repo_scan/hub/server.py` | 16.1 | 0.0154 | 2 | 0 | 18 | 282 | **no** |
+| `repo_scan/tickets.py` | 39.2 | 0.0311 | 24 | 0 | 88 | 508 | yes |
+| `repo_scan/utils.py` | 36.5 | 0.2405 | 28 | 0 | 0 | 80 | **no** |
+| `repo_scan/hub/prs.py` | 32.7 | 0.0099 | 5 | 0 | 75 | 526 | yes |
+| `repo_scan/radar/act.py` | 25.3 | 0.0145 | 11 | 0 | 52 | 445 | yes |
+| `repo_scan/radar/pipeline.py` | 21.4 | 0.0169 | 12 | 11 | 0 | 498 | yes |
+| `repo_scan/config.py` | 20.6 | 0.0571 | 30 | 13 | 0 | 61 | **no** |
+| `repo_scan/graphs.py` | 20.5 | 0.0126 | 5 | 0 | 54 | 172 | yes |
+| `repo_scan/hub/daemon.py` | 19.0 | 0.0081 | 3 | 12 | 0 | 395 | yes |
+| `README.md` | 18.9 | 0.0000 | 0 | 22 | 0 | 0 | **no** |
+| `repo_scan/radar/llm.py` | 18.9 | 0.0189 | 12 | 0 | 40 | 249 | yes |
+| `repo_scan/hub/ui.py` | 18.0 | 0.0098 | 2 | 9 | 0 | 467 | yes |
+| `repo_scan/scanner.py` | 15.7 | 0.0085 | 3 | 12 | 0 | 222 | yes |
+| `repo_scan/ranking.py` | 13.1 | 0.0096 | 2 | 0 | 34 | 106 | **no** |
+| `repo_scan/hub/tui.py` | 12.4 | 0.0082 | 2 | 0 | 25 | 218 | yes |
+| `repo_scan/hub/server.py` | 12.0 | 0.0106 | 4 | 0 | 18 | 281 | **no** |
 
 ```mermaid
 xychart-beta
     title "Importance score (top files)"
-    x-axis ["tickets.py", "config.py", "gates.py", "pipeline.py", "daemon.py", "README.md", "act.py", "ui.py"]
+    x-axis ["tickets.py", "utils.py", "prs.py", "act.py", "pipeline.py", "config.py", "graphs.py", "daemon.py"]
     y-axis "Score" 0 --> 100
-    bar [46.7, 45.7, 41.1, 39.5, 39.4, 30, 29.6, 28]
+    bar [39.2, 36.5, 32.7, 25.3, 21.4, 20.6, 20.5, 19]
 ```
 
 ```mermaid
@@ -71,16 +71,16 @@ quadrantChart
     quadrant-3 Quiet
     quadrant-4 Hot but simple
     tickets.py: [0.02, 0.98]
-    config.py: [0.62, 0.02]
-    gates.py: [0.02, 0.15]
-    pipeline.py: [0.48, 0.34]
-    daemon.py: [0.52, 0.43]
-    README.md: [0.98, 0.02]
+    prs.py: [0.02, 0.85]
     act.py: [0.02, 0.59]
-    ui.py: [0.43, 0.02]
-    graphs.py: [0.02, 0.64]
-    scanner.py: [0.52, 0.02]
+    pipeline.py: [0.50, 0.02]
+    config.py: [0.59, 0.02]
+    graphs.py: [0.02, 0.61]
+    daemon.py: [0.55, 0.02]
+    README.md: [0.98, 0.02]
     llm.py: [0.02, 0.45]
+    ui.py: [0.41, 0.02]
+    scanner.py: [0.55, 0.02]
     ranking.py: [0.02, 0.39]
 ```
 
@@ -117,6 +117,7 @@ repo-scan/
 │   │   ├── 2026-06-10-parallel-loops.md
 │   │   ├── 2026-06-10-phase-c3-workflow.md
 │   │   ├── 2026-06-10-pr-merge-ui.md
+│   │   ├── 2026-06-10-pr-remediate.md
 │   │   ├── 2026-06-10-tkt-0001-writers-refactor.md
 │   │   └── 2026-06-10-vault-autocommit.md
 │   ├── reports/
@@ -139,8 +140,12 @@ repo-scan/
 │   │   ├── 2026-06-10-add-a-list-for-the-open-tickets-to-the-n-spec.md
 │   │   ├── 2026-06-10-convert-tickets-to-most-human-friendly-t-spec.md
 │   │   ├── 2026-06-10-hidden-seam-pyproject-toml-setup-py-100-spec.md
+│   │   ├── 2026-06-10-hidden-seam-repo-scan-scanner-py-repo-sc-spec.md
+│   │   ├── 2026-06-10-i-want-to-add-a-more-robust-way-to-visua-spec.md
 │   │   ├── 2026-06-10-refactor-repo-scan-graphs-py-cc-56-3-com-spec.md
+│   │   ├── 2026-06-10-refactor-repo-scan-hub-daemon-py-cc-38-1-spec.md
 │   │   ├── 2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec.md
+│   │   ├── 2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-spec.md
 │   │   ├── 2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-spec.md
 │   │   ├── 2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec.md
 │   │   ├── 2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co-spec.md
@@ -158,7 +163,12 @@ repo-scan/
 │   │   ├── tkt-0009.md
 │   │   ├── tkt-0010.md
 │   │   ├── tkt-0011.md
-│   │   └── tkt-0012.md
+│   │   ├── tkt-0012.md
+│   │   ├── tkt-0013.md
+│   │   ├── tkt-0014.md
+│   │   ├── tkt-0015.md
+│   │   ├── tkt-0016.md
+│   │   └── tkt-0017.md
 │   ├── digest.md
 │   ├── index.md
 │   ├── RADAR_CONTEXT.md
@@ -197,6 +207,7 @@ repo-scan/
 │   ├── identity.py
 │   ├── languages.py
 │   ├── ranking.py
+│   ├── report_pipeline.py
 │   ├── scanner.py
 │   ├── tests_map.py
 │   ├── tickets.py
@@ -219,25 +230,14 @@ repo-scan/
 │   ├── fake_llm.py
 │   ├── test_act.py
 │   ├── test_behavior.py
+│   ├── test_daemon.py
+│   ├── test_graphs.py
 │   ├── test_hub.py
 │   ├── test_hub_ui.py
 │   ├── test_intent_governance.py
 │   ├── test_languages.py
 │   ├── test_llm_routing.py
 │   ├── test_packaging.py
-│   ├── test_phase_a.py
-│   ├── test_portability.py
-│   ├── test_prs.py
-│   ├── test_radar_full.py
-│   ├── test_radar_gates.py
-│   ├── test_radar_ingest.py
-│   ├── test_radar_llm.py
-│   ├── test_radar_pipeline.py
-│   ├── test_scan.py
-│   ├── test_scanner_snapshots.py
-│   ├── test_scanner_unit.py
-│   ├── test_tests_map.py
-│   ├── test_tickets.py
 │   └── …
 └── …
 ```
