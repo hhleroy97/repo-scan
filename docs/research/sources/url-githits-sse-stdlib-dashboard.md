@@ -4,7 +4,7 @@ type: "url"
 url: "https://app.githits.com/solutions/f294544e-72ac-4c89-a9a4-3f2391b43344"
 raw_url: "https://github.com/tinygrad/tinygrad/blob/master/tinygrad/viz/serve.py"
 tags: ["sse", "stdlib", "dashboard", "live-updates", "hub", "deferred"]
-linked_files: ["repo_scan/hub/server.py", "repo_scan/hub/ui.py"]
+linked_files: ["repo_scan/hub/server.py", "repo_scan/hub/ui/__init__.py"]
 relevance: "Reference for Phase 3 SSE on the hub — Phase 1 uses enhanced polling + stage_detail first; this pattern shows ThreadingHTTPServer + /events stream + EventSource client without new dependencies."
 ingested_at: "2026-06-10 16:00 UTC"
 ---

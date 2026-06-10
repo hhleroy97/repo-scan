@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: vault-linked-files
+        name: vault linked_files check
+        entry: python -m repo_scan.provenance_lint
+        language: python
+        pass_filenames: false
+        stages: [commit]
+        files: ^docs/(tickets|specs|research)/

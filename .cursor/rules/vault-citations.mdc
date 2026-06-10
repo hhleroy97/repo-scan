@@ -1,0 +1,43 @@
+---
+description: Require vault citations in new Python modules
+globs: repo_scan/**/*.py
+alwaysApply: false
+---
+
+# Vault citation requirement
+
+Every Python module under `repo_scan/` **must** include a vault citation
+line in its module docstring linking it to the ticket or spec that motivated
+its creation.
+
+## Format
+
+Add one or both of these lines inside the module's triple-quoted docstring:
+
+```
+Vault: docs/tickets/tkt-XXXX
+Spec:  docs/specs/YYYY-MM-DD-name-spec
+```
+
+Multiple tickets can appear comma-separated:
+
+```
+Vault: docs/tickets/tkt-0001, docs/tickets/tkt-0008
+```
+
+## Why
+
+The citation scanner (`repo_scan/citations.py`) picks up `docs/tickets/tkt-XXXX`
+and `docs/specs/...-spec` patterns in Python source files. Without code-side
+citations, the provenance "cited" signal stays false and the doc scores lower.
+
+## When to add
+
+- Creating a new module → add the ticket/spec that requested it
+- Substantially refactoring a module → add the ticket driving the refactor
+- If no ticket exists yet, create one first or reference the planning doc
+
+## Verification
+
+Run `radar audit-provenance` to check coverage. Files missing citations
+appear in the "untracked code" list on the dashboard.

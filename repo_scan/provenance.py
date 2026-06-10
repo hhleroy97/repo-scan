@@ -292,6 +292,80 @@ def vault_coverage(root: Path, cfg: dict, scan: dict | None = None,
     }
 
 
+def autolink_orphan_analyses(root: Path, cfg: dict) -> list[str]:
+    """Propagate linked_files from sources to analyses that reference them.
+
+    Analyses list their sources in frontmatter ``sources: [...]``.  If a
+    referenced source has ``linked_files``, those paths are propagated to the
+    analysis (transitive linking).  Only adds ``linked_files`` — never removes
+    existing entries.
+
+    Returns list of analysis filenames that were updated.
+    """
+    docs = root / cfg["docs_dir"]
+    source_dir = docs / "research" / "sources"
+    analysis_dir = docs / "research" / "analysis"
+    if not source_dir.is_dir() or not analysis_dir.is_dir():
+        return []
+
+    source_links: dict[str, list[str]] = {}
+    for sp in source_dir.glob("*.md"):
+        fm = parse_frontmatter(sp.read_text(encoding="utf-8", errors="ignore"))
+        lf = _parse_linked_files(fm)
+        if lf:
+            source_links[sp.stem] = lf
+
+    updated: list[str] = []
+    for ap in sorted(analysis_dir.glob("*-analysis.md")):
+        text = ap.read_text(encoding="utf-8", errors="ignore")
+        fm = parse_frontmatter(text)
+        existing_lf = set(_parse_linked_files(fm))
+
+        raw_sources = fm.get("sources", "")
+        if isinstance(raw_sources, str):
+            src_ids = [s.strip().strip('"\'') for s in raw_sources.strip("[]").split(",") if s.strip()]
+        elif isinstance(raw_sources, list):
+            src_ids = [str(s).strip().strip('"\'') for s in raw_sources]
+        else:
+            src_ids = []
+
+        propagated: set[str] = set()
+        for sid in src_ids:
+            for lf in source_links.get(sid, []):
+                if lf not in existing_lf:
+                    propagated.add(lf)
+
+        if not propagated:
+            continue
+
+        merged = sorted(existing_lf | propagated)
+        lf_value = "[" + ", ".join(f'"{f}"' for f in merged) + "]"
+
+        if "linked_files:" in text:
+            import re as _re
+            text = _re.sub(
+                r"linked_files:\s*\[[^\]]*\]",
+                f"linked_files: {lf_value}",
+                text,
+                count=1,
+            )
+        else:
+            lines = text.splitlines(keepends=True)
+            in_fm = False
+            for i, line in enumerate(lines):
+                if line.strip() == "---":
+                    if not in_fm:
+                        in_fm = True
+                    else:
+                        lines.insert(i, f"linked_files: {lf_value}\n")
+                        break
+            text = "".join(lines)
+
+        ap.write_text(text, encoding="utf-8")
+        updated.append(ap.name)
+    return updated
+
+
 def vault_health_payload(root: Path, cfg: dict, scan_files: dict,
                          citations: list[dict], behavior: dict | None,
                          ranking: list | None = None) -> dict:

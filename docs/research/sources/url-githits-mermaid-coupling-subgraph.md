@@ -4,7 +4,7 @@ type: "url"
 url: "https://app.githits.com/solutions/96d85ef8-6e73-4c34-be5b-71359ca1f63b"
 raw_url: "https://github.com/maskati/bicep-dependency-diagram"
 tags: ["mermaid", "coupling", "subgraph", "tickets", "visualization"]
-linked_files: ["repo_scan/graphs.py", "repo_scan/tickets.py", "docs/tickets/tkt-0012.md"]
+linked_files: ["repo_scan/graphs.py", "repo_scan/tickets/__init__.py", "docs/tickets/tkt-0012.md"]
 relevance: "Validates tkt-0012 spec approach: graph LR with subgraphs for coupled components, directed edges for dependencies — matches coupling_to_mermaid and ticket Evidence diagrams in the approved spec."
 ingested_at: "2026-06-10 16:00 UTC"
 ---

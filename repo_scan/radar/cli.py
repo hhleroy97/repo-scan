@@ -112,6 +112,16 @@ def main():
     p_serve.add_argument("--no-daemon", action="store_true",
                          help="Serve the dashboard without the background runner")
 
+    p_audit = sub.add_parser("audit-provenance",
+                             help="Vault provenance coverage audit with regression check")
+    p_audit.add_argument("--fix", action="store_true",
+                         help="Auto-link orphan analyses from source linked_files")
+    p_audit.add_argument("--fail-on-regression", action="store_true",
+                         help="Exit 1 if coverage dropped vs last scan.json")
+
+    p_lint = sub.add_parser("lint-links",
+                            help="Check linked_files frontmatter in vault docs")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -153,6 +163,15 @@ def main():
         from ..hub.server import cmd_serve
         sys.exit(cmd_serve(root, cfg, host=args.host, port=args.port,
                            with_daemon=not args.no_daemon))
+
+    if args.command == "audit-provenance":
+        from ..provenance_audit import audit
+        sys.exit(audit(root, cfg, fix=args.fix,
+                       fail_on_regression=args.fail_on_regression))
+
+    if args.command == "lint-links":
+        from ..provenance_lint import main as lint_main
+        sys.exit(lint_main())
 
 
 if __name__ == "__main__":

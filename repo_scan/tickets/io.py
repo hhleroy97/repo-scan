@@ -40,6 +40,19 @@ def next_ticket_num(tickets: list[dict]) -> int:
     return max(nums, default=0) + 1
 
 
+def _linked_files_from_fingerprint(fingerprint: str) -> list[str]:
+    """Extract code file paths from a ticket fingerprint.
+
+    Fingerprints have the form ``signal:path`` or ``signal:path1+path2``.
+    Feature fingerprints (``feature:slug``) have no extractable paths.
+    """
+    if not fingerprint or ":" not in fingerprint:
+        return []
+    _, rest = fingerprint.split(":", 1)
+    parts = rest.split("+")
+    return [p for p in parts if "." in p and "/" in p]
+
+
 def write_ticket(root: Path, cfg: dict, ticket: dict,
                  signals: dict | None = None) -> Path:
     """Write a new ticket file. Never overwrites an existing one.
@@ -58,8 +71,8 @@ def write_ticket(root: Path, cfg: dict, ticket: dict,
         fp = ticket.get("fingerprint", "")
         if fp:
             evidence_body = ticket_evidence_diagrams(fp, signals, cfg)
-    lines = [
-        frontmatter({
+    linked = _linked_files_from_fingerprint(ticket.get("fingerprint", ""))
+    fm_dict = {
             "id": ticket["id"],
             "title": ticket["title"],
             "status": ticket.get("status", "proposed"),
@@ -70,7 +83,11 @@ def write_ticket(root: Path, cfg: dict, ticket: dict,
             "evidence": ticket.get("evidence", []),
             "created": tickets_pkg.now_date(),
             "tags": ["ticket"] + ticket.get("tags", []),
-        }),
+    }
+    if linked:
+        fm_dict["linked_files"] = linked
+    lines = [
+        frontmatter(fm_dict),
         "",
         f"# {ticket['title']}",
         "",
