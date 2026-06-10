@@ -268,11 +268,11 @@ def test_daemon_tick_survives_live_act_thread(act_repo):
     save_meta(root, cfg, {"last_scan": time.time()})
     t = threading.Thread(target=time.sleep, args=(1.0,), daemon=True)
     t.start()
-    daemon_mod._act_threads["fake-run-id"] = t
+    daemon_mod._run_threads["fake-run-id"] = t
     try:
         daemon_tick(root, cfg)  # must not raise
     finally:
-        del daemon_mod._act_threads["fake-run-id"]
+        del daemon_mod._run_threads["fake-run-id"]
 
 
 def test_reclaim_orphan_runs_resurrects_work(act_repo, tmp_path):

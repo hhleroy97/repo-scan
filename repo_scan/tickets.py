@@ -445,12 +445,19 @@ def update_ticket_criteria(root: Path, cfg: dict, ticket_id: str,
     return parsed
 
 
-def pick_approved_ticket(root: Path, cfg: dict) -> dict | None:
-    """Highest-priority approved ticket with real acceptance criteria."""
+def approved_tickets(root: Path, cfg: dict) -> list[dict]:
+    """Approved tickets with real acceptance criteria, highest priority
+    first — the radar work queue (parallel loops take from the top)."""
     order = {"high": 0, "medium": 1, "low": 2}
     approved = [t for t in load_tickets(root, cfg)
                 if t.get("status") == "approved" and t.get("criteria_ready")]
     approved.sort(key=lambda t: (order.get(t.get("priority", "medium"), 1), t["id"]))
+    return approved
+
+
+def pick_approved_ticket(root: Path, cfg: dict) -> dict | None:
+    """Highest-priority approved ticket (single-loop callers, e.g. radar full)."""
+    approved = approved_tickets(root, cfg)
     return approved[0] if approved else None
 
 

@@ -42,7 +42,7 @@ RADAR_CONFIG_KEYS = {
     # act stage (spec implementation)
     "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
     # model routing + parallelism
-    "llm_roles", "max_parallel_acts",
+    "llm_roles", "max_parallel_acts", "max_parallel_loops",
     # PR workflow
     "act_open_pr",
     # governance: budgets, path policy, per-kind autonomy, acceptance tests

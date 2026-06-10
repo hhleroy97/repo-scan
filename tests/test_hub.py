@@ -158,6 +158,7 @@ def _approved_ticket(root: Path) -> dict:
 def test_daemon_full_cycle(loop_env, monkeypatch):
     root, cfg, note, queue = loop_env
     cfg["radar_enabled"] = True
+    cfg["max_parallel_loops"] = 1  # inline for determinism
     save_meta(root, cfg, {"last_scan": time.time()})  # skip the scheduled scan
     ticket = _approved_ticket(root)
     problem = ticket_problem({**ticket, "status": "approved"})
@@ -192,6 +193,47 @@ def test_daemon_full_cycle(loop_env, monkeypatch):
     # an act candidate for the daemon's fan-out
     body = Path(ticket["path"]).read_text()
     assert "-spec]]" in body
+
+
+def test_daemon_fans_out_parallel_loops(loop_env, monkeypatch):
+    """Two approved tickets -> two loop runs in the same tick, on threads,
+    each pausing at its own gate 1."""
+    root, cfg, note, queue = loop_env
+    cfg["radar_enabled"] = True
+    cfg["max_parallel_loops"] = 2
+    save_meta(root, cfg, {"last_scan": time.time()})
+    _approved_ticket(root)
+    write_ticket(root, DEFAULT_CONFIG,
+                 {"id": "tkt-0002", "title": "Second thing", "priority": "low",
+                  "fingerprint": "x:2", "why": "Also broken.", "criteria": ["ok"]})
+    set_ticket_status(root, DEFAULT_CONFIG, "tkt-0002", "approved")
+
+    # threads consume the fake LLM concurrently, so the ordered response queue
+    # would race — one merged response satisfies propose/summarize/analyze
+    monkeypatch.setenv("RADAR_FAKE_RESPONSE", json.dumps({
+        "sources": [{"ref": f"file:{note}", "why": "design note"}],
+        "notes": "use local note",
+        "summary": "Note about gates.", "key_claims": ["file-backed gates"],
+        "tags": ["design"], "relevance": "directly relevant",
+        "findings": ["gates should be file-backed"],
+        "recommendation": "Use pending-state files.",
+        "confidence": "high", "risks": [],
+    }))
+
+    actions = daemon_tick(root, cfg)
+    assert sum(a.startswith("started:") for a in actions) == 2
+
+    deadline = time.time() + 60
+    while time.time() < deadline:
+        runs = load_runs(root, cfg)
+        if len(runs) == 2 and all(r["status"] == "waiting-on-gate" for r in runs):
+            break
+        time.sleep(0.2)
+    runs = load_runs(root, cfg)
+    assert len(runs) == 2
+    assert all(r["status"] == "waiting-on-gate" and r["gate"] == "post_analyze"
+               for r in runs)
+    assert {r["ticket"] for r in runs} == {"tkt-0001", "tkt-0002"}
 
 
 def test_commit_vault_commits_docs_only(tmp_repo):

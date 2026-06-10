@@ -433,7 +433,7 @@ def cmd_full(root: Path, cfg: dict, approve: list[str] | None = None,
         rc = cmd_loop(root, cfg, problem, approve=approve, gates_override=gates_override)
         if rc == 0:
             set_ticket_status(root, cfg, ticket["id"], "in-progress")
-            spec = _latest_spec(root, cfg)
+            spec = spec_for_problem(root, cfg, problem) or _latest_spec(root, cfg)
             note = f"radar spec approved{f': [[{spec}]]' if spec else ''} — status moved to in-progress"
             append_ticket_note(root, cfg, ticket["id"], note)
             ok(f"{ticket['id']} -> in-progress")
@@ -450,5 +450,16 @@ def cmd_full(root: Path, cfg: dict, approve: list[str] | None = None,
 
 def _latest_spec(root: Path, cfg: dict) -> str | None:
     specs = sorted((root / cfg["docs_dir"] / "specs").glob("*.md"),
+                   key=lambda p: p.stat().st_mtime)
+    return specs[-1].stem if specs else None
+
+
+def spec_for_problem(root: Path, cfg: dict, problem: str) -> str | None:
+    """The spec stem THIS problem produced (deterministic slug match).
+
+    Concurrent loops make "latest spec" a race — loop A finishing must never
+    link loop B's spec onto its ticket."""
+    slug = slugify(problem, 40)
+    specs = sorted((root / cfg["docs_dir"] / "specs").glob(f"*-{slug}-spec.md"),
                    key=lambda p: p.stat().st_mtime)
     return specs[-1].stem if specs else None

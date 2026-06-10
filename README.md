@@ -244,6 +244,13 @@ ever touching your checkout — one cheap agent per ticket. `radar act
 --worktree` does the same manually. Successful worktrees are pruned after
 commit; failed ones are kept for inspection.
 
+Research loops fan out the same way: the daemon starts up to
+`max_parallel_loops` (default 2) loops on threads, one per approved ticket,
+highest priority first. Loop state (checkpoints, gates, decisions) is keyed
+by problem so concurrent loops never collide, and each finished loop links
+its own spec onto its ticket by problem slug rather than "newest spec file".
+Set `max_parallel_loops` to 1 to force the old one-at-a-time behavior.
+
 ```json
 {
   "act_enabled": true,

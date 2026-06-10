@@ -24,8 +24,8 @@ from .notify import notify
 from .state import (active_runs, append_event, create_run, load_meta,
                     load_runs, peek_decision, save_meta, update_run)
 
-# run id -> thread, for in-flight act runs owned by this process
-_act_threads: dict[str, threading.Thread] = {}
+# run id -> thread, for in-flight runs (acts AND loops) owned by this process
+_run_threads: dict[str, threading.Thread] = {}
 
 # parallel acts must not race each other (or a human) on the git index
 _VAULT_LOCK = threading.Lock()
@@ -70,10 +70,11 @@ def _run_loop(root: Path, cfg: dict, run: dict) -> int:
         update_run(root, cfg, run["id"], "done")
         append_event(root, cfg, "run", f"loop done — spec approved ({run.get('ticket')})")
         if run.get("ticket"):
-            # the spec wikilink is what makes this ticket an act candidate
-            from ..radar.pipeline import _latest_spec
+            # the spec wikilink is what makes this ticket an act candidate;
+            # resolved by problem slug — parallel loops finish out of order
+            from ..radar.pipeline import spec_for_problem
             set_ticket_status(root, cfg, run["ticket"], "in-progress")
-            spec = _latest_spec(root, cfg)
+            spec = spec_for_problem(root, cfg, run["problem"])
             link = f": [[{spec}]]" if spec else ""
             append_ticket_note(root, cfg, run["ticket"],
                                f"radar spec approved (daemon run){link} — status moved to in-progress")
@@ -140,14 +141,15 @@ def _run_act(root: Path, cfg: dict, run: dict) -> int:
     return rc
 
 
-def _spawn_act(root: Path, cfg: dict, run: dict, parallel: bool) -> None:
-    """Run an act either inline (tests, single-slot configs) or on a thread."""
+def _spawn(root: Path, cfg: dict, run: dict, runner, parallel: bool) -> None:
+    """Run a loop/act either inline (tests, single-slot configs) or on a
+    thread — threaded runs never block the scheduler tick."""
     if not parallel:
-        _run_act(root, cfg, run)
+        runner(root, cfg, run)
         return
-    t = threading.Thread(target=_run_act, args=(root, cfg, run),
-                         name=f"act-{run['id']}", daemon=True)
-    _act_threads[run["id"]] = t
+    t = threading.Thread(target=runner, args=(root, cfg, run),
+                         name=f"{run.get('kind', 'run')}-{run['id']}", daemon=True)
+    _run_threads[run["id"]] = t
     t.start()
 
 
@@ -234,7 +236,7 @@ def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
     """
     reclaimed = []
     for r in active_runs(root, cfg):
-        if r["status"] in ("queued", "running") and r["id"] not in _act_threads:
+        if r["status"] in ("queued", "running") and r["id"] not in _run_threads:
             update_run(root, cfg, r["id"], "stopped",
                        note="reclaimed at daemon startup (owner died)")
             warn(f"reclaimed orphaned run {r['id']} ({r.get('ticket')})")
@@ -245,13 +247,15 @@ def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
 def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
     actions: list[str] = []
-    for rid in [r for r, t in _act_threads.items() if not t.is_alive()]:
-        del _act_threads[rid]
+    for rid in [r for r, t in _run_threads.items() if not t.is_alive()]:
+        del _run_threads[rid]
 
     max_acts = int(cfg.get("max_parallel_acts", 2))
-    parallel = max_acts > 1
+    max_loops = int(cfg.get("max_parallel_loops", 2))
+    parallel_acts = max_acts > 1
+    parallel_loops = max_loops > 1
     active = active_runs(root, cfg)
-    busy = set(_act_threads)  # run ids whose threads this process owns
+    busy = set(_run_threads)  # run ids whose threads this process owns
 
     # 1 — resume paused runs whose decisions arrived
     for run in active:
@@ -260,13 +264,13 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
         if run.get("gate") and peek_decision(root, cfg, run["gate"], run["problem"]):
             info(f"decision arrived for gate {run['gate']} — resuming run {run['id']}")
             if run.get("kind") == "act":
-                _spawn_act(root, cfg, run, parallel)
+                _spawn(root, cfg, run, _run_act, parallel_acts)
             else:
-                _run_loop(root, cfg, run)
+                _spawn(root, cfg, run, _run_loop, parallel_loops)
             actions.append(f"resumed:{run['id']}")
     if actions:
         active = active_runs(root, cfg)
-        busy = set(_act_threads)
+        busy = set(_run_threads)
 
     mid_flight = [r for r in active
                   if r["status"] in ("queued", "running") and r["id"] not in busy]
@@ -275,7 +279,7 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
         return actions
 
     # 2 — scheduled scan (skip while anything is actively running)
-    if not _act_threads:
+    if not _run_threads:
         meta = load_meta(root, cfg)
         scan_interval = float(cfg.get("daemon_scan_hours", 6)) * 3600
         if time.time() - float(meta.get("last_scan", 0)) >= scan_interval:
@@ -313,10 +317,14 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
         return actions
 
     # 3 — fan out acts on approved specs, up to max_parallel_acts
+    def _alive(kind: str) -> int:
+        ids = {r["id"] for r in active_runs(root, cfg) if r.get("kind") == kind}
+        return len(ids & set(_run_threads))
+
     if cfg.get("act_enabled"):
         from ..radar.act import act_problem, find_act_tickets
         covered = {r.get("ticket") for r in active_runs(root, cfg)}
-        slots = max_acts - len(_act_threads)
+        slots = max_acts - _alive("act")
         for ticket, spec_stem in find_act_tickets(root, cfg):
             if slots <= 0:
                 break
@@ -325,24 +333,31 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
             problem = act_problem(ticket["id"], spec_stem)
             run = create_run(root, cfg, problem, ticket=ticket["id"], kind="act")
             info(f"starting act run {run['id']} for ticket {ticket['id']}")
-            _spawn_act(root, cfg, run, parallel)
+            _spawn(root, cfg, run, _run_act, parallel_acts)
             actions.append(f"act-started:{run['id']}")
             slots -= 1
         if actions:
             return actions
 
-    # 4 — start a research loop for the next approved ticket (one at a time)
-    loops_active = [r for r in active_runs(root, cfg) if r.get("kind") != "act"]
-    if cfg.get("radar_enabled") and not loops_active:
+    # 4 — fan out research loops for approved tickets, up to max_parallel_loops
+    if cfg.get("radar_enabled"):
         from ..radar.pipeline import ticket_problem
-        from ..tickets import pick_approved_ticket
-        ticket = pick_approved_ticket(root, cfg)
-        if ticket:
+        from ..tickets import approved_tickets
+        covered = {r.get("ticket") for r in active_runs(root, cfg)}
+        slots = max_loops - len([r for r in active_runs(root, cfg)
+                                 if r.get("kind") != "act"
+                                 and r["status"] in ("queued", "running")])
+        for ticket in approved_tickets(root, cfg):
+            if slots <= 0:
+                break
+            if ticket["id"] in covered:
+                continue
             problem = ticket_problem(ticket)
             run = create_run(root, cfg, problem, ticket=ticket["id"])
             info(f"starting run {run['id']} for ticket {ticket['id']}")
-            _run_loop(root, cfg, run)
+            _spawn(root, cfg, run, _run_loop, parallel_loops)
             actions.append(f"started:{run['id']}")
+            slots -= 1
 
     return actions
 

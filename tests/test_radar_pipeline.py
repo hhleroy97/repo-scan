@@ -185,6 +185,27 @@ def test_loop_revision_round(loop_env):
     assert "[!success] Audit verdict: pass" in spec
 
 
+def test_spec_for_problem_matches_slug_not_mtime(tmp_repo):
+    """Parallel loops finish out of order — spec resolution must key off the
+    problem slug, never "newest spec file"."""
+    import time
+
+    from repo_scan.radar.pipeline import spec_for_problem
+    from repo_scan.radar.sources import slugify
+
+    cfg = load_config(tmp_repo)
+    specs = tmp_repo / "docs" / "specs"
+    specs.mkdir(parents=True)
+    a, b = "improve the widget", "fix the gadget"
+    a_stem = f"2026-06-10-{slugify(a, 40)}-spec"
+    (specs / f"{a_stem}.md").write_text("a")
+    time.sleep(0.05)
+    (specs / f"2026-06-10-{slugify(b, 40)}-spec.md").write_text("b")  # newer
+
+    assert spec_for_problem(tmp_repo, cfg, a) == a_stem
+    assert spec_for_problem(tmp_repo, cfg, "unrelated problem") is None
+
+
 def test_loop_fails_cleanly_without_backend(tmp_repo):
     cfg = load_config(tmp_repo)
     cfg["llm_cli"] = ["definitely-not-a-real-cli-xyz"]
