@@ -184,3 +184,5 @@
 | 2026-06-10 21:14 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
 | 2026-06-10 21:18 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
 | 2026-06-10 21:20 UTC | post_analyze | paused | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
+| 2026-06-10 21:26 UTC | post_analyze | approved (dashboard) | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
+| 2026-06-10 21:37 UTC | post_audit | paused | audit revise: The spec correctly diagnoses current `rGraph()` interleaving and proposes a coherent target order aligned  |
