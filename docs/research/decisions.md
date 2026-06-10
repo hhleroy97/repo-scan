@@ -93,3 +93,4 @@
 | 2026-06-10 13:18 UTC | post_analyze | approved (dashboard) | Follow the repo's characterization-then-extract playbook: snapshot radon output and a copy of `docs/scan.json`, then add |
 | 2026-06-10 13:20 UTC | post_audit | paused | audit revise: The spec aligns well with existing Mermaid writers, coupling/seam signals, and fingerprinted tickets, but  |
 | 2026-06-10 13:21 UTC | post_audit | paused | audit revise: Radon/scan.json baselines (cmd_loop CC 19, write_analysis CC 11, derived cc_by_file 30, churn 10 vs stale  |
+| 2026-06-10 13:23 UTC | post_audit | paused | audit revise: The dual-track approach matches the codebase (live 53%/5 shared, relative-import bug, existing snapshot ha |
