@@ -307,6 +307,66 @@ def test_server_gate_decision_roundtrip(hub_server):
     assert code == 400
 
 
+def test_build_state_includes_ticket_card_fields(hub_server):
+    root, cfg, token, base = hub_server
+    write_ticket(root, DEFAULT_CONFIG, {
+        "id": "tkt-0099", "title": "Refactor foo.py (CC 9)",
+        "fingerprint": "refactor:foo.py", "priority": "high",
+        "why": "`foo.py` is hot.", "criteria": ["tests pass"],
+    })
+    code, state = _get(f"{base}/api/state", token)
+    assert code == 200
+    row = next(t for t in state["tickets"] if t["id"] == "tkt-0099")
+    assert row["card"]["outcome"] == "Reduce risk in foo.py"
+    assert row["criteria_count"] == 1
+    assert row["criteria_ready"] is True
+    assert row["doc"] == "tickets/tkt-0099.md"
+
+
+def test_ticket_approve_rejected_without_criteria(hub_server):
+    root, cfg, token, base = hub_server
+    write_ticket(root, DEFAULT_CONFIG, {
+        "id": "tkt-0003", "title": "T", "fingerprint": "x:3",
+        "why": "w", "criteria": ["define done"],
+    })
+    code, resp = _post(f"{base}/api/ticket", token,
+                       {"id": "tkt-0003", "action": "approve"})
+    assert code == 400
+    assert "criteria" in resp["error"].lower()
+    bad = next(t for t in load_tickets(root, cfg) if t["id"] == "tkt-0003")
+    assert bad["status"] == "proposed"
+
+
+def _patch(url: str, token: str, data: dict) -> tuple[int, dict]:
+    req = urllib.request.Request(url, data=json.dumps(data).encode(),
+                                 headers={"Content-Type": "application/json",
+                                          "X-Radar-Token": token},
+                                 method="PATCH")
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status, json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        return e.code, json.loads(e.read().decode())
+
+
+def test_ticket_patch_criteria_enables_approve(hub_server):
+    root, cfg, token, base = hub_server
+    write_ticket(root, DEFAULT_CONFIG, {
+        "id": "tkt-0004", "title": "T", "fingerprint": "x:4",
+        "why": "w", "criteria": ["define acceptance criteria before approving"],
+    })
+    code, resp = _patch(f"{base}/api/ticket", token,
+                        {"id": "tkt-0004", "criteria": ["exports csv", "handles utf-8"]})
+    assert code == 200 and resp["criteria_ready"] is True
+    body = (root / "docs" / "tickets" / "tkt-0004.md").read_text()
+    assert "- [ ] exports csv" in body
+    code, resp = _post(f"{base}/api/ticket", token,
+                       {"id": "tkt-0004", "action": "approve"})
+    assert code == 200 and resp["ok"]
+    good = next(t for t in load_tickets(root, cfg) if t["id"] == "tkt-0004")
+    assert good["status"] == "approved"
+
+
 def test_server_ticket_action(hub_server):
     root, cfg, token, base = hub_server
     ticket = {"id": "tkt-0002", "title": "T", "priority": "low",

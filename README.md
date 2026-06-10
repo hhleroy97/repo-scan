@@ -98,6 +98,14 @@ repo-scan tickets approve tkt-0001
 repo-scan tickets start | reject | done <id>
 ```
 
+Approval requires at least one real acceptance criterion (not the placeholder
+`define done` / `define acceptance criteria before approving`). The hub, CLI,
+and `radar top` enforce this; tickets with placeholder criteria stay out of the
+radar loop even if marked approved in frontmatter. Each ticket also projects a
+PM-facing **card** on read (`outcome`, `why_line`, criteria summary) — override
+with an optional `## Card` block (`Outcome:`, `Story:`, `Title:`) or
+frontmatter `card_*` keys; the canonical `title` in markdown stays technical.
+
 **Intent intake.** Your ideas enter the same pipeline as scan signals — as
 `feature` tickets that the loop researches, specs, implements, and PRs like
 any other work:
@@ -295,9 +303,11 @@ Autonomy is granted in policy, not all at once:
 
 `radar serve` runs a zero-dependency stdlib HTTP server (plus the daemon in a
 background thread) and prints a tokenized URL. The dashboard is one
-self-contained mobile-first page: the **Now** tab shows open tickets (status,
-priority, kind, id, title) with a link to the full **Tickets** tab — approve
-and create actions stay on Tickets (and in `radar top` for terminal use); live
+self-contained mobile-first page: the **Now** tab shows open tickets as PM
+glance rows (`card.outcome`, why line, criteria count) with a link to the full
+**Tickets** tab — three-tier cards there (expand for checklist, edit criteria
+when not ready, **View ticket** for full markdown); approve and create actions
+stay on Tickets (and in `radar top` for terminal use); live
 stats and runs; pending gates with **Approve / Reject** buttons and the full
 analysis one tap away; the ticket board; and the decision trail. Decisions land in a file-backed inbox
 (`docs/.radar/decisions/`); the daemon resumes paused loops on its next poll.

@@ -5,6 +5,18 @@ plus a generated board.md in Obsidian Kanban format. The scan auto-proposes
 tickets from its signals; humans review by editing `status` (or dragging
 cards), and add their own tickets as plain files.
 
+Each ticket's markdown is ground truth. ``parse_ticket()`` derives a PM-facing
+``card`` (``title``, ``outcome``, ``story``, ``why_line``, ``criteria_summary``)
+on read — never a parallel file. Override order: optional ``## Card`` block
+(``Outcome:``, ``Story:``, ``Title:``), then frontmatter ``card_*`` keys, then
+heuristics from fingerprint kind, ``Why``, and ``title``.
+
+Approval is blocked until at least one non-placeholder acceptance criterion
+exists (not ``define done`` or ``define acceptance criteria before approving``,
+including case/whitespace variants). The same gate applies in hub, CLI, TUI,
+and ``pick_approved_ticket()`` so legacy approved placeholders do not enter the
+radar loop.
+
 Dedup: every auto-ticket carries a content-stable `fingerprint`
 (signal:file). A fingerprint that exists in ANY status — including
 rejected — is never re-proposed, so saying no sticks.
@@ -26,6 +38,113 @@ def tickets_dir(root: Path, cfg: dict) -> Path:
     return root / cfg["docs_dir"] / "tickets"
 
 
+OPEN_STATUSES = {"proposed", "approved", "in-progress"}
+
+PLACEHOLDER_CRITERIA = frozenset({
+    "define done",
+    "define acceptance criteria before approving",
+})
+
+
+def _normalize_criterion(text: str) -> str:
+    return re.sub(r"\s+", " ", text.strip().lower())
+
+
+def criteria_ready(criteria: list[str]) -> bool:
+    """True when at least one criterion is not a known placeholder string."""
+    if not criteria:
+        return False
+    return any(_normalize_criterion(c) not in PLACEHOLDER_CRITERIA
+               for c in criteria if c.strip())
+
+
+def _strip_technical(text: str) -> str:
+    """Remove backtick paths, CC parentheticals, and line-count suffixes."""
+
+    def _backtick(m: re.Match) -> str:
+        inner = m.group(1)
+        return Path(inner).name if "/" in inner or "\\" in inner else inner
+
+    text = re.sub(r"`([^`]+)`", _backtick, text)
+    text = re.sub(r"\(CC\s+\d+[^)]*\)", "", text, flags=re.I)
+    text = re.sub(r"\(\d+\s+lines\)", "", text, flags=re.I)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _first_sentence(text: str, limit: int = 120) -> str:
+    if not text:
+        return ""
+    sent = re.split(r"(?<=[.!?])\s+", text.strip(), maxsplit=1)[0]
+    return _strip_technical(sent)[:limit]
+
+
+def _parse_card_section(text: str) -> dict[str, str]:
+    m = re.search(r"^## Card\n+(.+?)(?:\n##|\Z)", text, re.S | re.M)
+    if not m:
+        return {}
+    card: dict[str, str] = {}
+    for line in m.group(1).splitlines():
+        for key in ("Outcome", "Story", "Title"):
+            prefix = f"{key}:"
+            if line.startswith(prefix):
+                card[key.lower()] = line[len(prefix):].strip()
+    return card
+
+
+def _criteria_summary(criteria: list[str]) -> str:
+    real = [c.strip() for c in criteria
+            if c.strip() and _normalize_criterion(c) not in PLACEHOLDER_CRITERIA]
+    return " · ".join(real[:2])
+
+
+def derive_card(meta: dict, text: str) -> dict:
+    """Build a PM-facing card from ticket ground truth.
+
+    Base layer: heuristics from fingerprint kind (``refactor`` → reduce risk in
+    basename, ``size`` → break up oversized basename, ``seam`` → make coupling
+    explicit), else the first sentence of ``Why`` (≤120 chars). Technical
+    paths and ``(CC N, …)`` / ``(N lines)`` parentheticals are stripped from
+    display copy. Higher layers override: ``## Card`` fields, then frontmatter
+    ``card_outcome`` / ``card_story`` / ``card_title``.
+    """
+    title = meta.get("title", "")
+    why = meta.get("why", "")
+    fingerprint = str(meta.get("fingerprint", ""))
+    kind = fingerprint.split(":", 1)[0] if fingerprint else ""
+    if not kind and meta.get("tags"):
+        kind = str(meta["tags"][0])
+    path_part = fingerprint.split(":", 1)[1] if ":" in fingerprint else ""
+    basename = Path(path_part).name if path_part else ""
+
+    if kind == "refactor":
+        outcome = f"Reduce risk in {basename}" if basename else "Reduce risk in this area"
+    elif kind == "size":
+        outcome = f"Break up oversized {basename}" if basename else "Break up oversized file"
+    elif kind == "seam":
+        outcome = "Make coupling explicit"
+    else:
+        outcome = _first_sentence(why) or _strip_technical(title)
+
+    card = {
+        "title": title,
+        "outcome": outcome,
+        "story": "",
+        "why_line": _first_sentence(why) or _strip_technical(why.splitlines()[0] if why else ""),
+        "criteria_summary": _criteria_summary(meta.get("criteria", [])),
+    }
+
+    for key, val in _parse_card_section(text).items():
+        if val:
+            card[key] = val
+
+    for fm_key, card_key in (("card_outcome", "outcome"), ("card_story", "story"),
+                             ("card_title", "title")):
+        if meta.get(fm_key):
+            card[card_key] = str(meta[fm_key])
+
+    return card
+
+
 def parse_ticket(path: Path) -> dict | None:
     text = path.read_text(encoding="utf-8", errors="ignore")
     meta = parse_frontmatter(text)
@@ -38,7 +157,13 @@ def parse_ticket(path: Path) -> dict | None:
     meta["path"] = path
     m = re.search(r"^## Why\n+(.+?)(?:\n##|\Z)", text, re.S | re.M)
     meta["why"] = m.group(1).strip() if m else ""
-    meta["criteria"] = re.findall(r"^- \[[ x]\] (.+)$", text, re.M)
+    checks = re.findall(r"^- \[([ x])\] (.+)$", text, re.M)
+    meta["criteria"] = [c[1] for c in checks]
+    meta["criteria_checked"] = [c[0] == "x" for c in checks]
+    meta["criteria_ready"] = criteria_ready(meta["criteria"])
+    meta["criteria_count"] = len(meta["criteria"])
+    meta["card"] = derive_card(meta, text)
+    meta["criteria_summary"] = meta["card"]["criteria_summary"]
     return meta
 
 
@@ -208,9 +333,6 @@ def propose_from_scan(cfg: dict, *, line_counts: dict, ranking: list,
     return proposals
 
 
-OPEN_STATUSES = {"proposed", "approved", "in-progress"}
-
-
 def new_ticket(root: Path, cfg: dict, title: str, *, why: str = "",
                priority: str = "medium", criteria: list[str] | None = None,
                kind: str = "feature", source: str = "intent",
@@ -242,6 +364,8 @@ def new_ticket(root: Path, cfg: dict, title: str, *, why: str = "",
         "why": why or "_captured from intent — refine before approving_",
         "criteria": criteria or ["define acceptance criteria before approving"],
     }
+    if ticket["status"] == "approved" and not criteria_ready(ticket["criteria"]):
+        raise ValueError("acceptance criteria required before approving")
     write_ticket(root, cfg, ticket)
     write_board(root, cfg, load_tickets(root, cfg))
     ticket["path"] = tickets_dir(root, cfg) / f"{ticket['id']}.md"
@@ -256,6 +380,8 @@ def set_ticket_status(root: Path, cfg: dict, ticket_id: str, status: str) -> dic
     ticket = next((t for t in tickets if t["id"] == ticket_id), None)
     if ticket is None:
         raise KeyError(f"no ticket with id {ticket_id!r}")
+    if status == "approved" and not ticket.get("criteria_ready"):
+        raise ValueError("acceptance criteria required before approving")
     path: Path = ticket["path"]
     text = path.read_text(encoding="utf-8")
     new_text, n = re.subn(r'^status: ".*?"', f'status: "{status}"', text,
@@ -283,10 +409,47 @@ def append_ticket_note(root: Path, cfg: dict, ticket_id: str, note: str):
     path.write_text(text, encoding="utf-8")
 
 
+def update_ticket_criteria(root: Path, cfg: dict, ticket_id: str,
+                           criteria: list[str]) -> dict:
+    """Replace the ticket's acceptance-criteria checklist in markdown."""
+    tickets = load_tickets(root, cfg)
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if ticket is None:
+        raise KeyError(f"no ticket with id {ticket_id!r}")
+    cleaned = [c.strip() for c in criteria if c.strip()]
+    if not cleaned:
+        raise ValueError("at least one acceptance criterion required")
+    path: Path = ticket["path"]
+    text = path.read_text(encoding="utf-8")
+    block = "\n".join(f"- [ ] {c}" for c in cleaned) + "\n"
+    if re.search(r"^## Acceptance criteria\n", text, re.M):
+        new_text, n = re.subn(
+            r"(^## Acceptance criteria\n+)(.+?)(?=\n## |\Z)",
+            r"\1" + block,
+            text,
+            count=1,
+            flags=re.S | re.M,
+        )
+        if n == 0:
+            raise ValueError(f"{path.name} acceptance criteria section is malformed")
+    else:
+        anchor = "## Notes"
+        if anchor in text:
+            new_text = text.replace(anchor, f"## Acceptance criteria\n\n{block}\n{anchor}", 1)
+        else:
+            new_text = text.rstrip() + f"\n\n## Acceptance criteria\n\n{block}"
+    path.write_text(new_text, encoding="utf-8")
+    write_board(root, cfg, load_tickets(root, cfg))
+    parsed = parse_ticket(path)
+    assert parsed is not None
+    return parsed
+
+
 def pick_approved_ticket(root: Path, cfg: dict) -> dict | None:
-    """Highest-priority approved ticket — the radar loop's work queue."""
+    """Highest-priority approved ticket with real acceptance criteria."""
     order = {"high": 0, "medium": 1, "low": 2}
-    approved = [t for t in load_tickets(root, cfg) if t.get("status") == "approved"]
+    approved = [t for t in load_tickets(root, cfg)
+                if t.get("status") == "approved" and t.get("criteria_ready")]
     approved.sort(key=lambda t: (order.get(t.get("priority", "medium"), 1), t["id"]))
     return approved[0] if approved else None
 
@@ -374,6 +537,9 @@ def tickets_main(argv: list[str]) -> int:
     if args.action == "new":
         if not args.ticket_id:
             parser.error("`new` requires a title: repo-scan tickets new \"...\"")
+        if args.approve and not args.criterion:
+            print("error: --approve requires at least one --criterion")
+            return 1
         ticket = new_ticket(root, cfg, args.ticket_id, why=args.why,
                             priority=args.priority, criteria=args.criterion,
                             kind=args.kind,

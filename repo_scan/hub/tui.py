@@ -34,9 +34,11 @@ def actionable_items(state: dict) -> list[dict]:
                       "detail": g.get("detail", {})})
     for t in state.get("tickets", []):
         if t.get("status") in ("proposed", "approved"):
+            card = t.get("card") or {}
+            headline = card.get("outcome") or t.get("title", "")
             items.append({"kind": "ticket", "id": t.get("id"),
                           "status": t.get("status"),
-                          "label": f"{t.get('id')} {t.get('title', '')}"[:120]})
+                          "label": f"{t.get('id')} {headline}"[:120]})
     return items
 
 
@@ -54,7 +56,10 @@ def apply_decision(root: Path, cfg: dict, item: dict, decision: str) -> str:
         new = "approved" if item["status"] == "proposed" else "in-progress"
     else:
         new = "rejected"
-    set_ticket_status(root, cfg, item["id"], new)
+    try:
+        set_ticket_status(root, cfg, item["id"], new)
+    except ValueError as e:
+        return str(e)
     return f"{item['id']}: {new}"
 
 

@@ -94,13 +94,13 @@ def test_open_tickets_sort_follows_workflow_order(open_statuses, status_order):
 
 
 def test_rnow_open_tickets_renders_rows_for_fixture():
-    """Row template includes status badge, kind, priority, id, and title."""
+    """Row template includes status badge, PM outcome, priority, id, criteria count."""
     start = DASHBOARD_HTML.index("function rOpenTickets()")
     end = DASHBOARD_HTML.index("function rNow()", start)
     src = DASHBOARD_HTML[start:end]
     assert "TICKET_BADGE_CLS[t.status]" in src
-    assert "t.kind" in src and "t.priority" in src
-    assert "t.id" in src and "t.title" in src
+    assert "ticketHeadline(t)" in src and "t.priority" in src
+    assert "t.id" in src and "criteria_count" in src
     assert "Open tickets" in src
     assert "setTab('tickets')" in src
 
@@ -132,3 +132,16 @@ def test_rnow_places_open_tickets_after_gates_or_stats():
 def test_rtickets_uses_shared_sort_helpers():
     assert "sortTickets(S.tickets)" in DASHBOARD_HTML
     assert "TICKET_BADGE_CLS[t.status]" in DASHBOARD_HTML
+
+
+def test_ticket_cards_render_card_outcome_and_criteria_count():
+    for needle in (
+        "function ticketCard(",
+        "ticketHeadline",
+        "criteria_count",
+        "toggleTicket",
+        "saveCriteria",
+        "Define acceptance criteria before approving",
+        "View ticket",
+    ):
+        assert needle in DASHBOARD_HTML, f"{needle} missing from dashboard"

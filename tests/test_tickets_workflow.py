@@ -40,6 +40,34 @@ def test_set_ticket_status_roundtrip_and_board(tmp_repo: Path):
         set_ticket_status(tmp_repo, DEFAULT_CONFIG, "tkt-9999", "done")
 
 
+def test_pick_approved_skips_placeholder_criteria(tmp_repo: Path):
+    write_ticket(tmp_repo, DEFAULT_CONFIG, {
+        "id": "tkt-0001", "title": "Bad", "fingerprint": "x:1",
+        "why": "w", "criteria": ["define acceptance criteria before approving"],
+    })
+    path = tmp_repo / "docs" / "tickets" / "tkt-0001.md"
+    path.write_text(path.read_text().replace('status: "proposed"', 'status: "approved"'))
+    _make_ticket(tmp_repo, 2, priority="low")
+    set_ticket_status(tmp_repo, DEFAULT_CONFIG, "tkt-0002", "approved")
+    picked = pick_approved_ticket(tmp_repo, DEFAULT_CONFIG)
+    assert picked["id"] == "tkt-0002"
+
+
+def test_tickets_cli_approve_rejected_without_criteria(tmp_repo: Path):
+    write_ticket(tmp_repo, DEFAULT_CONFIG, {
+        "id": "tkt-0001", "title": "T", "fingerprint": "x:1",
+        "why": "w", "criteria": ["define done"],
+    })
+    assert tickets_main(["approve", "tkt-0001", "--repo", str(tmp_repo)]) == 1
+    assert load_tickets(tmp_repo, DEFAULT_CONFIG)[0]["status"] == "proposed"
+
+
+def test_tickets_cli_new_approve_requires_criteria(tmp_repo: Path, capsys):
+    assert tickets_main(["new", "Ship it", "--approve", "--repo", str(tmp_repo)]) == 1
+    assert "criterion" in capsys.readouterr().out.lower()
+    assert not list((tmp_repo / "docs" / "tickets").glob("tkt-*.md"))
+
+
 def test_pick_approved_ticket_priority_order(tmp_repo: Path):
     _make_ticket(tmp_repo, 1, priority="low")
     _make_ticket(tmp_repo, 2, priority="high")

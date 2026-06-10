@@ -96,6 +96,17 @@ def test_apply_decision_gate_writes_inbox(tmp_repo: Path):
     assert d and d["decision"] == "approve" and d["source"] == "tui"
 
 
+def test_tui_approve_blocked_without_criteria(tmp_repo: Path):
+    cfg = DEFAULT_CONFIG
+    write_ticket(tmp_repo, cfg, {"id": "tkt-0001", "title": "Refactor A",
+                                 "priority": "high", "fingerprint": "x:1",
+                                 "why": "w", "criteria": ["define done"]})
+    item = {"kind": "ticket", "id": "tkt-0001", "status": "proposed"}
+    msg = apply_decision(tmp_repo, cfg, item, "approve")
+    assert "acceptance criteria" in msg.lower()
+    assert load_tickets(tmp_repo, cfg)[0]["status"] == "proposed"
+
+
 def test_apply_decision_ticket_lifecycle(tmp_repo: Path):
     cfg = DEFAULT_CONFIG
     write_ticket(tmp_repo, cfg, {"id": "tkt-0001", "title": "Refactor A",
