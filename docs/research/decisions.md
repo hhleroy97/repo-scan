@@ -193,3 +193,5 @@
 | 2026-06-10 21:46 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
 | 2026-06-10 21:52 UTC | post_implement | auto | tests passed; 7 files changed, 277 insertions(+), 15 deletions(-) on radar/tkt-0032 — commit? |
 | 2026-06-10 21:55 UTC | post_audit | paused | audit revise: The spec correctly incorporates audit feedback (test_act→act_run, partial remediation status, AC1/AC2 spli |
+| 2026-06-10 21:55 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
+| 2026-06-10 21:55 UTC | post_audit | approved (dashboard) | audit revise: The spec correctly incorporates audit feedback (test_act→act_run, partial remediation status, AC1/AC2 spli |
