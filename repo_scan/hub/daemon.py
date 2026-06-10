@@ -25,6 +25,7 @@ from pathlib import Path
 
 from ..utils import header, info, now_date, ok, warn
 from .notify import notify
+from .settings import cfg_hub
 from .state import (active_runs, append_event, create_run, load_meta,
                     load_runs, peek_decision, save_meta, update_run)
 
@@ -54,7 +55,7 @@ def _dashboard_url(cfg: dict) -> str | None:
     if cfg.get("dashboard_url"):
         return str(cfg["dashboard_url"])
     host = cfg.get("serve_host")
-    port = cfg.get("serve_port", 8800)
+    port = cfg_hub(cfg, "serve_port")
     return f"http://{host}:{port}/" if host else None
 
 
@@ -169,7 +170,7 @@ def commit_vault(root: Path, cfg: dict, message: str) -> bool:
     "vault_autocommit": false.
     """
     import subprocess
-    if not cfg.get("vault_autocommit", True):
+    if not cfg_hub(cfg, "vault_autocommit"):
         return False
     docs = cfg["docs_dir"]
 
@@ -272,7 +273,7 @@ def _maybe_run_scheduled_scan(root: Path, cfg: dict, actions: list[str]) -> list
     if _run_threads:
         return None
     meta = load_meta(root, cfg)
-    scan_interval = float(cfg.get("daemon_scan_hours", 6)) * 3600
+    scan_interval = float(cfg_hub(cfg, "daemon_scan_hours")) * 3600
     if time.time() - float(meta.get("last_scan", 0)) < scan_interval:
         return None
     from ..scanner import scan
@@ -406,8 +407,8 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
     _prune_finished_threads()
 
-    max_acts = int(cfg.get("max_parallel_acts", 2))
-    max_loops = int(cfg.get("max_parallel_loops", 2))
+    max_acts = int(cfg_hub(cfg, "max_parallel_acts"))
+    max_loops = int(cfg_hub(cfg, "max_parallel_loops"))
     parallel_acts = max_acts > 1
     parallel_loops = max_loops > 1
     actions: list[str] = []
@@ -443,8 +444,8 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
 def cmd_daemon(root: Path, cfg: dict, poll_seconds: int | None = None) -> int:
     header("radar daemon")
     reclaim_orphan_runs(root, cfg)
-    poll = int(poll_seconds or cfg.get("daemon_poll_seconds", 20))
-    info(f"polling every {poll}s — scans every {cfg.get('daemon_scan_hours', 6)}h "
+    poll = int(poll_seconds or cfg_hub(cfg, "daemon_poll_seconds"))
+    info(f"polling every {poll}s — scans every {cfg_hub(cfg, 'daemon_scan_hours')}h "
          f"(state: {cfg['docs_dir']}/.radar/)")
     try:
         while True:

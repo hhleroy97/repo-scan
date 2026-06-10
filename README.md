@@ -383,9 +383,11 @@ The daemon then pushes when a gate needs you, a loop finishes or fails, and
 when a scan proposes tickets — tapping the notification opens the dashboard
 (set `"serve_host"` to your tailnet name so the link resolves).
 
-Hub config keys (all optional): `serve_host`, `serve_port`,
-`daemon_poll_seconds`, `daemon_scan_hours`, `ntfy_topic`, `ntfy_server`,
-`dashboard_url` (overrides notification links when a proxy fronts the hub).
+Hub config keys (all optional; defaults in `repo_scan/hub/settings.py`):
+`serve_host`, `serve_port`, `daemon_poll_seconds`, `daemon_scan_hours`,
+`ntfy_topic`, `ntfy_server`, `dashboard_url` (overrides notification links
+when a proxy fronts the hub), `vault_autocommit`, `max_parallel_acts`,
+`max_parallel_loops`.
 
 Machine-private values (the ntfy topic is effectively a credential) belong in
 `.repo-scan.local.json` — same format, merged after `.repo-scan.json`, and
