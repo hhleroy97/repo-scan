@@ -112,9 +112,10 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
 
     if not quiet:
         crit = [f for f, s in line_counts.items() if s["lines"] >= cfg["line_crit"]]
-        print(fmt(f"\n✓ Done. Open docs/index.md in Obsidian to explore.", GREEN + BOLD))
+        docs = cfg["docs_dir"]
+        print(fmt(f"\n✓ Done. Open {docs}/index.md in Obsidian to explore.", GREEN + BOLD))
         if crit:
-            warn(f"{len(crit)} file(s) exceed {cfg['line_crit']} lines — see docs/reports/health.md")
+            warn(f"{len(crit)} file(s) exceed {cfg['line_crit']} lines — see {docs}/reports/health.md")
         print()
 
 

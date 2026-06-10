@@ -28,6 +28,14 @@ def detect_languages(root: Path, cfg: dict) -> dict[str, list[Path]]:
     return buckets
 
 
+# Machine-generated files that pollute line counts, health alerts, and ranking
+LOCKFILES = {
+    "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb",
+    "poetry.lock", "uv.lock", "Pipfile.lock",
+    "Cargo.lock", "composer.lock", "Gemfile.lock", "go.sum",
+}
+
+
 def get_line_counts(root: Path, cfg: dict) -> dict[str, dict]:
     counts = {}
     # the generated docs tree is the tool's own output — never audit it
@@ -45,7 +53,7 @@ def get_line_counts(root: Path, cfg: dict) -> dict[str, dict]:
                             rel = path.relative_to(root)
                         except ValueError:
                             rel = path
-                        if any(p in skip for p in rel.parts):
+                        if any(p in skip for p in rel.parts) or rel.name in LOCKFILES:
                             continue
                         counts[str(rel)] = {
                             "lines": report["stats"]["code"],
@@ -59,7 +67,7 @@ def get_line_counts(root: Path, cfg: dict) -> dict[str, dict]:
     for f in root.rglob("*"):
         if not f.is_file():
             continue
-        if any(p in skip for p in f.parts):
+        if any(p in skip for p in f.parts) or f.name in LOCKFILES:
             continue
         if f.suffix.lower() not in all_exts:
             continue

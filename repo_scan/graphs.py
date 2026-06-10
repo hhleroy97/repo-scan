@@ -61,14 +61,20 @@ def get_ts_dep_edges(root: Path, ts_files: list[Path]) -> tuple[list[tuple[str, 
         return [], "madge not installed — npm install -g madge"
     src_candidates = ["src", "app", "lib", "."]
     src_dir = next((root / d for d in src_candidates if (root / d).is_dir()), root)
-    out, _, code = run(["madge", "--json", str(src_dir)], cwd=root)
+    # without --extensions, madge silently returns {} for .tsx/.jsx projects
+    out, _, code = run(["madge", "--json", "--extensions", "ts,tsx,js,jsx", str(src_dir)],
+                       cwd=root)
     if code != 0 or not out.strip():
         return [], "madge produced no output"
     try:
         graph = json.loads(out)
     except json.JSONDecodeError:
         return [], "madge output was not valid JSON"
-    edges = [(src, dst) for src, deps in graph.items() for dst in deps]
+    # madge paths are relative to src_dir; re-anchor to repo root so they
+    # match line_counts/ranking keys (otherwise PageRank silently sees no graph)
+    prefix = src_dir.relative_to(root).as_posix()
+    prefix = "" if prefix == "." else prefix + "/"
+    edges = [(prefix + src, prefix + dst) for src, deps in graph.items() for dst in deps]
     return edges, "" if edges else "no imports between files detected"
 
 

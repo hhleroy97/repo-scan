@@ -1,5 +1,5 @@
 # Repo index
-_Last scan: 2026-06-10 00:12 UTC_
+_Last scan: 2026-06-10 00:21 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
@@ -9,13 +9,13 @@ _Last scan: 2026-06-10 00:12 UTC_
 
 | Metric | Value |
 |--------|-------|
-| Source files | 34 |
-| Total lines | 3,305 |
-| Languages | PY: 34 |
+| Source files | 35 |
+| Total lines | 3,343 |
+| Languages | PY: 35 |
 | Large files (>300 lines) | 1 |
 | Critical files (>600 lines) | 0 |
 | Branch | main |
-| Last commit | 5abf40e feat: visual layer for generated docs — Mermaid charts, callouts, PageRank-tinted dep graphs |
+| Last commit | c5b6286 fix: emoji-free generated docs — pictographs render as tofu in Obsidian/WSL |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml`, `setup.py` |
 
@@ -31,28 +31,28 @@ _"Imported by" counts direct dependents only; PageRank captures transitive impor
 
 | File | Score | PageRank | Imported by | Commits | CC | Lines |
 |------|-------|----------|-------------|---------|----|-------|
-| `repo_scan/writers.py` | 57.7 | 0.0452 | 1 | 3 | 43 | 393 |
-| `repo_scan/graphs.py` | 52.4 | 0.0452 | 1 | 2 | 55 | 137 |
-| `repo_scan/radar/pipeline.py` | 46.9 | 0.0637 | 2 | 3 | 11 | 292 |
-| `repo_scan/identity.py` | 43.4 | 0.1034 | 4 | 0 | 14 | 81 |
-| `tests/test_radar_pipeline.py` | 37.0 | 0.0373 | 0 | 3 | 19 | 113 |
-| `repo_scan/ranking.py` | 36.2 | 0.0532 | 1 | 0 | 34 | 106 |
-| `repo_scan/config.py` | 34.3 | 0.0981 | 5 | 0 | 0 | 42 |
-| `repo_scan/radar/sources.py` | 29.5 | 0.0558 | 2 | 0 | 14 | 166 |
-| `repo_scan/scanner.py` | 25.0 | 0.0000 | 0 | 3 | 20 | 118 |
-| `setup.py` | 21.8 | 0.0000 | 0 | 5 | 0 | 13 |
-| `pyproject.toml` | 21.8 | 0.0000 | 0 | 5 | 0 | 14 |
-| `README.md` | 21.4 | 0.0000 | 0 | 5 | 0 | 0 |
-| `repo_scan/radar/fetchers.py` | 20.5 | 0.0479 | 1 | 0 | 0 | 170 |
-| `repo_scan/radar/gates.py` | 20.2 | 0.0532 | 1 | 0 | 0 | 85 |
-| `repo_scan/radar/research.py` | 18.8 | 0.0452 | 1 | 0 | 0 | 136 |
+| `repo_scan/writers.py` | 58.4 | 0.0409 | 1 | 4 | 43 | 393 |
+| `repo_scan/graphs.py` | 45.3 | 0.0481 | 2 | 0 | 56 | 140 |
+| `repo_scan/radar/pipeline.py` | 43.6 | 0.0576 | 2 | 3 | 11 | 292 |
+| `repo_scan/radar/sources.py` | 39.3 | 0.0505 | 2 | 3 | 14 | 166 |
+| `repo_scan/radar/cli.py` | 37.0 | 0.1006 | 5 | 0 | 0 | 80 |
+| `repo_scan/ranking.py` | 34.6 | 0.0481 | 1 | 0 | 34 | 106 |
+| `repo_scan/config.py` | 34.4 | 0.0958 | 6 | 0 | 0 | 42 |
+| `tests/test_radar_pipeline.py` | 34.3 | 0.0337 | 0 | 3 | 19 | 113 |
+| `repo_scan/languages.py` | 23.9 | 0.0409 | 1 | 0 | 18 | 66 |
+| `repo_scan/scanner.py` | 23.2 | 0.0000 | 0 | 3 | 20 | 119 |
+| `repo_scan/radar/fetchers.py` | 19.4 | 0.0433 | 1 | 0 | 0 | 170 |
+| `setup.py` | 19.1 | 0.0000 | 0 | 5 | 0 | 13 |
+| `pyproject.toml` | 19.1 | 0.0000 | 0 | 5 | 0 | 14 |
+| `repo_scan/radar/gates.py` | 18.9 | 0.0481 | 1 | 0 | 0 | 85 |
+| `README.md` | 18.8 | 0.0000 | 0 | 5 | 0 | 0 |
 
 ```mermaid
 xychart-beta
     title "Importance score (top files)"
-    x-axis ["writers.py", "graphs.py", "pipeline.py", "identity.py", "test_radar_pipeli…", "ranking.py", "config.py", "sources.py"]
+    x-axis ["writers.py", "graphs.py", "pipeline.py", "sources.py", "cli.py", "ranking.py", "config.py", "test_radar_pipeli…"]
     y-axis "Score" 0 --> 100
-    bar [57.7, 52.4, 46.9, 43.4, 37, 36.2, 34.3, 29.5]
+    bar [58.4, 45.3, 43.6, 39.3, 37, 34.6, 34.4, 34.3]
 ```
 
 ```mermaid
@@ -64,13 +64,13 @@ quadrantChart
     quadrant-2 Complex but stable
     quadrant-3 Quiet
     quadrant-4 Hot but simple
-    writers.py: [0.60, 0.78]
-    graphs.py: [0.40, 0.98]
+    writers.py: [0.80, 0.77]
+    graphs.py: [0.02, 0.98]
     pipeline.py: [0.60, 0.20]
-    identity.py: [0.02, 0.25]
-    test_radar_pipeli…: [0.60, 0.35]
-    ranking.py: [0.02, 0.62]
-    sources.py: [0.02, 0.25]
+    sources.py: [0.60, 0.25]
+    ranking.py: [0.02, 0.61]
+    test_radar_pipeli…: [0.60, 0.34]
+    languages.py: [0.02, 0.32]
     scanner.py: [0.60, 0.36]
     setup.py: [0.98, 0.02]
     pyproject.toml: [0.98, 0.02]
@@ -86,6 +86,7 @@ repo-scan/
 │   │   └── dependency-graph.md
 │   ├── changelog/
 │   │   ├── 2026-06-09-loop.md
+│   │   ├── 2026-06-09-no-emoji-docs.md
 │   │   ├── 2026-06-09-obsidian-graph.md
 │   │   ├── 2026-06-09-pagerank-ranking.md
 │   │   ├── 2026-06-09-phase-a.md
@@ -94,6 +95,7 @@ repo-scan/
 │   │   ├── 2026-06-09-phase-b2-research.md
 │   │   ├── 2026-06-09-phase-b3-loop.md
 │   │   ├── 2026-06-09-phase-b4-autonomy.md
+│   │   ├── 2026-06-09-portability-fixes.md
 │   │   └── 2026-06-09-visual-layer.md
 │   ├── reports/
 │   │   ├── calls.md
@@ -149,6 +151,7 @@ repo-scan/
 │   ├── conftest.py
 │   ├── fake_llm.py
 │   ├── test_phase_a.py
+│   ├── test_portability.py
 │   ├── test_radar_full.py
 │   ├── test_radar_gates.py
 │   ├── test_radar_ingest.py
