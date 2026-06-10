@@ -4,6 +4,11 @@ No build step, no framework, no CDN — everything inline so it works on a
 phone over Tailscale with zero external requests. The page polls /api/state
 and renders four tabs: Now (open-ticket summary, stats, runs, agent feed),
 Gates, Tickets, Activity.
+
+Ticket cards use three-tier disclosure (aligned with ``OPEN_STATUSES`` on the
+Now tab and Tickets tab): glance row (``card.outcome``, ``card.why_line``,
+status, priority, criteria count), tap-to-expand checklist (and inline
+criteria editor when not ready), then full markdown via ``openDoc``.
 """
 
 DASHBOARD_HTML = r"""<!DOCTYPE html>
@@ -88,6 +93,13 @@ nav a .n{display:inline-block;min-width:16px;border-radius:8px;font-size:10px;
 .dot.waiting-on-gate{background:var(--warn)}
 .dot.done{background:var(--ok)}
 .dot.stopped,.dot.failed{background:var(--bad)}
+.ticket-glance{cursor:pointer}
+.ticket-expand{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.crit-list{list-style:none;margin:8px 0}
+.crit-list li{padding:4px 0;font-size:13px}
+.crit-list li:before{content:"☐ ";color:var(--dim)}
+.crit-list li.done:before{content:"☑ ";color:var(--ok)}
+.hint{color:var(--warn);font-size:12px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -161,15 +173,24 @@ function filterOpenTickets(tickets){return tickets.filter(t=>OPEN_TICKET_STATUSE
 function sortTickets(tickets){
   return [...tickets].sort((a,b)=>(TICKET_STATUS_ORDER[a.status]??9)-(TICKET_STATUS_ORDER[b.status]??9))}
 
+function ticketHeadline(t){
+  const c=t.card||{};
+  return c.outcome||t.title||'';
+}
+function ticketWhyLine(t){
+  const c=t.card||{};
+  return c.why_line||'';
+}
 function rOpenTickets(){
   const open=sortTickets(filterOpenTickets(S.tickets));
   if(!open.length)return '';
   let h=`<div class="section">Open tickets (${open.length})</div><div class="card">`;
   h+=open.map(t=>`<div class="run">
     <span class="badge ${TICKET_BADGE_CLS[t.status]||''}">${esc(t.status)}</span>
-    ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
     ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
-    <span style="flex:1"><span class="dim small">${esc(t.id)}</span> ${esc(t.title).slice(0,90)}</span>
+    <span class="badge">${t.criteria_count||0} criteria</span>
+    <span style="flex:1"><span class="dim small">${esc(t.id)}</span> ${esc(ticketHeadline(t)).slice(0,90)}
+    ${ticketWhyLine(t)?`<br><span class="dim small">${esc(ticketWhyLine(t)).slice(0,100)}</span>`:''}</span>
     </div>`).join('');
   h+=`</div><div class="btnrow"><button class="ghost" onclick="setTab('tickets')">View all</button></div>`;
   return h;
@@ -318,14 +339,52 @@ function rTickets(){
       <button class="approve" onclick="newTicket(this)">Create ticket</button>
     </div></div>`;
   if(!ts.length)return h+`<div class="empty">No tickets yet — run a scan or capture an idea above.</div>`;
-  h+=ts.map(t=>`<div class="card">
-    <span class="badge ${TICKET_BADGE_CLS[t.status]||''}">${esc(t.status)}</span>
-    ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
-    ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
-    <div class="title" style="margin-top:8px">${esc(t.title)}</div>
-    ${t.why?`<div class="dim small">${esc(t.why).slice(0,180)}</div>`:''}
-    ${actions(t)}</div>`).join('');
+  h+=ts.map(t=>ticketCard(t)).join('');
   return h;
+}
+function ticketCard(t){
+  const c=t.card||{};
+  const expanded=window._ticketOpen===t.id;
+  const crit=(t.criteria||[]);
+  let body=`<div class="card">
+    <div class="ticket-glance" onclick="toggleTicket('${t.id}')">
+      <span class="badge ${TICKET_BADGE_CLS[t.status]||''}">${esc(t.status)}</span>
+      ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
+      ${t.priority?`<span class="badge">${esc(t.priority)}</span>`:''}
+      <span class="badge">${t.criteria_count||0} criteria</span>
+      <div class="title" style="margin-top:8px">${esc(c.outcome||t.title)}</div>
+      ${c.why_line?`<div class="dim small">${esc(c.why_line).slice(0,180)}</div>`:''}
+      ${c.story?`<div class="dim small" style="margin-top:4px">${esc(c.story).slice(0,160)}</div>`:''}
+      <div class="dim small" style="margin-top:4px">${esc(t.id)} · ${expanded?'tap to collapse':'tap for details'}</div>
+    </div>`;
+  if(expanded){
+    body+=`<div class="ticket-expand">
+      ${c.criteria_summary?`<div class="dim small">${esc(c.criteria_summary)}</div>`:''}
+      <ul class="crit-list">${crit.map((x,i)=>`<li class="${(t.criteria_checked&&t.criteria_checked[i])?'done':''}">${esc(x)}</li>`).join('')}</ul>
+      ${!t.criteria_ready?`<textarea id="crit-${t.id}" rows="3" placeholder="Acceptance criteria, one per line" style="width:100%;margin:8px 0;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit">${esc(crit.join('\n'))}</textarea>
+      <div class="btnrow"><button class="ghost" onclick="saveCriteria('${t.id}',this)">Save criteria</button></div>`:''}
+      <div class="btnrow"><button class="ghost" onclick="openDoc('${t.doc||('tickets/'+t.id+'.md')}')">View ticket</button></div>
+      ${actions(t)}
+      ${!t.criteria_ready&&t.status==='proposed'?`<div class="hint">Define acceptance criteria before approving.</div>`:''}
+    </div>`;
+  }
+  body+=`</div>`;
+  return body;
+}
+function toggleTicket(id){
+  window._ticketOpen=window._ticketOpen===id?null:id;
+  render(true);
+}
+async function saveCriteria(id,btn){
+  const el=document.getElementById('crit-'+id);
+  if(!el)return;
+  const criteria=el.value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!criteria.length){toast('Add at least one criterion');return}
+  btn.disabled=true;
+  try{await api('/api/ticket',{method:'PATCH',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id,criteria})});
+    toast('Criteria saved');setTimeout(refresh,500)}
+  catch(e){toast('Failed: '+e.message);btn.disabled=false}
 }
 async function newTicket(btn){
   const title=document.getElementById('nt-title').value.trim();
@@ -341,8 +400,9 @@ async function newTicket(btn){
   catch(e){toast('Failed: '+e.message);btn.disabled=false}
 }
 function actions(t){
-  const b=(a,l,c)=>`<button class="${c||'ghost'}" onclick="ticketAct('${t.id}','${a}',this)">${l}</button>`;
-  if(t.status==='proposed')return `<div class="btnrow">${b('approve','Approve','approve')}${b('reject','Reject','reject')}</div>`;
+  const approveDis=(!t.criteria_ready&&t.status==='proposed')?' disabled':'';
+  const b=(a,l,c,extra='')=>`<button class="${c||'ghost'}"${extra} onclick="ticketAct('${t.id}','${a}',this)">${l}</button>`;
+  if(t.status==='proposed')return `<div class="btnrow">${b('approve','Approve','approve',approveDis)}${b('reject','Reject','reject')}</div>`;
   if(t.status==='approved')return `<div class="btnrow">${b('start','Mark in-progress')}${b('reject','Reject','reject')}</div>`;
   if(t.status==='in-progress')return `<div class="btnrow">${b('done','Mark done','approve')}</div>`;
   return '';

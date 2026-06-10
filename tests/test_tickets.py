@@ -2,14 +2,18 @@
 
 from pathlib import Path
 
+import pytest
+
 import repo_scan
 from repo_scan.config import DEFAULT_CONFIG
 from repo_scan.tickets import (
+    criteria_ready,
     generate_tickets,
     load_tickets,
     next_ticket_num,
     parse_ticket,
     propose_from_scan,
+    set_ticket_status,
     write_board,
     write_ticket,
 )
@@ -104,6 +108,61 @@ def test_ids_increment_and_roundtrip(tmp_repo: Path):
     assert parsed["fingerprint"] == "x:y"
     assert parsed["title"] == "T: a, b"  # colon/comma survive quoting
     assert next_ticket_num([parsed]) == 2
+
+
+def test_criteria_ready_rejects_placeholders():
+    assert not criteria_ready(["define done"])
+    assert not criteria_ready(["  Define Acceptance Criteria Before Approving  "])
+    assert criteria_ready(["define done", "tests pass"])
+    assert criteria_ready(["Complexity of every function below rank C"])
+
+
+def test_derive_card_from_refactor_ticket(tmp_repo: Path):
+    cfg = dict(DEFAULT_CONFIG)
+    ticket = {
+        "id": "tkt-0099",
+        "title": "Refactor repo_scan/graphs.py (CC 56, 3 commits)",
+        "fingerprint": "refactor:repo_scan/graphs.py",
+        "why": "`repo_scan/graphs.py` is both high-churn (3 commits) and "
+               "high-complexity (total CC 56).",
+        "criteria": ["Complexity of every function below rank C"],
+    }
+    write_ticket(tmp_repo, cfg, ticket)
+    path = tmp_repo / "docs" / "tickets" / "tkt-0099.md"
+    parsed = parse_ticket(path)
+    assert parsed["title"] == ticket["title"]
+    outcome = parsed["card"]["outcome"]
+    assert "repo_scan" not in outcome and "CC" not in outcome
+    assert outcome == "Reduce risk in graphs.py"
+
+
+def test_parse_ticket_card_section_overrides(tmp_repo: Path):
+    cfg = dict(DEFAULT_CONFIG)
+    tdir = tmp_repo / "docs" / "tickets"
+    tdir.mkdir(parents=True)
+    (tdir / "tkt-0100.md").write_text(
+        '---\nid: "tkt-0100"\ntitle: "Technical title"\nstatus: "proposed"\n'
+        'fingerprint: "feature:x"\n---\n\n# Technical title\n\n## Why\n\nBecause.\n\n'
+        "## Card\n\n"
+        "Outcome: Ship the friendly outcome\n"
+        "Story: As a PM I can triage quickly\n"
+        "Title: PM headline\n\n"
+        "## Acceptance criteria\n\n- [ ] real criterion\n")
+    parsed = parse_ticket(tdir / "tkt-0100.md")
+    assert parsed["card"]["outcome"] == "Ship the friendly outcome"
+    assert parsed["card"]["story"] == "As a PM I can triage quickly"
+    assert parsed["card"]["title"] == "PM headline"
+    assert parsed["title"] == "Technical title"
+
+
+def test_approve_blocked_without_valid_criteria(tmp_repo: Path):
+    cfg = dict(DEFAULT_CONFIG)
+    write_ticket(tmp_repo, cfg, {
+        "id": "tkt-0001", "title": "T", "fingerprint": "x:1",
+        "why": "w", "criteria": ["define acceptance criteria before approving"],
+    })
+    with pytest.raises(ValueError, match="acceptance criteria"):
+        set_ticket_status(tmp_repo, cfg, "tkt-0001", "approved")
 
 
 def test_scan_proposes_tickets_end_to_end(tmp_repo_with_imports: Path):

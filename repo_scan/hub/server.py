@@ -77,7 +77,11 @@ def build_state(root: Path, cfg: dict) -> dict:
 
     tickets = []
     for t in load_tickets(root, cfg):
-        row = {k: t.get(k) for k in ("id", "status", "title", "priority", "why")}
+        row = {k: t.get(k) for k in ("id", "status", "title", "priority", "why",
+                                      "criteria", "criteria_checked", "criteria_count",
+                                      "criteria_ready", "criteria_summary")}
+        row["card"] = t.get("card", {})
+        row["doc"] = f"tickets/{t['id']}.md"
         # kind lives in the fingerprint prefix, e.g. "refactor:path/to/file"
         row["kind"] = str(t.get("fingerprint", "")).split(":", 1)[0] or None
         tickets.append(row)
@@ -249,18 +253,53 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._json({"ok": True, "id": t["id"], "status": t["status"]})
 
             if url.path == "/api/ticket":
-                from ..tickets import set_ticket_status
+                from ..tickets import load_tickets, set_ticket_status
                 tid = str(body.get("id", ""))
                 action = str(body.get("action", ""))
                 statuses = {"approve": "approved", "reject": "rejected",
                             "start": "in-progress", "done": "done"}
                 if not (tid and action in statuses):
                     return self._json({"error": "id and valid action required"}, 400)
+                if action == "approve":
+                    ticket = next((t for t in load_tickets(root, cfg)
+                                   if t["id"] == tid), None)
+                    if ticket and not ticket.get("criteria_ready"):
+                        return self._json(
+                            {"error": "acceptance criteria required before approving"}, 400)
                 try:
                     set_ticket_status(root, cfg, tid, statuses[action])
                 except Exception as e:
                     return self._json({"error": str(e)[:200]}, 400)
                 return self._json({"ok": True})
+
+            self._json({"error": "not found"}, 404)
+
+        def do_PATCH(self):
+            if not self._authed():
+                return self._deny()
+            length = int(self.headers.get("Content-Length", 0) or 0)
+            try:
+                body = json.loads(self.rfile.read(length) or b"{}")
+            except json.JSONDecodeError:
+                return self._json({"error": "bad json"}, 400)
+            url = urlparse(self.path)
+
+            if url.path == "/api/ticket":
+                from ..tickets import update_ticket_criteria
+                tid = str(body.get("id", ""))
+                raw = body.get("criteria")
+                if not tid or not isinstance(raw, list):
+                    return self._json({"error": "id and criteria list required"}, 400)
+                criteria = [str(c).strip() for c in raw if str(c).strip()]
+                try:
+                    ticket = update_ticket_criteria(root, cfg, tid, criteria)
+                except Exception as e:
+                    return self._json({"error": str(e)[:200]}, 400)
+                return self._json({
+                    "ok": True,
+                    "criteria_ready": ticket.get("criteria_ready"),
+                    "criteria_count": ticket.get("criteria_count"),
+                })
 
             self._json({"error": "not found"}, 404)
 
