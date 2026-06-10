@@ -11,6 +11,7 @@ from .handoff import write_handoff
 from .identity import get_directory_tree
 from .languages import detect_languages, get_line_counts
 from .ranking import rank_files
+from .tests_map import find_tested_files, is_test_file
 from .trends import append_trend_log, compute_delta, load_previous_summary, summarize_metrics
 from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
 from .writers import (
@@ -87,7 +88,11 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     ranking = rank_files(line_counts, churn, complexity, all_edges,
                          cfg.get("rank_top_n", 15), exclude_prefix=cfg["docs_dir"] + "/")
     tree = get_directory_tree(root, cfg)
-    ok(f"top {len(ranking)} files scored")
+    tested = find_tested_files(list(line_counts))
+    for r in ranking:
+        r["tested"] = r["file"] in tested or is_test_file(r["file"])
+    untested_ranked = sum(1 for r in ranking if not r["tested"])
+    ok(f"top {len(ranking)} files scored ({untested_ranked} without tests)")
 
     node_scores = ranking_node_scores(ranking)
     ts_deps = edges_to_mermaid(ts_edges, node_scores)
@@ -107,7 +112,7 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     append_trend_log(root, cfg, curr_summary, delta)
 
     if cfg.get("radar_enabled"):
-        write_candidates(root, cfg, churn, complexity)
+        write_candidates(root, cfg, churn, complexity, tested=tested)
         churn_files = {c["file"] for c in churn}
         cc_files = {item["file"] for item in complexity}
         if churn_files & cc_files and not quiet:

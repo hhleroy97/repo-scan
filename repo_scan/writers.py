@@ -301,12 +301,14 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
             "_Composite of import-graph PageRank × git churn × complexity × size._",
             "_\"Imported by\" counts direct dependents only; PageRank captures transitive importance._",
             "",
-            "| File | Score | PageRank | Imported by | Commits | CC | Lines |",
-            "|------|-------|----------|-------------|---------|----|-------|",
+            "| File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |",
+            "|------|-------|----------|-------------|---------|----|-------|-------|",
         ]
         for r in ranking:
+            tests = "yes" if r.get("tested") else "**no**"
             lines.append(f"| `{r['file']}` | {r['score']} | {r.get('pagerank', 0):.4f} | "
-                         f"{r['imported_by']} | {r['commits']} | {r['complexity']} | {r['lines']} |")
+                         f"{r['imported_by']} | {r['commits']} | {r['complexity']} | "
+                         f"{r['lines']} | {tests} |")
         lines.append("")
         top = ranking[:8]
         lines += mermaid_bar("Importance score (top files)", "Score",
@@ -376,8 +378,11 @@ def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
     ok(str(path.relative_to(root)))
 
 
-def write_candidates(root: Path, cfg: dict, churn: list, complexity: list):
-    """RADAR trigger feed: files that are both high-churn and complex."""
+def write_candidates(root: Path, cfg: dict, churn: list, complexity: list,
+                     tested: set | None = None):
+    """RADAR trigger feed: files that are both high-churn and complex.
+    Untested candidates get a 2x priority boost — churn x complexity x no
+    safety net is the strongest possible refactor trigger."""
     docs = root / cfg["docs_dir"]
     churn_by_file = {c["file"]: c["commits"] for c in churn}
     cc_by_file: dict[str, int] = {}
@@ -386,11 +391,14 @@ def write_candidates(root: Path, cfg: dict, churn: list, complexity: list):
 
     candidates = []
     for f in set(churn_by_file) & set(cc_by_file):
+        has_tests = tested is None or f in tested
+        priority = churn_by_file[f] * cc_by_file[f] * (1 if has_tests else 2)
         candidates.append({
             "file": f,
             "commits": churn_by_file[f],
             "complexity": cc_by_file[f],
-            "priority": churn_by_file[f] * cc_by_file[f],
+            "tested": has_tests,
+            "priority": priority,
         })
     candidates.sort(key=lambda x: x["priority"], reverse=True)
 
@@ -405,11 +413,13 @@ def write_candidates(root: Path, cfg: dict, churn: list, complexity: list):
     if candidates:
         lines += churn_complexity_quadrant(candidates, "Candidate zone (top-right)")
         lines += [
-            "| File | Commits | Complexity | Priority |",
-            "|------|---------|------------|----------|",
+            "| File | Commits | Complexity | Tests | Priority |",
+            "|------|---------|------------|-------|----------|",
         ]
         for c in candidates[:10]:
-            lines.append(f"| `{c['file']}` | {c['commits']} | {c['complexity']} | {c['priority']} |")
+            tests = "yes" if c["tested"] else "**no** (2x)"
+            lines.append(f"| `{c['file']}` | {c['commits']} | {c['complexity']} | "
+                         f"{tests} | {c['priority']} |")
     else:
         lines += callout("tip", "No files are currently both high-churn and high-complexity")
     lines.append("")
