@@ -14,6 +14,7 @@ kanban-plugin: board
 
 ## Approved
 
+- [ ] [[tkt-0010|Add a list for the open tickets to the now page]]
 
 ## In progress
 
