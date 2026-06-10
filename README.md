@@ -4,6 +4,28 @@
 
 Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
+## Agentic loop (ground truth)
+
+Canonical RADAR behavior — file-backed state under `docs/`, gates pausable from the hub
+or `--approve`.
+
+**Obsidian:** use ASCII diagrams in [docs/architecture/agentic-loop.md](docs/architecture/agentic-loop.md)
+(`[[architecture/agentic-loop]]`) — no horizontal scroll. Mermaid there is optional/vertical only.
+
+**Dashboard tab:** `radar serve` → **Dashboard** — vault audit panels (signal matrix, score histogram, untracked-code queue) plus a provenance graph (pan/zoom, coverage layer, closed-loop edges). Tap a node for the four-signal chain (E/L/C/F). [roadmap](docs/architecture/graph-viewer-roadmap.md). Metrics land in `scan.json` (`vault_health`, `citations`) and `reports/trend.md`.
+
+```
+repo-scan → tickets → RADAR loop → approved spec → radar act → PR → rescan
+```
+
+| Phase | Stages | Gates |
+|-------|--------|-------|
+| **Loop** | Research → Analyze → Draft → Audit → Record | `post_analyze`, `post_audit` |
+| **Act** | pre → Implement → Test → post → commit | `pre_implement`, `post_implement` |
+| **Daemon** | resume gates → rescan → fan-out acts → start loop | budgets cap *new* starts only |
+
+See [NORTH_STAR.md](docs/NORTH_STAR.md) · [RADAR_CONTEXT.md](docs/RADAR_CONTEXT.md).
+
 ---
 
 ## Install (global)

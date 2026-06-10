@@ -23,8 +23,6 @@ The mobile hub **Dashboard** is a **derived view** of canonical docs — not a s
 | Mermaid agentic loop | `repo_scan/hub/agentic_loop.py` → `agentic_loop_mermaid` in `build_state()` |
 | Loop render + live highlight | `repo_scan/hub/ui/_graph_loop.py` (`_STAGE_MARKS` / gate keys) |
 | Vault audit panels | `repo_scan/hub/ui/_graph_dashboard.py`, `repo_scan/provenance.py` |
-| Graph controls stack | `repo_scan/hub/ui/_graph.py` (`rGraphControlsStack`, `.graph-controls-stack`) |
-| Context panels (loop + untracked) | `repo_scan/hub/ui/_graph.py` (`rGraphContextPanels`, `.graph-context-panels`) |
 | Graph API scores / chain | `repo_scan/hub/graph.py` |
 | State contract | `repo_scan/hub/contract.py` (`HUB_STATE_KEYS`) |
 | Trends / scan.json metrics | `repo_scan/trends.py`, `repo_scan/writers.py` (`vault_health`) |
