@@ -188,3 +188,7 @@
 | 2026-06-10 21:37 UTC | post_audit | paused | audit revise: The spec correctly diagnoses current `rGraph()` interleaving and proposes a coherent target order aligned  |
 | 2026-06-10 21:37 UTC | post_analyze | approved (dashboard) | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
 | 2026-06-10 21:37 UTC | post_audit | approved (dashboard) | audit revise: The spec correctly diagnoses current `rGraph()` interleaving and proposes a coherent target order aligned  |
+| 2026-06-10 21:38 UTC | pre_implement | auto | implement [[2026-06-10-move-the-agentic-loop-graph-and-untracke-spec]] on branch radar/tkt-0032 for tkt-0032 |
+| 2026-06-10 21:46 UTC | pre_implement | auto | implement [[2026-06-10-move-the-agentic-loop-graph-and-untracke-spec]] on branch radar/tkt-0032 for tkt-0032 |
+| 2026-06-10 21:46 UTC | post_analyze | approved (dashboard) | Treat hub.act_run as the named explicit contract (already extracted): daemon imports it for orchestration, and add a min |
+| 2026-06-10 21:52 UTC | post_implement | auto | tests passed; 7 files changed, 277 insertions(+), 15 deletions(-) on radar/tkt-0032 — commit? |
