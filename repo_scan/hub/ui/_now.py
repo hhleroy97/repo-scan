@@ -1,4 +1,4 @@
-"""Post-contract ticket helpers, ``rOpenTickets``, ``rLiveRuns``, and ``rNow`` tab renderer."""
+"""Post-contract ticket helpers, ``rLiveRuns``, and ``rNow`` tab renderer."""
 
 _FRAGMENT = r"""/* __HUB_CONTRACT__ */
 function filterOpenTickets(tickets){return tickets.filter(t=>OPEN_TICKET_STATUSES.has(t.status))}
@@ -33,8 +33,6 @@ function rLiveRuns(){
   if(!live.length)return '';
   let h=`<div class="section">Live now (${live.length})</div>`;
   live.forEach(r=>{
-    const gate=r.status==='waiting-on-gate'&&r.gate
-      ?`<div class="btnrow" style="margin-top:8px"><button class="ghost" onclick="setTab('gates')">Gate: ${esc(r.gate)}</button></div>`:'';
     const ev=(S.events||[]).find(e=>r.problem&&e.summary&&e.summary.includes(r.problem.slice(0,40)));
     const evLine=ev?`<div class="dim small">${esc(ev.summary).slice(0,100)}</div>`:'';
     h+=`<div class="card" style="border-color:var(--accent)">
@@ -46,7 +44,7 @@ function rLiveRuns(){
           <span class="badge">${esc(r.kind||'run')}</span>
           ${r.stage_detail?`<div class="dim small" style="margin-top:6px">${esc(r.stage_detail)}</div>`:''}
           <div class="dim small" style="margin-top:4px">${esc(r.problem).slice(0,90)}</div>
-          ${evLine}${gate}
+          ${evLine}
         </div>
       </div></div>`;
   });
@@ -55,32 +53,14 @@ function rLiveRuns(){
 
 function rNow(){
   const sc=S.scan||{};
-  let h=rLiveRuns();
-  if(S.gates.length){
-    h+=`<div class="card" style="border-color:var(--warn)">
-      <div class="title">${S.gates.length} gate(s) waiting on you</div>
-      <div class="dim">${esc(S.gates[0].summary).slice(0,140)}</div>
-      <div class="btnrow"><button class="ghost" onclick="setTab('gates')">Review</button></div></div>`;
-    h+=rOpenTickets();
-  }
-  h+=`<div class="grid">
+  let h=`<div class="grid">
     ${stat(sc.files??'–','Source files')}
     ${stat((sc.lines??0).toLocaleString(),'Lines')}
     ${stat(sc.hotspots??'–','CC hotspots')}
     ${stat(sc.critical??'–','Critical files')}
   </div>`;
-  if(!S.gates.length)h+=rOpenTickets();
-  if(S.runs.length){
-    h+=`<div class="section">Runs</div><div class="card">`+
-      S.runs.map(r=>{
-        const live=['running','queued'].includes(r.status);
-        const stage=r.stage?`<br><span class="dim small">${live?'&#9654; ':''}${esc(r.stage)}${r.stage_detail?' — '+esc(r.stage_detail):''}</span>`:'';
-        return `<div class="run"><span class="dot ${r.status}"></span>
-        <span style="flex:1">${esc(r.problem).slice(0,90)}${stage}</span>
-        <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`}).join('')+
-      `</div>`;
-  }
-  h+=rPRs();
+  h+=rLiveRuns();
+  h+=rNowPRsAndGates();
   h+=rFeed();
   h+=rUsage();
   h+=`<div class="dim small" style="text-align:center;margin-top:14px">

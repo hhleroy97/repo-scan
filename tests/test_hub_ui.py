@@ -108,19 +108,57 @@ def test_open_tickets_section_omitted_when_empty():
     ), "rOpenTickets must omit markup when no open tickets"
 
 
-def test_rnow_places_open_tickets_after_gates_or_stats():
+def test_rnow_layout_metrics_then_live_then_actions():
     start = DASHBOARD_HTML.index("function rNow()")
     end = DASHBOARD_HTML.index("function tok", start)
     src = DASHBOARD_HTML[start:end]
-    assert "h+=rOpenTickets();" in src
-    assert "if(S.gates.length){" in src
-    assert "if(!S.gates.length)h+=rOpenTickets()" in src
-    gates_idx = src.index("if(S.gates.length){")
-    open_after_gates = src.index("h+=rOpenTickets();", gates_idx)
     stats_idx = src.index('<div class="grid">')
-    open_no_gates = src.index("if(!S.gates.length)h+=rOpenTickets()")
-    assert open_after_gates < stats_idx
-    assert stats_idx < open_no_gates
+    live_idx = src.index("h+=rLiveRuns();")
+    actions_idx = src.index("h+=rNowPRsAndGates();")
+    assert stats_idx < live_idx < actions_idx
+    assert "h+=rOpenTickets()" not in src
+    assert "S.runs" not in src
+    assert "gate(s) waiting" not in src
+    assert "setTab('gates')" not in src
+
+
+def test_rnow_prs_and_gates_combined_with_direct_approve():
+    assert "function rNowPRsAndGates()" in DASHBOARD_HTML
+    assert "PRs &amp; gates" in DASHBOARD_HTML
+    start = DASHBOARD_HTML.index("function rNowPRsAndGates()")
+    end = DASHBOARD_HTML.index("function rFeed()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "rGateCard(g,gi)" in src
+    assert "rPRCard" in src
+    assert "gateDecide(" in DASHBOARD_HTML
+    assert "function rGateCard(" in DASHBOARD_HTML
+
+
+def test_dashboard_has_telemetry_section():
+    assert "function rTelemetry()" in DASHBOARD_HTML
+    assert "Pipeline telemetry" in DASHBOARD_HTML
+    assert "S.telemetry" in DASHBOARD_HTML
+
+
+def test_dashboard_has_stage_burn_chart():
+    assert "function rStageBurnChart()" in DASHBOARD_HTML
+    assert "function buildStageChartClient(" in DASHBOARD_HTML
+    assert "function setBurnView(" in DASHBOARD_HTML
+    assert "function setBurnRun(" in DASHBOARD_HTML
+    assert "burn-tabs" in DASHBOARD_HTML
+    assert "Avg / run" in DASHBOARD_HTML
+    assert "burn-chart" in DASHBOARD_HTML
+    assert "pct_time" in DASHBOARD_HTML
+    assert "pct_tokens" in DASHBOARD_HTML
+    assert "views.runs" in DASHBOARD_HTML
+
+
+def test_rlive_runs_omits_gate_navigation():
+    start = DASHBOARD_HTML.index("function rLiveRuns()")
+    end = DASHBOARD_HTML.index("function rNow()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "setTab('gates')" not in src
+    assert "Gate:" not in src
 
 
 def test_rtickets_uses_shared_sort_helpers():
@@ -147,7 +185,7 @@ def test_badge_cls_injected_from_contract(contract_block):
 
 
 _DASHBOARD_HTML_SHA256 = (
-    "110b50e47230d0983c45e7347132b0fe5e13231ac421de83ea926c83173ee977"
+    "e22715fbac1e95a79ff7942dd4ee8392ad95463f4a369b00f264836dc158a542"
 )
 _UI_PACKAGE = Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui"
 _UI_LINE_CAP = 300

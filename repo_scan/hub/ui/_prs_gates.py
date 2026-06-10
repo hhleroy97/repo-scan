@@ -49,28 +49,39 @@ function prShowFixBtn(p){
   if(d.kind&&(Date.now()-(prLast[p.number]?.at||0)<300000))return true;
   return false;
 }
-function rPRs(){
-  const prs=S.prs||[];if(!prs.length)return '';
+function rPRCard(p){
   const ck={passing:['ok','checks passing'],failing:['bad','checks FAILING'],
             pending:['warn','checks running'],none:['','no checks']};
-  return `<div class="section">Pull requests</div>`+prs.map(p=>{
-    const [cls,label]=ck[p.checks]||['',p.checks];
-    const conflict=p.mergeable==='CONFLICTING';
-    const d=p.diagnosis||{};
-    let btns=`<a class="ghost" style="text-decoration:none;text-align:center" href="${esc(p.url)}" target="_blank" rel="noopener">View</a>`;
-    if(prShowFixBtn(p))
-      btns+=`<button class="ghost" onclick="prAct('update',${p.number},this)">Fix &amp; update</button>`;
-    btns+=`<button class="approve" ${conflict?'disabled':''} onclick="prMerge(${p.number},'${esc(p.ticket||'')}',this)">Merge</button>`;
-    const border=p.checks==='failing'||conflict?'style="border-color:var(--bad)"':'';
-    return `<div class="card" ${border} id="pr-${p.number}">
-      <span class="badge ${cls}">${label}</span>
-      ${p.ticket?`<span class="badge">${esc(p.ticket)}</span>`:''}
-      ${conflict?`<span class="badge bad">conflicts</span>`:''}
-      ${p.draft?`<span class="badge">draft</span>`:''}
-      <div class="title" style="margin-top:8px">#${p.number} ${esc(p.title)}</div>
-      <div class="dim small">${esc(p.branch)}</div>
-      ${prDiagBlock(d)}
-      <div class="btnrow">${btns}</div></div>`}).join('');
+  const [cls,label]=ck[p.checks]||['',p.checks];
+  const conflict=p.mergeable==='CONFLICTING';
+  const d=p.diagnosis||{};
+  let btns=`<a class="ghost" style="text-decoration:none;text-align:center" href="${esc(p.url)}" target="_blank" rel="noopener">View</a>`;
+  if(prShowFixBtn(p))
+    btns+=`<button class="ghost" onclick="prAct('update',${p.number},this)">Fix &amp; update</button>`;
+  btns+=`<button class="approve" ${conflict?'disabled':''} onclick="prMerge(${p.number},'${esc(p.ticket||'')}',this)">Merge</button>`;
+  const border=p.checks==='failing'||conflict?'style="border-color:var(--bad)"':'';
+  return `<div class="card" ${border} id="pr-${p.number}">
+    <span class="badge ${cls}">${label}</span>
+    ${p.ticket?`<span class="badge">${esc(p.ticket)}</span>`:''}
+    ${conflict?`<span class="badge bad">conflicts</span>`:''}
+    ${p.draft?`<span class="badge">draft</span>`:''}
+    <div class="title" style="margin-top:8px">#${p.number} ${esc(p.title)}</div>
+    <div class="dim small">${esc(p.branch)}</div>
+    ${prDiagBlock(d)}
+    <div class="btnrow">${btns}</div></div>`;
+}
+function rPRs(){
+  const prs=S.prs||[];if(!prs.length)return '';
+  return `<div class="section">Pull requests</div>`+prs.map(rPRCard).join('');
+}
+function rNowPRsAndGates(){
+  const prs=S.prs||[];
+  const gates=S.gates||[];
+  if(!prs.length&&!gates.length)return '';
+  let h=`<div class="section">PRs &amp; gates</div>`;
+  h+=gates.map((g,gi)=>rGateCard(g,gi)).join('');
+  h+=prs.map(rPRCard).join('');
+  return h;
 }
 function prMerge(number,ticket,btn){
   const failing=(S.prs.find(p=>p.number===number)||{}).checks==='failing';
@@ -147,37 +158,38 @@ function rGateDrawer(g){
   if(dr.excerpt)h+=`<pre class="excerpt">${esc(dr.excerpt)}</pre>`;
   return h+`</div>`;
 }
+function rGateCard(g,gi){
+  const d=g.detail||{};
+  const expanded=window._gateOpen===gi;
+  let body='';
+  if(expanded){
+    if(d.confidence)body+=`<span class="badge info">confidence: ${esc(d.confidence)}</span> `;
+    if(d.audit_verdict)body+=`<span class="badge ${d.audit_verdict==='pass'?'ok':'warn'}">audit: ${esc(d.audit_verdict)}</span>`;
+    if((d.findings||[]).length)body+=`<div class="section">Findings</div><ul class="plain">`+
+      d.findings.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+    if((d.issues||[]).length)body+=`<div class="section">Audit issues</div><ul class="plain">`+
+      d.issues.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+    if((d.risks||[]).length)body+=`<div class="section">Risks</div><ul class="plain">`+
+      d.risks.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
+    body+=rGateDrawer(g);
+  }
+  return `<div class="card" id="gate-${gi}" style="border-color:var(--warn)">
+    <div class="gate-glance" onclick="toggleGate(${gi})">
+      <span class="badge warn">${esc(g.gate)}</span>
+      <div class="title" style="margin-top:8px">${esc(g.summary).slice(0,200)}</div>
+      <div class="dim small">${esc(g.problem).slice(0,160)}</div>
+      <div class="dim small" style="margin-top:4px">${expanded?'tap to collapse':'tap for spec + criteria'}</div>
+    </div>
+    ${body}
+    ${expanded&&d.doc?`<div class="btnrow"><button class="ghost" onclick="openDoc('${esc(d.doc)}')">Read full document</button></div>`:''}
+    <div class="btnrow">
+      <button class="approve" onclick="gateDecide('${esc(g.gate)}',this,'approve')">Approve</button>
+      <button class="reject" onclick="gateDecide('${esc(g.gate)}',this,'reject')">Reject</button>
+    </div></div>`;
+}
 function rGates(){
   if(!S.gates.length)return `<div class="empty">No gates waiting. All clear.</div>`;
-  return S.gates.map((g,gi)=>{
-    const d=g.detail||{};
-    const expanded=window._gateOpen===gi;
-    let body='';
-    if(expanded){
-      if(d.confidence)body+=`<span class="badge info">confidence: ${esc(d.confidence)}</span> `;
-      if(d.audit_verdict)body+=`<span class="badge ${d.audit_verdict==='pass'?'ok':'warn'}">audit: ${esc(d.audit_verdict)}</span>`;
-      if((d.findings||[]).length)body+=`<div class="section">Findings</div><ul class="plain">`+
-        d.findings.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
-      if((d.issues||[]).length)body+=`<div class="section">Audit issues</div><ul class="plain">`+
-        d.issues.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
-      if((d.risks||[]).length)body+=`<div class="section">Risks</div><ul class="plain">`+
-        d.risks.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
-      body+=rGateDrawer(g);
-    }
-    return `<div class="card" id="gate-${gi}">
-      <div class="gate-glance" onclick="toggleGate(${gi})">
-        <span class="badge warn">${esc(g.gate)}</span>
-        <div class="title" style="margin-top:8px">${esc(g.summary).slice(0,200)}</div>
-        <div class="dim small">${esc(g.problem).slice(0,160)}</div>
-        <div class="dim small" style="margin-top:4px">${expanded?'tap to collapse':'tap for spec + criteria'}</div>
-      </div>
-      ${body}
-      ${expanded&&d.doc?`<div class="btnrow"><button class="ghost" onclick="openDoc('${esc(d.doc)}')">Read full document</button></div>`:''}
-      <div class="btnrow">
-        <button class="approve" onclick="gateDecide('${esc(g.gate)}',this,'approve')">Approve</button>
-        <button class="reject" onclick="gateDecide('${esc(g.gate)}',this,'reject')">Reject</button>
-      </div></div>`;
-  }).join('');
+  return S.gates.map((g,gi)=>rGateCard(g,gi)).join('');
 }
 async function gateDecide(gate,btn,decision){
   const g=S.gates.find(x=>x.gate===gate);if(!g)return;
