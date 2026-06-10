@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Refactor repo_scan/scanner.py (CC 27, 8 commits, untested). `repo_scan/scanner.py` is both high-churn (8 commits) and high-complexity (total CC 27) with no matching test file. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-analysis]]"
-drafted_at: "2026-06-10 03:20 UTC"
+drafted_at: "2026-06-10 03:24 UTC"
 ---
 
 # Spec — Refactor repo_scan/scanner.py (CC 27, 8 commits, untested). `repo_scan/scanner.py` is both high-churn (8 commits) and high-complexity (total CC 27) with no matching test file. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 03:20 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 03:24 UTC by radar — **status: approved**_
 
 ## Goal
 

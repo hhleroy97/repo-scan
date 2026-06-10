@@ -1,8 +1,10 @@
 # Research index
-_Rebuilt 2026-06-10 03:15 UTC — 12 source(s)_
+_Rebuilt 2026-06-10 03:26 UTC — 14 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]] | github | amd, circular-dependencies, cli, commonjs, css-preprocessors, dependency-graph, es6-modules, graphviz, javascript, module-resolution, repo, static-analysis, typescript | 2026-06-10 03:26 UTC |
+| [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]] | github | caching, dependencies, dependency-resolution, heroku, package-metadata, pypi, python, repo, rest-api | 2026-06-10 03:25 UTC |
 | [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]] | url | ai-assisted-refactoring, article, behavior-preservation, characterization-tests, legacy-code, mutation-testing, refactoring, safety-net, technical-debt, test-coverage, test-then-refactor | 2026-06-10 03:15 UTC |
 | [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]] | arxiv | arxiv, code-quality, empirical-evaluation, extract-method, hallucination-filtering, intellij-plugin, llm, long-methods, paper, program-slicing, refactoring, static-analysis | 2026-06-10 03:14 UTC |
 | [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]] | github | characterization-tests, dependency-breaking, java, legacy-code, michael-feathers, refactoring, repo, safe-change-algorithm, seams, technical-debt, testability, testing | 2026-06-10 03:14 UTC |

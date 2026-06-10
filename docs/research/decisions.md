@@ -13,3 +13,8 @@
 | 2026-06-10 03:15 UTC | post_analyze | paused | Follow the Feathers change algorithm and the writers spec precedent: Phase 1 adds characterization tests—a fixed fixture |
 | 2026-06-10 03:17 UTC | post_analyze | approved (dashboard) | Follow the Feathers change algorithm and the writers spec precedent: Phase 1 adds characterization tests—a fixed fixture |
 | 2026-06-10 03:20 UTC | post_audit | paused | audit revise: The phased snapshot-then-extract shape matches the writers precedent and scanner hotspots, but the spec ne |
+| 2026-06-10 03:24 UTC | post_analyze | approved (dashboard) | Follow the Feathers change algorithm and the writers spec precedent: Phase 1 adds characterization tests—a fixed fixture |
+| 2026-06-10 03:24 UTC | post_audit | approved (dashboard) | audit revise: The phased snapshot-then-extract shape matches the writers precedent and scanner hotspots, but the spec ne |
+| 2026-06-10 03:27 UTC | post_analyze | paused | Follow the established two-phase pattern: first add tests/test_graphs.py with fixture repos covering Python import varia |
+| 2026-06-10 03:30 UTC | post_analyze | approved (dashboard) | Follow the established two-phase pattern: first add tests/test_graphs.py with fixture repos covering Python import varia |
+| 2026-06-10 03:33 UTC | post_audit | paused | audit revise: Phasing, hotspot metrics, and research-backed ast/madge approach are sound, but radon rank wording is wron |

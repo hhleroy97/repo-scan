@@ -1,9 +1,13 @@
 # Research tags
-_Rebuilt 2026-06-10 03:15 UTC_
+_Rebuilt 2026-06-10 03:26 UTC_
 
 ## ai-assisted-refactoring
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
+
+## amd
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 
 ## article
 
@@ -19,6 +23,10 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## caching
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
 ## characterization-tests
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -28,8 +36,13 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 
+## circular-dependencies
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
 ## cli
 
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
 ## code-quality
@@ -45,9 +58,21 @@ _Rebuilt 2026-06-10 03:15 UTC_
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## commonjs
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
 ## complex-networks
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
+
+## css-preprocessors
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## dependencies
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
 ## dependency-breaking
 
@@ -59,9 +84,14 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 ## dependency-graph
 
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
+
+## dependency-resolution
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
 ## documentation
 
@@ -70,6 +100,10 @@ _Rebuilt 2026-06-10 03:15 UTC_
 ## empirical-evaluation
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
+
+## es6-modules
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 
 ## extract-function
 
@@ -100,9 +134,17 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 
+## graphviz
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
 ## hallucination-filtering
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
+
+## heroku
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
 ## html
 
@@ -122,6 +164,7 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 ## javascript
 
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
 ## legacy-code
@@ -157,9 +200,17 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## module-resolution
+
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
 ## mutation-testing
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
+
+## package-metadata
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
 ## pagerank
 
@@ -176,6 +227,10 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 
+## pypi
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
 ## pytest
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -187,6 +242,7 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 ## python
 
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
@@ -205,6 +261,8 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 ## repo
 
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -217,6 +275,10 @@ _Rebuilt 2026-06-10 03:15 UTC_
 ## reporting
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
+
+## rest-api
+
+- [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
 ## safe-change-algorithm
 
@@ -248,6 +310,7 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 ## static-analysis
 
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
@@ -288,6 +351,7 @@ _Rebuilt 2026-06-10 03:15 UTC_
 
 ## typescript
 
+- [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-phoenix-assistant-impact-graph\|phoenix-assistant/impact-graph — If I change this function, what breaks? Change impact analysis with call graphs…]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 - [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]

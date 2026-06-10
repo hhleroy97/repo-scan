@@ -41,6 +41,8 @@ RADAR_CONFIG_KEYS = {
     "ntfy_topic", "ntfy_server", "dashboard_url",
     # act stage (spec implementation)
     "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
+    # model routing + parallelism
+    "llm_roles", "max_parallel_acts",
 }
 
 

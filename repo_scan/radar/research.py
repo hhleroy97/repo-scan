@@ -73,7 +73,7 @@ def run_research(root: Path, cfg: dict, question: str, max_sources: int = 3) -> 
         existing="\n".join(existing_source_ids(root, cfg)) or "(none)",
         question=question,
         max_sources=max_sources,
-    ), cfg)
+    ), cfg, role="research", root=root)
 
     proposed = proposal.get("sources", [])[:max_sources]
     ingested, failed = [], []
@@ -87,7 +87,7 @@ def run_research(root: Path, cfg: dict, question: str, max_sources: int = 3) -> 
             continue
         source.relevance = why or source.relevance
         try:
-            source = summarize_source(source, text, cfg)
+            source = summarize_source(source, text, cfg, root=root)
         except LLMError as e:
             info(f"summarize failed for {ref} ({e}) — keeping fetched summary")
         write_source(root, cfg, source)

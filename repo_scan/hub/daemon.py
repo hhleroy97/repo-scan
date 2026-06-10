@@ -1,24 +1,31 @@
 """The resident loop runner.
 
 One tick:
-1. If a run is waiting on a gate and a decision has arrived in the inbox,
-   resume the loop (checkpoints make this cheap — completed LLM stages skip).
-2. Otherwise, if the scan is stale, rescan (which also proposes tickets).
-3. Otherwise, if an approved ticket is queued and nothing is running,
-   start a loop for it.
+1. Resume any waiting run whose gate decision arrived (checkpoints make this
+   cheap — completed LLM stages skip). Act runs resume on threads.
+2. If the scan is stale and nothing is mid-flight, rescan (proposes tickets).
+3. Fan out act runs (approved specs) into isolated worktrees, up to
+   max_parallel_acts at once — each on its own thread, each on its own
+   radar/<ticket> branch, so agents never collide.
+4. Start a research loop for the next approved ticket (one at a time —
+   loops share the vault).
 
 All state is file-backed, so the daemon can die and restart at any point;
 the dashboard and CLI keep working against the same files either way.
 """
 
 import json
+import threading
 import time
 from pathlib import Path
 
 from ..utils import header, info, ok, warn
 from .notify import notify
-from .state import (active_run, create_run, load_meta, peek_decision,
+from .state import (active_runs, create_run, load_meta, peek_decision,
                     save_meta, update_run)
+
+# run id -> thread, for in-flight act runs owned by this process
+_act_threads: dict[str, threading.Thread] = {}
 
 
 def _pending_gate_for(root: Path, cfg: dict, problem: str) -> str | None:
@@ -88,7 +95,7 @@ def _run_act(root: Path, cfg: dict, run: dict) -> int:
     from ..radar.act import cmd_act
 
     update_run(root, cfg, run["id"], "running")
-    rc = cmd_act(root, cfg, ticket_id=run.get("ticket"))
+    rc = cmd_act(root, cfg, ticket_id=run.get("ticket"), worktree=True)
 
     if rc == 0:
         update_run(root, cfg, run["id"], "done")
@@ -115,65 +122,94 @@ def _run_act(root: Path, cfg: dict, run: dict) -> int:
     return rc
 
 
+def _spawn_act(root: Path, cfg: dict, run: dict, parallel: bool) -> None:
+    """Run an act either inline (tests, single-slot configs) or on a thread."""
+    if not parallel:
+        _run_act(root, cfg, run)
+        return
+    t = threading.Thread(target=_run_act, args=(root, cfg, run),
+                         name=f"act-{run['id']}", daemon=True)
+    _act_threads[run["id"]] = t
+    t.start()
+
+
 def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
     actions: list[str] = []
-    run = active_run(root, cfg)
+    for rid in [r for r, t in _act_threads.items() if not t.is_alive()]:
+        del _act_threads[rid]
 
-    # 1 — resume a paused run if its decision arrived
-    if run and run["status"] == "waiting-on-gate":
+    max_acts = int(cfg.get("max_parallel_acts", 2))
+    parallel = max_acts > 1
+    active = active_runs(root, cfg)
+    busy = {r["id"] for r in _act_threads}  # threads this process is running
+
+    # 1 — resume paused runs whose decisions arrived
+    for run in active:
+        if run["status"] != "waiting-on-gate" or run["id"] in busy:
+            continue
         if run.get("gate") and peek_decision(root, cfg, run["gate"], run["problem"]):
             info(f"decision arrived for gate {run['gate']} — resuming run {run['id']}")
             if run.get("kind") == "act":
-                _run_act(root, cfg, run)
+                _spawn_act(root, cfg, run, parallel)
             else:
                 _run_loop(root, cfg, run)
             actions.append(f"resumed:{run['id']}")
-        return actions  # while waiting, don't start anything else
+    if actions:
+        active = active_runs(root, cfg)
+        busy = {r["id"] for r in _act_threads}
 
-    if run and run["status"] in ("queued", "running"):
-        # a previous tick (or process) is mid-flight; leave it alone
+    mid_flight = [r for r in active
+                  if r["status"] in ("queued", "running") and r["id"] not in busy]
+    if mid_flight:
+        # another tick/process owns these; leave them alone
         return actions
 
-    # 2 — scheduled scan
-    meta = load_meta(root, cfg)
-    scan_interval = float(cfg.get("daemon_scan_hours", 6)) * 3600
-    if time.time() - float(meta.get("last_scan", 0)) >= scan_interval:
-        from ..scanner import scan
-        info("scheduled scan starting")
-        try:
-            scan(root, quiet=True)
-            actions.append("scanned")
-        except Exception as e:
-            warn(f"scheduled scan failed: {e}")
-            actions.append("scan-failed")
-        meta["last_scan"] = time.time()
-        save_meta(root, cfg, meta)
-        from ..tickets import load_tickets
-        proposed = [t for t in load_tickets(root, cfg) if t["status"] == "proposed"]
-        if proposed:
-            notify(cfg, f"repo-scan: {len(proposed)} ticket(s) awaiting review",
-                   "; ".join(t["title"][:60] for t in proposed[:3]),
-                   tags=["ticket"], click=_dashboard_url(cfg))
-        return actions
-
-    # 3 — act on an approved spec (finish started work before starting new)
-    if cfg.get("act_enabled"):
-        from ..radar.act import act_problem, find_act_ticket
-        picked = find_act_ticket(root, cfg)
-        if picked:
-            ticket, spec_stem = picked
-            problem = act_problem(ticket["id"], spec_stem)
-            run = create_run(root, cfg, problem, ticket=ticket["id"])
-            update_run(root, cfg, run["id"], "queued", kind="act")
-            run["kind"] = "act"
-            info(f"starting act run {run['id']} for ticket {ticket['id']}")
-            _run_act(root, cfg, run)
-            actions.append(f"act-started:{run['id']}")
+    # 2 — scheduled scan (skip while anything is actively running)
+    if not _act_threads:
+        meta = load_meta(root, cfg)
+        scan_interval = float(cfg.get("daemon_scan_hours", 6)) * 3600
+        if time.time() - float(meta.get("last_scan", 0)) >= scan_interval:
+            from ..scanner import scan
+            info("scheduled scan starting")
+            try:
+                scan(root, quiet=True)
+                actions.append("scanned")
+            except Exception as e:
+                warn(f"scheduled scan failed: {e}")
+                actions.append("scan-failed")
+            meta["last_scan"] = time.time()
+            save_meta(root, cfg, meta)
+            from ..tickets import load_tickets
+            proposed = [t for t in load_tickets(root, cfg) if t["status"] == "proposed"]
+            if proposed:
+                notify(cfg, f"repo-scan: {len(proposed)} ticket(s) awaiting review",
+                       "; ".join(t["title"][:60] for t in proposed[:3]),
+                       tags=["ticket"], click=_dashboard_url(cfg))
             return actions
 
-    # 4 — start a research loop for the next approved ticket
-    if cfg.get("radar_enabled"):
+    # 3 — fan out acts on approved specs, up to max_parallel_acts
+    if cfg.get("act_enabled"):
+        from ..radar.act import act_problem, find_act_tickets
+        covered = {r.get("ticket") for r in active_runs(root, cfg)}
+        slots = max_acts - len(_act_threads)
+        for ticket, spec_stem in find_act_tickets(root, cfg):
+            if slots <= 0:
+                break
+            if ticket["id"] in covered:
+                continue
+            problem = act_problem(ticket["id"], spec_stem)
+            run = create_run(root, cfg, problem, ticket=ticket["id"], kind="act")
+            info(f"starting act run {run['id']} for ticket {ticket['id']}")
+            _spawn_act(root, cfg, run, parallel)
+            actions.append(f"act-started:{run['id']}")
+            slots -= 1
+        if actions:
+            return actions
+
+    # 4 — start a research loop for the next approved ticket (one at a time)
+    loops_active = [r for r in active_runs(root, cfg) if r.get("kind") != "act"]
+    if cfg.get("radar_enabled") and not loops_active:
         from ..radar.pipeline import ticket_problem
         from ..tickets import pick_approved_ticket
         ticket = pick_approved_ticket(root, cfg)

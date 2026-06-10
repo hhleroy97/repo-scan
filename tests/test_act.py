@@ -20,7 +20,7 @@ from repo_scan.hub.state import (active_run, load_checkpoint, load_runs,
 from repo_scan.radar.act import act_problem, cmd_act, find_act_ticket
 from repo_scan.tickets import append_ticket_note, load_tickets, set_ticket_status, write_ticket
 
-import time
+import time  # noqa: E402
 
 
 def _git(root: Path, *args: str) -> str:
@@ -122,7 +122,8 @@ def test_act_pauses_and_resumes_via_inbox(act_repo, tmp_path):
 
     # prompt gates, non-interactive -> pause at pre_implement before any work
     assert cmd_act(root, cfg) == 2
-    assert (root / "docs" / "research" / "pending" / "pre_implement.json").exists()
+    pending_dir = root / "docs" / "research" / "pending"
+    assert list(pending_dir.glob("pre_implement*.json"))
     assert not (root / "impl.py").exists()
     assert _git(root, "rev-parse", "--abbrev-ref", "HEAD") != "radar/tkt-0001"
 
@@ -130,8 +131,7 @@ def test_act_pauses_and_resumes_via_inbox(act_repo, tmp_path):
     submit_decision(root, cfg, "pre_implement", problem, "approve")
     assert cmd_act(root, cfg) == 2
     assert (root / "impl.py").exists()
-    pending = json.loads((root / "docs" / "research" / "pending" /
-                          "post_implement.json").read_text())
+    pending = json.loads(next(pending_dir.glob("post_implement*.json")).read_text())
     assert "tests passed" in pending["payload"]["summary"]
 
     # approve post_implement -> resumes from checkpoint (agent NOT re-run), commits
@@ -185,12 +185,55 @@ def test_daemon_runs_act_for_inprogress_ticket(act_repo, tmp_path):
     root, cfg = act_repo
     cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["max_parallel_acts"] = 1  # inline for determinism
     save_meta(root, cfg, {"last_scan": time.time()})  # skip scheduled scan
 
     actions = daemon_tick(root, cfg)
     assert any(a.startswith("act-started:") for a in actions)
     assert load_runs(root, cfg)[0]["status"] == "done"
-    assert (root / "impl.py").exists()
+
+    # daemon acts run in an isolated worktree: the main checkout is untouched,
+    # the implementation lives on the radar branch, the worktree is pruned
+    assert not (root / "impl.py").exists()
+    assert _git(root, "rev-parse", "--abbrev-ref", "HEAD") == "main"
+    assert "VALUE = 42" in _git(root, "show", "radar/tkt-0001:impl.py")
+    from repo_scan.radar.act import worktree_path
+    assert not worktree_path(root, "tkt-0001").exists()
 
     # implemented ticket no longer a candidate -> next tick is a no-op
     assert daemon_tick(root, cfg) == []
+
+
+def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):
+    """Two approved specs -> two act runs in the same tick, isolated worktrees."""
+    root, cfg = act_repo
+    specs = root / "docs" / "specs"
+    (specs / "2026-01-02-second-thing-spec.md").write_text(
+        '---\ntype: "spec"\nstatus: "approved"\n---\n\n# Spec\n\n'
+        "## Goal\nCreate impl.py with VALUE = 42.\n")
+    write_ticket(root, DEFAULT_CONFIG,
+                 {"id": "tkt-0002", "title": "Second thing", "priority": "low",
+                  "fingerprint": "x:2", "why": "w", "criteria": ["c"]})
+    set_ticket_status(root, DEFAULT_CONFIG, "tkt-0002", "in-progress")
+    append_ticket_note(root, DEFAULT_CONFIG, "tkt-0002",
+                       "radar spec approved: [[2026-01-02-second-thing-spec]]")
+    subprocess.run(["git", "add", "-A"], cwd=root, capture_output=True)
+    subprocess.run(["git", "commit", "-qm", "more"], cwd=root, capture_output=True)
+
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["max_parallel_acts"] = 2
+    save_meta(root, cfg, {"last_scan": time.time()})
+
+    actions = daemon_tick(root, cfg)
+    assert sum(a.startswith("act-started:") for a in actions) == 2
+
+    deadline = time.time() + 60
+    while time.time() < deadline:
+        statuses = {r["status"] for r in load_runs(root, cfg)}
+        if statuses == {"done"}:
+            break
+        time.sleep(0.2)
+    assert {r["status"] for r in load_runs(root, cfg)} == {"done"}
+    for tid in ("tkt-0001", "tkt-0002"):
+        assert "VALUE = 42" in _git(root, "show", f"radar/{tid}:impl.py")

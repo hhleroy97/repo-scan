@@ -87,9 +87,9 @@ def run_tests(root: Path, cfg: dict) -> tuple[bool, str]:
     return result.returncode == 0, output[-4000:]
 
 
-def find_act_ticket(root: Path, cfg: dict) -> tuple[dict, str] | None:
-    """Highest-priority in-progress ticket with an approved spec and no
-    implementation note yet. Returns (ticket, spec_stem)."""
+def find_act_tickets(root: Path, cfg: dict) -> list[tuple[dict, str]]:
+    """In-progress tickets with an approved spec and no implementation note
+    yet, highest priority first. Returns [(ticket, spec_stem), ...]."""
     from ..tickets import load_tickets
     order = {"high": 0, "medium": 1, "low": 2}
     candidates = []
@@ -105,11 +105,18 @@ def find_act_ticket(root: Path, cfg: dict) -> tuple[dict, str] | None:
         spec_path = root / cfg["docs_dir"] / "specs" / f"{stems[-1]}.md"
         if spec_path.exists() and 'status: "approved"' in spec_path.read_text(encoding="utf-8"):
             candidates.append((order.get(t.get("priority"), 9), t, stems[-1]))
-    if not candidates:
-        return None
-    candidates.sort(key=lambda x: x[0])
-    _, ticket, stem = candidates[0]
-    return ticket, stem
+    candidates.sort(key=lambda x: (x[0], x[1]["id"]))
+    return [(t, stem) for _, t, stem in candidates]
+
+
+def find_act_ticket(root: Path, cfg: dict) -> tuple[dict, str] | None:
+    found = find_act_tickets(root, cfg)
+    return found[0] if found else None
+
+
+def worktree_path(root: Path, ticket_id: str) -> Path:
+    """Isolated checkout per ticket so parallel agents never collide."""
+    return Path.home() / ".cache" / "repo-scan" / "worktrees" / f"{root.name}-{ticket_id}"
 
 
 def act_problem(ticket_id: str, spec_stem: str) -> str:
@@ -141,8 +148,14 @@ def record_act(root: Path, cfg: dict, ticket_id: str, spec_stem: str, result: di
 
 
 def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
-            approve: list[str] | None = None) -> int:
-    """Returns 0 committed, 1 error, 2 stopped (gate pause/reject or test failure)."""
+            approve: list[str] | None = None, worktree: bool = False) -> int:
+    """Returns 0 committed, 1 error, 2 stopped (gate pause/reject or test failure).
+
+    With worktree=True the implementation happens in an isolated checkout
+    under ~/.cache/repo-scan/worktrees/, so multiple acts can run in
+    parallel without touching this working tree. Vault state (gates,
+    checkpoints, tickets, changelog) always lives in `root`.
+    """
     from ..hub.state import load_checkpoint, save_checkpoint
     from ..tickets import append_ticket_note, load_tickets
     from .pipeline import _finish_loop, _gate_paused
@@ -182,7 +195,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
     info(f"{ticket['id']}: {ticket['title'][:80]}")
 
     # -- preconditions --------------------------------------------------------
-    if not ckpt.get("branch"):
+    if not worktree and not ckpt.get("branch"):
         if _tree_dirty(root, cfg["docs_dir"]):
             err("working tree is dirty (outside the vault) — commit or stash before radar act")
             return 1
@@ -195,15 +208,37 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
         "detail": {"doc": f"specs/{spec_path.name}"},
     }
     if not gate("pre_implement", payload, cfg, root, approved):
-        if not _gate_paused(root, cfg, "pre_implement"):
+        if not _gate_paused(root, cfg, "pre_implement", problem):
             _finish_loop(root, cfg, problem)
             record_act(root, cfg, ticket["id"], spec_stem, result)
         return 2
 
     try:
-        # -- branch ------------------------------------------------------------
+        # -- branch / worktree --------------------------------------------------
         step("[2/5] Branch")
-        if ckpt.get("branch"):
+        work = root  # where the agent edits, tests run, and the commit lands
+        if worktree:
+            wt = worktree_path(root, ticket["id"])
+            if not (wt / ".git").exists():
+                wt.parent.mkdir(parents=True, exist_ok=True)
+                branch_exists = _git(root, "rev-parse", "--verify", "--quiet",
+                                     branch).returncode == 0
+                args = (["worktree", "add", str(wt), branch] if branch_exists
+                        else ["worktree", "add", "-b", branch, str(wt)])
+                r = _git(root, *args)
+                if r.returncode != 0:
+                    err(f"cannot create worktree: {r.stderr.strip()[:200]}")
+                    return 1
+                ok(f"worktree {wt.name} on {branch}")
+            else:
+                info(f"resuming in worktree {wt.name}")
+            work = wt
+            if not ckpt.get("branch"):
+                ckpt["branch"] = branch
+                ckpt["base"] = _current_branch(root)
+                ckpt["worktree"] = str(wt)
+                save_checkpoint(root, cfg, problem, ckpt)
+        elif ckpt.get("branch"):
             if _current_branch(root) != branch:
                 _git(root, "checkout", branch)
             info(f"resuming on {branch}")
@@ -225,7 +260,8 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
         else:
             summary = complete(
                 ACT_PROMPT.format(spec=spec_text[:14000], docs_dir=cfg["docs_dir"]),
-                cfg, timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)), cwd=str(root))
+                cfg, timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)), cwd=str(work),
+                role="act", root=root)
             ckpt["implemented"] = True
             ckpt["agent_summary"] = summary[:1000]
             save_checkpoint(root, cfg, problem, ckpt)
@@ -234,18 +270,19 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
         # -- test (hard gate, bounded fix rounds) -----------------------------------
         step("[4/5] Test")
         rounds = int(cfg.get("act_fix_rounds", 2))
-        passed, output = run_tests(root, cfg)
+        passed, output = run_tests(work, cfg)
         attempt = int(ckpt.get("fix_attempts", 0))
         while not passed and attempt < rounds:
             attempt += 1
             info(f"tests failing — fix round {attempt}/{rounds}")
             complete(FIX_PROMPT.format(
-                test_cmd=cfg.get("test_cmd") or default_test_cmd(root),
+                test_cmd=cfg.get("test_cmd") or default_test_cmd(work),
                 output=output), cfg,
-                timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)), cwd=str(root))
+                timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)), cwd=str(work),
+                role="act_fix", root=root)
             ckpt["fix_attempts"] = attempt
             save_checkpoint(root, cfg, problem, ckpt)
-            passed, output = run_tests(root, cfg)
+            passed, output = run_tests(work, cfg)
         result["tests"] = "passed" if passed else "failed"
         if not passed:
             err(f"tests still failing after {attempt} fix round(s) — "
@@ -253,14 +290,15 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             result["outcome"] = "tests-failed"
             _finish_loop(root, cfg, problem)
             record_act(root, cfg, ticket["id"], spec_stem, result)
+            where = f" (worktree: {work})" if worktree else ""
             append_ticket_note(root, cfg, ticket["id"],
-                               f"act run failed tests on {branch} — needs a human")
+                               f"act run failed tests on {branch} — needs a human{where}")
             return 2
         ok("tests passing")
 
         # -- Gate: post_implement -----------------------------------------------------
         step("[5/5] Gate (post-implement) + commit")
-        diff_stat = _git(root, "diff", "--stat", "HEAD", "--",
+        diff_stat = _git(work, "diff", "--stat", "HEAD", "--",
                          f":(exclude){cfg['docs_dir']}").stdout.strip()
         stat_tail = diff_stat.splitlines()[-1].strip() if diff_stat else "no changes"
         result["diff_stat"] = stat_tail
@@ -273,7 +311,7 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             },
         }
         if not gate("post_implement", payload, cfg, root, approved):
-            if not _gate_paused(root, cfg, "post_implement"):
+            if not _gate_paused(root, cfg, "post_implement", problem):
                 result["outcome"] = "rejected"
                 _finish_loop(root, cfg, problem)
                 record_act(root, cfg, ticket["id"], spec_stem, result)
@@ -282,16 +320,18 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             return 2
 
         # vault churn stays out of the implementation commit
-        _git(root, "add", "-A", "--", f":(exclude){cfg['docs_dir']}")
+        _git(work, "add", "-A", "--", f":(exclude){cfg['docs_dir']}")
         msg = f"radar: implement {ticket['id']} — {ticket['title'][:60]}\n\nSpec: {spec_stem}"
-        r = _git(root, "commit", "-m", msg, timeout=120)
+        r = _git(work, "commit", "-m", msg, timeout=120)
         if r.returncode != 0:
             err(f"commit failed: {r.stderr.strip()[:200]}")
             return 1
-        commit = _git(root, "rev-parse", "--short", "HEAD").stdout.strip()
+        commit = _git(work, "rev-parse", "--short", "HEAD").stdout.strip()
         result["outcome"] = "committed"
         result["commit"] = commit
         ok(f"committed {commit} on {branch}")
+        if worktree:  # branch keeps the commit; the checkout is disposable
+            _git(root, "worktree", "remove", "--force", str(work))
 
         append_ticket_note(root, cfg, ticket["id"],
                            f"implemented: {commit} on {branch} (spec [[{spec_stem}]]) "

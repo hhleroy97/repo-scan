@@ -15,11 +15,11 @@ kanban-plugin: board
 
 ## Approved
 
-- [ ] [[tkt-0002|Refactor repo_scan/scanner.py (CC 27, 8 commits, untested)]]
 - [ ] [[tkt-0003|Refactor repo_scan/graphs.py (CC 56, 3 commits, untested)]]
 
 ## In progress
 
+- [ ] [[tkt-0002|Refactor repo_scan/scanner.py (CC 27, 8 commits, untested)]]
 
 ## Done
 

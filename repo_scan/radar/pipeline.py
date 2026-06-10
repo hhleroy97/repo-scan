@@ -85,7 +85,7 @@ def run_analyze(root: Path, cfg: dict, problem: str, ingested: list[dict]) -> di
         repo_context=repo_context_snippet(root, cfg),
         problem=problem,
         research=_research_digest(root, cfg, ingested),
-    ), cfg)
+    ), cfg, role="analyze", root=root)
     analysis.setdefault("findings", [])
     analysis.setdefault("recommendation", "")
     analysis.setdefault("confidence", "low")
@@ -140,11 +140,13 @@ def run_draft(root: Path, cfg: dict, problem: str, analysis: dict) -> str:
         problem=problem,
         findings="\n".join(f"- {f}" for f in analysis["findings"]),
         recommendation=analysis["recommendation"],
-    ), cfg)
+    ), cfg, role="draft", root=root)
 
 
-def run_audit(cfg: dict, problem: str, spec_text: str) -> dict:
-    audit = complete_json(AUDIT_PROMPT.format(problem=problem, spec=spec_text[:12000]), cfg)
+def run_audit(cfg: dict, problem: str, spec_text: str,
+              root: Path | None = None) -> dict:
+    audit = complete_json(AUDIT_PROMPT.format(problem=problem, spec=spec_text[:12000]),
+                          cfg, role="audit", root=root)
     audit.setdefault("verdict", "revise")
     audit.setdefault("issues", [])
     audit.setdefault("notes", "")
@@ -213,9 +215,11 @@ def record_loop(root: Path, cfg: dict, problem: str, result: dict):
     ok(f"recorded to {path.relative_to(root)}")
 
 
-def _gate_paused(root: Path, cfg: dict, name: str) -> bool:
+def _gate_paused(root: Path, cfg: dict, name: str, problem: str = "") -> bool:
     """After gate() returns False: pending file present = paused, gone = rejected."""
-    return (root / cfg["docs_dir"] / "research" / "pending" / f"{name}.json").exists()
+    from .gates import pending_path
+    legacy = root / cfg["docs_dir"] / "research" / "pending" / f"{name}.json"
+    return pending_path(root, cfg, name, problem).exists() or legacy.exists()
 
 
 def _finish_loop(root: Path, cfg: dict, problem: str):
@@ -293,7 +297,7 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         if not gate("post_analyze", gate1_payload, cfg, root, approved):
             gates_log.append("post_analyze: stopped")
             result["gates"] = "; ".join(gates_log)
-            if not _gate_paused(root, cfg, "post_analyze"):
+            if not _gate_paused(root, cfg, "post_analyze", problem):
                 _finish_loop(root, cfg, problem)
             record_loop(root, cfg, problem, result)
             return 2
@@ -314,13 +318,13 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
             audit = ckpt["audit"]
             info("resumed from checkpoint")
         else:
-            audit = run_audit(cfg, problem, spec_text)
+            audit = run_audit(cfg, problem, spec_text, root=root)
             if audit["verdict"] != "pass" and audit["issues"]:
                 info(f"audit requested revision: {len(audit['issues'])} issue(s)")
                 spec_text = complete(REVISE_PROMPT.format(
                     spec=spec_text, issues="\n".join(f"- {i}" for i in audit["issues"]),
-                ), cfg)
-                audit = run_audit(cfg, problem, spec_text)
+                ), cfg, role="draft", root=root)
+                audit = run_audit(cfg, problem, spec_text, root=root)
             ckpt["spec_text"] = spec_text
             ckpt["audit"] = audit
             save_checkpoint(root, cfg, problem, ckpt)
@@ -343,7 +347,7 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         if not gate("post_audit", payload, cfg, root, approved):
             gates_log.append("post_audit: stopped")
             result["gates"] = "; ".join(gates_log)
-            if not _gate_paused(root, cfg, "post_audit"):
+            if not _gate_paused(root, cfg, "post_audit", problem):
                 _finish_loop(root, cfg, problem)
             record_loop(root, cfg, problem, result)
             return 2

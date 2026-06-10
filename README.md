@@ -156,18 +156,35 @@ radar research "how do X loops work?" # LLM proposes sources, radar ingests them
 radar loop "should we adopt X?"       # full pipeline, pauses at gates for approval
 radar full                            # metric-triggered: top churn x complexity file
 radar act                             # implement an approved spec (tests = hard gate)
+radar top                             # terminal dashboard: runs, gates, LLM usage
 radar daemon                          # resident runner: scans, loops, acts, gate resume
 radar serve                           # mobile dashboard + daemon (port 8800)
 ```
 
-### LLM backend
+### LLM backend, model routing, and the usage ledger
 
 No API keys. `radar` shells out to an agent CLI on PATH — `cursor-agent` or
 `claude` by default, configurable per repo:
 
 ```json
-{ "llm_cli": ["cursor-agent -p --output-format text", "claude -p"] }
+{ "llm_cli": ["cursor-agent -p --output-format json -f", "claude -p --output-format json"] }
 ```
+
+Per-role model routing puts cheap models on the labor and the default
+(frontier) model on the judgment — the spec is already approved by the time
+an act-model touches code, and tests are the backstop:
+
+```json
+{ "llm_roles": { "act": "composer-2.5", "act_fix": "composer-2.5" } }
+```
+
+Roles: `research`, `analyze`, `draft`, `audit`, `act`, `act_fix`. Any role
+without an override uses the backend default.
+
+Every LLM call is appended to `docs/<docs_dir>/.radar/usage.jsonl` with real
+token counts (parsed from the agent CLI's JSON envelope; plain-text backends
+get a chars/4 estimate flagged as such). Both dashboards aggregate it by
+day, model, and role.
 
 ### The Act stage — from approved spec to reviewed commit
 
@@ -185,12 +202,20 @@ Safety: refuses dirty trees, never touches your branch, excludes vault churn
 from the implementation commit, and a failed run leaves the branch for human
 review with a note on the ticket.
 
+**Parallel agents.** Daemon-scheduled acts run in isolated git worktrees
+(`~/.cache/repo-scan/worktrees/`), one per ticket branch, so up to
+`max_parallel_acts` (default 2) implementations proceed concurrently without
+ever touching your checkout — one cheap agent per ticket. `radar act
+--worktree` does the same manually. Successful worktrees are pruned after
+commit; failed ones are kept for inspection.
+
 ```json
 {
   "act_enabled": true,
   "test_cmd": "python3 -m pytest -q",
   "act_timeout": 1800,
-  "act_fix_rounds": 2
+  "act_fix_rounds": 2,
+  "max_parallel_acts": 2
 }
 ```
 
@@ -226,7 +251,13 @@ Loops checkpoint per stage, so a resume skips completed LLM calls.
 ```bash
 radar serve                # 0.0.0.0:8800, token printed on start
 radar serve --port 9000 --no-daemon
+radar top                  # same state in the terminal (curses, stdlib)
 ```
+
+`radar top` is the terminal flavor of the dashboard: live runs, pending
+gates (approve with `a`, reject with `r`), actionable tickets, the LLM token
+ledger by model and role, and the recent decision trail — handy when you're
+already in the shell and don't want to reach for a browser.
 
 Remote access, the low-friction way: install [Tailscale](https://tailscale.com)
 on this machine and your phone, then open

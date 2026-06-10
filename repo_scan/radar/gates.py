@@ -34,19 +34,31 @@ def _pending_dir(root: Path, cfg: dict) -> Path:
     return root / cfg["docs_dir"] / "research" / "pending"
 
 
+def pending_path(root: Path, cfg: dict, name: str, problem: str = "") -> Path:
+    """Pending files are keyed by (gate, problem) so concurrent runs paused
+    at the same gate never clobber each other."""
+    suffix = ""
+    if problem:
+        from ..hub.state import problem_key
+        suffix = f"-{problem_key(problem)}"
+    return _pending_dir(root, cfg) / f"{name}{suffix}.json"
+
+
 def write_pending(root: Path, cfg: dict, name: str, payload: dict) -> Path:
-    pending = _pending_dir(root, cfg)
-    pending.mkdir(parents=True, exist_ok=True)
-    path = pending / f"{name}.json"
+    problem = str(payload.get("problem", "") or payload.get("summary", ""))
+    path = pending_path(root, cfg, name, problem)
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"gate": name, "written_at": now_iso(), "payload": payload},
                                indent=2) + "\n", encoding="utf-8")
     return path
 
 
-def clear_pending(root: Path, cfg: dict, name: str):
-    path = _pending_dir(root, cfg) / f"{name}.json"
-    if path.exists():
-        path.unlink()
+def clear_pending(root: Path, cfg: dict, name: str, problem: str = ""):
+    # also sweep the legacy un-keyed filename so old pauses don't linger
+    for path in (pending_path(root, cfg, name, problem),
+                 _pending_dir(root, cfg) / f"{name}.json"):
+        if path.exists():
+            path.unlink()
 
 
 def record_decision(root: Path, cfg: dict, name: str, decision: str, summary: str):
@@ -68,10 +80,11 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
     pending state from a previous paused run).
     """
     summary = str(payload.get("summary", ""))[:200]
+    problem = str(payload.get("problem", "") or summary)
     mode = gate_mode(name, cfg)
 
     if approved and name in approved:
-        clear_pending(root, cfg, name)
+        clear_pending(root, cfg, name, problem)
         record_decision(root, cfg, name, "approved (--approve)", summary)
         ok(f"gate {name}: pre-approved")
         return True
@@ -88,12 +101,11 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
 
     # prompt mode — check the decision inbox first so remote surfaces
     # (dashboard, future channels) count as answers, not just the terminal
-    problem = str(payload.get("problem", "") or summary)
     if problem:
         from ..hub.state import peek_decision
         inbox = peek_decision(root, cfg, name, problem)
         if inbox:
-            clear_pending(root, cfg, name)
+            clear_pending(root, cfg, name, problem)
             who = inbox.get("source", "remote")
             note = f" — {inbox['comment'][:80]}" if inbox.get("comment") else ""
             if inbox["decision"] == "approve":
@@ -115,7 +127,7 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
     print(f"  {summary or '(no summary)'}")
     answer = input("  approve and continue? [y/N] ").strip().lower()
     if answer in ("y", "yes"):
-        clear_pending(root, cfg, name)
+        clear_pending(root, cfg, name, problem)
         record_decision(root, cfg, name, "approved", summary)
         return True
     record_decision(root, cfg, name, "rejected", summary)

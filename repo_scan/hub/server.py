@@ -89,6 +89,7 @@ def build_state(root: Path, cfg: dict) -> dict:
                 activity.append({"when": cells[0], "gate": cells[1],
                                  "decision": cells[2], "summary": cells[3]})
 
+    from ..radar.llm import usage_summary
     return {
         "version": VERSION,
         "repo": {"name": root.name, "branch": git_branch(root)},
@@ -98,6 +99,7 @@ def build_state(root: Path, cfg: dict) -> dict:
         "tickets": tickets,
         "runs": load_runs(root, cfg)[::-1][:10],
         "activity": activity,
+        "usage": usage_summary(root, cfg),
     }
 
 

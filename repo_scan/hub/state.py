@@ -13,11 +13,16 @@ through queued -> running -> waiting-on-gate -> done/stopped/failed.
 import hashlib
 import json
 import secrets
+import threading
 from pathlib import Path
 
 from ..utils import now_iso
 
 RUN_STATUSES = ("queued", "running", "waiting-on-gate", "done", "stopped", "failed")
+
+# guards runs.json read-modify-write within one process (daemon thread,
+# server thread, and parallel act threads all share it)
+_RUNS_LOCK = threading.Lock()
 
 
 def state_dir(root: Path, cfg: dict) -> Path:
@@ -124,42 +129,49 @@ def _save_runs(root: Path, cfg: dict, runs: list[dict]):
         json.dumps(runs, indent=2) + "\n", encoding="utf-8")
 
 
-def create_run(root: Path, cfg: dict, problem: str, ticket: str | None = None) -> dict:
-    runs = load_runs(root, cfg)
-    run = {
-        "id": problem_key(problem),
-        "problem": problem,
-        "ticket": ticket,
-        "status": "queued",
-        "gate": None,
-        "created_at": now_iso(),
-        "updated_at": now_iso(),
-    }
-    # one record per problem: restarting a known problem reuses its slot
-    runs = [r for r in runs if r["id"] != run["id"]]
-    runs.append(run)
-    _save_runs(root, cfg, runs[-50:])
-    return run
+def create_run(root: Path, cfg: dict, problem: str, ticket: str | None = None,
+               kind: str = "loop") -> dict:
+    with _RUNS_LOCK:
+        runs = load_runs(root, cfg)
+        run = {
+            "id": problem_key(problem),
+            "problem": problem,
+            "ticket": ticket,
+            "kind": kind,
+            "status": "queued",
+            "gate": None,
+            "created_at": now_iso(),
+            "updated_at": now_iso(),
+        }
+        # one record per problem: restarting a known problem reuses its slot
+        runs = [r for r in runs if r["id"] != run["id"]]
+        runs.append(run)
+        _save_runs(root, cfg, runs[-50:])
+        return run
 
 
 def update_run(root: Path, cfg: dict, run_id: str, status: str, **fields):
     if status not in RUN_STATUSES:
         raise ValueError(f"unknown run status {status!r}")
-    runs = load_runs(root, cfg)
-    for r in runs:
-        if r["id"] == run_id:
-            r["status"] = status
-            r["updated_at"] = now_iso()
-            r.update(fields)
-            break
-    _save_runs(root, cfg, runs)
+    with _RUNS_LOCK:
+        runs = load_runs(root, cfg)
+        for r in runs:
+            if r["id"] == run_id:
+                r["status"] = status
+                r["updated_at"] = now_iso()
+                r.update(fields)
+                break
+        _save_runs(root, cfg, runs)
+
+
+def active_runs(root: Path, cfg: dict) -> list[dict]:
+    return [r for r in load_runs(root, cfg)
+            if r["status"] in ("queued", "running", "waiting-on-gate")]
 
 
 def active_run(root: Path, cfg: dict) -> dict | None:
-    for r in reversed(load_runs(root, cfg)):
-        if r["status"] in ("queued", "running", "waiting-on-gate"):
-            return r
-    return None
+    active = active_runs(root, cfg)
+    return active[-1] if active else None
 
 
 # --- meta (daemon bookkeeping) ------------------------------------------------

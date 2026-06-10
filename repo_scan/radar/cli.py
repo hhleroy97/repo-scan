@@ -34,7 +34,7 @@ def cmd_ingest(root: Path, cfg: dict, ref: str, summarize: bool) -> int:
         from .llm import LLMError, summarize_source
         step("Summarizing (LLM)")
         try:
-            source = summarize_source(source, text, cfg)
+            source = summarize_source(source, text, cfg, root=root)
             ok(f"summary + {len(source.key_claims)} key claim(s)")
         except LLMError as e:
             info(f"LLM unavailable ({e}) — keeping fetched summary")
@@ -79,6 +79,11 @@ def main():
                        help="Target ticket (default: highest-priority in-progress with approved spec)")
     p_act.add_argument("--approve", action="append", default=[], metavar="GATE",
                        help="Pre-approve a gate (pre_implement, post_implement); repeatable")
+    p_act.add_argument("--worktree", action="store_true",
+                       help="Implement in an isolated worktree (parallel-safe)")
+
+    p_top = sub.add_parser("top", help="Terminal dashboard: runs, gates, tickets, LLM usage")
+    p_top.add_argument("--poll", type=float, default=3.0, help="Refresh seconds (default 3)")
 
     p_daemon = sub.add_parser("daemon", help="Resident runner: scans, loops, gate resume")
     p_daemon.add_argument("--poll", type=int, default=None, metavar="SECONDS")
@@ -115,7 +120,12 @@ def main():
 
     if args.command == "act":
         from .act import cmd_act
-        sys.exit(cmd_act(root, cfg, ticket_id=args.ticket, approve=args.approve))
+        sys.exit(cmd_act(root, cfg, ticket_id=args.ticket, approve=args.approve,
+                         worktree=args.worktree))
+
+    if args.command == "top":
+        from ..hub.tui import run_tui
+        sys.exit(run_tui(root, cfg, poll_seconds=args.poll))
 
     if args.command == "daemon":
         from ..hub.daemon import cmd_daemon

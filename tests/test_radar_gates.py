@@ -40,8 +40,8 @@ def test_gate_deny_stops(tmp_repo):
 def test_gate_prompt_noninteractive_pauses_with_pending_file(tmp_repo):
     cfg = _cfg(tmp_repo)  # prompt mode; pytest stdin is not a tty
     assert gate("post_analyze", {"summary": "needs a human"}, cfg, tmp_repo) is False
-    pending = tmp_repo / "docs" / "research" / "pending" / "post_analyze.json"
-    assert pending.exists()
+    # pending files are keyed by (gate, problem) so parallel runs don't clobber
+    pending = next((tmp_repo / "docs" / "research" / "pending").glob("post_analyze*.json"))
     data = json.loads(pending.read_text())
     assert data["gate"] == "post_analyze"
     assert data["payload"]["summary"] == "needs a human"
@@ -52,7 +52,7 @@ def test_gate_preapproved_consumes_pending(tmp_repo):
     write_pending(tmp_repo, cfg, "post_analyze", {"summary": "s"})
     assert gate("post_analyze", {"summary": "s"}, cfg, tmp_repo,
                 approved={"post_analyze"}) is True
-    assert not (tmp_repo / "docs" / "research" / "pending" / "post_analyze.json").exists()
+    assert not list((tmp_repo / "docs" / "research" / "pending").glob("post_analyze*.json"))
     decisions = (tmp_repo / "docs" / "research" / "decisions.md").read_text()
     assert "approved (--approve)" in decisions
 

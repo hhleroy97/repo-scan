@@ -159,8 +159,22 @@ function rNow(){
         <span class="badge">${r.status}${r.gate?': '+r.gate:''}</span></div>`).join('')+
       `</div>`;
   }
+  h+=rUsage();
   h+=`<div class="dim small" style="text-align:center;margin-top:14px">
     last scan ${esc(sc.generated_at||'never')} · refreshed ${esc(S.now)}</div>`;
+  return h;
+}
+function tok(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'k':String(n??0)}
+function rUsage(){
+  const u=S.usage;if(!u||!u.total||!u.total.calls)return '';
+  const row=(name,a)=>`<div class="run"><span style="flex:1">${esc(name)}</span>
+    <span class="dim small">${a.calls} calls</span>
+    <span class="badge">${tok(a.input_tokens)} in · ${tok(a.output_tokens)} out</span></div>`;
+  let h=`<div class="section">LLM usage${u.total.estimated?' (some estimated)':''}</div><div class="card">`;
+  h+=row('Today',u.today)+row('All time',u.total);
+  h+=Object.entries(u.by_model).map(([m,a])=>row(m,a)).join('');
+  if(u.total.cost_usd!=null)h+=`<div class="dim small" style="margin-top:6px">reported cost: $${u.total.cost_usd}</div>`;
+  h+=`</div>`;
   return h;
 }
 function stat(v,l){return `<div class="card stat"><div class="v">${v}</div>

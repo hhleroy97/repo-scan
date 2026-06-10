@@ -1,5 +1,10 @@
 {
   "radar_enabled": true,
   "act_enabled": true,
-  "test_cmd": "python3 -m pytest -q"
+  "test_cmd": "python3 -m pytest -q",
+  "llm_roles": {
+    "act": "composer-2.5",
+    "act_fix": "composer-2.5"
+  },
+  "max_parallel_acts": 2
 }
