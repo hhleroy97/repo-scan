@@ -142,3 +142,5 @@
 | 2026-06-10 18:33 UTC | post_audit | paused | audit revise: The package/concat/contract-injection approach is sound and line caps are achievable, but fragment boundar |
 | 2026-06-10 18:35 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |
 | 2026-06-10 18:35 UTC | post_audit | approved (dashboard) | audit revise: The package/concat/contract-injection approach is sound and line caps are achievable, but fragment boundar |
+| 2026-06-10 18:36 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-hub-ui-py-706-lines-repo-spec]] on branch radar/tkt-0025 for tkt-0025 |
+| 2026-06-10 18:39 UTC | post_implement | auto | tests passed; 3 files changed, 31 insertions(+), 713 deletions(-) on radar/tkt-0025 — commit? |

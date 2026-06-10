@@ -17,10 +17,10 @@ kanban-plugin: board
 
 ## Approved
 
-- [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]]
 
 ## In progress
 
+- [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]]
 
 ## Done
 
