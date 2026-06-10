@@ -111,3 +111,5 @@
 | 2026-06-10 13:44 UTC | pre_implement | auto | implement [[2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-spec]] on branch radar/tkt-0006 for tkt-0006 |
 | 2026-06-10 13:47 UTC | post_implement | auto | tests passed; 1 file changed, 252 insertions(+), 152 deletions(-) on radar/tkt-0006 — commit? |
 | 2026-06-10 13:49 UTC | post_implement | paused | PROTECTED paths touched (repo_scan/config.py) — tests passed; 12 files changed, 412 insertions(+), 32 deletions(-) on ra |
+| 2026-06-10 14:02 UTC | pre_implement | auto | implement [[2026-06-10-i-want-to-add-a-more-robust-way-to-visua-spec]] on branch radar/tkt-0012 for tkt-0012 |
+| 2026-06-10 14:02 UTC | post_implement | approved (dashboard) | PROTECTED paths touched (repo_scan/config.py) — tests passed; 12 files changed, 412 insertions(+), 32 deletions(-) on ra |
