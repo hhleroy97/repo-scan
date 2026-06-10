@@ -96,7 +96,11 @@ def _fetch_open_prs(root: Path) -> list[dict]:
 
 
 def merge_pr(root: Path, cfg: dict, number: int) -> tuple[bool, str]:
-    """Squash-merge a PR and delete its branch. Returns (ok, message)."""
+    """Squash-merge a PR, delete its branch, and sync the local checkout.
+
+    The sync matters: the merge happens on GitHub, so without it the hub's
+    working copy falls behind and every later scan/act runs against stale
+    code. Returns (ok, message)."""
     if not shutil.which("gh"):
         return False, "gh CLI not found on the hub machine"
     try:
@@ -108,7 +112,28 @@ def merge_pr(root: Path, cfg: dict, number: int) -> tuple[bool, str]:
     if r.returncode != 0:
         return False, (r.stderr.strip() or r.stdout.strip())[:300]
     _note_merged(root, cfg, number)
-    return True, f"PR #{number} squash-merged, branch deleted"
+    sync = sync_local(root)
+    return True, f"PR #{number} squash-merged, branch deleted — {sync}"
+
+
+def sync_local(root: Path) -> str:
+    """Fetch origin and fast-forward the current branch. Never destructive:
+    --ff-only refuses anything that would rewrite or merge local work."""
+    def _git(*args: str, timeout: int = 60) -> subprocess.CompletedProcess:
+        return subprocess.run(["git", *args], cwd=root, capture_output=True,
+                              text=True, timeout=timeout)
+    try:
+        r = _git("fetch", "origin", timeout=120)
+        if r.returncode != 0:
+            return f"fetch failed: {r.stderr.strip()[:120]}"
+        branch = _git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+        r = _git("pull", "--ff-only", "origin", branch)
+        if r.returncode != 0:
+            return (f"fetched, but {branch} not fast-forwarded "
+                    f"({r.stderr.strip()[:120]})")
+        return f"local {branch} synced with origin"
+    except (subprocess.TimeoutExpired, OSError) as e:
+        return f"sync skipped ({e})"
 
 
 def update_pr_branch(root: Path, number: int) -> tuple[bool, str]:

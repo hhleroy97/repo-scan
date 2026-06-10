@@ -91,6 +91,42 @@ def test_merge_pr_squash_deletes_and_notes_ticket(tmp_repo, fake_gh):
     assert any("PR #7 merged" in e["text"] for e in load_events(tmp_repo, cfg))
 
 
+def test_merge_pr_syncs_local_checkout(tmp_repo, tmp_path, fake_gh):
+    """After a GitHub-side merge, the hub's checkout fast-forwards so later
+    scans/acts run against the merged code."""
+    import subprocess
+
+    def run(args, cwd):
+        return subprocess.run(args, cwd=cwd, check=True, capture_output=True)
+
+    remote = tmp_path / "origin.git"
+    run(["git", "clone", "--bare", "-q", str(tmp_repo), str(remote)], tmp_path)
+    run(["git", "remote", "add", "origin", str(remote)], tmp_repo)
+
+    # someone (GitHub's squash-merge) advances origin/main past local
+    clone = tmp_path / "clone"
+    run(["git", "clone", "-q", str(remote), str(clone)], tmp_path)
+    run(["git", "config", "user.email", "t@t.com"], clone)
+    run(["git", "config", "user.name", "T"], clone)
+    (clone / "merged.py").write_text("MERGED = True\n")
+    run(["git", "add", "."], clone)
+    run(["git", "commit", "-qm", "squash-merge of PR"], clone)
+    run(["git", "push", "-q", "origin", "main"], clone)
+    assert not (tmp_repo / "merged.py").exists()
+
+    cfg = load_config(tmp_repo)
+    done, msg = merge_pr(tmp_repo, cfg, 9)
+    assert done and "synced with origin" in msg
+    assert (tmp_repo / "merged.py").exists()  # local main fast-forwarded
+
+
+def test_merge_pr_sync_never_destroys_local_work(tmp_repo, fake_gh):
+    """No origin configured: merge still succeeds, sync degrades to a note."""
+    cfg = load_config(tmp_repo)
+    done, msg = merge_pr(tmp_repo, cfg, 9)
+    assert done and ("fetch failed" in msg or "sync skipped" in msg)
+
+
 def test_merge_pr_failure_propagates_message(tmp_repo, tmp_path, monkeypatch):
     bindir = tmp_path / "bin2"
     bindir.mkdir()
