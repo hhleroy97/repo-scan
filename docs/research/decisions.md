@@ -149,3 +149,5 @@
 | 2026-06-10 18:51 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
 | 2026-06-10 18:52 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/tickets.py` into `repo_scan/tickets/` with modules `constants`, `parse`, `evidence`, `propose`, `io`, |
 | 2026-06-10 18:55 UTC | post_audit | paused | audit revise: The split boundaries, ≤300 cap feasibility, facade re-export strategy, and lazy-import cycle breaks are so |
+| 2026-06-10 19:09 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/tickets.py` into `repo_scan/tickets/` with modules `constants`, `parse`, `evidence`, `propose`, `io`, |
+| 2026-06-10 19:09 UTC | post_audit | approved (dashboard) | audit revise: The split boundaries, ≤300 cap feasibility, facade re-export strategy, and lazy-import cycle breaks are so |

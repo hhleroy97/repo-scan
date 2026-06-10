@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Split repo_scan/tickets.py (654 lines). `repo_scan/tickets.py` is 654 lines — past the 600-line critical threshold where files become hard to navigate and review. Acceptance criteria: No resulting file above 300 lines; All tests still pass. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-analysis]]"
-drafted_at: "2026-06-10 18:55 UTC"
+drafted_at: "2026-06-10 19:09 UTC"
 ---
 
 # Spec — Split repo_scan/tickets.py (654 lines). `repo_scan/tickets.py` is 654 lines — past the 600-line critical threshold where files become hard to navigate and review. Acceptance criteria: No resulting file above 300 lines; All tests still pass. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 18:55 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 19:09 UTC by radar — **status: approved**_
 
 I'll inspect `tickets.py`, its imports, tests, and the prior UI split so the spec matches the repo.
 ## Goal
