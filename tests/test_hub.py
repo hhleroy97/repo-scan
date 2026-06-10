@@ -362,6 +362,65 @@ def test_dashboard_html_served(hub_server):
     assert "repo-scan hub" in html and "/api/state" in html
 
 
+def test_event_bus_broadcast():
+    from repo_scan.hub.events import broadcast, subscribe, unsubscribe
+    q = subscribe()
+    try:
+        broadcast({"type": "refresh"})
+        assert q.get(timeout=1)["type"] == "refresh"
+    finally:
+        unsubscribe(q)
+
+
+def test_append_event_broadcasts(hub_server):
+    from repo_scan.hub.events import subscribe, unsubscribe
+    root, cfg, token, base = hub_server
+    q = subscribe()
+    try:
+        from repo_scan.hub.state import append_event
+        append_event(root, cfg, "run", "sse test ping")
+        msg = q.get(timeout=2)
+        assert msg["type"] == "feed"
+        assert "sse test" in msg["text"]
+    finally:
+        unsubscribe(q)
+
+
+def test_sse_requires_auth(hub_server):
+    root, cfg, token, base = hub_server
+    assert _get(f"{base}/api/events")[0] == 401
+
+
+def test_sse_streams_connected(hub_server):
+    import urllib.request
+
+    root, cfg, token, base = hub_server
+    req = urllib.request.Request(f"{base}/api/events")
+    req.add_header("X-Radar-Token", token)
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        assert "text/event-stream" in resp.headers.get("Content-Type", "")
+        chunk = resp.fp.read1(256)  # first frame only — stream stays open
+    assert b"data:" in chunk and b"connected" in chunk
+
+
+def test_dashboard_has_sse_client(hub_server):
+    root, cfg, token, base = hub_server
+    code, html = _get(f"{base}/?token={token}")
+    assert code == 200
+    assert "EventSource" in html and "/api/events" in html
+    assert "connectSSE" in html
+
+
+def test_dashboard_loading_states(hub_server):
+    """Slow actions expose busy chrome — not a silent frozen UI."""
+    root, cfg, token, base = hub_server
+    code, html = _get(f"{base}/?token={token}")
+    assert code == 200
+    for needle in ("beginPending", "syncBusyChrome", "busy-bar",
+                   "status-pill", "card-pending", "pending-spinner"):
+        assert needle in html, f"missing loading UX: {needle}"
+
+
 # --- local (machine-private) config overrides ------------------------------------
 
 def test_local_config_merges_after_shared(tmp_repo: Path):

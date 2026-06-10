@@ -16,12 +16,35 @@ drift becomes a hard signal.
 
 **Prerequisite:** Phase 1 live panel + Phase 2 record stage.
 
-## Task 3.1 — SSE on hub
+## Task 3.0 — Loading states pass ✅
 
-Implement `/api/events` SSE per [[url-githits-sse-stdlib-dashboard]]:
-- Push on `append_event`, gate submit, run status change
-- Client `EventSource` triggers `refresh()` or partial DOM update
-- Fallback to adaptive poll if SSE disconnects
+**Problem:** Merge, gate approve, PR remediate, and background refresh can take
+seconds (merge + rescan) or minutes (agent fix). The UI looked frozen — only the
+clicked button disabled with no card or header feedback.
+
+**Shipped (2026-06-10):**
+- Header status pill + animated busy bar during refresh and pending ops
+- Per-card overlay with spinner on PR / gate / ticket actions
+- Long-running PR remediate keeps overlay until background fix completes or times out
+- Document viewer loading state
+
+**Acceptance criteria:**
+- [x] Merge shows "Merging & verifying…" overlay on PR card
+- [x] Gate approve/reject shows card overlay + status pill
+- [x] Background poll shows thin busy bar without wiping pending overlays
+- [x] `fix_started` PR keeps loading state until follow-up refresh
+
+**Files:** `repo_scan/hub/ui.py`, `tests/test_hub.py`
+
+## Task 3.1 — SSE on hub ✅
+
+**Shipped (2026-06-10):**
+- `/api/events` SSE with heartbeat + `connected` frame
+- `events.py` broadcast bus wired from state changes
+- Client `EventSource` → `refresh()`; slower backup poll when live
+- Reconnect after 5s on error; adaptive 3–12s poll when SSE down
+
+**Tests:** `test_event_bus_broadcast`, `test_sse_*`, `test_dashboard_has_sse_client`
 
 ## Task 3.2 — Gate drawer
 

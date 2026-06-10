@@ -33,7 +33,24 @@ header{position:sticky;top:0;z-index:5;background:var(--bg);
   padding:14px 16px 10px;border-bottom:1px solid var(--line);
   display:flex;align-items:baseline;gap:8px}
 header h1{font-size:17px;font-weight:650}
-header .sub{color:var(--dim);font-size:12px;margin-left:auto}
+header .sub{color:var(--dim);font-size:12px;margin-left:auto;display:flex;
+  align-items:center;gap:8px;flex-shrink:0}
+#status-pill{color:var(--accent);font-size:11px;font-weight:600;
+  white-space:nowrap;max-width:42vw;overflow:hidden;text-overflow:ellipsis}
+#busy-bar{position:fixed;top:0;left:0;right:0;height:2px;z-index:40;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  background-size:200% 100%;opacity:0;transition:opacity .2s;pointer-events:none}
+#busy-bar.active{opacity:1;animation:busy-slide 1.1s linear infinite}
+@keyframes busy-slide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.card{position:relative}
+.card.card-pending>.pending-overlay{position:absolute;inset:0;border-radius:var(--r);
+  background:rgba(14,17,22,.72);display:flex;align-items:center;justify-content:center;
+  gap:10px;font-size:13px;font-weight:600;z-index:2}
+.pending-spinner{width:16px;height:16px;border:2px solid var(--line);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.skeleton .card{opacity:.55;pointer-events:none}
+.skeleton .stat .v{background:var(--line);color:transparent;border-radius:6px}
 main{padding:14px 14px 24px;max-width:640px;margin:0 auto}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .card{background:var(--panel);border:1px solid var(--line);
@@ -103,7 +120,9 @@ nav a .n{display:inline-block;min-width:16px;border-radius:8px;font-size:10px;
 </style>
 </head>
 <body>
-<header><h1 id="repo">repo-scan</h1><span class="sub" id="meta"></span></header>
+<header><h1 id="repo">repo-scan</h1>
+<span class="sub"><span id="status-pill" hidden></span><span id="meta"></span></span></header>
+<div id="busy-bar" aria-hidden="true"></div>
 <main id="main"><div class="empty">Loading…</div></main>
 <nav>
   <a href="#now" class="active" data-tab="now">Now</a>
@@ -117,6 +136,8 @@ nav a .n{display:inline-block;min-width:16px;border-radius:8px;font-size:10px;
 <div id="toast"></div>
 <script>
 let S=null, tab=location.hash.replace('#','')||'now';
+const pending=new Map();
+let refreshDepth=0;
 
 function esc(s){return String(s??'').replace(/[&<>"]/g,
   c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -126,25 +147,117 @@ async function api(path,opts){const r=await fetch(path,opts);
   if(!r.ok){const j=await r.json().catch(()=>({}));
     throw new Error(j.error||j.message||r.status)}return r.json()}
 
-let pollMs=12000,pollTimer=null;
+function setMainLoading(msg){
+  document.getElementById('main').innerHTML=
+    `<div class="empty"><span class="pending-spinner" style="display:inline-block;vertical-align:middle;margin-right:8px"></span>${esc(msg)}</div>`;
+}
+function syncBusyChrome(){
+  const pill=document.getElementById('status-pill');
+  const bar=document.getElementById('busy-bar');
+  const labels=[...pending.values()].map(p=>p.label);
+  if(refreshDepth>0)labels.unshift('Refreshing…');
+  if(labels.length){
+    pill.hidden=false;
+    pill.textContent=labels[labels.length-1];
+    bar.classList.add('active');
+  }else{
+    pill.hidden=true;
+    bar.classList.remove('active');
+  }
+  document.querySelectorAll('.card.card-pending').forEach(el=>{
+    if(!pending.has(el.id)){
+      el.classList.remove('card-pending');
+      el.querySelector('.pending-overlay')?.remove();
+    }
+  });
+  pending.forEach((p,key)=>{
+    const el=document.getElementById(key);
+    if(!el)return;
+    el.classList.add('card-pending');
+    let ov=el.querySelector('.pending-overlay');
+    if(!ov){
+      ov=document.createElement('div');
+      ov.className='pending-overlay';
+      ov.innerHTML='<span class="pending-spinner"></span><span></span>';
+      el.appendChild(ov);
+    }
+    ov.querySelector('span:last-child').textContent=p.label;
+  });
+}
+function beginPending(key,label,{btn,btnLabel}={}){
+  pending.set(key,{label,btn,btnLabel:btnLabel||label});
+  if(btn){
+    btn.disabled=true;
+    if(!btn.dataset.prevText)btn.dataset.prevText=btn.textContent;
+    btn.textContent=btnLabel||label;
+  }
+  syncBusyChrome();
+}
+function endPending(key){
+  const p=pending.get(key);
+  if(p?.btn){
+    btnRestore(p.btn);
+  }
+  pending.delete(key);
+  syncBusyChrome();
+}
+function btnRestore(btn){
+  btn.disabled=false;
+  if(btn.dataset.prevText){
+    btn.textContent=btn.dataset.prevText;
+    delete btn.dataset.prevText;
+  }
+}
+
+let pollMs=12000,pollTimer=null,sse=null,sseOk=false,sseRetry=null;
 function schedulePoll(){
   const live=(S&&S.live_runs)||[];
-  const next=live.length?3000:12000;
+  let next;
+  if(sseOk){
+    next=live.length?12000:30000;
+  }else{
+    next=live.length?3000:12000;
+  }
   if(next===pollMs&&pollTimer)return;
   pollMs=next;
   if(pollTimer)clearInterval(pollTimer);
   pollTimer=setInterval(refresh,pollMs);
 }
+function connectSSE(){
+  if(sse||typeof EventSource==='undefined')return;
+  sse=new EventSource('/api/events');
+  sse.onopen=()=>{sseOk=true;if(sseRetry){clearTimeout(sseRetry);sseRetry=null}schedulePoll()};
+  sse.onmessage=(e)=>{
+    try{
+      const msg=JSON.parse(e.data);
+      if(msg.type==='connected')return;
+      refresh();
+    }catch(_){refresh()}
+  };
+  sse.onerror=()=>{
+    sseOk=false;
+    sse.close();
+    sse=null;
+    schedulePoll();
+    if(!sseRetry)sseRetry=setTimeout(connectSSE,5000);
+  };
+}
 async function refresh(){
+  const initial=!S;
+  refreshDepth++;
+  syncBusyChrome();
+  if(initial)setMainLoading('Loading dashboard…');
   try{S=await api('/api/state');
     // hub restarted with new code -> pull fresh HTML/JS (unless mid-form)
     if(S.boot&&window._boot&&window._boot!==S.boot&&!formBusy()){location.reload();return}
     window._boot=S.boot;
     applyPrLast();
     render();
-    schedulePoll()}
+    schedulePoll();
+    syncBusyChrome()}
   catch(e){document.getElementById('main').innerHTML=
     `<div class="empty">Cannot reach hub (${esc(e.message)})</div>`}
+  finally{refreshDepth=Math.max(0,refreshDepth-1);syncBusyChrome()}
 }
 
 function setTab(t){tab=t;
@@ -345,7 +458,10 @@ function prMerge(number,ticket,btn){
   prAct('merge',number,btn);
 }
 async function prAct(op,number,btn){
-  btn.disabled=true;btn.textContent=op==='merge'?'Merging…':'Diagnosing…';
+  const key=`pr-${number}`;
+  const label=op==='merge'?'Merging & verifying…':'Diagnosing & fixing…';
+  beginPending(key,label,{btn,btnLabel:label});
+  let keepPending=false;
   try{
     const r=await fetch('/api/pr/'+op,{method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -355,10 +471,17 @@ async function prAct(op,number,btn){
       throw new Error(j.error||r.status);
     mergePrResult(number,j);
     toast(j.message||(j.ok?'done':'see PR card'));
+    if(j.fix_started){
+      beginPending(key,'Agent fixing in background…',{btn,btnLabel:'Working…'});
+      render(true);
+      setTimeout(()=>{endPending(key);refresh()},8000);
+      keepPending=true;
+      return;
+    }
     render(true);
     setTimeout(refresh,2500);
-  }catch(e){toast('Failed: '+e.message);btn.disabled=false;
-    btn.textContent=op==='merge'?'Merge':'Fix & update'}
+  }catch(e){toast('Failed: '+e.message)}
+  finally{if(!keepPending)endPending(key)}
 }
 function rFeed(){
   const ev=S.events||[];if(!ev.length)return '';
@@ -385,7 +508,7 @@ function stat(v,l){return `<div class="card stat"><div class="v">${v}</div>
 
 function rGates(){
   if(!S.gates.length)return `<div class="empty">No gates waiting. All clear.</div>`;
-  return S.gates.map(g=>{
+  return S.gates.map((g,gi)=>{
     const d=g.detail||{};
     let body='';
     if(d.confidence)body+=`<span class="badge info">confidence: ${esc(d.confidence)}</span> `;
@@ -396,7 +519,7 @@ function rGates(){
       d.issues.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
     if((d.risks||[]).length)body+=`<div class="section">Risks</div><ul class="plain">`+
       d.risks.map(f=>`<li>${esc(f).slice(0,160)}</li>`).join('')+`</ul>`;
-    return `<div class="card">
+    return `<div class="card" id="gate-${gi}">
       <span class="badge warn">${esc(g.gate)}</span>
       <div class="title" style="margin-top:8px">${esc(g.summary).slice(0,200)}</div>
       <div class="dim small">${esc(g.problem).slice(0,160)}</div>
@@ -410,19 +533,23 @@ function rGates(){
 }
 async function gateDecide(gate,btn,decision){
   const g=S.gates.find(x=>x.gate===gate);if(!g)return;
+  const card=btn.closest('.card');
+  const key=card?.id||`gate-${gate}`;
   let comment='';
   if(decision==='reject')comment=prompt('Why? (optional)')||'';
-  btn.disabled=true;
+  const label=decision==='approve'?'Approving — daemon will resume…':'Rejecting…';
+  beginPending(key,label,{btn,btnLabel:label});
   try{await api('/api/gate',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({gate,problem:g.problem,decision,comment})});
     toast(decision==='approve'?'Approved — daemon will resume':'Rejected');
     setTimeout(refresh,800);}
-  catch(e){toast('Failed: '+e.message);btn.disabled=false}
+  catch(e){toast('Failed: '+e.message)}
+  finally{endPending(key)}
 }
 
 function rTickets(){
   const ts=sortTickets(S.tickets);
-  let h=`<div class="card">
+  let h=`<div class="card" id="new-ticket">
     <div class="title">New idea</div>
     <input id="nt-title" placeholder="What should be built or changed?" style="width:100%;margin:8px 0;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px">
     <textarea id="nt-why" placeholder="Why? (optional)" rows="2" style="width:100%;margin-bottom:8px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit"></textarea>
@@ -441,7 +568,7 @@ function ticketCard(t){
   const c=t.card||{};
   const expanded=window._ticketOpen===t.id;
   const crit=(t.criteria||[]);
-  let body=`<div class="card">
+  let body=`<div class="card" id="ticket-${t.id}">
     <div class="ticket-glance" onclick="toggleTicket('${t.id}')">
       <span class="badge ${TICKET_BADGE_CLS[t.status]||''}">${esc(t.status)}</span>
       ${t.kind?`<span class="badge">${esc(t.kind)}</span>`:''}
@@ -475,24 +602,27 @@ async function saveCriteria(id,btn){
   if(!el)return;
   const criteria=el.value.split('\n').map(s=>s.trim()).filter(Boolean);
   if(!criteria.length){toast('Add at least one criterion');return}
-  btn.disabled=true;
+  const key=`ticket-${id}`;
+  beginPending(key,'Saving criteria…',{btn,btnLabel:'Saving…'});
   try{await api('/api/ticket',{method:'PATCH',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({id,criteria})});
     toast('Criteria saved');setTimeout(refresh,500)}
-  catch(e){toast('Failed: '+e.message);btn.disabled=false}
+  catch(e){toast('Failed: '+e.message)}
+  finally{endPending(key)}
 }
 async function newTicket(btn){
   const title=document.getElementById('nt-title').value.trim();
   if(!title){toast('Title required');return}
   const criteria=document.getElementById('nt-criteria').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  btn.disabled=true;
+  beginPending('new-ticket','Creating ticket…',{btn,btnLabel:'Creating…'});
   try{const r=await api('/api/ticket/new',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({title,why:document.getElementById('nt-why').value,
       priority:document.getElementById('nt-priority').value,criteria})});
     toast(`${r.id} created — approve it to start the loop`);
     ['nt-title','nt-why','nt-criteria'].forEach(id=>document.getElementById(id).value='');
     setTimeout(refresh,500)}
-  catch(e){toast('Failed: '+e.message);btn.disabled=false}
+  catch(e){toast('Failed: '+e.message)}
+  finally{endPending('new-ticket')}
 }
 function actions(t){
   const approveDis=(!t.criteria_ready&&t.status==='proposed')?' disabled':'';
@@ -503,10 +633,14 @@ function actions(t){
   return '';
 }
 async function ticketAct(id,action,btn){
-  btn.disabled=true;
+  const key=`ticket-${id}`;
+  const labels={approve:'Approving…',reject:'Rejecting…',start:'Starting…',done:'Closing…'};
+  const label=labels[action]||'Updating…';
+  beginPending(key,label,{btn,btnLabel:label});
   try{await api('/api/ticket',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({id,action})});toast(`${id} ${action}`);setTimeout(refresh,500)}
-  catch(e){toast('Failed: '+e.message);btn.disabled=false}
+  catch(e){toast('Failed: '+e.message)}
+  finally{endPending(key)}
 }
 
 function rActivity(){
@@ -520,15 +654,20 @@ function rActivity(){
 }
 
 async function openDoc(rel){
+  const viewer=document.getElementById('viewer');
+  viewer.classList.add('open');
+  document.getElementById('docpath').textContent=rel;
+  document.getElementById('doctext').innerHTML=
+    '<span class="pending-spinner" style="display:inline-block;vertical-align:middle;margin-right:8px"></span>Loading document…';
   try{const d=await api('/api/doc?path='+encodeURIComponent(rel));
     document.getElementById('docpath').textContent=d.path;
-    document.getElementById('doctext').textContent=d.text;
-    document.getElementById('viewer').classList.add('open')}
-  catch(e){toast('Cannot load doc: '+e.message)}
+    document.getElementById('doctext').textContent=d.text}
+  catch(e){viewer.classList.remove('open');toast('Cannot load doc: '+e.message)}
 }
 function closeDoc(){document.getElementById('viewer').classList.remove('open')}
 
 refresh();
+connectSSE();
 </script>
 </body>
 </html>
