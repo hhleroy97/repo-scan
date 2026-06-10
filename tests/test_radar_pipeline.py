@@ -64,7 +64,7 @@ def test_loop_happy_path_auto_gates(loop_env):
     spec = specs[0].read_text()
     assert "status: approved" in spec
     assert "File-backed gates" in spec
-    assert "**Verdict:** pass" in spec
+    assert "[!success] Audit verdict: pass" in spec
 
     analysis = list((docs / "research" / "analysis").glob("*.md"))
     assert len(analysis) == 1
@@ -139,7 +139,7 @@ def test_loop_revision_round(loop_env):
     assert rc == 0
     spec = next((root / "docs" / "specs").glob("*.md")).read_text()
     assert "Revised." in spec
-    assert "**Verdict:** pass" in spec
+    assert "[!success] Audit verdict: pass" in spec
 
 
 def test_loop_fails_cleanly_without_backend(tmp_repo):

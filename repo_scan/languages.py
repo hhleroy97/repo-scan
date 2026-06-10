@@ -30,7 +30,8 @@ def detect_languages(root: Path, cfg: dict) -> dict[str, list[Path]]:
 
 def get_line_counts(root: Path, cfg: dict) -> dict[str, dict]:
     counts = {}
-    skip = set(cfg["exclude_dirs"])
+    # the generated docs tree is the tool's own output — never audit it
+    skip = set(cfg["exclude_dirs"]) | {cfg["docs_dir"]}
 
     if tool_available("tokei"):
         out, _, code = run(["tokei", "--output", "json"], cwd=root)

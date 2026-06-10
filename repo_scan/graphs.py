@@ -6,19 +6,48 @@ from pathlib import Path
 from .utils import run, tool_available
 
 
-def edges_to_mermaid(edges: list[tuple[str, str]]) -> str | None:
-    """Render (src_module, dst_module) edges as a Mermaid graph."""
+def _node_id(name: str) -> str:
+    return name.replace(".", "_").replace("/", "_").replace("-", "_")
+
+
+def edges_to_mermaid(edges: list[tuple[str, str]],
+                     scores: dict[str, float] | None = None) -> str | None:
+    """Render (src_module, dst_module) edges as a Mermaid graph.
+
+    With `scores` (node name → PageRank), nodes are tinted by importance tier
+    so the hubs are visible in the diagram itself: hot (≥60% of max), warm
+    (≥25%), cold (rest)."""
     if not edges:
         return None
     seen = set()
+    nodes: set[str] = set()
     lines = ["graph TD"]
     for s, t in edges:
         if (s, t) not in seen:
             seen.add((s, t))
-            sl = s.replace(".", "_").replace("/", "_").replace("-", "_")
-            tl = t.replace(".", "_").replace("/", "_").replace("-", "_")
+            nodes.update((s, t))
+            sl, tl = _node_id(s), _node_id(t)
             lines.append(f'  {sl}["{s.split(".")[-1].split("/")[-1]}"] --> {tl}["{t.split(".")[-1].split("/")[-1]}"]')
-    return "\n".join(lines) if len(lines) > 1 else None
+    if len(lines) <= 1:
+        return None
+
+    if scores:
+        max_score = max((scores.get(n, 0.0) for n in nodes), default=0.0)
+        if max_score > 0:
+            tiers: dict[str, list[str]] = {"hot": [], "warm": [], "cold": []}
+            for n in sorted(nodes):
+                ratio = scores.get(n, 0.0) / max_score
+                tier = "hot" if ratio >= 0.6 else ("warm" if ratio >= 0.25 else "cold")
+                tiers[tier].append(_node_id(n))
+            lines += [
+                "  classDef hot fill:#e74c3c,stroke:#922b21,color:#fff",
+                "  classDef warm fill:#f5b041,stroke:#b9770e,color:#1a1a1a",
+                "  classDef cold fill:#d6dbdf,stroke:#85929e,color:#1a1a1a",
+            ]
+            for tier, ids in tiers.items():
+                if ids:
+                    lines.append(f"  class {','.join(ids)} {tier}")
+    return "\n".join(lines)
 
 
 def get_ts_dep_edges(root: Path, ts_files: list[Path]) -> tuple[list[tuple[str, str]], str]:

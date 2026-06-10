@@ -22,6 +22,22 @@ from .writers import (
 )
 
 
+def ranking_node_scores(ranking: list[dict]) -> dict[str, float]:
+    """Map ranking rows to dep-graph node names (dotted modules for Python,
+    relative paths for TS) so graphs can tint nodes by PageRank tier."""
+    scores: dict[str, float] = {}
+    for r in ranking:
+        pr = r.get("pagerank", 0.0)
+        path = r["file"]
+        scores[path] = pr
+        if path.endswith(".py"):
+            parts = path[:-3].split("/")
+            if parts[-1] == "__init__":
+                parts = parts[:-1]
+            scores[".".join(parts)] = pr
+    return scores
+
+
 def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     cfg = load_config(root)
 
@@ -54,11 +70,9 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
 
     step("Building dependency graphs")
     ts_edges, ts_reason = get_ts_dep_edges(root, languages["ts"])
-    ts_deps = edges_to_mermaid(ts_edges)
     py_edges = get_python_dep_edges(root, languages["py"], cfg)
-    py_deps = edges_to_mermaid(py_edges)
-    ok(f"TS: {'graph generated' if ts_deps else f'skipped ({ts_reason})'}")
-    ok(f"Python: {'graph generated' if py_deps else 'skipped (no intra-repo imports)'}")
+    ok(f"TS: {'graph generated' if ts_edges else f'skipped ({ts_reason})'}")
+    ok(f"Python: {'graph generated' if py_edges else 'skipped (no intra-repo imports)'}")
 
     step("Building call graphs")
     c_calls = get_c_call_graph_mermaid(root, languages["c"])
@@ -73,6 +87,10 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
                          cfg.get("rank_top_n", 15), exclude_prefix=cfg["docs_dir"] + "/")
     tree = get_directory_tree(root, cfg)
     ok(f"top {len(ranking)} files scored")
+
+    node_scores = ranking_node_scores(ranking)
+    ts_deps = edges_to_mermaid(ts_edges, node_scores)
+    py_deps = edges_to_mermaid(py_edges, node_scores)
 
     step("Writing docs")
     write_health_report(root, cfg, line_counts, churn, complexity)

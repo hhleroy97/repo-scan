@@ -173,11 +173,15 @@ def write_spec(root: Path, cfg: dict, problem: str, spec_text: str,
         "",
         "## Audit",
         "",
-        f"**Verdict:** {audit['verdict']}  |  {audit['notes']}",
-        "",
     ]
-    if audit["issues"]:
-        lines += [f"- {i}" for i in audit["issues"]] + [""]
+    kind = "success" if audit["verdict"] == "pass" else "warning"
+    lines += [
+        f"> [!{kind}] Audit verdict: {audit['verdict']}",
+        f"> {audit['notes'] or '—'}",
+    ]
+    for issue in audit["issues"]:
+        lines.append(f"> - {issue}")
+    lines.append("")
     if analysis_path is not None:
         lines += ["## Provenance", "", f"- analysis: [[{analysis_path.stem}]]", ""]
     write_doc(path, "\n".join(lines), root)
@@ -191,15 +195,17 @@ def record_loop(root: Path, cfg: dict, problem: str, result: dict):
     path = changelog / f"{now_date()}-loop.md"
     if not path.exists():
         path.write_text(f"# RADAR loop runs — {now_date()}\n", encoding="utf-8")
+    outcome = result["outcome"]
+    kind = "success" if outcome == "approved" else ("warning" if outcome == "stopped" else "danger")
     entry = [
         "",
         f"## {now_iso()} — {problem}",
         "",
-        f"- outcome: **{result['outcome']}**",
-        f"- sources ingested: {result.get('sources', 0)}",
-        f"- confidence: {result.get('confidence', '?')}",
-        f"- spec: {result.get('spec', '—')}",
-        f"- gates: {result.get('gates', '—')}",
+        f"> [!{kind}] outcome: **{outcome}**",
+        f"> - sources ingested: {result.get('sources', 0)}",
+        f"> - confidence: {result.get('confidence', '?')}",
+        f"> - spec: {result.get('spec', '—')}",
+        f"> - gates: {result.get('gates', '—')}",
         "",
     ]
     with path.open("a", encoding="utf-8") as f:

@@ -1,5 +1,5 @@
 # Call graph
-_Generated 2026-06-10 00:00 UTC_
+_Generated 2026-06-10 00:09 UTC_
 
 ## C / C++
 

@@ -7,16 +7,125 @@ from .identity import detect_entry_points, detect_manifests, readme_summary
 from .utils import git_branch, git_last_commit, git_remote_url, now_iso, ok, warn, write_doc
 
 
+# ---------------------------------------------------------------------------
+# Visual helpers — Mermaid charts + Obsidian callouts (also render on GitHub)
+# ---------------------------------------------------------------------------
+
+def callout(kind: str, title: str, body_lines: list[str] | None = None) -> list[str]:
+    """Obsidian callout block (`> [!warning] ...`). GitHub renders the common
+    kinds (note/tip/warning) as alerts too."""
+    lines = [f"> [!{kind}] {title}"]
+    for line in body_lines or []:
+        lines.append(f"> {line}")
+    return lines
+
+
+def _chart_label(text: str, max_len: int = 18) -> str:
+    label = text.split("/")[-1].replace('"', "'")
+    return label if len(label) <= max_len else label[:max_len - 1] + "…"
+
+
+def mermaid_pie(title: str, pairs: list[tuple[str, float]]) -> list[str]:
+    if not pairs:
+        return []
+    lines = ["```mermaid", f'pie title {title}']
+    for label, value in pairs:
+        lines.append(f'    "{label}" : {value:g}')
+    lines += ["```", ""]
+    return lines
+
+
+def mermaid_bar(title: str, y_title: str, labels: list[str], values: list[float],
+                y_max: float | None = None) -> list[str]:
+    if not labels or not values:
+        return []
+    top = y_max if y_max is not None else max(values) or 1
+    label_str = ", ".join(f'"{_chart_label(l)}"' for l in labels)
+    value_str = ", ".join(f"{v:g}" for v in values)
+    return [
+        "```mermaid",
+        "xychart-beta",
+        f'    title "{title}"',
+        f"    x-axis [{label_str}]",
+        f'    y-axis "{y_title}" 0 --> {top:g}',
+        f"    bar [{value_str}]",
+        "```",
+        "",
+    ]
+
+
+def mermaid_quadrant(title: str, x_axis: str, y_axis: str,
+                     quadrants: tuple[str, str, str, str],
+                     points: list[tuple[str, float, float]]) -> list[str]:
+    """quadrantChart with normalized 0..1 points. quadrants order:
+    (top-right, top-left, bottom-left, bottom-right)."""
+    if not points:
+        return []
+    lines = [
+        "```mermaid",
+        "quadrantChart",
+        f"    title {title}",
+        f"    x-axis {x_axis}",
+        f"    y-axis {y_axis}",
+        f"    quadrant-1 {quadrants[0]}",
+        f"    quadrant-2 {quadrants[1]}",
+        f"    quadrant-3 {quadrants[2]}",
+        f"    quadrant-4 {quadrants[3]}",
+    ]
+    seen: set[str] = set()
+    for label, x, y in points:
+        name = _chart_label(label)
+        while name in seen:
+            name += "·"
+        seen.add(name)
+        lines.append(f"    {name}: [{min(max(x, 0.02), 0.98):.2f}, {min(max(y, 0.02), 0.98):.2f}]")
+    lines += ["```", ""]
+    return lines
+
+
+def churn_complexity_quadrant(rows: list[dict], title: str = "Churn vs complexity") -> list[str]:
+    """Shared quadrant: x=churn, y=complexity. Top-right = RADAR candidates."""
+    plot = [r for r in rows if r.get("commits", 0) or r.get("complexity", 0)]
+    max_commits = max((r["commits"] for r in plot), default=0)
+    max_cc = max((r["complexity"] for r in plot), default=0)
+    if not plot or not max_commits or not max_cc:
+        return []
+    points = [(r["file"], r["commits"] / max_commits, r["complexity"] / max_cc)
+              for r in plot[:12]]
+    return mermaid_quadrant(
+        title,
+        "Low churn --> High churn",
+        "Low complexity --> High complexity",
+        ("RADAR candidates", "Complex but stable", "Quiet", "Hot but simple"),
+        points,
+    )
+
+
 def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, complexity: list):
     ts = now_iso()
     warn_n = cfg["line_warn"]
     crit_n = cfg["line_crit"]
     docs = root / cfg["docs_dir"]
 
+    by_dir: dict[str, int] = {}
+    for rel, stats in line_counts.items():
+        top = rel.split("/")[0] if "/" in rel else "(root)"
+        by_dir[top] = by_dir.get(top, 0) + stats["lines"]
+    dir_pairs = sorted(by_dir.items(), key=lambda x: x[1], reverse=True)
+    if len(dir_pairs) > 7:
+        rest = sum(v for _, v in dir_pairs[7:])
+        dir_pairs = dir_pairs[:7] + [("other", rest)]
+    dir_pairs = [(d, v) for d, v in dir_pairs if v > 0]
+
     lines = [
         "# Health report",
         f"_Generated {ts}_  |  _Branch: {git_branch(root)}_  |  _Last commit: {git_last_commit(root)}_",
         "",
+        "## Where the code lives",
+        "",
+    ]
+    lines += mermaid_pie("Lines of code by directory", dir_pairs)
+    lines += [
         "## File sizes",
         "",
         "| File | Lines | Size | Status |",
@@ -43,9 +152,12 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
         lines += ["## Complexity", "", "_radon not available or no Python files_", ""]
 
     if churn:
+        lines += ["## Git churn (most changed files)", ""]
+        top_churn = churn[:10]
+        lines += mermaid_bar("Commits touching each file", "Commits",
+                             [c["file"] for c in top_churn],
+                             [c["commits"] for c in top_churn])
         lines += [
-            "## Git churn (most changed files)",
-            "",
             "| File | Commits |",
             "|------|---------|",
         ]
@@ -56,8 +168,11 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
     alerts = [f for f, s in line_counts.items() if s["lines"] >= crit_n]
     if alerts:
         lines += ["## Action items", ""]
-        for a in alerts:
-            lines.append(f"- [ ] Split `{a}` ({line_counts[a]['lines']} lines)")
+        lines += callout(
+            "warning",
+            f"{len(alerts)} file(s) over the {crit_n}-line critical threshold",
+            [f"- [ ] Split `{a}` ({line_counts[a]['lines']} lines)" for a in alerts],
+        )
         lines.append("")
 
     write_doc(docs / "reports" / "health.md", "\n".join(lines), root)
@@ -69,6 +184,9 @@ def write_dep_report(root: Path, cfg: dict, ts_mermaid: str | None, py_mermaid: 
     docs = root / cfg["docs_dir"]
 
     lines = ["# Dependency graph", f"_Generated {ts}_", ""]
+
+    if ts_mermaid or py_mermaid:
+        lines += ["_Node color = PageRank tier: red = hub, amber = mid, gray = leaf._", ""]
 
     if ts_mermaid:
         lines += ["## TypeScript / JavaScript", "", "```mermaid", ts_mermaid, "```", ""]
@@ -133,6 +251,22 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
     ]
     if summary:
         lines += [f"> {summary}", ""]
+
+    if critical:
+        worst = max(critical, key=lambda f: line_counts[f]["lines"])
+        lines += callout(
+            "warning",
+            f"{len(critical)} file(s) exceed {crit_n} lines — see [[reports/health]]",
+            [f"Largest: `{worst}` ({line_counts[worst]['lines']} lines)"],
+        ) + [""]
+    elif large:
+        lines += callout(
+            "note",
+            f"No critical files; {len(large)} file(s) above the {warn_n}-line watermark",
+        ) + [""]
+    else:
+        lines += callout("tip", f"Healthy: every file is under {warn_n} lines") + [""]
+
     lines += [
         "## Overview",
         "",
@@ -170,6 +304,10 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
             lines.append(f"| `{r['file']}` | {r['score']} | {r.get('pagerank', 0):.4f} | "
                          f"{r['imported_by']} | {r['commits']} | {r['complexity']} | {r['lines']} |")
         lines.append("")
+        top = ranking[:8]
+        lines += mermaid_bar("Importance score (top files)", "Score",
+                             [r["file"] for r in top], [r["score"] for r in top], y_max=100)
+        lines += churn_complexity_quadrant(ranking, "Where to focus: churn vs complexity")
 
     if tree:
         lines += ["## Structure", "", "```", tree, "```", ""]
@@ -261,6 +399,7 @@ def write_candidates(root: Path, cfg: dict, churn: list, complexity: list):
         "",
     ]
     if candidates:
+        lines += churn_complexity_quadrant(candidates, "Candidate zone (top-right)")
         lines += [
             "| File | Commits | Complexity | Priority |",
             "|------|---------|------------|----------|",
@@ -268,7 +407,7 @@ def write_candidates(root: Path, cfg: dict, churn: list, complexity: list):
         for c in candidates[:10]:
             lines.append(f"| `{c['file']}` | {c['commits']} | {c['complexity']} | {c['priority']} |")
     else:
-        lines.append("_No files are currently both high-churn and high-complexity._")
+        lines += callout("tip", "No files are currently both high-churn and high-complexity")
     lines.append("")
 
     write_doc(docs / "research" / "candidates.md", "\n".join(lines), root)
