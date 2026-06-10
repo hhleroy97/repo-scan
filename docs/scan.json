@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-06-10 21:18 UTC",
+  "generated_at": "2026-06-10 21:57 UTC",
   "repo": {
     "name": "repo-scan",
     "remote": "https://github.com/hhleroy97/repo-scan.git",
     "branch": "main",
-    "last_commit": "6d860e4 vault: loop artifacts \u2014 tkt-0018",
+    "last_commit": "138de87 vault: loop artifacts \u2014 tkt-0018",
     "manifests": [
       "pyproject.toml"
     ],
@@ -31,93 +31,97 @@
       "lines": 1,
       "bytes": 58
     },
-    "tests/test_radar_llm.py": {
-      "lines": 99,
-      "bytes": 4926
-    },
     "tests/support/act_fixtures.py": {
       "lines": 68,
       "bytes": 3394
-    },
-    "tests/test_portability.py": {
-      "lines": 57,
-      "bytes": 2927
-    },
-    "tests/test_tests_map.py": {
-      "lines": 40,
-      "bytes": 2130
-    },
-    "tests/test_llm_routing.py": {
-      "lines": 124,
-      "bytes": 5969
-    },
-    "tests/test_radar_gates.py": {
-      "lines": 71,
-      "bytes": 3465
-    },
-    "tests/test_phase2_freshness.py": {
-      "lines": 72,
-      "bytes": 3307
-    },
-    "tests/test_behavior.py": {
-      "lines": 76,
-      "bytes": 3899
-    },
-    "tests/fake_llm.py": {
-      "lines": 27,
-      "bytes": 903
-    },
-    "tests/test_scanner_snapshots.py": {
-      "lines": 168,
-      "bytes": 8631
-    },
-    "tests/test_scan.py": {
-      "lines": 80,
-      "bytes": 3934
-    },
-    "tests/test_hub_act_run.py": {
-      "lines": 149,
-      "bytes": 5870
-    },
-    "tests/test_tui.py": {
-      "lines": 100,
-      "bytes": 5469
     },
     "tests/test_radar_full.py": {
       "lines": 83,
       "bytes": 4046
     },
-    "tests/test_agentic_loop_mermaid.py": {
-      "lines": 35,
-      "bytes": 1796
+    "tests/fake_llm.py": {
+      "lines": 27,
+      "bytes": 903
     },
-    "tests/test_provenance.py": {
-      "lines": 112,
-      "bytes": 4869
+    "tests/test_tests_map.py": {
+      "lines": 40,
+      "bytes": 2130
     },
-    "tests/test_sources.py": {
-      "lines": 108,
-      "bytes": 5302
+    "tests/test_trend_sparkline.py": {
+      "lines": 16,
+      "bytes": 838
     },
-    "tests/test_packaging.py": {
-      "lines": 85,
-      "bytes": 3729
+    "tests/test_radar_gates.py": {
+      "lines": 71,
+      "bytes": 3465
+    },
+    "tests/test_radar_llm.py": {
+      "lines": 99,
+      "bytes": 4926
+    },
+    "tests/test_gate_drawer.py": {
+      "lines": 56,
+      "bytes": 2606
+    },
+    "tests/test_behavior.py": {
+      "lines": 76,
+      "bytes": 3899
+    },
+    "tests/test_scanner_snapshots.py": {
+      "lines": 168,
+      "bytes": 8631
+    },
+    "tests/test_act.py": {
+      "lines": 165,
+      "bytes": 9456
     },
     "tests/test_graphs.py": {
       "lines": 16,
       "bytes": 780
     },
+    "tests/test_hub_act_run.py": {
+      "lines": 149,
+      "bytes": 5870
+    },
+    "tests/test_phase2_freshness.py": {
+      "lines": 72,
+      "bytes": 3307
+    },
+    "tests/test_agentic_loop_mermaid.py": {
+      "lines": 35,
+      "bytes": 1796
+    },
+    "tests/test_scan.py": {
+      "lines": 80,
+      "bytes": 3934
+    },
     "tests/test_tickets_package_size.py": {
       "lines": 14,
       "bytes": 660
     },
+    "tests/test_portability.py": {
+      "lines": 57,
+      "bytes": 2927
+    },
+    "tests/test_llm_routing.py": {
+      "lines": 124,
+      "bytes": 5969
+    },
+    "tests/test_packaging.py": {
+      "lines": 85,
+      "bytes": 3729
+    },
+    "tests/test_provenance.py": {
+      "lines": 113,
+      "bytes": 4947
+    },
+    "tests/test_sources.py": {
+      "lines": 108,
+      "bytes": 5302
+    },
     "tests/test_radar_pipeline.py": {
       "lines": 163,
       "bytes": 8685
-    },
-    "tests/test_tickets.py": {
-      "lines": 230,
-      "bytes": 11026
     },
     "tests/test_radar_cli_gates.py": {
       "lines": 55,
@@ -131,9 +135,9 @@
       "lines": 59,
       "bytes": 2635
     },
-    "tests/test_act.py": {
-      "lines": 165,
-      "bytes": 9456
+    "tests/test_tui.py": {
+      "lines": 100,
+      "bytes": 5469
     },
     "tests/test_hub_settings.py": {
       "lines": 110,
@@ -147,77 +151,89 @@
       "lines": 148,
       "bytes": 5701
     },
-    "tests/test_tickets_workflow.py": {
-      "lines": 102,
-      "bytes": 5555
-    },
     "tests/test_citations.py": {
       "lines": 36,
       "bytes": 1882
     },
-    "tests/test_scanner_unit.py": {
-      "lines": 63,
-      "bytes": 3231
-    },
-    "tests/test_telemetry.py": {
-      "lines": 131,
-      "bytes": 5875
-    },
-    "tests/test_hub_ui.py": {
-      "lines": 214,
-      "bytes": 10313
-    },
-    "tests/test_visuals.py": {
-      "lines": 139,
-      "bytes": 6662
-    },
-    "tests/test_writers_snapshots.py": {
-      "lines": 107,
-      "bytes": 5925
-    },
-    "tests/test_trend_sparkline.py": {
-      "lines": 16,
-      "bytes": 838
-    },
-    "tests/test_languages.py": {
-      "lines": 174,
-      "bytes": 7982
-    },
-    "tests/test_gate_drawer.py": {
-      "lines": 56,
-      "bytes": 2606
-    },
-    "tests/test_report_pipeline.py": {
-      "lines": 162,
-      "bytes": 5970
+    "tests/test_tickets.py": {
+      "lines": 230,
+      "bytes": 11026
     },
     "tests/test_intent_governance.py": {
       "lines": 151,
       "bytes": 8275
     },
+    "tests/test_tickets_workflow.py": {
+      "lines": 102,
+      "bytes": 5555
+    },
+    "tests/test_report_pipeline.py": {
+      "lines": 162,
+      "bytes": 5970
+    },
+    "tests/test_writers_snapshots.py": {
+      "lines": 107,
+      "bytes": 5925
+    },
+    "tests/test_visuals.py": {
+      "lines": 139,
+      "bytes": 6662
+    },
+    "repo_scan/churn.py": {
+      "lines": 14,
+      "bytes": 588
+    },
+    "tests/conftest.py": {
+      "lines": 52,
+      "bytes": 2352
+    },
     "tests/test_phase_a.py": {
       "lines": 123,
       "bytes": 7000
+    },
+    "tests/test_scanner_unit.py": {
+      "lines": 63,
+      "bytes": 3231
+    },
+    "tests/test_hub_ui.py": {
+      "lines": 214,
+      "bytes": 10313
+    },
+    "repo_scan/citations.py": {
+      "lines": 109,
+      "bytes": 4434
     },
     "tests/test_hub.py": {
       "lines": 389,
       "bytes": 20636
     },
-    "tests/test_daemon.py": {
-      "lines": 337,
-      "bytes": 17512
-    },
-    "tests/test_hub_graph.py": {
-      "lines": 194,
-      "bytes": 8404
-    },
     "repo_scan/tickets/evidence.py": {
       "lines": 46,
       "bytes": 1971
     },
-    "repo_scan/citations.py": {
-      "lines": 109,
-      "bytes": 4434
+    "tests/test_telemetry.py": {
+      "lines": 131,
+      "bytes": 5875
+    },
+    "repo_scan/tickets/constants.py": {
+      "lines": 17,
+      "bytes": 816
+    },
+    "tests/test_languages.py": {
+      "lines": 174,
+      "bytes": 7982
+    },
+    "repo_scan/tickets/generation.py": {
+      "lines": 79,
+      "bytes": 3790
+    },
+    "repo_scan/tickets/io.py": {
+      "lines": 80,
+      "bytes": 2995
+    },
+    "tests/test_hub_graph.py": {
+      "lines": 194,
+      "bytes": 8404
     },
     "repo_scan/tickets/board.py": {
       "lines": 22,
@@ -227,17 +243,33 @@
       "lines": 89,
       "bytes": 2956
     },
-    "repo_scan/tickets/io.py": {
-      "lines": 80,
-      "bytes": 2995
-    },
     "repo_scan/tickets/merge.py": {
       "lines": 44,
       "bytes": 2253
     },
+    "repo_scan/config.py": {
+      "lines": 71,
+      "bytes": 3143
+    },
     "tests/test_prs.py": {
       "lines": 238,
       "bytes": 11116
+    },
+    "repo_scan/tickets/parse.py": {
+      "lines": 103,
+      "bytes": 4799
+    },
+    "repo_scan/ranking.py": {
+      "lines": 106,
+      "bytes": 4965
+    },
+    "repo_scan/complexity.py": {
+      "lines": 91,
+      "bytes": 3802
+    },
+    "repo_scan/handoff.py": {
+      "lines": 156,
+      "bytes": 5318
     },
     "repo_scan/tickets/cli.py": {
       "lines": 72,
@@ -247,173 +279,125 @@
       "lines": 123,
       "bytes": 5799
     },
-    "repo_scan/tickets/generation.py": {
-      "lines": 79,
-      "bytes": 3790
-    },
-    "repo_scan/trends.py": {
-      "lines": 153,
-      "bytes": 6995
+    "repo_scan/behavior.py": {
+      "lines": 102,
+      "bytes": 4461
     },
     "repo_scan/hooks.py": {
       "lines": 37,
       "bytes": 1271
     },
-    "repo_scan/writers.py": {
-      "lines": 543,
-      "bytes": 24598
-    },
-    "repo_scan/tickets/parse.py": {
-      "lines": 103,
-      "bytes": 4799
-    },
-    "repo_scan/provenance.py": {
-      "lines": 263,
-      "bytes": 10762
-    },
-    "repo_scan/tickets/constants.py": {
-      "lines": 17,
-      "bytes": 816
-    },
-    "repo_scan/identity.py": {
-      "lines": 81,
-      "bytes": 3786
-    },
     "repo_scan/tickets/propose.py": {
       "lines": 89,
       "bytes": 5153
-    },
-    "repo_scan/behavior.py": {
-      "lines": 102,
-      "bytes": 4461
-    },
-    "repo_scan/ranking.py": {
-      "lines": 106,
-      "bytes": 4965
-    },
-    "tests/conftest.py": {
-      "lines": 52,
-      "bytes": 2352
-    },
-    "repo_scan/churn.py": {
-      "lines": 14,
-      "bytes": 588
-    },
-    "repo_scan/config.py": {
-      "lines": 71,
-      "bytes": 3143
-    },
-    "repo_scan/radar/cli.py": {
-      "lines": 125,
-      "bytes": 5905
-    },
-    "repo_scan/scanner.py": {
-      "lines": 235,
-      "bytes": 10735
-    },
-    "repo_scan/handoff.py": {
-      "lines": 156,
-      "bytes": 5318
-    },
-    "repo_scan/graphs.py": {
-      "lines": 282,
-      "bytes": 12589
-    },
-    "repo_scan/radar/fetchers.py": {
-      "lines": 170,
-      "bytes": 7803
     },
     "repo_scan/radar/__init__.py": {
       "lines": 5,
       "bytes": 254
     },
-    "repo_scan/radar/gates.py": {
-      "lines": 163,
-      "bytes": 7803
+    "tests/test_daemon.py": {
+      "lines": 337,
+      "bytes": 17512
     },
-    "repo_scan/radar/sources.py": {
-      "lines": 189,
-      "bytes": 8013
+    "repo_scan/identity.py": {
+      "lines": 81,
+      "bytes": 3786
     },
-    "repo_scan/radar/research.py": {
-      "lines": 265,
-      "bytes": 11669
-    },
-    "repo_scan/radar/llm.py": {
-      "lines": 272,
-      "bytes": 12396
-    },
-    "repo_scan/hub/contract.py": {
-      "lines": 133,
-      "bytes": 4354
-    },
-    "repo_scan/hub/progress.py": {
-      "lines": 23,
-      "bytes": 1007
+    "repo_scan/__init__.py": {
+      "lines": 64,
+      "bytes": 1495
     },
     "repo_scan/tests_map.py": {
       "lines": 37,
       "bytes": 1664
     },
-    "repo_scan/hub/server.py": {
-      "lines": 378,
-      "bytes": 18162
+    "repo_scan/utils.py": {
+      "lines": 84,
+      "bytes": 4245
     },
-    "repo_scan/hub/state.py": {
-      "lines": 210,
-      "bytes": 9619
+    "repo_scan/hub/progress.py": {
+      "lines": 23,
+      "bytes": 1007
+    },
+    "repo_scan/trends.py": {
+      "lines": 153,
+      "bytes": 6995
+    },
+    "repo_scan/radar/cli.py": {
+      "lines": 125,
+      "bytes": 5905
+    },
+    "repo_scan/radar/fetchers.py": {
+      "lines": 170,
+      "bytes": 7803
+    },
+    "repo_scan/hub/contract.py": {
+      "lines": 133,
+      "bytes": 4354
+    },
+    "repo_scan/radar/sources.py": {
+      "lines": 189,
+      "bytes": 8013
+    },
+    "repo_scan/radar/gates.py": {
+      "lines": 163,
+      "bytes": 7803
+    },
+    "repo_scan/hub/__init__.py": {
+      "lines": 6,
+      "bytes": 307
+    },
+    "repo_scan/graphs.py": {
+      "lines": 282,
+      "bytes": 12589
     },
     "repo_scan/hub/settings.py": {
       "lines": 34,
       "bytes": 1147
     },
-    "repo_scan/hub/graph.py": {
-      "lines": 340,
-      "bytes": 13695
+    "repo_scan/provenance.py": {
+      "lines": 265,
+      "bytes": 10998
     },
-    "repo_scan/hub/prs.py": {
-      "lines": 530,
-      "bytes": 24079
+    "repo_scan/radar/llm.py": {
+      "lines": 272,
+      "bytes": 12396
     },
-    "repo_scan/radar/pipeline.py": {
-      "lines": 515,
-      "bytes": 24111
-    },
-    "repo_scan/radar/act.py": {
-      "lines": 539,
-      "bytes": 27318
-    },
-    "repo_scan/hub/ui/_graph_loop.py": {
-      "lines": 86,
-      "bytes": 3701
+    "repo_scan/scanner.py": {
+      "lines": 235,
+      "bytes": 10735
     },
     "repo_scan/hub/ui/_head.py": {
       "lines": 9,
       "bytes": 328
     },
-    "repo_scan/hub/ui/_tickets.py": {
-      "lines": 98,
-      "bytes": 6212
-    },
-    "repo_scan/hub/ui/_css.py": {
-      "lines": 213,
-      "bytes": 13307
-    },
-    "repo_scan/hub/ui/_graph.py": {
-      "lines": 231,
-      "bytes": 9863
+    "repo_scan/hub/ui/_graph_loop.py": {
+      "lines": 86,
+      "bytes": 3701
     },
     "repo_scan/hub/ui/__init__.py": {
       "lines": 34,
       "bytes": 1643
     },
-    "repo_scan/hub/ui/_prs_gates.py": {
-      "lines": 209,
-      "bytes": 9942
+    "repo_scan/hub/ui/_tickets.py": {
+      "lines": 98,
+      "bytes": 6212
+    },
+    "repo_scan/radar/research.py": {
+      "lines": 265,
+      "bytes": 11669
     },
     "repo_scan/hub/ui/_graph_events.py": {
       "lines": 82,
       "bytes": 3015
+    },
+    "repo_scan/hub/state.py": {
+      "lines": 210,
+      "bytes": 9619
+    },
+    "repo_scan/hub/ui/_shell.py": {
+      "lines": 20,
+      "bytes": 961
     },
     "repo_scan/hub/ui/_activity.py": {
       "lines": 170,
@@ -423,9 +407,17 @@
       "lines": 59,
       "bytes": 2982
     },
-    "repo_scan/hub/ui/_shell.py": {
-      "lines": 20,
-      "bytes": 961
+    "repo_scan/hub/ui/_graph.py": {
+      "lines": 231,
+      "bytes": 9863
+    },
+    "repo_scan/hub/ui/_css.py": {
+      "lines": 213,
+      "bytes": 13307
+    },
+    "repo_scan/hub/ui/_prs_gates.py": {
+      "lines": 209,
+      "bytes": 9942
     },
     "repo_scan/hub/ui/_now.py": {
       "lines": 69,
@@ -435,17 +427,17 @@
       "lines": 169,
       "bytes": 5693
     },
+    "repo_scan/writers.py": {
+      "lines": 543,
+      "bytes": 24598
+    },
+    "repo_scan/hub/act_run.py": {
+      "lines": 90,
+      "bytes": 3104
+    },
     "repo_scan/hub/ui/_graph_dashboard.py": {
       "lines": 178,
-      "bytes": 9024
-    },
-    "repo_scan/hub/gate_drawer.py": {
-      "lines": 93,
-      "bytes": 3965
-    },
-    "repo_scan/hub/agentic_loop.py": {
-      "lines": 134,
-      "bytes": 5193
+      "bytes": 9043
     },
     "repo_scan/hub/events.py": {
       "lines": 33,
@@ -455,53 +447,61 @@
       "lines": 40,
       "bytes": 1490
     },
+    "repo_scan/hub/agentic_loop.py": {
+      "lines": 134,
+      "bytes": 5193
+    },
     "repo_scan/report_pipeline.py": {
       "lines": 64,
       "bytes": 2258
     },
-    "repo_scan/hub/tui.py": {
-      "lines": 233,
-      "bytes": 11416
-    },
-    "repo_scan/__init__.py": {
-      "lines": 64,
-      "bytes": 1495
-    },
-    "repo_scan/hub/telemetry.py": {
-      "lines": 407,
-      "bytes": 17408
-    },
-    "repo_scan/languages.py": {
-      "lines": 100,
-      "bytes": 3654
-    },
-    "repo_scan/hub/__init__.py": {
-      "lines": 6,
-      "bytes": 307
-    },
-    "repo_scan/hub/act_run.py": {
-      "lines": 90,
-      "bytes": 3104
-    },
-    "repo_scan/digest.py": {
-      "lines": 46,
-      "bytes": 2347
+    "repo_scan/hub/gate_drawer.py": {
+      "lines": 93,
+      "bytes": 3965
     },
     "repo_scan/cli.py": {
       "lines": 67,
       "bytes": 2939
     },
+    "repo_scan/languages.py": {
+      "lines": 100,
+      "bytes": 3654
+    },
+    "repo_scan/digest.py": {
+      "lines": 46,
+      "bytes": 2347
+    },
     "repo_scan/hub/daemon.py": {
       "lines": 373,
       "bytes": 17310
     },
-    "repo_scan/complexity.py": {
-      "lines": 91,
-      "bytes": 3802
+    "repo_scan/radar/pipeline.py": {
+      "lines": 515,
+      "bytes": 24111
     },
-    "repo_scan/utils.py": {
-      "lines": 84,
-      "bytes": 4245
+    "repo_scan/hub/graph.py": {
+      "lines": 340,
+      "bytes": 13695
+    },
+    "repo_scan/hub/server.py": {
+      "lines": 378,
+      "bytes": 18162
+    },
+    "repo_scan/hub/tui.py": {
+      "lines": 233,
+      "bytes": 11416
+    },
+    "repo_scan/radar/act.py": {
+      "lines": 539,
+      "bytes": 27318
+    },
+    "repo_scan/hub/prs.py": {
+      "lines": 530,
+      "bytes": 24079
+    },
+    "repo_scan/hub/telemetry.py": {
+      "lines": 407,
+      "bytes": 17408
     },
     "pyproject.toml": {
       "lines": 18,
@@ -511,15 +511,15 @@
   "churn": [
     {
       "file": "docs/research/decisions.md",
-      "commits": 56
+      "commits": 63
     },
     {
       "file": "docs/changelog/2026-06-10-loop.md",
-      "commits": 43
+      "commits": 48
     },
     {
       "file": "docs/tickets/board.md",
-      "commits": 28
+      "commits": 30
     },
     {
       "file": "README.md",
@@ -535,42 +535,42 @@
     },
     {
       "file": "docs/architecture/dependency-graph.md",
-      "commits": 17
+      "commits": 18
     },
     {
       "file": "docs/index.md",
-      "commits": 17
+      "commits": 18
     },
     {
       "file": "docs/reports/calls.md",
-      "commits": 17
+      "commits": 18
     },
     {
       "file": "docs/reports/dependencies.md",
-      "commits": 17
+      "commits": 18
     },
     {
       "file": "docs/reports/health.md",
-      "commits": 17
+      "commits": 18
     },
     {
       "file": "docs/changelog/2026-06-10-act.md",
-      "commits": 16
+      "commits": 17
     },
     {
       "file": "docs/scan.json",
-      "commits": 16
+      "commits": 17
     },
     {
       "file": "repo_scan/config.py",
       "commits": 16
     },
     {
-      "file": "repo_scan/hub/daemon.py",
-      "commits": 14
+      "file": "docs/research/candidates.md",
+      "commits": 15
     },
     {
-      "file": "docs/research/candidates.md",
+      "file": "repo_scan/hub/daemon.py",
       "commits": 14
     },
     {
@@ -624,7 +624,7 @@
       "name": "vault_coverage",
       "rank": "D",
       "complexity": 27,
-      "lineno": 221
+      "lineno": 222
     },
     {
       "file": "repo_scan/hub/server.py",
@@ -643,9 +643,9 @@
     {
       "file": "repo_scan/provenance.py",
       "name": "score_node",
-      "rank": "C",
-      "complexity": 20,
-      "lineno": 104
+      "rank": "D",
+      "complexity": 22,
+      "lineno": 105
     },
     {
       "file": "repo_scan/hub/graph.py",
@@ -806,7 +806,7 @@
       "name": "_has_evidence",
       "rank": "C",
       "complexity": 13,
-      "lineno": 44
+      "lineno": 45
     },
     {
       "file": "repo_scan/trends.py",
@@ -1003,12 +1003,12 @@
     },
     {
       "file": "repo_scan/provenance.py",
-      "score": 23.4,
+      "score": 24.1,
       "pagerank": 0.009172,
       "imported_by": 5,
       "commits": 0,
-      "complexity": 60,
-      "lines": 263,
+      "complexity": 62,
+      "lines": 265,
       "tested": true
     },
     {
@@ -1043,22 +1043,12 @@
     },
     {
       "file": "repo_scan/config.py",
-      "score": 21.4,
+      "score": 20.4,
       "pagerank": 0.047405,
       "imported_by": 41,
       "commits": 16,
       "complexity": 0,
       "lines": 71,
-      "tested": false
-    },
-    {
-      "file": "repo_scan/hub/server.py",
-      "score": 19.9,
-      "pagerank": 0.008426,
-      "imported_by": 6,
-      "commits": 13,
-      "complexity": 27,
-      "lines": 378,
       "tested": false
     },
     {
@@ -1072,6 +1062,16 @@
       "tested": false
     },
     {
+      "file": "repo_scan/hub/server.py",
+      "score": 19.1,
+      "pagerank": 0.008426,
+      "imported_by": 6,
+      "commits": 13,
+      "complexity": 27,
+      "lines": 378,
+      "tested": false
+    },
+    {
       "file": "repo_scan/ranking.py",
       "score": 14.8,
       "pagerank": 0.011834,
@@ -1079,16 +1079,6 @@
       "commits": 0,
       "complexity": 34,
       "lines": 106,
-      "tested": false
-    },
-    {
-      "file": "README.md",
-      "score": 14.5,
-      "pagerank": 0.0,
-      "imported_by": 0,
-      "commits": 27,
-      "complexity": 0,
-      "lines": 0,
       "tested": false
     },
     {
@@ -1102,14 +1092,14 @@
       "tested": false
     },
     {
-      "file": "repo_scan/radar/pipeline.py",
-      "score": 12.7,
-      "pagerank": 0.012038,
-      "imported_by": 13,
-      "commits": 13,
+      "file": "README.md",
+      "score": 12.9,
+      "pagerank": 0.0,
+      "imported_by": 0,
+      "commits": 27,
       "complexity": 0,
-      "lines": 515,
-      "tested": true
+      "lines": 0,
+      "tested": false
     },
     {
       "file": "repo_scan/hub/tui.py",
@@ -1119,6 +1109,16 @@
       "commits": 0,
       "complexity": 29,
       "lines": 233,
+      "tested": true
+    },
+    {
+      "file": "repo_scan/radar/pipeline.py",
+      "score": 11.9,
+      "pagerank": 0.012038,
+      "imported_by": 13,
+      "commits": 13,
+      "complexity": 0,
+      "lines": 515,
       "tested": true
     }
   ],
@@ -3093,21 +3093,20 @@
     "coverage_pct": 0.0,
     "score_histogram": {
       "0": 86,
-      "1": 51,
+      "1": 57,
       "2": 0,
-      "3": 0,
-      "4": 0
+      "3": 0
     },
     "orphans_by_kind": {
-      "ticket": 32,
-      "spec": 20,
-      "analysis": 20,
+      "ticket": 36,
+      "spec": 21,
+      "analysis": 21,
       "source": 65
     },
     "untracked_code_count": 9,
     "stale_docs_count": 0,
     "healthy": 0,
-    "docs": 137,
+    "docs": 143,
     "knowledge_debt": 42.2,
     "thin_citations": []
   },

@@ -1,7 +1,7 @@
 # Health report
-_Generated 2026-06-10 21:18 UTC_  |  _Branch: main_  |  _Last commit: 6d860e4 vault: loop artifacts — tkt-0018_
+_Generated 2026-06-10 21:57 UTC_  |  _Branch: main_  |  _Last commit: 138de87 vault: loop artifacts — tkt-0018_
 
-> [!warning] Vault provenance: 0/137 docs fully traced (0%)
+> [!warning] Vault provenance: 0/143 docs fully traced (0%)
 > Untracked ranked code: 9
 > Stale docs: 0
 
@@ -9,20 +9,20 @@ _Generated 2026-06-10 21:18 UTC_  |  _Branch: main_  |  _Last commit: 6d860e4 va
 
 | Metric | Value |
 |--------|-------|
-| Coverage | 0% (0/137) |
+| Coverage | 0% (0/143) |
 | Untracked code (ranked) | 9 |
 | Stale docs | 0 |
-| Orphan analysiss | 20 |
+| Orphan analysiss | 21 |
 | Orphan sources | 65 |
-| Orphan specs | 20 |
-| Orphan tickets | 32 |
+| Orphan specs | 21 |
+| Orphan tickets | 36 |
 
 ## Where the code lives
 
 ```mermaid
 pie title Lines of code by directory
-    "repo_scan" : 12424
-    "tests" : 5336
+    "repo_scan" : 12426
+    "tests" : 5337
     "(root)" : 18
 ```
 
@@ -43,8 +43,8 @@ pie title Lines of code by directory
 | `tests/test_daemon.py` | 337 | 17.1 KB | *large* |
 | `repo_scan/graphs.py` | 282 | 12.3 KB | ok |
 | `repo_scan/radar/llm.py` | 272 | 12.1 KB | ok |
+| `repo_scan/provenance.py` | 265 | 10.7 KB | ok |
 | `repo_scan/radar/research.py` | 265 | 11.4 KB | ok |
-| `repo_scan/provenance.py` | 263 | 10.5 KB | ok |
 | `tests/test_prs.py` | 238 | 10.9 KB | ok |
 | `repo_scan/scanner.py` | 235 | 10.5 KB | ok |
 | `repo_scan/hub/tui.py` | 233 | 11.1 KB | ok |
@@ -79,10 +79,10 @@ pie title Lines of code by directory
 | `repo_scan/radar/llm.py` | `complete` | E | 38 | 166 |
 | `repo_scan/hub/prs.py` | `remediate_pr` | E | 33 | 469 |
 | `repo_scan/hub/tui.py` | `frame_lines` | D | 29 | 92 |
-| `repo_scan/provenance.py` | `vault_coverage` | D | 27 | 221 |
+| `repo_scan/provenance.py` | `vault_coverage` | D | 27 | 222 |
 | `repo_scan/hub/server.py` | `build_state` | D | 27 | 61 |
 | `repo_scan/hub/prs.py` | `_agent_remediate_pr` | D | 25 | 343 |
-| `repo_scan/provenance.py` | `score_node` | C | 20 | 104 |
+| `repo_scan/provenance.py` | `score_node` | D | 22 | 105 |
 | `repo_scan/hub/graph.py` | `_vault_layer` | C | 20 | 131 |
 | `repo_scan/ranking.py` | `rank_files` | C | 19 | 69 |
 | `repo_scan/tickets/propose.py` | `propose_from_scan` | C | 19 | 4 |
@@ -102,27 +102,27 @@ pie title Lines of code by directory
 xychart-beta
     title "Commits touching each file"
     x-axis ["decisions.md", "2026-06-10-loop.md", "board.md", "README.md", "index.md", "tags.md", "dependency-graph.…", "index.md", "calls.md", "dependencies.md"]
-    y-axis "Commits" 0 --> 56
-    bar [56, 43, 28, 27, 21, 21, 17, 17, 17, 17]
+    y-axis "Commits" 0 --> 63
+    bar [63, 48, 30, 27, 21, 21, 18, 18, 18, 18]
 ```
 
 | File | Commits |
 |------|---------|
-| `docs/research/decisions.md` | 56 |
-| `docs/changelog/2026-06-10-loop.md` | 43 |
-| `docs/tickets/board.md` | 28 |
+| `docs/research/decisions.md` | 63 |
+| `docs/changelog/2026-06-10-loop.md` | 48 |
+| `docs/tickets/board.md` | 30 |
 | `README.md` | 27 |
 | `docs/research/index.md` | 21 |
 | `docs/research/tags.md` | 21 |
-| `docs/architecture/dependency-graph.md` | 17 |
-| `docs/index.md` | 17 |
-| `docs/reports/calls.md` | 17 |
-| `docs/reports/dependencies.md` | 17 |
-| `docs/reports/health.md` | 17 |
-| `docs/changelog/2026-06-10-act.md` | 16 |
-| `docs/scan.json` | 16 |
+| `docs/architecture/dependency-graph.md` | 18 |
+| `docs/index.md` | 18 |
+| `docs/reports/calls.md` | 18 |
+| `docs/reports/dependencies.md` | 18 |
+| `docs/reports/health.md` | 18 |
+| `docs/changelog/2026-06-10-act.md` | 17 |
+| `docs/scan.json` | 17 |
 | `repo_scan/config.py` | 16 |
-| `repo_scan/hub/daemon.py` | 14 |
+| `docs/research/candidates.md` | 15 |
 
 ## Knowledge map (bus factor)
 
