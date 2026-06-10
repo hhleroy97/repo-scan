@@ -11,64 +11,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
-from repo_scan.config import DEFAULT_CONFIG, load_config
 from repo_scan.hub.state import (active_run, load_checkpoint, submit_decision)
 from repo_scan.radar.act import act_problem, cmd_act, find_act_ticket
-from repo_scan.tickets import append_ticket_note, load_tickets, set_ticket_status, write_ticket
+from repo_scan.tickets import load_tickets
+
+from tests.support.act_fixtures import (COUNTING_AGENT, IMPLEMENT_AGENT, act_repo,
+                                        stub_agent)
 
 def _git(root: Path, *args: str) -> str:
     r = subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
     return r.stdout.strip()
-
-
-def _stub_agent(tmp_path: Path, script: str) -> str:
-    """An 'agent CLI' — a python script run as `script.py <prompt>`."""
-    path = tmp_path / "agent.py"
-    path.write_text(script)
-    return f"{sys.executable} {path}"
-
-
-IMPLEMENT_AGENT = """\
-import sys
-from pathlib import Path
-Path("impl.py").write_text("VALUE = 42\\n")
-print("Implemented the spec: created impl.py with VALUE = 42.")
-"""
-
-# appends one line per invocation — lets tests require N agent calls
-COUNTING_AGENT = """\
-import sys
-from pathlib import Path
-p = Path("counter.txt")
-p.write_text(p.read_text() + "x\\n" if p.exists() else "x\\n")
-print("ran")
-"""
-
-
-@pytest.fixture
-def act_repo(tmp_repo: Path, tmp_path: Path):
-    """tmp repo with an in-progress ticket linked to an approved spec."""
-    specs = tmp_repo / "docs" / "specs"
-    specs.mkdir(parents=True, exist_ok=True)
-    (specs / "2026-01-01-fix-the-thing-spec.md").write_text(
-        '---\ntype: "spec"\nstatus: "approved"\n---\n\n# Spec\n\n'
-        "## Goal\nCreate impl.py with VALUE = 42.\n")
-    write_ticket(tmp_repo, DEFAULT_CONFIG,
-                 {"id": "tkt-0001", "title": "Fix the thing", "priority": "high",
-                  "fingerprint": "x:1", "why": "w", "criteria": ["c"]})
-    set_ticket_status(tmp_repo, DEFAULT_CONFIG, "tkt-0001", "in-progress")
-    append_ticket_note(tmp_repo, DEFAULT_CONFIG, "tkt-0001",
-                       "radar spec approved: [[2026-01-01-fix-the-thing-spec]]")
-    # vault setup churn must not block act's clean-tree check
-    subprocess.run(["git", "add", "-A"], cwd=tmp_repo, capture_output=True)
-    subprocess.run(["git", "commit", "-qm", "setup"], cwd=tmp_repo, capture_output=True)
-
-    cfg = load_config(tmp_repo)
-    cfg["act_enabled"] = True
-    cfg["test_cmd"] = f"{sys.executable} -c \"import impl; assert impl.VALUE == 42\""
-    return tmp_repo, cfg
 
 
 def test_find_act_ticket(act_repo):
@@ -80,7 +32,7 @@ def test_find_act_ticket(act_repo):
 
 def test_act_happy_path_commits_on_branch(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
 
     assert cmd_act(root, cfg) == 0
@@ -112,7 +64,7 @@ def test_act_happy_path_commits_on_branch(act_repo, tmp_path):
 
 def test_act_refuses_dirty_tree_outside_vault(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     (root / "uncommitted.py").write_text("x = 1\n")
     assert cmd_act(root, cfg) == 1
@@ -120,7 +72,7 @@ def test_act_refuses_dirty_tree_outside_vault(act_repo, tmp_path):
 
 def test_act_pauses_and_resumes_via_inbox(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
 
     # prompt gates, non-interactive -> pause at pre_implement before any work
@@ -147,7 +99,7 @@ def test_act_pauses_and_resumes_via_inbox(act_repo, tmp_path):
 
 def test_act_rejection_keeps_branch_uncommitted(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto"}  # post_implement stays prompt
     problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
 
@@ -192,7 +144,7 @@ def test_act_doc_fix_round_when_cli_surface_changes(act_repo, tmp_path, monkeypa
 
 def test_act_fix_round_then_pass(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, COUNTING_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, COUNTING_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     # passes only after the agent has been invoked twice (implement + 1 fix)
     cfg["test_cmd"] = (f"{sys.executable} -c \"from pathlib import Path; "
@@ -204,7 +156,7 @@ def test_act_fix_round_then_pass(act_repo, tmp_path):
 
 def test_act_gives_up_after_fix_rounds(act_repo, tmp_path):
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, COUNTING_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, COUNTING_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["act_fix_rounds"] = 1
     cfg["test_cmd"] = f"{sys.executable} -c \"import sys; sys.exit(1)\""  # never passes
@@ -220,7 +172,7 @@ def test_act_opens_pr_when_configured(act_repo, tmp_path, monkeypatch):
     via the gh CLI; the URL lands on the ticket and in the act log."""
     import os
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["act_open_pr"] = True
 
@@ -255,7 +207,7 @@ def test_act_opens_pr_when_configured(act_repo, tmp_path, monkeypatch):
 def test_act_pr_failure_keeps_commit(act_repo, tmp_path):
     """No gh / no remote: the commit and branch survive, outcome unchanged."""
     root, cfg = act_repo
-    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["llm_cli"] = [stub_agent(tmp_path, IMPLEMENT_AGENT)]
     cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
     cfg["act_open_pr"] = True  # no remote configured -> push fails gracefully
     assert cmd_act(root, cfg) == 0

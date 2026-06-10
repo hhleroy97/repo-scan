@@ -151,3 +151,32 @@
 | 2026-06-10 18:55 UTC | post_audit | paused | audit revise: The split boundaries, ≤300 cap feasibility, facade re-export strategy, and lazy-import cycle breaks are so |
 | 2026-06-10 19:09 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/tickets.py` into `repo_scan/tickets/` with modules `constants`, `parse`, `evidence`, `propose`, `io`, |
 | 2026-06-10 19:09 UTC | post_audit | approved (dashboard) | audit revise: The split boundaries, ≤300 cap feasibility, facade re-export strategy, and lazy-import cycle breaks are so |
+| 2026-06-10 19:09 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:09 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:10 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:10 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:10 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:11 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:11 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:11 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:12 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:12 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:12 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:13 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:13 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:13 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:14 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:14 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:14 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:15 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:15 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:15 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:16 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:16 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:16 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:17 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:17 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec]] on branch radar/tkt-0026 for tkt-0026 |
+| 2026-06-10 19:22 UTC | post_implement | auto | tests passed; 1 file changed, 748 deletions(-) on radar/tkt-0026 — commit? |
+| 2026-06-10 19:23 UTC | post_audit | paused | audit revise: The spec tracks live scan data (7 shared, 64%, daemon≈13/test_act≈9) and tkt-0016 AC1/AC2 split well, but  |
+| 2026-06-10 19:25 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 19:25 UTC | post_audit | approved (dashboard) | audit revise: The spec tracks live scan data (7 shared, 64%, daemon≈13/test_act≈9) and tkt-0016 AC1/AC2 split well, but  |
