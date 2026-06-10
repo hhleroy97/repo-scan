@@ -186,3 +186,5 @@
 | 2026-06-10 21:20 UTC | post_analyze | paused | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
 | 2026-06-10 21:26 UTC | post_analyze | approved (dashboard) | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
 | 2026-06-10 21:37 UTC | post_audit | paused | audit revise: The spec correctly diagnoses current `rGraph()` interleaving and proposes a coherent target order aligned  |
+| 2026-06-10 21:37 UTC | post_analyze | approved (dashboard) | Refactor rGraph() to keep summary/matrix/histogram (and optionally thin-links/trend) in Vault audit; move rGraphPipeline |
+| 2026-06-10 21:37 UTC | post_audit | approved (dashboard) | audit revise: The spec correctly diagnoses current `rGraph()` interleaving and proposes a coherent target order aligned  |
