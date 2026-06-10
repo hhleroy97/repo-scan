@@ -114,7 +114,11 @@ async function api(path,opts){const r=await fetch(path,opts);
     throw new Error(j.error||j.message||r.status)}return r.json()}
 
 async function refresh(){
-  try{S=await api('/api/state');render()}
+  try{S=await api('/api/state');
+    // hub restarted with new code -> pull fresh HTML/JS (unless mid-form)
+    if(S.boot&&window._boot&&window._boot!==S.boot&&!formBusy()){location.reload();return}
+    window._boot=S.boot;
+    render()}
   catch(e){document.getElementById('main').innerHTML=
     `<div class="empty">Cannot reach hub (${esc(e.message)})</div>`}
 }

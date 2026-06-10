@@ -24,6 +24,10 @@ from .ui import DASHBOARD_HTML
 
 ACTIVITY_ROWS = 10
 
+# changes on every server start; the dashboard reloads itself when it sees a
+# new value, so phones never run stale JS after a hub restart
+BOOT_ID = str(int(time.time()))
+
 
 def _read_json(root: Path, rel: str) -> dict:
     path = root / rel
@@ -93,6 +97,7 @@ def build_state(root: Path, cfg: dict) -> dict:
     from .prs import list_open_prs
     return {
         "version": VERSION,
+        "boot": BOOT_ID,
         "repo": {"name": root.name, "branch": git_branch(root)},
         "now": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
         "scan": summary,
