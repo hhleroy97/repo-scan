@@ -37,8 +37,10 @@ Analysis findings:
 Recommendation: {recommendation}
 
 Write a concise implementation spec in markdown (no JSON). Sections:
-## Goal, ## Approach, ## Changes (bulleted, by file/module), ## Risks, ## Out of scope.
-Keep it under 80 lines. Do not include a top-level title heading."""
+## Goal, ## Approach, ## Changes (bulleted, by file/module), ## Tests,
+## Documentation (docstrings/README sections that must change with the
+implementation), ## Risks, ## Out of scope.
+Keep it under 90 lines. Do not include a top-level title heading."""
 
 AUDIT_PROMPT = """You are auditing an implementation spec before it reaches a human reviewer.
 

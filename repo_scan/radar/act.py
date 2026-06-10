@@ -28,10 +28,19 @@ SPEC_LINK_RE = re.compile(r"\[\[([^\]\|]+-spec)(?:\|[^\]]*)?\]\]")
 
 ACT_PROMPT = """You are implementing an approved specification in this repository.
 Work autonomously: read code as needed, make the changes, keep edits minimal
-and consistent with existing conventions. Do NOT commit, push, or create
-branches — version control is handled outside this session. Do not modify
-files under {docs_dir}/. When done, reply with a one-paragraph summary of
-what you changed.
+and consistent with existing conventions.
+
+Documentation must evolve with the implementation:
+- update docstrings on every function/module you change so they describe the
+  new shape, not the old one
+- if the change affects behavior, usage, CLI flags, or config described in
+  README.md (or other root-level docs), update those sections too
+- add tests alongside the change when the spec calls for them
+
+Hard rules: do NOT commit, push, or create branches — version control is
+handled outside this session. Do not modify files under {docs_dir}/ (that
+directory is a generated knowledge vault, not hand-written docs). When done,
+reply with a one-paragraph summary of what you changed.
 
 Specification:
 ---
