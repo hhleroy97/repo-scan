@@ -10,13 +10,15 @@ import repo_scan
 from repo_scan.complexity import _ccn_rank, _min_ccn, get_complexity, get_lizard_complexity
 from repo_scan.config import DEFAULT_CONFIG
 from repo_scan.graphs import get_ts_dep_edges
+import repo_scan.languages as languages
 from repo_scan.languages import get_line_counts
 
 
-def test_lockfiles_excluded_from_line_counts(tmp_repo: Path):
+def test_lockfiles_excluded_from_line_counts(tmp_repo: Path, monkeypatch):
     (tmp_repo / "package-lock.json").write_text(
         "{\n" + "\n".join(f'"dep{i}": "1.0.{i}",' for i in range(1000)) + "\n}"
     )
+    monkeypatch.setattr(languages, "tool_available", lambda name: False)
     counts = get_line_counts(tmp_repo, DEFAULT_CONFIG)
     assert "package-lock.json" not in counts
     assert "main.py" in counts
