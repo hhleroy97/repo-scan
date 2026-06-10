@@ -212,6 +212,53 @@ def test_daemon_runs_act_for_inprogress_ticket(act_repo, tmp_path):
     assert daemon_tick(root, cfg) == []
 
 
+def test_act_opens_pr_when_configured(act_repo, tmp_path, monkeypatch):
+    """With act_open_pr, a successful act pushes the branch and opens a PR
+    via the gh CLI; the URL lands on the ticket and in the act log."""
+    import os
+    root, cfg = act_repo
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["act_open_pr"] = True
+
+    # local bare remote so the push is real
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)],
+                   cwd=root, capture_output=True)
+
+    # fake gh on PATH that records argv and prints a PR URL
+    bindir = tmp_path / "bin"
+    bindir.mkdir()
+    gh = bindir / "gh"
+    gh.write_text("#!/bin/sh\necho \"$@\" > " + str(tmp_path / "gh-args.txt") +
+                  "\necho https://github.com/x/y/pull/7\n")
+    gh.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{bindir}:{os.environ['PATH']}")
+
+    assert cmd_act(root, cfg) == 0
+    args = (tmp_path / "gh-args.txt").read_text()
+    assert "pr create" in args and "radar/tkt-0001" in args
+    # branch made it to the remote
+    heads = subprocess.run(["git", "ls-remote", "--heads", str(remote)],
+                           capture_output=True, text=True).stdout
+    assert "radar/tkt-0001" in heads
+    body = Path(load_tickets(root, cfg)[0]["path"]).read_text()
+    assert "https://github.com/x/y/pull/7" in body
+    act_log = next((root / "docs" / "changelog").glob("*-act.md")).read_text()
+    assert "pull/7" in act_log
+
+
+def test_act_pr_failure_keeps_commit(act_repo, tmp_path):
+    """No gh / no remote: the commit and branch survive, outcome unchanged."""
+    root, cfg = act_repo
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["act_open_pr"] = True  # no remote configured -> push fails gracefully
+    assert cmd_act(root, cfg) == 0
+    assert _git(root, "log", "-1", "--pretty=%s").startswith("radar: implement")
+
+
 def test_daemon_tick_survives_live_act_thread(act_repo):
     """Regression: a tick while an act thread is in flight must not crash
     (the daemon thread died on a bad iteration over _act_threads)."""

@@ -1,5 +1,17 @@
 # Research tags
-_Rebuilt 2026-06-10 04:03 UTC_
+_Rebuilt 2026-06-10 05:35 UTC_
+
+## 12-factor-agents
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## agpl
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## ai-agents
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## ai-assisted-refactoring
 
@@ -8,6 +20,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 ## amd
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## analytics
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## article
 
@@ -40,6 +56,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 
+## claude-code
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
 ## cli
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
@@ -69,6 +89,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## coding-agents
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
 ## commonjs
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
@@ -76,6 +100,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 ## complex-networks
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
+
+## context-engineering
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## css-preprocessors
 
@@ -103,6 +131,14 @@ _Rebuilt 2026-06-10 04:03 UTC_
 ## dependency-resolution
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## django
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## docker
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## documentation
 
@@ -181,6 +217,14 @@ _Rebuilt 2026-06-10 04:03 UTC_
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 
+## human-in-the-loop
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## ide
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
 ## inline-function
 
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
@@ -188,6 +232,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 ## intellij-plugin
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
+
+## issue-tracker
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## java
 
@@ -198,10 +246,22 @@ _Rebuilt 2026-06-10 04:03 UTC_
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## jira-alternative
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
 ## json-output
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
+
+## kanban
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## kubernetes
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## language-detection
 
@@ -268,6 +328,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
+## parallel-agents
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
 ## parametrization
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
@@ -276,9 +340,21 @@ _Rebuilt 2026-06-10 04:03 UTC_
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 
+## postgresql
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## product-management
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
 ## program-slicing
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
+
+## project-management
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## pypi
 
@@ -302,6 +378,14 @@ _Rebuilt 2026-06-10 04:03 UTC_
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/gh-Aider-AI-aider\|Aider-AI/aider — aider is AI pair programming in your terminal]]
 
+## react
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
+## redis
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
 ## refactoring
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -315,6 +399,8 @@ _Rebuilt 2026-06-10 04:03 UTC_
 
 ## repo
 
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
@@ -341,6 +427,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
 
+## roadmaps
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
+
 ## ruby
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
@@ -360,6 +450,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 ## seams
 
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
+
+## self-hosting
+
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
 ## separation-of-concerns
 
@@ -393,6 +487,10 @@ _Rebuilt 2026-06-10 04:03 UTC_
 ## syrupy
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
+
+## team-workflows
+
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## technical-debt
 
@@ -436,6 +534,8 @@ _Rebuilt 2026-06-10 04:03 UTC_
 
 ## typescript
 
+- [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+- [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-phoenix-assistant-impact-graph\|phoenix-assistant/impact-graph — If I change this function, what breaks? Change impact analysis with call graphs…]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]

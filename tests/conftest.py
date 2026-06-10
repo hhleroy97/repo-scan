@@ -17,7 +17,9 @@ def tmp_repo(tmp_path: Path) -> Path:
     """A minimal git repo with one Python file and one commit."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _git(["init", "-q"], repo)
+    # -b main: CI runners default init.defaultBranch to master, dev boxes to
+    # main — tests that assert on the base branch need it deterministic
+    _git(["init", "-q", "-b", "main"], repo)
     _git(["config", "user.email", "t@t.com"], repo)
     _git(["config", "user.name", "T"], repo)
     (repo / "main.py").write_text("def hello():\n    pass\n")

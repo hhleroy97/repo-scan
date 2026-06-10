@@ -38,6 +38,7 @@ def parse_ticket(path: Path) -> dict | None:
     meta["path"] = path
     m = re.search(r"^## Why\n+(.+?)(?:\n##|\Z)", text, re.S | re.M)
     meta["why"] = m.group(1).strip() if m else ""
+    meta["criteria"] = re.findall(r"^- \[[ x]\] (.+)$", text, re.M)
     return meta
 
 
@@ -210,6 +211,43 @@ def propose_from_scan(cfg: dict, *, line_counts: dict, ranking: list,
 OPEN_STATUSES = {"proposed", "approved", "in-progress"}
 
 
+def new_ticket(root: Path, cfg: dict, title: str, *, why: str = "",
+               priority: str = "medium", criteria: list[str] | None = None,
+               kind: str = "feature", source: str = "intent",
+               status: str = "proposed") -> dict:
+    """Intent intake: a human idea becomes a first-class ticket.
+
+    Same lifecycle as scan-proposed tickets, so the loop (research -> spec ->
+    act -> PR) picks it up identically. Fingerprinted by kind+title slug so
+    re-submitting the same idea dedups instead of duplicating.
+    """
+    from .radar.sources import slugify
+    title = title.strip()
+    if not title:
+        raise ValueError("ticket title required")
+    fingerprint = f"{kind}:{slugify(title, 60)}"
+    existing = load_tickets(root, cfg)
+    dup = next((t for t in existing if t.get("fingerprint") == fingerprint), None)
+    if dup:
+        return dup
+    ticket = {
+        "id": f"tkt-{next_ticket_num(existing):04d}",
+        "title": title,
+        "status": status if status in STATUSES else "proposed",
+        "origin": "human",
+        "source": source,
+        "priority": priority if priority in ("high", "medium", "low") else "medium",
+        "fingerprint": fingerprint,
+        "tags": [kind],
+        "why": why or "_captured from intent — refine before approving_",
+        "criteria": criteria or ["define acceptance criteria before approving"],
+    }
+    write_ticket(root, cfg, ticket)
+    write_board(root, cfg, load_tickets(root, cfg))
+    ticket["path"] = tickets_dir(root, cfg) / f"{ticket['id']}.md"
+    return ticket
+
+
 def set_ticket_status(root: Path, cfg: dict, ticket_id: str, status: str) -> dict:
     """Update a ticket's frontmatter status and rebuild the board."""
     if status not in STATUSES:
@@ -313,15 +351,38 @@ def tickets_main(argv: list[str]) -> int:
         description="Review scan-generated tickets from the terminal",
     )
     parser.add_argument("action", nargs="?", default="list",
-                        choices=["list", "approve", "start", "reject", "done"])
-    parser.add_argument("ticket_id", nargs="?", help="e.g. tkt-0001")
+                        choices=["list", "new", "approve", "start", "reject", "done"])
+    parser.add_argument("ticket_id", nargs="?",
+                        help="ticket id (or the title, for `new`)")
     parser.add_argument("--repo", default=".", help="Repo root (default: cwd)")
+    parser.add_argument("--why", default="", help="(new) rationale for the ticket")
+    parser.add_argument("--priority", default="medium",
+                        choices=["high", "medium", "low"], help="(new) priority")
+    parser.add_argument("--criterion", action="append", default=[],
+                        metavar="TEXT", help="(new) acceptance criterion; repeatable")
+    parser.add_argument("--kind", default="feature",
+                        help="(new) ticket kind: feature, refactor, chore... (default feature)")
+    parser.add_argument("--approve", action="store_true",
+                        help="(new) create directly as approved")
     args = parser.parse_args(argv)
 
     root = Path(args.repo).resolve()
     cfg = load_config(root)
     status_for = {"approve": "approved", "start": "in-progress",
                   "reject": "rejected", "done": "done"}
+
+    if args.action == "new":
+        if not args.ticket_id:
+            parser.error("`new` requires a title: repo-scan tickets new \"...\"")
+        ticket = new_ticket(root, cfg, args.ticket_id, why=args.why,
+                            priority=args.priority, criteria=args.criterion,
+                            kind=args.kind,
+                            status="approved" if args.approve else "proposed")
+        ok(f"{ticket['id']} ({ticket['status']}): {ticket['title']}")
+        if not args.criterion:
+            print("  tip: acceptance criteria drive the spec and the tests —"
+                  " add them with --criterion before approving")
+        return 0
 
     if args.action == "list":
         tickets = load_tickets(root, cfg)

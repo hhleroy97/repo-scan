@@ -115,3 +115,34 @@ def test_usage_ledger_appends(tmp_repo: Path, tmp_path: Path):
     for _ in range(3):
         complete("go", cfg, role="draft", root=tmp_repo)
     assert len(load_usage(tmp_repo, cfg)) == 3
+
+
+def test_complete_timeout_kills_and_raises(tmp_repo: Path, tmp_path: Path):
+    import pytest
+    from repo_scan.radar.llm import LLMError
+    script = tmp_path / "slow.py"
+    script.write_text("import time; time.sleep(30); print('late')")
+    cfg = dict(DEFAULT_CONFIG)
+    cfg["llm_cli"] = [f"{sys.executable} {script}"]
+    cfg["llm_timeout"] = 2
+    with pytest.raises(LLMError, match="timed out after 2s"):
+        complete("x", cfg, root=tmp_repo)
+
+
+def test_complete_emits_heartbeat_while_running(tmp_repo: Path, tmp_path: Path):
+    """A call longer than the heartbeat interval lands liveness events in the
+    feed — long agent runs read as 'working', not 'hung'."""
+    from repo_scan.hub.state import load_events
+    script = tmp_path / "slowish.py"
+    script.write_text("import time; time.sleep(7); print('finally done')")
+    cfg = dict(DEFAULT_CONFIG)
+    cfg["llm_cli"] = [f"{sys.executable} {script}"]
+    cfg["llm_heartbeat_seconds"] = 5
+    cfg["llm_timeout"] = 60
+
+    out = complete("x", cfg, role="research", root=tmp_repo)
+    assert out == "finally done"
+    beats = [e for e in load_events(tmp_repo, cfg, limit=20)
+             if "still working" in e["text"]]
+    assert beats and "research" in beats[0]["text"]
+    assert "alive" in beats[0]["text"]
