@@ -83,12 +83,12 @@ Turns the Graph tab into a **trust signal** for vault docs:
 
 | Feature | Source | UI |
 |---------|--------|-----|
-| **Provenance scoring** | `repo_scan/provenance.py` | Coverage layer — score rings (0–4) |
-| **Signal matrix** | `coverage.signal_matrix` | Per-kind pass % for E/L/C/F |
+| **Provenance scoring** | `repo_scan/provenance.py` | Coverage layer — score rings (0–3, fresh is vanity) |
+| **Signal matrix** | `coverage.signal_matrix` | Per-kind pass % for E/L/C (fresh shown but unscored) |
 | **Score histogram** | `coverage.score_histogram` | Bar chart of docs by score |
 | **Untracked queue** | `coverage.untracked_ranked` | Ranked code missing vault backlinks |
 | **Closed-loop edges** | `cites` + `linked_file` | Green solid = doc↔code both ways |
-| **Provenance chain** | `GET /api/graph/chain?id=…` | E/L/C/F checklist + stale strip per row |
+| **Provenance chain** | `GET /api/graph/chain?id=…` | E/L/C checklist + stale strip per row |
 
 **Status:** done — see `docs/changelog/2026-06-11-vault-provenance.md`.
 
