@@ -9,7 +9,7 @@
   "max_parallel_acts": 2,
   "act_open_pr": true,
   "gates": { "pre_implement": "auto", "post_implement": "auto" },
-  "max_acts_per_day": 10,
+  "max_acts_per_day": 50,
   "protected_paths": [".github/*", "repo_scan/config.py"],
   "llm_timeout": 1500,
   "act_timeout": 2700
