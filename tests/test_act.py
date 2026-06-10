@@ -159,6 +159,37 @@ def test_act_rejection_keeps_branch_uncommitted(act_repo, tmp_path):
     assert "outcome: **rejected**" in act_log
 
 
+def test_needs_readme_sync():
+    from repo_scan.radar.act import _needs_readme_sync
+    assert _needs_readme_sync(["repo_scan/radar/cli.py"])
+    assert not _needs_readme_sync(["repo_scan/radar/cli.py", "README.md"])
+    assert not _needs_readme_sync(["impl.py"])
+
+
+def test_act_doc_fix_round_when_cli_surface_changes(act_repo, tmp_path, monkeypatch):
+    """Doc fix round fires when implement touches cli.py without README."""
+    root, cfg = act_repo
+    prompts: list[str] = []
+
+    def fake_complete(prompt, *args, **kwargs):
+        prompts.append(prompt)
+        if len(prompts) == 1:
+            (root / "impl.py").write_text("VALUE = 1\n")
+        else:
+            (root / "README.md").write_text("# Updated README\n")
+        return "ok"
+
+    monkeypatch.setattr("repo_scan.radar.act.complete", fake_complete)
+    monkeypatch.setattr("repo_scan.radar.act._changed_files",
+                        lambda *a, **k: ["repo_scan/radar/cli.py"])
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["test_cmd"] = f"{sys.executable} -c \"pass\""
+    assert cmd_act(root, cfg) == 0
+    assert len(prompts) >= 2
+    assert "Changed code files:" in prompts[1]
+    assert "repo_scan/radar/cli.py" in prompts[1]
+
+
 def test_act_fix_round_then_pass(act_repo, tmp_path):
     root, cfg = act_repo
     cfg["llm_cli"] = [_stub_agent(tmp_path, COUNTING_AGENT)]

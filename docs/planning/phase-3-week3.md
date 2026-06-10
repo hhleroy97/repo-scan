@@ -46,17 +46,16 @@ clicked button disabled with no card or header feedback.
 
 **Tests:** `test_event_bus_broadcast`, `test_sse_*`, `test_dashboard_has_sse_client`
 
-## Task 3.2 — Gate drawer
+## Task 3.2 — Gate drawer ✅
 
-Gate card expands to show:
-- Spec summary (first 40 lines via `/api/doc`)
-- Linked analysis wikilink
-- Warning if spec `drafted_at` older than last `main` commit
-- Acceptance criteria checklist
+**Shipped (2026-06-10):** tap-to-expand gate cards with spec excerpt, analysis
+link, criteria checklist, stale-spec warning vs `main`.
 
-## Task 3.3 — Doc drift check on act
+**Tests:** `tests/test_gate_drawer.py`
 
-If act changes `repo_scan/*.py` public CLI surface, require README diff or
-trigger `doc_fix` round (one bounded retry).
+## Task 3.3 — Doc drift check on act ✅
 
-**Detailed acceptance criteria:** to be written after Phase 2 ships.
+**Shipped (2026-06-10):** one bounded `doc_fix` round when act touches public
+`repo_scan/` surface without a README edit.
+
+**Tests:** `tests/test_act.py::test_act_doc_fix_when_cli_changes_without_readme`

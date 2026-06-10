@@ -63,6 +63,15 @@ Specification:
 {spec}
 ---"""
 
+DOC_FIX_PROMPT = """You changed public package code under repo_scan/ but README.md
+was not updated. Bring README.md in line with the new CLI flags, config keys,
+or behavior you introduced. Keep edits minimal. Do NOT commit or create
+branches. Reply with a one-paragraph summary.
+
+Changed code files:
+{files}
+"""
+
 FIX_PROMPT = """Your implementation of a spec in this repository has failing tests.
 Fix the failures. Keep changes minimal. Do NOT commit or create branches.
 Reply with a one-paragraph summary of the fix.
@@ -143,6 +152,20 @@ def _changed_files(work: Path, docs_dir: str) -> list[str]:
         if p:
             files.append(p)
     return files
+
+
+def _needs_readme_sync(changed: list[str]) -> bool:
+    """True when act touched public CLI surface without updating README."""
+    py = [f for f in changed if f.startswith("repo_scan/") and f.endswith(".py")]
+    if not py:
+        return False
+    surface = any(
+        f.endswith("cli.py") or f.endswith("__init__.py")
+        or f.endswith("config.py") or f.endswith("main.py")
+        for f in py
+    )
+    readme = any(Path(f).name.lower() == "readme.md" for f in changed)
+    return surface and not readme
 
 
 def _is_test_file(path: str) -> bool:
@@ -431,6 +454,18 @@ def cmd_act(root: Path, cfg: dict, ticket_id: str | None = None,
             ckpt["agent_summary"] = summary[:1000]
             save_checkpoint(root, cfg, problem, ckpt)
             ok("agent finished")
+
+        if not ckpt.get("doc_fix_ok"):
+            changed = _changed_files(work, cfg["docs_dir"])
+            if _needs_readme_sync(changed):
+                progress(root, cfg, problem, "[3/5] Implement",
+                         "README out of sync — doc fix round", banner=False)
+                complete(DOC_FIX_PROMPT.format(files="\n".join(changed[:20])),
+                         cfg, timeout=int(cfg.get("act_timeout", ACT_TIMEOUT)),
+                         cwd=str(work), role="act_fix", root=root)
+                ckpt["doc_fix_ok"] = True
+                save_checkpoint(root, cfg, problem, ckpt)
+                ok("README sync round finished")
 
         # -- acceptance tests (hard requirement for intent-driven kinds) -------------
         require_kinds = set(cfg.get("require_tests_for_kinds", ["feature"]))

@@ -14,6 +14,6 @@ RADAR loop context.
 |-------|-----|-------|--------|
 | 1 | [[phase-1-week1]] | Merge diagrams PR, `repo_snapshot`, live run panel | **Done** |
 | 2 | [[phase-2-week2]] | Pre-act bundle, Record stage, auto-close tickets | **Done** |
-| 3 | [[phase-3-week3]] | Loading states, SSE hub, gate drawer, doc drift | In progress (3.0–3.1 done) |
+| 3 | [[phase-3-week3]] | Loading states, SSE hub, gate drawer, doc drift | **Done** |
 
 Research run for Phase 1: [[2026-06-10-phase1-planning-research]]
