@@ -1,5 +1,7 @@
 # repo-scan
 
+[![CI](https://github.com/hhleroy97/repo-scan/actions/workflows/ci.yml/badge.svg)](https://github.com/hhleroy97/repo-scan/actions/workflows/ci.yml)
+
 Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
 ---
