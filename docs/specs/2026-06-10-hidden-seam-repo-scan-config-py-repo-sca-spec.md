@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled). `repo_scan/config.py` and `repo_scan/hub/daemon.py` changed together in 7 commits (58% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-hidden-seam-repo-scan-config-py-repo-sca-analysis]]"
 drafted_at: "2026-06-10 17:31 UTC"
 ---
 
 # Spec — Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled). `repo_scan/config.py` and `repo_scan/hub/daemon.py` changed together in 7 commits (58% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 17:31 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 17:31 UTC by radar — **status: approved**_
 
 I'll inspect the repo's coupling metrics, config/daemon setup, and the tkt-0008 precedent so the revised spec matches reality.
 ## Goal
