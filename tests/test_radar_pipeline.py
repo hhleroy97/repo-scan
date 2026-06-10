@@ -1,4 +1,8 @@
-"""B3: full radar loop with the fake-LLM response queue (offline, deterministic)."""
+"""B3: full radar loop with the fake-LLM response queue (offline, deterministic).
+
+Private ``assert_*`` helpers keep the happy-path integration test readable (Assertion
+Roulette fix) without splitting the artifact graph into micro-tests.
+"""
 
 import json
 import sys
@@ -51,6 +55,70 @@ def happy_path_responses(note: Path) -> list[str]:
     ]
 
 
+def assert_approved_spec(docs: Path) -> Path:
+    """Single spec file with approved status, goal text, and audit pass banner."""
+    specs = list((docs / "specs").glob("*.md"))
+    assert len(specs) == 1
+    spec = specs[0].read_text()
+    assert "status: approved" in spec
+    assert "File-backed gates" in spec
+    assert "[!success] Audit verdict: pass" in spec
+    return specs[0]
+
+
+def assert_analysis_confidence(docs: Path) -> Path:
+    """Single analysis file reporting high confidence."""
+    analysis = list((docs / "research" / "analysis").glob("*.md"))
+    assert len(analysis) == 1
+    assert "confidence: high" in analysis[0].read_text()
+    return analysis[0]
+
+
+def _assert_provenance_analysis_links(
+    docs: Path, spec_text: str, analysis_text: str, analysis_stem: str,
+) -> None:
+    """Wikilinks from spec and analysis to the analysis artifact and run log."""
+    assert analysis_stem.endswith("-analysis")
+    assert f"[[{analysis_stem}]]" in spec_text
+    assert "[[file-note\\|" in analysis_text
+    run_log = next((docs / "research" / "runs").glob("*.md"))
+    assert f"[[{run_log.stem}]]" in analysis_text
+
+
+def _assert_provenance_decision_links(
+    docs: Path, spec_stem: str, analysis_stem: str, run_log_stem: str,
+) -> None:
+    """Decisions table wikilinks and bare-link stem disambiguation."""
+    assert run_log_stem != analysis_stem != spec_stem
+    decisions_text = (docs / "research" / "decisions.md").read_text()
+    assert f"[[{analysis_stem}]]" in decisions_text
+    assert f"[[{spec_stem}]]" in decisions_text
+
+
+def assert_provenance_cluster(docs: Path, spec_stem: str, analysis_stem: str) -> None:
+    """Wikilinks among spec, analysis, run log, and decisions; evidence to source."""
+    spec_text = (docs / "specs" / f"{spec_stem}.md").read_text()
+    analysis_text = (docs / "research" / "analysis" / f"{analysis_stem}.md").read_text()
+    _assert_provenance_analysis_links(docs, spec_text, analysis_text, analysis_stem)
+    run_log_stem = next((docs / "research" / "runs").glob("*.md")).stem
+    _assert_provenance_decision_links(docs, spec_stem, analysis_stem, run_log_stem)
+
+
+def assert_loop_changelog(docs: Path) -> None:
+    """Single loop changelog with approved outcome and gate pass lines."""
+    loop_logs = list((docs / "changelog").glob("*-loop.md"))
+    assert len(loop_logs) == 1
+    log = loop_logs[0].read_text()
+    assert "outcome: **approved**" in log
+    assert "post_analyze: passed; post_audit: passed" in log
+
+
+def assert_decisions_auto_rows(docs: Path, count: int = 2) -> None:
+    """Decisions table contains the expected number of auto gate rows."""
+    decisions = (docs / "research" / "decisions.md").read_text()
+    assert decisions.count("| auto |") == count
+
+
 def test_loop_happy_path_auto_gates(loop_env):
     root, cfg, note, queue = loop_env
     queue_responses(queue, happy_path_responses(note))
@@ -59,38 +127,11 @@ def test_loop_happy_path_auto_gates(loop_env):
     assert rc == 0
 
     docs = root / "docs"
-    specs = list((docs / "specs").glob("*.md"))
-    assert len(specs) == 1
-    spec = specs[0].read_text()
-    assert "status: approved" in spec
-    assert "File-backed gates" in spec
-    assert "[!success] Audit verdict: pass" in spec
-
-    analysis = list((docs / "research" / "analysis").glob("*.md"))
-    assert len(analysis) == 1
-    analysis_text = analysis[0].read_text()
-    assert "confidence: high" in analysis_text
-
-    # provenance cluster: spec -> analysis -> sources/run log; decisions -> artifacts
-    analysis_stem = analysis[0].stem
-    assert analysis_stem.endswith("-analysis")
-    assert f"[[{analysis_stem}]]" in spec
-    assert "[[file-note\\|" in analysis_text          # evidence wikilink to source
-    run_log = next((docs / "research" / "runs").glob("*.md"))
-    assert f"[[{run_log.stem}]]" in analysis_text
-    assert run_log.stem != analysis_stem != specs[0].stem  # bare links stay unambiguous
-    decisions_text = (docs / "research" / "decisions.md").read_text()
-    assert f"[[{analysis_stem}]]" in decisions_text
-    assert f"[[{specs[0].stem}]]" in decisions_text
-
-    loop_logs = list((docs / "changelog").glob("*-loop.md"))
-    assert len(loop_logs) == 1
-    log = loop_logs[0].read_text()
-    assert "outcome: **approved**" in log
-    assert "post_analyze: passed; post_audit: passed" in log
-
-    decisions = (docs / "research" / "decisions.md").read_text()
-    assert decisions.count("| auto |") == 2
+    spec_path = assert_approved_spec(docs)
+    analysis_path = assert_analysis_confidence(docs)
+    assert_provenance_cluster(docs, spec_path.stem, analysis_path.stem)
+    assert_loop_changelog(docs)
+    assert_decisions_auto_rows(docs)
 
 
 def test_loop_pauses_at_gate1_noninteractive(loop_env):
