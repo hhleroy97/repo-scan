@@ -6,7 +6,6 @@ kanban-plugin: board
 
 ## Proposed
 
-- [ ] [[tkt-0001|Refactor repo_scan/writers.py (CC 52, 7 commits, untested)]]
 - [ ] [[tkt-0002|Refactor repo_scan/scanner.py (CC 27, 8 commits, untested)]]
 - [ ] [[tkt-0003|Refactor repo_scan/graphs.py (CC 56, 3 commits, untested)]]
 - [ ] [[tkt-0004|Refactor repo_scan/languages.py (CC 18, 3 commits, untested)]]
@@ -23,6 +22,7 @@ kanban-plugin: board
 
 ## Done
 
+- [x] [[tkt-0001|Refactor repo_scan/writers.py (CC 52, 7 commits, untested)]]
 
 ## Rejected
 

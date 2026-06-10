@@ -34,7 +34,7 @@ DEFAULT_CONFIG = {
 }
 
 # Keys owned by radar (B-phases) — valid in .repo-scan.json, unused by scan.
-RADAR_CONFIG_KEYS = {"gates", "llm_cli"}
+RADAR_CONFIG_KEYS = {"gates", "llm_cli", "llm_timeout"}
 
 
 def load_config(root: Path) -> dict:

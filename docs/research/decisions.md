@@ -6,3 +6,7 @@
 | 2026-06-09 23:46 UTC | post_analyze | approved (--approve) | Do not fully replace the composite heuristic with graph-only PageRank. Instead, upgrade the structural centrality term f |
 | 2026-06-09 23:48 UTC | post_audit | paused | audit revise: The spec aligns with the approved analysis and zero-deps constraint, but needs clearer edge-mapping rules, |
 | 2026-06-09 23:58 UTC | post_audit | approved (human, with implementation) | [[2026-06-09-should-repo-scan-replace-its-heuristic-i-spec]] — approved at Gate 2; audit issues to be addressed in imple |
+| 2026-06-10 01:51 UTC | post_analyze | paused | Before any structural refactor, add syrupy characterization snapshots for every write_* artifact using a fixed fixture r |
+| 2026-06-10 01:54 UTC | post_analyze | approved (--approve) | Before any structural refactor, add syrupy characterization snapshots for every write_* artifact using a fixed fixture r |
+| 2026-06-10 01:57 UTC | post_audit | paused | audit revise: The phased snapshot-then-extract plan matches the codebase hotspots and ticket intent, but the spec needs  |
+| 2026-06-10 02:02 UTC | post_audit | approved | human approved with audit corrections folded into implementation — [[2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co |

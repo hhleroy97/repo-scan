@@ -9,6 +9,11 @@ description = "Repo intelligence tool"
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+# dev/test only — runtime stays zero-dependency.
+# syrupy 5.x requires pytest>=8 (snapshot characterization tests).
+dev = ["pytest>=8", "syrupy>=5", "radon", "lizard"]
+
 [project.scripts]
 repo-scan = "repo_scan:main"
 radar = "repo_scan.radar.cli:main"

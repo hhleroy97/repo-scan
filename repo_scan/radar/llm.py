@@ -13,7 +13,7 @@ import subprocess
 
 from .sources import Source
 
-LLM_TIMEOUT = 180
+LLM_TIMEOUT = 420
 
 # Each candidate is a command template; the prompt is appended as the final arg.
 # cursor-agent needs -f in non-interactive mode, else it exits asking for
@@ -42,7 +42,11 @@ def available_backend(cfg: dict) -> list[str] | None:
     return None
 
 
-def complete(prompt: str, cfg: dict, timeout: int = LLM_TIMEOUT) -> str:
+def complete(prompt: str, cfg: dict, timeout: int | None = None) -> str:
+    # agent CLIs have highly variable latency (cold starts, thinking time);
+    # default is generous and overridable per repo via "llm_timeout"
+    if timeout is None:
+        timeout = int(cfg.get("llm_timeout", LLM_TIMEOUT))
     cmd = available_backend(cfg)
     if not cmd:
         tried = ", ".join(c[0] for c in _candidates(cfg))
@@ -78,7 +82,7 @@ def extract_json(text: str) -> dict:
         raise LLMError(f"LLM output was not valid JSON: {e}") from e
 
 
-def complete_json(prompt: str, cfg: dict, timeout: int = LLM_TIMEOUT) -> dict:
+def complete_json(prompt: str, cfg: dict, timeout: int | None = None) -> dict:
     return extract_json(complete(prompt, cfg, timeout))
 
 

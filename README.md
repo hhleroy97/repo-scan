@@ -210,9 +210,13 @@ docs/
 ## Development
 
 ```bash
-pip install pytest
+pip install -e ".[dev]"    # pytest>=8, syrupy>=5, radon, lizard
 python3 -m pytest tests/   # offline: fake-LLM harness, no network calls
 ```
+
+Writer output is pinned by syrupy golden files in `tests/__snapshots__/`.
+If you intentionally change generated markdown/JSON, refresh them with
+`pytest --snapshot-update` and review the diff like any other code change.
 
 Build progress is tracked per phase in `docs/changelog/`.
 

@@ -1,23 +1,27 @@
 # Repo index
-_Last scan: 2026-06-10 01:21 UTC_
+_Last scan: 2026-06-10 02:07 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
-> [!note] No critical files; 1 file(s) above the 300-line watermark
+> [!note] No critical files; 3 file(s) above the 300-line watermark
 
-> [!tip] No metric changes since last scan
+> [!note] Since last scan (2026-06-10 01:21 UTC)
+> lines +325, files +2, hotspot functions -1, critical files 0
+> - `repo_scan/writers.py` complexity -52
+> - `repo_scan/tickets.py` complexity +14
+> - `repo_scan/scanner.py` complexity +1
 
 ## Overview
 
 | Metric | Value |
 |--------|-------|
-| Source files | 43 |
-| Total lines | 4,261 |
-| Languages | PY: 43 |
-| Large files (>300 lines) | 1 |
+| Source files | 45 |
+| Total lines | 4,586 |
+| Languages | PY: 45 |
+| Large files (>300 lines) | 3 |
 | Critical files (>600 lines) | 0 |
 | Branch | main |
-| Last commit | 2bc8811 feat: C1 behavioral metrics — change coupling, bus-factor map, code age from one git pass |
+| Last commit | 95fcbf7 feat: C3 ticket workflow — review CLI, approved-ticket radar queue, metrics-resolved flags |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml`, `setup.py` |
 
@@ -33,28 +37,28 @@ _"Imported by" counts direct dependents only; PageRank captures transitive impor
 
 | File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |
 |------|-------|----------|-------------|---------|----|-------|-------|
-| `repo_scan/writers.py` | 60.4 | 0.0295 | 1 | 7 | 52 | 469 | **no** |
-| `repo_scan/graphs.py` | 44.0 | 0.0337 | 2 | 3 | 56 | 140 | **no** |
-| `repo_scan/scanner.py` | 39.2 | 0.0000 | 0 | 8 | 27 | 146 | **no** |
-| `repo_scan/config.py` | 36.0 | 0.1672 | 18 | 0 | 0 | 49 | **no** |
-| `repo_scan/radar/pipeline.py` | 28.8 | 0.0416 | 2 | 3 | 11 | 292 | yes |
-| `repo_scan/radar/sources.py` | 26.4 | 0.0364 | 2 | 3 | 14 | 166 | **no** |
-| `repo_scan/ranking.py` | 24.7 | 0.0347 | 1 | 0 | 34 | 106 | **no** |
-| `repo_scan/languages.py` | 24.4 | 0.0285 | 1 | 3 | 18 | 66 | **no** |
-| `README.md` | 21.0 | 0.0000 | 0 | 7 | 0 | 0 | **no** |
-| `repo_scan/tickets.py` | 19.5 | 0.0313 | 1 | 0 | 19 | 210 | yes |
-| `tests/test_radar_pipeline.py` | 16.0 | 0.0244 | 0 | 0 | 19 | 113 | yes |
-| `setup.py` | 15.3 | 0.0000 | 0 | 5 | 0 | 13 | **no** |
-| `pyproject.toml` | 15.3 | 0.0000 | 0 | 5 | 0 | 14 | **no** |
-| `repo_scan/behavior.py` | 14.1 | 0.0313 | 1 | 0 | 12 | 102 | yes |
-| `repo_scan/complexity.py` | 12.8 | 0.0285 | 1 | 0 | 11 | 91 | **no** |
+| `repo_scan/scanner.py` | 77.9 | 0.1039 | 11 | 10 | 28 | 151 | **no** |
+| `repo_scan/graphs.py` | 46.2 | 0.0301 | 2 | 3 | 56 | 140 | **no** |
+| `repo_scan/writers.py` | 38.0 | 0.0264 | 1 | 7 | 0 | 485 | yes |
+| `repo_scan/radar/pipeline.py` | 34.7 | 0.0372 | 2 | 4 | 11 | 310 | yes |
+| `repo_scan/tickets.py` | 32.4 | 0.0339 | 2 | 0 | 33 | 303 | yes |
+| `repo_scan/config.py` | 31.9 | 0.0916 | 11 | 0 | 0 | 49 | **no** |
+| `repo_scan/radar/sources.py` | 28.8 | 0.0326 | 2 | 3 | 14 | 166 | **no** |
+| `repo_scan/ranking.py` | 27.8 | 0.0310 | 1 | 0 | 34 | 106 | **no** |
+| `repo_scan/languages.py` | 26.2 | 0.0255 | 1 | 3 | 18 | 66 | **no** |
+| `README.md` | 24.5 | 0.0000 | 0 | 9 | 0 | 0 | **no** |
+| `tests/test_radar_pipeline.py` | 18.1 | 0.0218 | 0 | 0 | 19 | 113 | yes |
+| `repo_scan/behavior.py` | 16.9 | 0.0279 | 1 | 0 | 12 | 102 | yes |
+| `repo_scan/complexity.py` | 15.4 | 0.0255 | 1 | 0 | 11 | 91 | **no** |
+| `tests/test_trends.py` | 14.8 | 0.0218 | 0 | 0 | 14 | 61 | yes |
+| `pyproject.toml` | 14.0 | 0.0000 | 0 | 5 | 0 | 16 | **no** |
 
 ```mermaid
 xychart-beta
     title "Importance score (top files)"
-    x-axis ["writers.py", "graphs.py", "scanner.py", "config.py", "pipeline.py", "sources.py", "ranking.py", "languages.py"]
+    x-axis ["scanner.py", "graphs.py", "writers.py", "pipeline.py", "tickets.py", "config.py", "sources.py", "ranking.py"]
     y-axis "Score" 0 --> 100
-    bar [60.4, 44, 39.2, 36, 28.8, 26.4, 24.7, 24.4]
+    bar [77.9, 46.2, 38, 34.7, 32.4, 31.9, 28.8, 27.8]
 ```
 
 ```mermaid
@@ -66,18 +70,18 @@ quadrantChart
     quadrant-2 Complex but stable
     quadrant-3 Quiet
     quadrant-4 Hot but simple
-    writers.py: [0.88, 0.93]
-    graphs.py: [0.38, 0.98]
-    scanner.py: [0.98, 0.48]
-    pipeline.py: [0.38, 0.20]
-    sources.py: [0.38, 0.25]
+    scanner.py: [0.98, 0.50]
+    graphs.py: [0.30, 0.98]
+    writers.py: [0.70, 0.02]
+    pipeline.py: [0.40, 0.20]
+    tickets.py: [0.02, 0.59]
+    sources.py: [0.30, 0.25]
     ranking.py: [0.02, 0.61]
-    languages.py: [0.38, 0.32]
-    README.md: [0.88, 0.02]
-    tickets.py: [0.02, 0.34]
+    languages.py: [0.30, 0.32]
+    README.md: [0.90, 0.02]
     test_radar_pipeli…: [0.02, 0.34]
-    setup.py: [0.62, 0.02]
-    pyproject.toml: [0.62, 0.02]
+    behavior.py: [0.02, 0.21]
+    complexity.py: [0.02, 0.20]
 ```
 
 ## Structure
@@ -100,7 +104,10 @@ repo-scan/
 │   │   ├── 2026-06-09-phase-b3-loop.md
 │   │   ├── 2026-06-09-phase-b4-autonomy.md
 │   │   ├── 2026-06-09-portability-fixes.md
-│   │   └── 2026-06-09-visual-layer.md
+│   │   ├── 2026-06-09-visual-layer.md
+│   │   ├── 2026-06-10-behavior-and-tickets.md
+│   │   ├── 2026-06-10-loop.md
+│   │   └── 2026-06-10-phase-c3-workflow.md
 │   ├── reports/
 │   │   ├── calls.md
 │   │   ├── coupling.md
@@ -117,14 +124,18 @@ repo-scan/
 │   │   ├── index.md
 │   │   └── tags.md
 │   ├── specs/
-│   │   └── 2026-06-09-should-repo-scan-replace-its-heuristic-i-spec.md
+│   │   ├── 2026-06-09-should-repo-scan-replace-its-heuristic-i-spec.md
+│   │   └── 2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co-spec.md
 │   ├── tickets/
 │   │   ├── board.md
 │   │   ├── tkt-0001.md
 │   │   ├── tkt-0002.md
 │   │   ├── tkt-0003.md
 │   │   ├── tkt-0004.md
-│   │   └── tkt-0005.md
+│   │   ├── tkt-0005.md
+│   │   ├── tkt-0006.md
+│   │   ├── tkt-0007.md
+│   │   └── tkt-0008.md
 │   ├── digest.md
 │   ├── index.md
 │   ├── RADAR_CONTEXT.md
@@ -165,6 +176,8 @@ repo-scan/
 │   ├── SOURCES.txt
 │   └── top_level.txt
 ├── tests/
+│   ├── __snapshots__/
+│   │   └── test_writers_snapshots.ambr
 │   ├── conftest.py
 │   ├── fake_llm.py
 │   ├── test_behavior.py
@@ -178,8 +191,10 @@ repo-scan/
 │   ├── test_scan.py
 │   ├── test_tests_map.py
 │   ├── test_tickets.py
+│   ├── test_tickets_workflow.py
 │   ├── test_trends.py
-│   └── test_visuals.py
+│   ├── test_visuals.py
+│   └── test_writers_snapshots.py
 ├── .gitignore
 ├── .repo-scan.json
 ├── pyproject.toml

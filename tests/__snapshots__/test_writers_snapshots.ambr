@@ -1,0 +1,416 @@
+# serializer version: 1
+# name: test_call_report_snapshot
+  '''
+  # Call graph
+  _Generated 2026-01-01 00:00 UTC_
+  
+  ## C / C++
+  
+  ```mermaid
+  graph TD
+    main --> helper
+  ```
+  
+  ## TypeScript
+  
+  _TS call graph via ts-morph — coming in next version_
+  
+  ## Python
+  
+  _Python call graph via AST walker — coming in next version_
+  
+  '''
+# ---
+# name: test_candidates_snapshot
+  '''
+  # RADAR candidates
+  _Generated 2026-01-01 00:00 UTC_
+  
+  Files that are both high-churn and high-complexity — the most valuable
+  targets for external research. Consumed by `radar` as a trigger feed.
+  
+  ```mermaid
+  quadrantChart
+      title Candidate zone (top-right)
+      x-axis Low churn --> High churn
+      y-axis Low complexity --> High complexity
+      quadrant-1 RADAR candidates
+      quadrant-2 Complex but stable
+      quadrant-3 Quiet
+      quadrant-4 Hot but simple
+      app.py: [0.98, 0.98]
+      util.py: [0.33, 0.50]
+  ```
+  
+  | File | Commits | Complexity | Tests | Priority |
+  |------|---------|------------|-------|----------|
+  | `src/app.py` | 12 | 24 | yes | 288 |
+  | `src/util.py` | 4 | 12 | **no** (2x) | 96 |
+  
+  '''
+# ---
+# name: test_coupling_report_snapshot
+  '''
+  # Change coupling
+  _Generated 2026-01-01 00:00 UTC_
+  
+  Files that change together (≥4 shared commits, ≥50% degree).
+  Coupled pairs **without** an import edge are hidden seams — an implicit
+  contract the dependency graph can't see.
+  
+  > [!warning] 1 hidden seam(s): coupled in history, no import edge
+  > - `src/app.py` ↔ `src/util.py` (67% over 4 commits)
+  
+  | File A | File B | Shared commits | Degree | Import edge |
+  |--------|--------|----------------|--------|-------------|
+  | `src/app.py` | `src/util.py` | 4 | 67% | **none — seam** |
+  
+  '''
+# ---
+# name: test_dep_report_snapshot
+  '''
+  # Dependency graph
+  _Generated 2026-01-01 00:00 UTC_
+  
+  _Node color = PageRank tier: red = hub, amber = mid, gray = leaf._
+  
+  ## TypeScript / JavaScript
+  
+  ```mermaid
+  graph TD
+    src_a["a"] --> src_b["b"]
+  ```
+  
+  ## Python
+  
+  ```mermaid
+  graph TD
+    pkg_mod["mod"] --> pkg_util["util"]
+  ```
+  
+  '''
+# ---
+# name: test_health_report_snapshot
+  '''
+  # Health report
+  _Generated 2026-01-01 00:00 UTC_  |  _Branch: main_  |  _Last commit: abc1234 fixed commit_
+  
+  ## Where the code lives
+  
+  ```mermaid
+  pie title Lines of code by directory
+      "src" : 1100
+      "tests" : 80
+  ```
+  
+  ## File sizes
+  
+  | File | Lines | Size | Status |
+  |------|-------|------|--------|
+  | `src/app.py` | 700 | 20.5 KB | **critical** |
+  | `src/util.py` | 350 | 10.3 KB | *large* |
+  | `tests/test_app.py` | 80 | 2.3 KB | ok |
+  | `src/ok.py` | 50 | 1.5 KB | ok |
+  
+  ## Complexity hotspots
+  
+  | File | Function | Rank | Score | Line |
+  |------|----------|------|-------|------|
+  | `src/app.py` | `main` | D | 24 | 10 |
+  | `src/util.py` | `helper` | C | 12 | 5 |
+  
+  ## Git churn (most changed files)
+  
+  ```mermaid
+  xychart-beta
+      title "Commits touching each file"
+      x-axis ["app.py", "util.py"]
+      y-axis "Commits" 0 --> 12
+      bar [12, 4]
+  ```
+  
+  | File | Commits |
+  |------|---------|
+  | `src/app.py` | 12 |
+  | `src/util.py` | 4 |
+  
+  ## Knowledge map (bus factor)
+  
+  _Top-author share near 100% on an active file = knowledge silo._
+  
+  | File | Commits | Authors | Top author share | Age (days) | Flag |
+  |------|---------|---------|------------------|------------|------|
+  | `src/app.py` | 12 | 1 | 100% | 3 | silo |
+  | `src/util.py` | 4 | 2 | 75% | 200 | stale |
+  
+  ## Action items
+  
+  > [!warning] 1 file(s) over the 600-line critical threshold
+  > - [ ] Split `src/app.py` (700 lines)
+  
+  '''
+# ---
+# name: test_index_snapshot
+  '''
+  # Repo index
+  _Last scan: 2026-01-01 00:00 UTC_
+  
+  > A deterministic fixture repo for writer snapshots.
+  
+  > [!warning] 1 file(s) exceed 600 lines — see [[reports/health]]
+  > Largest: `src/app.py` (700 lines)
+  
+  > [!warning] Since last scan (2025-12-31 00:00 UTC)
+  > lines +120, files +1, hotspot functions +1, critical files 0
+  > - `src/app.py` complexity +6
+  
+  ## Overview
+  
+  | Metric | Value |
+  |--------|-------|
+  | Source files | 4 |
+  | Total lines | 1,180 |
+  | Languages | PY: 4 |
+  | Large files (>300 lines) | 2 |
+  | Critical files (>600 lines) | 1 |
+  | Branch | main |
+  | Last commit | abc1234 fixed commit |
+  | Remote | https://example.com/repo.git |
+  | Manifests | `pyproject.toml` |
+  
+  ## Entry points
+  
+  - `fixed` → fixed:main (pyproject)
+  
+  ## Start here (ranked by importance)
+  
+  _Composite of import-graph PageRank × git churn × complexity × size._
+  _"Imported by" counts direct dependents only; PageRank captures transitive importance._
+  
+  | File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |
+  |------|-------|----------|-------------|---------|----|-------|-------|
+  | `src/app.py` | 80.0 | 0.4100 | 2 | 12 | 24 | 700 | yes |
+  | `src/util.py` | 40.5 | 0.1800 | 1 | 4 | 12 | 350 | **no** |
+  
+  ```mermaid
+  xychart-beta
+      title "Importance score (top files)"
+      x-axis ["app.py", "util.py"]
+      y-axis "Score" 0 --> 100
+      bar [80, 40.5]
+  ```
+  
+  ```mermaid
+  quadrantChart
+      title Where to focus: churn vs complexity
+      x-axis Low churn --> High churn
+      y-axis Low complexity --> High complexity
+      quadrant-1 RADAR candidates
+      quadrant-2 Complex but stable
+      quadrant-3 Quiet
+      quadrant-4 Hot but simple
+      app.py: [0.98, 0.98]
+      util.py: [0.33, 0.50]
+  ```
+  
+  ## Structure
+  
+  ```
+  src/
+    app.py
+    util.py
+    ok.py
+  tests/
+    test_app.py
+  ```
+  
+  ## Reports
+  
+  - [[reports/health]] — file sizes, complexity, git churn
+  - [[reports/dependencies]] — dependency graphs (Mermaid)
+  - [[reports/calls]] — call graphs (Mermaid)
+  
+  ## Architecture
+  
+  - [[architecture/dependency-graph]] — stable dep graph for cross-linking
+  - [[architecture/overview]] — hand-written system overview _(create this)_
+  
+  ## Research
+  
+  - [[research/index]] — ingested sources _(populated by RADAR)_
+  - [[research/theory]] — distilled understanding _(yours to write)_
+  
+  ## Action items
+  
+  - [ ] Split `src/app.py` (700 lines)
+  
+  '''
+# ---
+# name: test_scan_json_snapshot
+  '''
+  {
+    "schema_version": 1,
+    "generated_at": "2026-01-01 00:00 UTC",
+    "repo": {
+      "name": "fixed",
+      "remote": "https://example.com/repo.git",
+      "branch": "main",
+      "last_commit": "abc1234 fixed commit",
+      "manifests": [
+        "pyproject.toml"
+      ],
+      "entry_points": [
+        "`fixed` \u2192 fixed:main (pyproject)"
+      ]
+    },
+    "languages": {
+      "py": 4
+    },
+    "files": {
+      "src/app.py": {
+        "lines": 700,
+        "bytes": 21000
+      },
+      "src/util.py": {
+        "lines": 350,
+        "bytes": 10500
+      },
+      "src/ok.py": {
+        "lines": 50,
+        "bytes": 1500
+      },
+      "tests/test_app.py": {
+        "lines": 80,
+        "bytes": 2400
+      }
+    },
+    "churn": [
+      {
+        "file": "src/app.py",
+        "commits": 12
+      },
+      {
+        "file": "src/util.py",
+        "commits": 4
+      }
+    ],
+    "complexity": [
+      {
+        "file": "src/app.py",
+        "name": "main",
+        "rank": "D",
+        "complexity": 24,
+        "lineno": 10
+      },
+      {
+        "file": "src/util.py",
+        "name": "helper",
+        "rank": "C",
+        "complexity": 12,
+        "lineno": 5
+      }
+    ],
+    "ranking": [
+      {
+        "file": "src/app.py",
+        "score": 80.0,
+        "pagerank": 0.41,
+        "imported_by": 2,
+        "commits": 12,
+        "complexity": 24,
+        "lines": 700,
+        "tested": true
+      },
+      {
+        "file": "src/util.py",
+        "score": 40.5,
+        "pagerank": 0.18,
+        "imported_by": 1,
+        "commits": 4,
+        "complexity": 12,
+        "lines": 350,
+        "tested": false
+      }
+    ],
+    "dependency_edges": {
+      "python": [
+        [
+          "pkg.mod",
+          "pkg.util"
+        ]
+      ],
+      "typescript": [
+        [
+          "src/a.ts",
+          "src/b.ts"
+        ]
+      ]
+    },
+    "behavior": {
+      "coupling": [
+        {
+          "a": "src/app.py",
+          "b": "src/util.py",
+          "shared": 4,
+          "degree": 67
+        }
+      ],
+      "ownership": [
+        {
+          "file": "src/app.py",
+          "commits": 12,
+          "authors": 1,
+          "top_author": "alice@example.com",
+          "top_share": 1.0
+        },
+        {
+          "file": "src/util.py",
+          "commits": 4,
+          "authors": 2,
+          "top_author": "bob@example.com",
+          "top_share": 0.75
+        }
+      ],
+      "age_days": {
+        "src/app.py": 3,
+        "src/util.py": 200
+      }
+    },
+    "config": {
+      "line_warn": 300,
+      "line_crit": 600,
+      "complexity_min_rank": "C",
+      "churn_top_n": 20,
+      "exclude_dirs": [
+        "node_modules",
+        ".git",
+        "__pycache__",
+        ".venv",
+        "venv",
+        "dist",
+        "build",
+        ".next",
+        "target",
+        ".mypy_cache",
+        ".pytest_cache",
+        "coverage",
+        ".turbo",
+        "out"
+      ],
+      "docs_dir": "docs",
+      "radar_enabled": false,
+      "tree_depth": 3,
+      "rank_top_n": 15,
+      "digest_tokens": 4000,
+      "coupling_min_shared": 4,
+      "coupling_min_degree": 50,
+      "coupling_max_changeset": 30,
+      "silo_min_share": 0.9,
+      "stale_days": 180,
+      "tickets_enabled": true,
+      "tickets_max_new_per_scan": 5
+    }
+  }
+  
+  '''
+# ---

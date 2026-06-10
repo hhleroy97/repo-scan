@@ -102,13 +102,9 @@ def churn_complexity_quadrant(rows: list[dict], title: str = "Churn vs complexit
     )
 
 
-def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, complexity: list,
-                        behavior: dict | None = None):
-    ts = now_iso()
-    warn_n = cfg["line_warn"]
-    crit_n = cfg["line_crit"]
-    docs = root / cfg["docs_dir"]
+# --- health.md section builders (pure: inputs -> list[str]) ----------------
 
+def _health_dir_pie_section(line_counts: dict) -> list[str]:
     by_dir: dict[str, int] = {}
     for rel, stats in line_counts.items():
         top = rel.split("/")[0] if "/" in rel else "(root)"
@@ -118,16 +114,11 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
         rest = sum(v for _, v in dir_pairs[7:])
         dir_pairs = dir_pairs[:7] + [("other", rest)]
     dir_pairs = [(d, v) for d, v in dir_pairs if v > 0]
+    return ["## Where the code lives", ""] + mermaid_pie("Lines of code by directory", dir_pairs)
 
+
+def _health_sizes_section(line_counts: dict, warn_n: int, crit_n: int) -> list[str]:
     lines = [
-        "# Health report",
-        f"_Generated {ts}_  |  _Branch: {git_branch(root)}_  |  _Last commit: {git_last_commit(root)}_",
-        "",
-        "## Where the code lives",
-        "",
-    ]
-    lines += mermaid_pie("Lines of code by directory", dir_pairs)
-    lines += [
         "## File sizes",
         "",
         "| File | Lines | Size | Status |",
@@ -138,69 +129,88 @@ def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, c
         kb = stats["bytes"] / 1024
         status = "**critical**" if n >= crit_n else ("*large*" if n >= warn_n else "ok")
         lines.append(f"| `{rel}` | {n} | {kb:.1f} KB | {status} |")
-    lines.append("")
+    return lines + [""]
 
-    if complexity:
-        lines += [
-            "## Complexity hotspots",
-            "",
-            "| File | Function | Rank | Score | Line |",
-            "|------|----------|------|-------|------|",
-        ]
-        for item in complexity[:20]:
-            lines.append(f"| `{item['file']}` | `{item['name']}` | {item['rank']} | {item['complexity']} | {item['lineno']} |")
-        lines.append("")
-    else:
-        lines += ["## Complexity", "", "_radon not available or no Python files_", ""]
 
-    if churn:
-        lines += ["## Git churn (most changed files)", ""]
-        top_churn = churn[:10]
-        lines += mermaid_bar("Commits touching each file", "Commits",
-                             [c["file"] for c in top_churn],
-                             [c["commits"] for c in top_churn])
-        lines += [
-            "| File | Commits |",
-            "|------|---------|",
-        ]
-        for item in churn[:15]:
-            lines.append(f"| `{item['file']}` | {item['commits']} |")
-        lines.append("")
+def _health_complexity_section(complexity: list) -> list[str]:
+    if not complexity:
+        return ["## Complexity", "", "_radon not available or no Python files_", ""]
+    lines = [
+        "## Complexity hotspots",
+        "",
+        "| File | Function | Rank | Score | Line |",
+        "|------|----------|------|-------|------|",
+    ]
+    for item in complexity[:20]:
+        lines.append(f"| `{item['file']}` | `{item['name']}` | {item['rank']} | {item['complexity']} | {item['lineno']} |")
+    return lines + [""]
 
-    if behavior and behavior.get("ownership"):
-        silo_share = cfg.get("silo_min_share", 0.9)
-        stale_days = cfg.get("stale_days", 180)
-        age = behavior.get("age_days", {})
-        lines += [
-            "## Knowledge map (bus factor)",
-            "",
-            "_Top-author share near 100% on an active file = knowledge silo._",
-            "",
-            "| File | Commits | Authors | Top author share | Age (days) | Flag |",
-            "|------|---------|---------|------------------|------------|------|",
-        ]
-        for o in behavior["ownership"][:15]:
-            flags = []
-            if o["top_share"] >= silo_share and o["commits"] >= 5 and o["authors"] == 1:
-                flags.append("silo")
-            if age.get(o["file"], 0) >= stale_days:
-                flags.append("stale")
-            lines.append(f"| `{o['file']}` | {o['commits']} | {o['authors']} | "
-                         f"{o['top_share']:.0%} | {age.get(o['file'], '?')} | "
-                         f"{', '.join(flags) or '—'} |")
-        lines.append("")
 
+def _health_churn_section(churn: list) -> list[str]:
+    if not churn:
+        return []
+    top_churn = churn[:10]
+    lines = ["## Git churn (most changed files)", ""]
+    lines += mermaid_bar("Commits touching each file", "Commits",
+                         [c["file"] for c in top_churn],
+                         [c["commits"] for c in top_churn])
+    lines += ["| File | Commits |", "|------|---------|"]
+    lines += [f"| `{item['file']}` | {item['commits']} |" for item in churn[:15]]
+    return lines + [""]
+
+
+def _health_knowledge_section(behavior: dict | None, cfg: dict) -> list[str]:
+    if not behavior or not behavior.get("ownership"):
+        return []
+    silo_share = cfg.get("silo_min_share", 0.9)
+    stale_days = cfg.get("stale_days", 180)
+    age = behavior.get("age_days", {})
+    lines = [
+        "## Knowledge map (bus factor)",
+        "",
+        "_Top-author share near 100% on an active file = knowledge silo._",
+        "",
+        "| File | Commits | Authors | Top author share | Age (days) | Flag |",
+        "|------|---------|---------|------------------|------------|------|",
+    ]
+    for o in behavior["ownership"][:15]:
+        flags = []
+        if o["top_share"] >= silo_share and o["commits"] >= 5 and o["authors"] == 1:
+            flags.append("silo")
+        if age.get(o["file"], 0) >= stale_days:
+            flags.append("stale")
+        lines.append(f"| `{o['file']}` | {o['commits']} | {o['authors']} | "
+                     f"{o['top_share']:.0%} | {age.get(o['file'], '?')} | "
+                     f"{', '.join(flags) or '—'} |")
+    return lines + [""]
+
+
+def _health_actions_section(line_counts: dict, crit_n: int) -> list[str]:
     alerts = [f for f, s in line_counts.items() if s["lines"] >= crit_n]
-    if alerts:
-        lines += ["## Action items", ""]
-        lines += callout(
-            "warning",
-            f"{len(alerts)} file(s) over the {crit_n}-line critical threshold",
-            [f"- [ ] Split `{a}` ({line_counts[a]['lines']} lines)" for a in alerts],
-        )
-        lines.append("")
+    if not alerts:
+        return []
+    return ["## Action items", ""] + callout(
+        "warning",
+        f"{len(alerts)} file(s) over the {crit_n}-line critical threshold",
+        [f"- [ ] Split `{a}` ({line_counts[a]['lines']} lines)" for a in alerts],
+    ) + [""]
 
-    write_doc(docs / "reports" / "health.md", "\n".join(lines), root)
+
+def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, complexity: list,
+                        behavior: dict | None = None):
+    warn_n, crit_n = cfg["line_warn"], cfg["line_crit"]
+    lines = [
+        "# Health report",
+        f"_Generated {now_iso()}_  |  _Branch: {git_branch(root)}_  |  _Last commit: {git_last_commit(root)}_",
+        "",
+    ]
+    lines += _health_dir_pie_section(line_counts)
+    lines += _health_sizes_section(line_counts, warn_n, crit_n)
+    lines += _health_complexity_section(complexity)
+    lines += _health_churn_section(churn)
+    lines += _health_knowledge_section(behavior, cfg)
+    lines += _health_actions_section(line_counts, crit_n)
+    write_doc(root / cfg["docs_dir"] / "reports" / "health.md", "\n".join(lines), root)
 
 
 def write_coupling_report(root: Path, cfg: dict, coupling: list[dict], seams: list[dict]):
@@ -291,49 +301,33 @@ def write_call_report(root: Path, cfg: dict, c_mermaid: str | None):
     write_doc(docs / "reports" / "calls.md", "\n".join(lines), root)
 
 
-def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
-                ranking: list[dict] | None = None, tree: str = "",
-                delta: dict | None = None):
-    ts = now_iso()
-    docs = root / cfg["docs_dir"]
-    warn_n = cfg["line_warn"]
-    crit_n = cfg["line_crit"]
+# --- index.md section builders (pure: inputs -> list[str]) -----------------
 
-    total_files = sum(len(v) for v in languages.values())
-    total_lines = sum(s["lines"] for s in line_counts.values())
-    lang_summary = ", ".join(f"{k.upper()}: {len(v)}" for k, v in languages.items() if v)
-    large = [f for f, s in line_counts.items() if s["lines"] >= warn_n]
-    critical = [f for f, s in line_counts.items() if s["lines"] >= crit_n]
-    manifests = detect_manifests(root)
-    entry_points = detect_entry_points(root)
-    summary = readme_summary(root)
-
-    lines = [
-        "# Repo index",
-        f"_Last scan: {ts}_",
-        "",
-    ]
-    if summary:
-        lines += [f"> {summary}", ""]
-
+def _index_size_callout(line_counts: dict, large: list, critical: list,
+                        warn_n: int, crit_n: int) -> list[str]:
     if critical:
         worst = max(critical, key=lambda f: line_counts[f]["lines"])
-        lines += callout(
+        return callout(
             "warning",
             f"{len(critical)} file(s) exceed {crit_n} lines — see [[reports/health]]",
             [f"Largest: `{worst}` ({line_counts[worst]['lines']} lines)"],
         ) + [""]
-    elif large:
-        lines += callout(
+    if large:
+        return callout(
             "note",
             f"No critical files; {len(large)} file(s) above the {warn_n}-line watermark",
         ) + [""]
-    else:
-        lines += callout("tip", f"Healthy: every file is under {warn_n} lines") + [""]
+    return callout("tip", f"Healthy: every file is under {warn_n} lines") + [""]
 
-    lines += trend_callout(delta)
 
-    lines += [
+def _index_overview_section(root: Path, line_counts: dict, languages: dict,
+                            large: list, critical: list,
+                            warn_n: int, crit_n: int) -> list[str]:
+    total_files = sum(len(v) for v in languages.values())
+    total_lines = sum(s["lines"] for s in line_counts.values())
+    lang_summary = ", ".join(f"{k.upper()}: {len(v)}" for k, v in languages.items() if v)
+    manifests = detect_manifests(root)
+    lines = [
         "## Overview",
         "",
         "| Metric | Value |",
@@ -349,63 +343,90 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
     ]
     if manifests:
         lines.append(f"| Manifests | {', '.join(f'`{m}`' for m in manifests)} |")
+    return lines + [""]
+
+
+def _index_entry_points_section(root: Path) -> list[str]:
+    entry_points = detect_entry_points(root)
+    if not entry_points:
+        return []
+    return ["## Entry points", ""] + [f"- {e}" for e in entry_points] + [""]
+
+
+def _index_ranking_section(ranking: list[dict] | None) -> list[str]:
+    if not ranking:
+        return []
+    lines = [
+        "## Start here (ranked by importance)",
+        "",
+        "_Composite of import-graph PageRank × git churn × complexity × size._",
+        "_\"Imported by\" counts direct dependents only; PageRank captures transitive importance._",
+        "",
+        "| File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |",
+        "|------|-------|----------|-------------|---------|----|-------|-------|",
+    ]
+    for r in ranking:
+        tests = "yes" if r.get("tested") else "**no**"
+        lines.append(f"| `{r['file']}` | {r['score']} | {r.get('pagerank', 0):.4f} | "
+                     f"{r['imported_by']} | {r['commits']} | {r['complexity']} | "
+                     f"{r['lines']} | {tests} |")
     lines.append("")
+    top = ranking[:8]
+    lines += mermaid_bar("Importance score (top files)", "Score",
+                         [r["file"] for r in top], [r["score"] for r in top], y_max=100)
+    lines += churn_complexity_quadrant(ranking, "Where to focus: churn vs complexity")
+    return lines
 
-    if entry_points:
-        lines += ["## Entry points", ""]
-        lines += [f"- {e}" for e in entry_points]
-        lines.append("")
 
-    if ranking:
-        lines += [
-            "## Start here (ranked by importance)",
-            "",
-            "_Composite of import-graph PageRank × git churn × complexity × size._",
-            "_\"Imported by\" counts direct dependents only; PageRank captures transitive importance._",
-            "",
-            "| File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |",
-            "|------|-------|----------|-------------|---------|----|-------|-------|",
-        ]
-        for r in ranking:
-            tests = "yes" if r.get("tested") else "**no**"
-            lines.append(f"| `{r['file']}` | {r['score']} | {r.get('pagerank', 0):.4f} | "
-                         f"{r['imported_by']} | {r['commits']} | {r['complexity']} | "
-                         f"{r['lines']} | {tests} |")
-        lines.append("")
-        top = ranking[:8]
-        lines += mermaid_bar("Importance score (top files)", "Score",
-                             [r["file"] for r in top], [r["score"] for r in top], y_max=100)
-        lines += churn_complexity_quadrant(ranking, "Where to focus: churn vs complexity")
+_INDEX_LINKS = [
+    "## Reports",
+    "",
+    "- [[reports/health]] — file sizes, complexity, git churn",
+    "- [[reports/dependencies]] — dependency graphs (Mermaid)",
+    "- [[reports/calls]] — call graphs (Mermaid)",
+    "",
+    "## Architecture",
+    "",
+    "- [[architecture/dependency-graph]] — stable dep graph for cross-linking",
+    "- [[architecture/overview]] — hand-written system overview _(create this)_",
+    "",
+    "## Research",
+    "",
+    "- [[research/index]] — ingested sources _(populated by RADAR)_",
+    "- [[research/theory]] — distilled understanding _(yours to write)_",
+    "",
+]
 
+
+def _index_actions_section(line_counts: dict, critical: list) -> list[str]:
+    if not critical:
+        return []
+    return ["## Action items", ""] + \
+        [f"- [ ] Split `{f}` ({line_counts[f]['lines']} lines)" for f in critical] + [""]
+
+
+def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
+                ranking: list[dict] | None = None, tree: str = "",
+                delta: dict | None = None):
+    warn_n, crit_n = cfg["line_warn"], cfg["line_crit"]
+    large = [f for f, s in line_counts.items() if s["lines"] >= warn_n]
+    critical = [f for f, s in line_counts.items() if s["lines"] >= crit_n]
+    summary = readme_summary(root)
+
+    lines = ["# Repo index", f"_Last scan: {now_iso()}_", ""]
+    if summary:
+        lines += [f"> {summary}", ""]
+    lines += _index_size_callout(line_counts, large, critical, warn_n, crit_n)
+    lines += trend_callout(delta)
+    lines += _index_overview_section(root, line_counts, languages, large, critical,
+                                     warn_n, crit_n)
+    lines += _index_entry_points_section(root)
+    lines += _index_ranking_section(ranking)
     if tree:
         lines += ["## Structure", "", "```", tree, "```", ""]
-
-    lines += [
-        "## Reports",
-        "",
-        "- [[reports/health]] — file sizes, complexity, git churn",
-        "- [[reports/dependencies]] — dependency graphs (Mermaid)",
-        "- [[reports/calls]] — call graphs (Mermaid)",
-        "",
-        "## Architecture",
-        "",
-        "- [[architecture/dependency-graph]] — stable dep graph for cross-linking",
-        "- [[architecture/overview]] — hand-written system overview _(create this)_",
-        "",
-        "## Research",
-        "",
-        "- [[research/index]] — ingested sources _(populated by RADAR)_",
-        "- [[research/theory]] — distilled understanding _(yours to write)_",
-        "",
-    ]
-
-    if critical:
-        lines += ["## Action items", ""]
-        for f in critical:
-            lines.append(f"- [ ] Split `{f}` ({line_counts[f]['lines']} lines)")
-        lines.append("")
-
-    write_doc(docs / "index.md", "\n".join(lines), root)
+    lines += _INDEX_LINKS
+    lines += _index_actions_section(line_counts, critical)
+    write_doc(root / cfg["docs_dir"] / "index.md", "\n".join(lines), root)
 
 
 def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
@@ -413,7 +434,18 @@ def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
                     py_edges: list, ts_edges: list, behavior: dict | None = None):
     """Machine-readable sidecar so agents don't have to parse markdown."""
     docs = root / cfg["docs_dir"]
-    payload = {
+    payload = scan_payload(root, cfg, line_counts, languages, churn, complexity,
+                           ranking, py_edges, ts_edges, behavior)
+    path = docs / "scan.json"
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    ok(str(path.relative_to(root)))
+
+
+def scan_payload(root: Path, cfg: dict, line_counts: dict, languages: dict,
+                 churn: list, complexity: list, ranking: list,
+                 py_edges: list, ts_edges: list, behavior: dict | None = None) -> dict:
+    """Pure scan.json payload builder, separated from file I/O."""
+    return {
         "schema_version": 1,
         "generated_at": now_iso(),
         "repo": {
@@ -440,9 +472,6 @@ def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
         },
         "config": cfg,
     }
-    path = docs / "scan.json"
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    ok(str(path.relative_to(root)))
 
 
 def write_candidates(root: Path, cfg: dict, churn: list, complexity: list,

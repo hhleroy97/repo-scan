@@ -11,4 +11,5 @@ setup(
         ],
     },
     python_requires=">=3.10",
+    extras_require={"dev": ["pytest>=8", "syrupy>=5", "radon", "lizard"]},
 )

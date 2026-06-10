@@ -19,11 +19,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install package and optional analyzers
+      - name: Install package with dev deps (pytest, syrupy, radon, lizard)
         run: |
           python -m pip install --upgrade pip
-          pip install -e .
-          pip install pytest radon lizard
+          pip install -e ".[dev]"
 
       - name: Install madge (TS dependency graphs)
         run: npm install -g madge
