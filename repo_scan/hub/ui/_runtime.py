@@ -1,6 +1,8 @@
 """Shared dashboard JS: helpers, polling, SSE, ``refresh``, ``render``, contract splice point."""
 
-_FRAGMENT = r"""let S=null, tab=location.hash.replace('#','')||'now';
+_FRAGMENT = r"""let _hashTab=location.hash.replace('#','')||'now';
+if(_hashTab==='graph')_hashTab='dashboard';
+let S=null, tab=_hashTab;
 const pending=new Map();
 let refreshDepth=0;
 
@@ -125,9 +127,10 @@ async function refresh(){
   finally{refreshDepth=Math.max(0,refreshDepth-1);syncBusyChrome()}
 }
 
-function setTab(t){tab=t;
+function setTab(t){tab=t==='graph'?'dashboard':t;
+  if(location.hash!=='#'+tab)location.hash=tab;
   document.querySelectorAll('nav a').forEach(a=>
-    a.classList.toggle('active',a.dataset.tab===t));
+    a.classList.toggle('active',a.dataset.tab===tab));
   render(true)}
 document.querySelectorAll('nav a').forEach(a=>
   a.addEventListener('click',e=>setTab(a.dataset.tab)));
@@ -149,7 +152,17 @@ function render(force){
   badge('ngates',S.gates.length);badge('ntickets',open);
   if(!force&&formBusy())return;
   const m=document.getElementById('main');
-  m.innerHTML={now:rNow,gates:rGates,tickets:rTickets,activity:rActivity}[tab]();
+  if(tab==='dashboard'&&graphData&&!force){
+    _updateLoopBanner();
+    mountGraph();
+    return;
+  }
+  m.innerHTML={now:rNow,gates:rGates,tickets:rTickets,activity:rActivity,dashboard:rGraph}[tab]();
+  if(tab==='dashboard')mountGraph();
+}
+function _updateLoopBanner(){
+  const el=document.querySelector('.loop-card>div:first-of-type');
+  if(el)el.innerHTML=_loopLiveBanner();
 }
 function badge(id,n){const e=document.getElementById(id);
   e.hidden=!n;e.textContent=n}
