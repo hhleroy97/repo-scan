@@ -1,9 +1,10 @@
 """The dashboard: one self-contained mobile-first HTML page.
 
 No build step, no framework, no CDN — everything inline so it works on a
-phone over Tailscale with zero external requests. The page polls /api/state
-and renders four tabs: Now (open-ticket summary, stats, runs, agent feed),
-Gates, Tickets, Activity.
+phone over Tailscale with zero external requests. ``DASHBOARD_HTML`` is the
+template plus ``contract.js_contract_block()`` at ``/* __HUB_CONTRACT__ */``.
+The page polls ``API_STATE`` and renders four tabs: Now (open-ticket summary,
+stats, runs, agent feed), Gates, Tickets, Activity.
 
 Ticket cards use three-tier disclosure (aligned with ``OPEN_STATUSES`` on the
 Now tab and Tickets tab): glance row (``card.outcome``, ``card.why_line``,
@@ -11,7 +12,9 @@ status, priority, criteria count), tap-to-expand checklist (and inline
 criteria editor when not ready), then full markdown via ``openDoc``.
 """
 
-DASHBOARD_HTML = r"""<!DOCTYPE html>
+from .contract import js_contract_block
+
+_DASHBOARD_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -231,7 +234,7 @@ function schedulePoll(){
 }
 function connectSSE(){
   if(sse||typeof EventSource==='undefined')return;
-  sse=new EventSource('/api/events');
+  sse=new EventSource(API_EVENTS);
   sse.onopen=()=>{sseOk=true;if(sseRetry){clearTimeout(sseRetry);sseRetry=null}schedulePoll()};
   sse.onmessage=(e)=>{
     try{
@@ -253,7 +256,7 @@ async function refresh(){
   refreshDepth++;
   syncBusyChrome();
   if(initial)setMainLoading('Loading dashboard…');
-  try{S=await api('/api/state');
+  try{S=await api(API_STATE);
     // hub restarted with new code -> pull fresh HTML/JS (unless mid-form)
     if(S.boot&&window._boot&&window._boot!==S.boot&&!formBusy()){location.reload();return}
     window._boot=S.boot;
@@ -295,10 +298,7 @@ function render(force){
 function badge(id,n){const e=document.getElementById(id);
   e.hidden=!n;e.textContent=n}
 
-// Keep OPEN_TICKET_STATUSES aligned with repo_scan.tickets.OPEN_STATUSES.
-const OPEN_TICKET_STATUSES=new Set(['proposed','approved','in-progress']);
-const TICKET_STATUS_ORDER={proposed:0,approved:1,'in-progress':2,done:3,rejected:4};
-const TICKET_BADGE_CLS={proposed:'warn',approved:'info','in-progress':'info',done:'ok',rejected:'bad'};
+/* __HUB_CONTRACT__ */
 function filterOpenTickets(tickets){return tickets.filter(t=>OPEN_TICKET_STATUSES.has(t.status))}
 function sortTickets(tickets){
   return [...tickets].sort((a,b)=>(TICKET_STATUS_ORDER[a.status]??9)-(TICKET_STATUS_ORDER[b.status]??9))}
@@ -469,7 +469,7 @@ async function prAct(op,number,btn){
   beginPending(key,label,{btn,btnLabel:label});
   let keepPending=false;
   try{
-    const r=await fetch('/api/pr/'+op,{method:'POST',
+    const r=await fetch(API_PR_PREFIX+op,{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({number})});
     const j=await r.json().catch(()=>({}));
@@ -572,7 +572,7 @@ async function gateDecide(gate,btn,decision){
   if(decision==='reject')comment=prompt('Why? (optional)')||'';
   const label=decision==='approve'?'Approving — daemon will resume…':'Rejecting…';
   beginPending(key,label,{btn,btnLabel:label});
-  try{await api('/api/gate',{method:'POST',headers:{'Content-Type':'application/json'},
+  try{await api(API_GATE,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({gate,problem:g.problem,decision,comment})});
     toast(decision==='approve'?'Approved — daemon will resume':'Rejected');
     setTimeout(refresh,800);}
@@ -637,7 +637,7 @@ async function saveCriteria(id,btn){
   if(!criteria.length){toast('Add at least one criterion');return}
   const key=`ticket-${id}`;
   beginPending(key,'Saving criteria…',{btn,btnLabel:'Saving…'});
-  try{await api('/api/ticket',{method:'PATCH',headers:{'Content-Type':'application/json'},
+  try{await api(API_TICKET,{method:'PATCH',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({id,criteria})});
     toast('Criteria saved');setTimeout(refresh,500)}
   catch(e){toast('Failed: '+e.message)}
@@ -648,7 +648,7 @@ async function newTicket(btn){
   if(!title){toast('Title required');return}
   const criteria=document.getElementById('nt-criteria').value.split('\n').map(s=>s.trim()).filter(Boolean);
   beginPending('new-ticket','Creating ticket…',{btn,btnLabel:'Creating…'});
-  try{const r=await api('/api/ticket/new',{method:'POST',headers:{'Content-Type':'application/json'},
+  try{const r=await api(API_TICKET_NEW,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({title,why:document.getElementById('nt-why').value,
       priority:document.getElementById('nt-priority').value,criteria})});
     toast(`${r.id} created — approve it to start the loop`);
@@ -670,7 +670,7 @@ async function ticketAct(id,action,btn){
   const labels={approve:'Approving…',reject:'Rejecting…',start:'Starting…',done:'Closing…'};
   const label=labels[action]||'Updating…';
   beginPending(key,label,{btn,btnLabel:label});
-  try{await api('/api/ticket',{method:'POST',headers:{'Content-Type':'application/json'},
+  try{await api(API_TICKET,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({id,action})});toast(`${id} ${action}`);setTimeout(refresh,500)}
   catch(e){toast('Failed: '+e.message)}
   finally{endPending(key)}
@@ -692,7 +692,7 @@ async function openDoc(rel){
   document.getElementById('docpath').textContent=rel;
   document.getElementById('doctext').innerHTML=
     '<span class="pending-spinner" style="display:inline-block;vertical-align:middle;margin-right:8px"></span>Loading document…';
-  try{const d=await api('/api/doc?path='+encodeURIComponent(rel));
+  try{const d=await api(API_DOC+'?path='+encodeURIComponent(rel));
     document.getElementById('docpath').textContent=d.path;
     document.getElementById('doctext').textContent=d.text}
   catch(e){viewer.classList.remove('open');toast('Cannot load doc: '+e.message)}
@@ -705,3 +705,7 @@ connectSSE();
 </body>
 </html>
 """
+
+DASHBOARD_HTML = _DASHBOARD_TEMPLATE.replace(
+    "/* __HUB_CONTRACT__ */", js_contract_block(),
+)
