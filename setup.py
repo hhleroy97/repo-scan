@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="repo-scan",
     version="0.2.0",
-    packages=["repo_scan", "repo_scan.radar"],
+    packages=["repo_scan", "repo_scan.radar", "repo_scan.hub"],
     entry_points={
         "console_scripts": [
             "repo-scan=repo_scan:main",

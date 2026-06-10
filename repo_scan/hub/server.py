@@ -1,0 +1,239 @@
+"""Stdlib HTTP server for the mobile dashboard.
+
+Single user, low traffic: ThreadingHTTPServer is plenty, and it keeps the
+runtime zero-dependency. Reads come straight from the vault; writes go
+through the same decision inbox and ticket APIs the CLI uses, so the
+dashboard is just another surface — never a second source of truth.
+
+Auth is a per-repo bearer token (docs/<docs_dir>/.radar/token). Pair with
+Tailscale (or any private network) for remote access; do not expose this
+server to the open internet.
+"""
+
+import json
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import parse_qs, urlparse
+
+from ..config import VERSION
+from ..utils import git_branch, header, info, ok
+from .state import get_token, load_runs, submit_decision
+from .ui import DASHBOARD_HTML
+
+ACTIVITY_ROWS = 10
+
+
+def _read_json(root: Path, rel: str) -> dict:
+    path = root / rel
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+
+
+def build_state(root: Path, cfg: dict) -> dict:
+    """Everything the dashboard renders, in one payload."""
+    from ..tickets import load_tickets
+    docs = root / cfg["docs_dir"]
+
+    scan = _read_json(root, f"{cfg['docs_dir']}/scan.json")
+    summary = {}
+    if scan:
+        files = scan.get("files", {})
+        summary = {
+            "generated_at": scan.get("generated_at"),
+            "files": len(files),
+            "lines": sum(s.get("lines", 0) for s in files.values()),
+            "hotspots": len(scan.get("complexity", [])),
+            "critical": sum(1 for s in files.values()
+                            if s.get("lines", 0) >= cfg.get("line_crit", 600)),
+            "languages": scan.get("languages", {}),
+        }
+
+    gates = []
+    pending = docs / "research" / "pending"
+    if pending.exists():
+        for path in sorted(pending.glob("*.json")):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                continue
+            payload = data.get("payload", {})
+            gates.append({
+                "gate": data.get("gate"),
+                "written_at": data.get("written_at"),
+                "summary": payload.get("summary", ""),
+                "problem": payload.get("problem", ""),
+                "detail": payload.get("detail", {}),
+            })
+
+    tickets = []
+    for t in load_tickets(root, cfg):
+        row = {k: t.get(k) for k in ("id", "status", "title", "priority", "why")}
+        # kind lives in the fingerprint prefix, e.g. "refactor:path/to/file"
+        row["kind"] = str(t.get("fingerprint", "")).split(":", 1)[0] or None
+        tickets.append(row)
+
+    activity = []
+    decisions = docs / "research" / "decisions.md"
+    if decisions.exists():
+        rows = [l for l in decisions.read_text(encoding="utf-8").splitlines()
+                if l.startswith("|") and "---" not in l][1:]
+        for row in rows[-ACTIVITY_ROWS:][::-1]:
+            cells = [c.strip() for c in row.strip("|").split("|")]
+            if len(cells) >= 4:
+                activity.append({"when": cells[0], "gate": cells[1],
+                                 "decision": cells[2], "summary": cells[3]})
+
+    return {
+        "version": VERSION,
+        "repo": {"name": root.name, "branch": git_branch(root)},
+        "now": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
+        "scan": summary,
+        "gates": gates,
+        "tickets": tickets,
+        "runs": load_runs(root, cfg)[::-1][:10],
+        "activity": activity,
+    }
+
+
+def _safe_doc(root: Path, cfg: dict, rel: str) -> str | None:
+    """Read a markdown doc strictly inside the docs dir."""
+    docs = (root / cfg["docs_dir"]).resolve()
+    target = (docs / rel).resolve()
+    if not str(target).startswith(str(docs) + "/") or target.suffix != ".md":
+        return None
+    if not target.exists():
+        return None
+    return target.read_text(encoding="utf-8", errors="ignore")
+
+
+def make_handler(root: Path, cfg: dict, token: str):
+    class Handler(BaseHTTPRequestHandler):
+        server_version = f"repo-scan-hub/{VERSION}"
+
+        def log_message(self, fmt, *args):  # keep the terminal quiet
+            pass
+
+        # --- plumbing ---------------------------------------------------
+        def _authed(self) -> bool:
+            q = parse_qs(urlparse(self.path).query)
+            if q.get("token", [None])[0] == token:
+                return True
+            if self.headers.get("X-Radar-Token") == token:
+                return True
+            cookies = self.headers.get("Cookie", "")
+            return f"radar_token={token}" in cookies
+
+        def _send(self, code: int, body: bytes, ctype: str,
+                  extra: dict | None = None):
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(body)
+
+        def _json(self, data: dict, code: int = 200, extra: dict | None = None):
+            self._send(code, json.dumps(data).encode("utf-8"),
+                       "application/json; charset=utf-8", extra)
+
+        def _deny(self):
+            self._json({"error": "unauthorized"}, 401)
+
+        # --- routes -----------------------------------------------------
+        def do_GET(self):
+            url = urlparse(self.path)
+            if not self._authed():
+                return self._deny()
+
+            if url.path == "/":
+                # landing via ?token=... sets the cookie so links stay clean
+                extra = {}
+                q = parse_qs(url.query)
+                if q.get("token", [None])[0] == token:
+                    extra["Set-Cookie"] = (f"radar_token={token}; Path=/; "
+                                           "HttpOnly; SameSite=Strict; Max-Age=31536000")
+                return self._send(200, DASHBOARD_HTML.encode("utf-8"),
+                                  "text/html; charset=utf-8", extra)
+
+            if url.path == "/api/state":
+                return self._json(build_state(root, cfg))
+
+            if url.path == "/api/doc":
+                rel = parse_qs(url.query).get("path", [""])[0]
+                text = _safe_doc(root, cfg, rel)
+                if text is None:
+                    return self._json({"error": "not found"}, 404)
+                return self._json({"path": rel, "text": text})
+
+            self._json({"error": "not found"}, 404)
+
+        def do_POST(self):
+            if not self._authed():
+                return self._deny()
+            length = int(self.headers.get("Content-Length", 0) or 0)
+            try:
+                body = json.loads(self.rfile.read(length) or b"{}")
+            except json.JSONDecodeError:
+                return self._json({"error": "bad json"}, 400)
+            url = urlparse(self.path)
+
+            if url.path == "/api/gate":
+                gate = str(body.get("gate", ""))
+                problem = str(body.get("problem", ""))
+                decision = str(body.get("decision", ""))
+                comment = str(body.get("comment", ""))[:500]
+                if not (gate and problem and decision in ("approve", "reject")):
+                    return self._json({"error": "gate, problem, decision required"}, 400)
+                submit_decision(root, cfg, gate, problem, decision,
+                                comment=comment, source="dashboard")
+                return self._json({"ok": True})
+
+            if url.path == "/api/ticket":
+                from ..tickets import set_ticket_status
+                tid = str(body.get("id", ""))
+                action = str(body.get("action", ""))
+                statuses = {"approve": "approved", "reject": "rejected",
+                            "start": "in-progress", "done": "done"}
+                if not (tid and action in statuses):
+                    return self._json({"error": "id and valid action required"}, 400)
+                try:
+                    set_ticket_status(root, cfg, tid, statuses[action])
+                except Exception as e:
+                    return self._json({"error": str(e)[:200]}, 400)
+                return self._json({"ok": True})
+
+            self._json({"error": "not found"}, 404)
+
+    return Handler
+
+
+def cmd_serve(root: Path, cfg: dict, host: str | None = None,
+              port: int | None = None, with_daemon: bool = True) -> int:
+    header("radar serve")
+    host = host or str(cfg.get("serve_host", "0.0.0.0"))
+    port = int(port or cfg.get("serve_port", 8800))
+    token = get_token(root, cfg)
+
+    if with_daemon:
+        from .daemon import cmd_daemon
+        t = threading.Thread(target=cmd_daemon, args=(root, cfg), daemon=True)
+        t.start()
+        info("daemon thread running (scans, loops, gate resume)")
+
+    httpd = ThreadingHTTPServer((host, port), make_handler(root, cfg, token))
+    shown = "localhost" if host in ("0.0.0.0", "::") else host
+    ok(f"dashboard: http://{shown}:{port}/?token={token}")
+    info("on Tailscale, replace the host with this machine's tailnet name/IP")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        info("server stopped")
+    return 0

@@ -74,6 +74,15 @@ def main():
     p_full.add_argument("--approve", action="append", default=[], metavar="GATE")
     p_full.add_argument("--gates", choices=["prompt", "auto", "deny"])
 
+    p_daemon = sub.add_parser("daemon", help="Resident runner: scans, loops, gate resume")
+    p_daemon.add_argument("--poll", type=int, default=None, metavar="SECONDS")
+
+    p_serve = sub.add_parser("serve", help="Mobile dashboard + daemon (default port 8800)")
+    p_serve.add_argument("--host", default=None)
+    p_serve.add_argument("--port", type=int, default=None)
+    p_serve.add_argument("--no-daemon", action="store_true",
+                         help="Serve the dashboard without the background runner")
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
@@ -97,6 +106,15 @@ def main():
     if args.command == "full":
         from .pipeline import cmd_full
         sys.exit(cmd_full(root, cfg, approve=args.approve, gates_override=args.gates))
+
+    if args.command == "daemon":
+        from ..hub.daemon import cmd_daemon
+        sys.exit(cmd_daemon(root, cfg, poll_seconds=args.poll))
+
+    if args.command == "serve":
+        from ..hub.server import cmd_serve
+        sys.exit(cmd_serve(root, cfg, host=args.host, port=args.port,
+                           with_daemon=not args.no_daemon))
 
 
 if __name__ == "__main__":

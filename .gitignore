@@ -3,3 +3,6 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+
+# hub runtime state (tokens, checkpoints, decision inbox)
+.radar/

@@ -86,7 +86,24 @@ def gate(name: str, payload: dict, cfg: dict, root: Path,
         warn(f"gate {name}: denied by config")
         return False
 
-    # prompt mode
+    # prompt mode — check the decision inbox first so remote surfaces
+    # (dashboard, future channels) count as answers, not just the terminal
+    problem = str(payload.get("problem", "") or summary)
+    if problem:
+        from ..hub.state import peek_decision
+        inbox = peek_decision(root, cfg, name, problem)
+        if inbox:
+            clear_pending(root, cfg, name)
+            who = inbox.get("source", "remote")
+            note = f" — {inbox['comment'][:80]}" if inbox.get("comment") else ""
+            if inbox["decision"] == "approve":
+                record_decision(root, cfg, name, f"approved ({who})", summary + note)
+                ok(f"gate {name}: approved via {who}")
+                return True
+            record_decision(root, cfg, name, f"rejected ({who})", summary + note)
+            warn(f"gate {name}: rejected via {who}")
+            return False
+
     write_pending(root, cfg, name, payload)
     if not sys.stdin.isatty():
         info(f"gate {name}: paused (non-interactive) — pending state written to "

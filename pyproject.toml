@@ -19,4 +19,4 @@ repo-scan = "repo_scan:main"
 radar = "repo_scan.radar.cli:main"
 
 [tool.setuptools]
-packages = ["repo_scan", "repo_scan.radar"]
+packages = ["repo_scan", "repo_scan.radar", "repo_scan.hub"]

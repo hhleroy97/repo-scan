@@ -34,7 +34,12 @@ DEFAULT_CONFIG = {
 }
 
 # Keys owned by radar (B-phases) — valid in .repo-scan.json, unused by scan.
-RADAR_CONFIG_KEYS = {"gates", "llm_cli", "llm_timeout"}
+RADAR_CONFIG_KEYS = {
+    "gates", "llm_cli", "llm_timeout",
+    # hub (daemon + dashboard)
+    "serve_host", "serve_port", "daemon_poll_seconds", "daemon_scan_hours",
+    "ntfy_topic", "ntfy_server",
+}
 
 
 def load_config(root: Path) -> dict:

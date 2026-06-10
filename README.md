@@ -155,6 +155,8 @@ radar ingest arxiv:2210.03629         #   also: url:https://...  file:./paper.pd
 radar research "how do X loops work?" # LLM proposes sources, radar ingests them
 radar loop "should we adopt X?"       # full pipeline, pauses at gates for approval
 radar full                            # metric-triggered: top churn x complexity file
+radar daemon                          # resident runner: scans, loops, gate resume
+radar serve                           # mobile dashboard + daemon (port 8800)
 ```
 
 ### LLM backend
@@ -181,6 +183,41 @@ Every decision is appended to `docs/research/decisions.md`. Loop runs are
 recorded to `docs/changelog/{date}-loop.md`; specs land in `docs/specs/`
 (`status: draft` → `status: approved` after Gate 2).
 
+### The hub — approve from your phone
+
+`radar serve` runs a zero-dependency stdlib HTTP server (plus the daemon in a
+background thread) and prints a tokenized URL. The dashboard is one
+self-contained mobile-first page: live stats and runs, pending gates with
+**Approve / Reject** buttons and the full analysis one tap away, the ticket
+board, and the decision trail. Decisions land in a file-backed inbox
+(`docs/.radar/decisions/`); the daemon resumes paused loops on its next poll.
+Loops checkpoint per stage, so a resume skips completed LLM calls.
+
+```bash
+radar serve                # 0.0.0.0:8800, token printed on start
+radar serve --port 9000 --no-daemon
+```
+
+Remote access, the low-friction way: install [Tailscale](https://tailscale.com)
+on this machine and your phone, then open
+`http://<machine-tailnet-name>:8800/?token=...` from anywhere. The token
+(persisted at `docs/.radar/token`) gates every request; still, treat the
+server as private-network-only — don't port-forward it to the internet.
+
+Push notifications (optional): install the [ntfy](https://ntfy.sh) app,
+subscribe to a long random topic, and set it in `.repo-scan.json`:
+
+```json
+{ "ntfy_topic": "repo-scan-hub-<something-long-and-random>" }
+```
+
+The daemon then pushes when a gate needs you, a loop finishes or fails, and
+when a scan proposes tickets — tapping the notification opens the dashboard
+(set `"serve_host"` to your tailnet name so the link resolves).
+
+Hub config keys (all optional): `serve_host`, `serve_port`,
+`daemon_poll_seconds`, `daemon_scan_hours`, `ntfy_topic`, `ntfy_server`.
+
 ### Obsidian graph + Dataview
 
 All radar artifacts carry YAML frontmatter (type, tags, status, confidence —
@@ -203,6 +240,8 @@ docs/
     decisions.md            # append-only gate decision trail
   specs/                    # drafted + audited implementation specs
   changelog/{date}-loop.md  # loop outcomes
+  .radar/                   # hub runtime state (gitignored): token, runs,
+                            #   decision inbox, loop checkpoints
 ```
 
 ---

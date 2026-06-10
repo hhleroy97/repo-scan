@@ -112,11 +112,13 @@ def test_loop_resumes_with_approve(loop_env):
     queue_responses(queue, happy_path_responses(note)[:3])
     assert cmd_loop(root, cfg, "how should gates work?") == 2
 
-    # resume: full queue again, gate1 pre-approved, gate2 auto via config
-    queue_responses(queue, happy_path_responses(note))
+    # resume: research/analyze come from the checkpoint, so only draft+audit
+    # responses are needed; gate1 pre-approved, gate2 auto via config
+    queue_responses(queue, happy_path_responses(note)[3:5])
     cfg["gates"] = {"post_audit": "auto"}
     rc = cmd_loop(root, cfg, "how should gates work?", approve=["post_analyze"])
     assert rc == 0
+    assert not sorted(queue.glob("*.txt"))
     assert not (root / "docs" / "research" / "pending" / "post_analyze.json").exists()
     spec = next((root / "docs" / "specs").glob("*.md")).read_text()
     assert "status: approved" in spec

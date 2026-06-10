@@ -213,8 +213,27 @@ def record_loop(root: Path, cfg: dict, problem: str, result: dict):
     ok(f"recorded to {path.relative_to(root)}")
 
 
+def _gate_paused(root: Path, cfg: dict, name: str) -> bool:
+    """After gate() returns False: pending file present = paused, gone = rejected."""
+    return (root / cfg["docs_dir"] / "research" / "pending" / f"{name}.json").exists()
+
+
+def _finish_loop(root: Path, cfg: dict, problem: str):
+    """A loop fully ended (approved or rejected) — drop its resume state."""
+    from ..hub.state import clear_checkpoint, clear_decisions
+    clear_checkpoint(root, cfg, problem)
+    clear_decisions(root, cfg, problem)
+
+
 def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = None,
              gates_override: str | None = None, max_sources: int = 3) -> int:
+    """Returns 0 done, 1 error, 2 stopped (paused at a gate or rejected).
+
+    Stages checkpoint to docs/<docs_dir>/.radar/checkpoints/ so resuming a
+    paused loop (same problem) skips completed LLM stages instead of paying
+    for them again.
+    """
+    from ..hub.state import load_checkpoint, save_checkpoint
     header(f"radar loop")
     info(problem)
     ensure_dirs(root, cfg)
@@ -224,47 +243,87 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
     approved = set(approve or [])
     gates_log: list[str] = []
     result = {"outcome": "stopped", "sources": 0, "confidence": "?", "spec": "—"}
+    ckpt = load_checkpoint(root, cfg, problem)
 
     try:
         # 1 — Research
         step("[1/7] Research")
-        research = run_research(root, cfg, problem, max_sources)
-        run_log_path = write_run_log(root, cfg, research)
-        result["sources"] = len(research["ingested"])
+        if "ingested" in ckpt:
+            ingested = ckpt["ingested"]
+            run_log_path = Path(ckpt["run_log"]) if ckpt.get("run_log") else None
+            info("resumed from checkpoint")
+        else:
+            research = run_research(root, cfg, problem, max_sources)
+            run_log_path = write_run_log(root, cfg, research)
+            ingested = research["ingested"]
+            ckpt["ingested"] = ingested
+            ckpt["run_log"] = str(run_log_path)
+            save_checkpoint(root, cfg, problem, ckpt)
+        result["sources"] = len(ingested)
         ok(f"{result['sources']} source(s) ingested")
 
         # 2 — Analyze
         step("[2/7] Analyze")
-        analysis = run_analyze(root, cfg, problem, research["ingested"])
-        analysis_path = write_analysis(root, cfg, problem, analysis,
-                                       research["ingested"], run_log_path)
+        if "analysis" in ckpt:
+            analysis = ckpt["analysis"]
+            analysis_path = Path(ckpt["analysis_path"])
+            info("resumed from checkpoint")
+        else:
+            analysis = run_analyze(root, cfg, problem, ingested)
+            analysis_path = write_analysis(root, cfg, problem, analysis,
+                                           ingested, run_log_path)
+            ckpt["analysis"] = analysis
+            ckpt["analysis_path"] = str(analysis_path)
+            save_checkpoint(root, cfg, problem, ckpt)
         result["confidence"] = analysis["confidence"]
         ok(f"{len(analysis['findings'])} finding(s), confidence {analysis['confidence']}")
 
         # 3 — Gate 1
         step("[3/7] Gate 1 (post-analyze)")
-        gate1_payload = {"summary": f"{analysis['recommendation']} — [[{analysis_path.stem}]]"}
+        gate1_payload = {
+            "problem": problem,
+            "summary": f"{analysis['recommendation']} — [[{analysis_path.stem}]]",
+            "detail": {
+                "confidence": analysis["confidence"],
+                "findings": analysis["findings"][:6],
+                "risks": analysis["risks"][:4],
+                "doc": f"research/analysis/{analysis_path.name}",
+            },
+        }
         if not gate("post_analyze", gate1_payload, cfg, root, approved):
             gates_log.append("post_analyze: stopped")
             result["gates"] = "; ".join(gates_log)
+            if not _gate_paused(root, cfg, "post_analyze"):
+                _finish_loop(root, cfg, problem)
             record_loop(root, cfg, problem, result)
             return 2
         gates_log.append("post_analyze: passed")
 
         # 4 — Draft
         step("[4/7] Draft")
-        spec_text = run_draft(root, cfg, problem, analysis)
-        ok(f"spec drafted ({len(spec_text.splitlines())} lines)")
+        if "spec_text" in ckpt:
+            spec_text = ckpt["spec_text"]
+            info("resumed from checkpoint")
+        else:
+            spec_text = run_draft(root, cfg, problem, analysis)
+            ok(f"spec drafted ({len(spec_text.splitlines())} lines)")
 
         # 5 — Audit (one revision round if needed)
         step("[5/7] Audit")
-        audit = run_audit(cfg, problem, spec_text)
-        if audit["verdict"] != "pass" and audit["issues"]:
-            info(f"audit requested revision: {len(audit['issues'])} issue(s)")
-            spec_text = complete(REVISE_PROMPT.format(
-                spec=spec_text, issues="\n".join(f"- {i}" for i in audit["issues"]),
-            ), cfg)
+        if "audit" in ckpt:
+            audit = ckpt["audit"]
+            info("resumed from checkpoint")
+        else:
             audit = run_audit(cfg, problem, spec_text)
+            if audit["verdict"] != "pass" and audit["issues"]:
+                info(f"audit requested revision: {len(audit['issues'])} issue(s)")
+                spec_text = complete(REVISE_PROMPT.format(
+                    spec=spec_text, issues="\n".join(f"- {i}" for i in audit["issues"]),
+                ), cfg)
+                audit = run_audit(cfg, problem, spec_text)
+            ckpt["spec_text"] = spec_text
+            ckpt["audit"] = audit
+            save_checkpoint(root, cfg, problem, ckpt)
         ok(f"audit verdict: {audit['verdict']}")
 
         # 6 — Gate 2
@@ -272,10 +331,20 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
         spec_path = write_spec(root, cfg, problem, spec_text, audit,
                                status="draft", analysis_path=analysis_path)
         result["spec"] = f"[[{spec_path.stem}]]"
-        payload = {"summary": f"audit {audit['verdict']}: {audit['notes']} — [[{spec_path.stem}]]"}
+        payload = {
+            "problem": problem,
+            "summary": f"audit {audit['verdict']}: {audit['notes']} — [[{spec_path.stem}]]",
+            "detail": {
+                "audit_verdict": audit["verdict"],
+                "issues": audit["issues"][:8],
+                "doc": f"specs/{spec_path.name}",
+            },
+        }
         if not gate("post_audit", payload, cfg, root, approved):
             gates_log.append("post_audit: stopped")
             result["gates"] = "; ".join(gates_log)
+            if not _gate_paused(root, cfg, "post_audit"):
+                _finish_loop(root, cfg, problem)
             record_loop(root, cfg, problem, result)
             return 2
         gates_log.append("post_audit: passed")
@@ -286,6 +355,7 @@ def cmd_loop(root: Path, cfg: dict, problem: str, approve: list[str] | None = No
                    status="approved", analysis_path=analysis_path)
         result["outcome"] = "approved"
         result["gates"] = "; ".join(gates_log)
+        _finish_loop(root, cfg, problem)
         record_loop(root, cfg, problem, result)
         return 0
 
@@ -319,6 +389,13 @@ def pick_candidate(root: Path, cfg: dict) -> str | None:
             f"or restructure it.")
 
 
+def ticket_problem(ticket: dict) -> str:
+    """Canonical problem string for a ticket — must be stable, it keys
+    checkpoints and gate decisions across pauses/resumes."""
+    return (f"{ticket['title']}. {ticket['why']} "
+            "Research current best practices and draft a spec for this work.")
+
+
 def cmd_full(root: Path, cfg: dict, approve: list[str] | None = None,
              gates_override: str | None = None) -> int:
     header("radar full")
@@ -331,8 +408,7 @@ def cmd_full(root: Path, cfg: dict, approve: list[str] | None = None,
     from ..tickets import append_ticket_note, pick_approved_ticket, set_ticket_status
     ticket = pick_approved_ticket(root, cfg)
     if ticket:
-        problem = f"{ticket['title']}. {ticket['why']} " \
-                  "Research current best practices and draft a spec for this work."
+        problem = ticket_problem(ticket)
         info(f"working approved ticket {ticket['id']}: {ticket['title'][:80]}")
         rc = cmd_loop(root, cfg, problem, approve=approve, gates_override=gates_override)
         if rc == 0:
