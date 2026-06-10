@@ -16,11 +16,11 @@ kanban-plugin: board
 ## Approved
 
 - [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
-- [ ] [[tkt-0026|Split repo_scan/tickets.py (654 lines)]]
 
 ## In progress
 
 - [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]]
+- [ ] [[tkt-0026|Split repo_scan/tickets.py (654 lines)]]
 
 ## Done
 
