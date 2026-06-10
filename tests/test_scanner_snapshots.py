@@ -192,6 +192,7 @@ def test_scan_json_schema_guard(fixture_repo: Path, monkeypatch):
     assert set(payload) == {
         "schema_version", "generated_at", "repo", "languages", "files", "churn",
         "complexity", "ranking", "dependency_edges", "behavior", "config",
+        "citations", "vault_health",
     }
     assert payload["repo"]["name"] == "fixed"
     assert payload["ranking"][0]["file"] == "src/app.py"

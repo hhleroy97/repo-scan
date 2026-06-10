@@ -19,6 +19,7 @@ from .languages import detect_languages, get_line_counts
 from .ranking import rank_files
 from .tests_map import find_tested_files, is_test_file
 from .tickets import generate_tickets
+from .citations import scan_citations
 from .report_pipeline import ReportPayload, write_scan_reports
 from .trends import compute_delta, load_previous_summary, summarize_metrics
 from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
@@ -66,6 +67,7 @@ class ScanContext:
     curr_summary: dict = field(default_factory=dict)
     delta: dict | None = None
     seams: list = field(default_factory=list)
+    citations: list = field(default_factory=list)
 
 
 def _prepare_scan(ctx: ScanContext) -> None:
@@ -147,10 +149,22 @@ def _rank_files(ctx: ScanContext) -> None:
     ctx.py_deps = edges_to_mermaid(ctx.py_edges, ctx.node_scores)
 
 
+def _scan_citations(ctx: ScanContext) -> None:
+    step("Scanning code → doc citations")
+    ctx.citations = scan_citations(ctx.root, ctx.cfg, ctx.line_counts)
+    ok(f"{len(ctx.citations)} citation(s)")
+
+
 def _write_reports(ctx: ScanContext) -> None:
     step("Writing docs")
+    _scan_citations(ctx)
     ctx.prev_summary = load_previous_summary(ctx.root, ctx.cfg)
-    ctx.curr_summary = summarize_metrics(ctx.line_counts, ctx.complexity, ctx.cfg)
+    from .provenance import vault_health_payload
+    vh = vault_health_payload(
+        ctx.root, ctx.cfg, ctx.line_counts, ctx.citations, ctx.behavior,
+        ranking=ctx.ranking,
+    )
+    ctx.curr_summary = summarize_metrics(ctx.line_counts, ctx.complexity, ctx.cfg, vh)
     ctx.delta = compute_delta(ctx.prev_summary, ctx.curr_summary)
 
     all_edges = ctx.py_edges + ctx.ts_edges
@@ -172,6 +186,7 @@ def _write_reports(ctx: ScanContext) -> None:
         ts_edges=ctx.ts_edges,
         curr_summary=ctx.curr_summary,
         delta=ctx.delta,
+        citations=ctx.citations,
     )
     write_scan_reports(ctx.root, ctx.cfg, payload)
 

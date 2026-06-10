@@ -5,7 +5,7 @@ the sole orchestration-layer entry that sequences ``writers.write_*`` calls
 and appends the trend log.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from .trends import append_trend_log
@@ -39,6 +39,7 @@ class ReportPayload:
     ts_edges: list
     curr_summary: dict
     delta: dict | None
+    citations: list = field(default_factory=list)
 
     @property
     def coupling(self) -> list:
@@ -49,7 +50,8 @@ def write_scan_reports(root: Path, cfg: dict, payload: ReportPayload) -> None:
     """Write health, coupling, dependency, call, index, scan.json, then trend log."""
     write_health_report(
         root, cfg, payload.line_counts, payload.churn, payload.complexity,
-        behavior=payload.behavior,
+        behavior=payload.behavior, citations=payload.citations,
+        ranking=payload.ranking,
     )
     write_coupling_report(
         root, cfg, payload.coupling, payload.seams,
@@ -65,6 +67,6 @@ def write_scan_reports(root: Path, cfg: dict, payload: ReportPayload) -> None:
     write_scan_json(
         root, cfg, payload.line_counts, payload.languages, payload.churn,
         payload.complexity, payload.ranking, payload.py_edges, payload.ts_edges,
-        behavior=payload.behavior,
+        behavior=payload.behavior, citations=payload.citations,
     )
     append_trend_log(root, cfg, payload.curr_summary, payload.delta)

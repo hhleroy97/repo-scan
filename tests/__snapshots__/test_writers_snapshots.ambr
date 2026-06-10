@@ -384,6 +384,23 @@
         "src/util.py": 200
       }
     },
+    "citations": [],
+    "vault_health": {
+      "coverage_pct": 1.0,
+      "score_histogram": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+      },
+      "orphans_by_kind": {},
+      "untracked_code_count": 2,
+      "stale_docs_count": 0,
+      "healthy": 0,
+      "docs": 0,
+      "knowledge_debt": 15.0,
+      "thin_citations": []
+    },
     "config": {
       "line_warn": 300,
       "line_crit": 600,

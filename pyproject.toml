@@ -20,3 +20,6 @@ radar = "repo_scan.radar.cli:main"
 
 [tool.setuptools]
 packages = ["repo_scan", "repo_scan.radar", "repo_scan.hub"]
+
+[tool.setuptools.package-data]
+"repo_scan.hub" = ["static/*.js"]

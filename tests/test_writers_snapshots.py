@@ -125,5 +125,6 @@ def test_scan_json_snapshot(fixture_repo: Path, snapshot):
     assert set(payload) == {
         "schema_version", "generated_at", "repo", "languages", "files", "churn",
         "complexity", "ranking", "dependency_edges", "behavior", "config",
+        "citations", "vault_health",
     }
     assert raw == snapshot

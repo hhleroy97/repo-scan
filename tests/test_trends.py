@@ -29,6 +29,25 @@ def test_summarize_metrics():
     assert s["cc_by_file"] == {"a": 17}
 
 
+def test_summarize_metrics_includes_vault_health():
+    s = summarize_metrics(_counts(a=10), [], DEFAULT_CONFIG, vault_health={
+        "coverage_pct": 0.75,
+        "untracked_code_count": 3,
+    })
+    assert s["vault_coverage_pct"] == 0.75
+    assert s["untracked_code_count"] == 3
+
+
+def test_compute_delta_vault_metrics():
+    base = {"lines": 0, "files": 0, "hotspot_functions": 0,
+            "critical_files": 0, "cc_by_file": {}}
+    prev = {**base, "vault_coverage_pct": 0.5, "untracked_code_count": 10}
+    curr = {**base, "vault_coverage_pct": 0.75, "untracked_code_count": 7}
+    delta = compute_delta(prev, curr)
+    assert delta["vault_coverage_pct"] == 0.25
+    assert delta["untracked_code_count"] == -3
+
+
 def test_compute_delta_and_movers():
     prev = summarize_metrics(_counts(a=100), [_cc("a", 12)], DEFAULT_CONFIG)
     prev["generated_at"] = "yesterday"

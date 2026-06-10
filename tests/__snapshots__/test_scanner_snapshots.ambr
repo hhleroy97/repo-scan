@@ -40,9 +40,9 @@
   One row per scan — the long-term memory that makes interventions
   measurable. Newest at the bottom.
   
-  | When | Files | Lines | Hotspot fns | Critical | Δ lines | Δ hotspots |
-  |------|-------|-------|-------------|----------|---------|------------|
-  | 2026-01-01 00:00 UTC | 4 | 1180 | 2 | 1 | — | — |
+  | When | Files | Lines | Hotspot fns | Critical | Δ lines | Δ hotspots | Vault % | Δ vault |
+  |------|-------|-------|-------------|----------|---------|------------|---------|---------|
+  | 2026-01-01 00:00 UTC | 4 | 1180 | 2 | 1 | — | — | 100% | — |
   
   '''
 # ---

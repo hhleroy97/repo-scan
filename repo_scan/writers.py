@@ -192,14 +192,51 @@ def _health_actions_section(line_counts: dict, crit_n: int) -> list[str]:
     ) + [""]
 
 
+def _health_vault_section(root: Path, cfg: dict, line_counts: dict,
+                          citations: list | None, behavior: dict | None,
+                          ranking: list | None) -> list[str]:
+    from .provenance import vault_coverage
+    scan_stub = {
+        "files": line_counts,
+        "ranking": ranking or [],
+        "behavior": behavior or {},
+        "citations": citations or [],
+    }
+    cov = vault_coverage(root, cfg, scan_stub, citations or [])
+    if not cov["docs"]:
+        return []
+    pct = int(round(cov["coverage_pct"] * 100))
+    kind = "warning" if pct < 70 else ("note" if pct < 90 else "tip")
+    lines = callout(
+        kind,
+        f"Vault provenance: {cov['healthy']}/{cov['docs']} docs fully traced ({pct}%)",
+        [
+            f"Untracked ranked code: {cov['untracked_code_count']}",
+            f"Stale docs: {cov['stale_docs_count']}",
+        ],
+    ) + ["", "## Vault health", "",
+         "| Metric | Value |",
+         "|--------|-------|",
+         f"| Coverage | {pct}% ({cov['healthy']}/{cov['docs']}) |",
+         f"| Untracked code (ranked) | {cov['untracked_code_count']} |",
+         f"| Stale docs | {cov['stale_docs_count']} |"]
+    for kind_name, count in sorted(cov.get("orphans_by_kind", {}).items()):
+        if count:
+            lines.append(f"| Orphan {kind_name}s | {count} |")
+    lines.append("")
+    return lines
+
+
 def write_health_report(root: Path, cfg: dict, line_counts: dict, churn: list, complexity: list,
-                        behavior: dict | None = None):
+                        behavior: dict | None = None, citations: list | None = None,
+                        ranking: list | None = None):
     warn_n, crit_n = cfg["line_warn"], cfg["line_crit"]
     lines = [
         "# Health report",
         f"_Generated {now_iso()}_  |  _Branch: {git_branch(root)}_  |  _Last commit: {git_last_commit(root)}_",
         "",
     ]
+    lines += _health_vault_section(root, cfg, line_counts, citations, behavior, ranking)
     lines += _health_dir_pie_section(line_counts)
     lines += _health_sizes_section(line_counts, warn_n, crit_n)
     lines += _health_complexity_section(complexity)
@@ -442,11 +479,13 @@ def write_index(root: Path, cfg: dict, line_counts: dict, languages: dict,
 
 def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
                     churn: list, complexity: list, ranking: list,
-                    py_edges: list, ts_edges: list, behavior: dict | None = None):
+                    py_edges: list, ts_edges: list, behavior: dict | None = None,
+                    citations: list | None = None):
     """Machine-readable sidecar so agents don't have to parse markdown."""
     docs = root / cfg["docs_dir"]
     payload = scan_payload(root, cfg, line_counts, languages, churn, complexity,
-                           ranking, py_edges, ts_edges, behavior)
+                           ranking, py_edges, ts_edges, behavior,
+                           citations=citations)
     path = docs / "scan.json"
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     ok(str(path.relative_to(root)))
@@ -454,8 +493,14 @@ def write_scan_json(root: Path, cfg: dict, line_counts: dict, languages: dict,
 
 def scan_payload(root: Path, cfg: dict, line_counts: dict, languages: dict,
                  churn: list, complexity: list, ranking: list,
-                 py_edges: list, ts_edges: list, behavior: dict | None = None) -> dict:
+                 py_edges: list, ts_edges: list, behavior: dict | None = None,
+                 citations: list | None = None) -> dict:
     """Pure scan.json payload builder, separated from file I/O."""
+    cites = citations or []
+    from .provenance import vault_health_payload
+    vault_health = vault_health_payload(
+        root, cfg, line_counts, cites, behavior, ranking=ranking,
+    )
     return {
         "schema_version": 1,
         "generated_at": now_iso(),
@@ -481,6 +526,8 @@ def scan_payload(root: Path, cfg: dict, line_counts: dict, languages: dict,
             "ownership": (behavior or {}).get("ownership", [])[:20],
             "age_days": (behavior or {}).get("age_days", {}),
         },
+        "citations": cites,
+        "vault_health": vault_health,
         "config": cfg,
     }
 
