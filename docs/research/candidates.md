@@ -1,5 +1,5 @@
 # RADAR candidates
-_Generated 2026-06-10 03:06 UTC_
+_Generated 2026-06-10 09:06 UTC_
 
 Files that are both high-churn and high-complexity — the most valuable
 targets for external research. Consumed by `radar` as a trigger feed.
@@ -13,13 +13,11 @@ quadrantChart
     quadrant-2 Complex but stable
     quadrant-3 Quiet
     quadrant-4 Hot but simple
-    scanner.py: [0.98, 0.98]
-    test_radar_pipeli…: [0.40, 0.68]
-    pipeline.py: [0.50, 0.98]
+    daemon.py: [0.98, 0.98]
+    pipeline.py: [0.91, 0.79]
 ```
 
 | File | Commits | Complexity | Tests | Priority |
 |------|---------|------------|-------|----------|
-| `repo_scan/scanner.py` | 10 | 28 | **no** (2x) | 560 |
-| `tests/test_radar_pipeline.py` | 4 | 19 | **no** (2x) | 152 |
-| `repo_scan/radar/pipeline.py` | 5 | 28 | yes | 140 |
+| `repo_scan/hub/daemon.py` | 11 | 38 | **no** (2x) | 836 |
+| `repo_scan/radar/pipeline.py` | 10 | 30 | yes | 300 |
