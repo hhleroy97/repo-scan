@@ -201,6 +201,15 @@ token counts (parsed from the agent CLI's JSON envelope; plain-text backends
 get a chars/4 estimate flagged as such). Both dashboards aggregate it by
 day, model, and role.
 
+**Timeouts and liveness.** Agent CLIs are silent until they finish, which
+looks identical to a hang. While a call runs, radar emits a heartbeat event
+every `llm_heartbeat_seconds` (default 120) — `research · composer-2.5 still
+working · 6m elapsed (pid alive, limit 25m)` — to the agent feed, dashboard,
+and TUI, so you can tell working from stuck. Hard caps: `llm_timeout` for
+research/analyze/draft/audit calls and `act_timeout` for implementation runs;
+set them generously — a killed call loses that stage's work (checkpoints
+resume from the last completed stage, not mid-call).
+
 ### The Act stage — from approved spec to reviewed commit
 
 With `"act_enabled": true`, `radar act` takes the highest-priority in-progress
