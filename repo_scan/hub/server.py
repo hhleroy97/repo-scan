@@ -33,6 +33,7 @@ from .contract import (
     HubState,
     TICKET_ACTION_STATUSES,
 )
+from .settings import cfg_hub
 from .state import get_token, load_events, load_runs, submit_decision
 from .ui import DASHBOARD_HTML
 
@@ -367,7 +368,7 @@ def cmd_serve(root: Path, cfg: dict, host: str | None = None,
               port: int | None = None, with_daemon: bool = True) -> int:
     header("radar serve")
     host = host or str(cfg.get("serve_host", "0.0.0.0"))
-    port = int(port or cfg.get("serve_port", 8800))
+    port = int(port or cfg_hub(cfg, "serve_port"))
     token = get_token(root, cfg)
 
     if with_daemon:

@@ -420,7 +420,14 @@
       "tickets_max_new_per_scan": 5,
       "ticket_diagrams_enabled": true,
       "diagram_max_coupling_edges": 20,
-      "diagram_max_ticket_neighbors": 4
+      "diagram_max_ticket_neighbors": 4,
+      "serve_port": 8800,
+      "daemon_poll_seconds": 20,
+      "daemon_scan_hours": 6,
+      "ntfy_server": "https://ntfy.sh",
+      "vault_autocommit": true,
+      "max_parallel_acts": 2,
+      "max_parallel_loops": 2
     }
   }
   

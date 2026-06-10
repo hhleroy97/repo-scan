@@ -9,6 +9,7 @@ import json
 import urllib.request
 
 from ..utils import info
+from .settings import cfg_hub
 
 
 def notify(cfg: dict, title: str, message: str, priority: str = "default",
@@ -16,7 +17,7 @@ def notify(cfg: dict, title: str, message: str, priority: str = "default",
     topic = cfg.get("ntfy_topic")
     if not topic:
         return False
-    server = str(cfg.get("ntfy_server", "https://ntfy.sh")).rstrip("/")
+    server = str(cfg_hub(cfg, "ntfy_server")).rstrip("/")
     body = {
         "topic": topic,
         "title": title,

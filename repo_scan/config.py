@@ -1,8 +1,14 @@
-"""Defaults and .repo-scan.json loading."""
+"""Defaults and .repo-scan.json loading.
+
+Hub/daemon keys and defaults live in ``repo_scan.hub.settings`` (imported
+below); they are merged into ``DEFAULT_CONFIG`` and validated separately from
+``RADAR_CONFIG_KEYS``.
+"""
 
 import json
 from pathlib import Path
 
+from .hub.settings import HUB_CONFIG_KEYS, HUB_DEFAULTS
 from .utils import warn
 
 VERSION = "0.2.0"
@@ -36,26 +42,22 @@ DEFAULT_CONFIG = {
     "diagram_max_coupling_edges": 20,
     "diagram_max_ticket_neighbors": 4,
 }
+DEFAULT_CONFIG.update(HUB_DEFAULTS)
 
 # Keys owned by radar (B-phases) — valid in .repo-scan.json, unused by scan.
-RADAR_CONFIG_KEYS = {
+_RADAR_CONFIG_KEYS = {
     "gates", "llm_cli", "llm_timeout", "llm_heartbeat_seconds",
-    # hub (daemon + dashboard)
-    "serve_host", "serve_port", "daemon_poll_seconds", "daemon_scan_hours",
-    "ntfy_topic", "ntfy_server", "dashboard_url",
     # act stage (spec implementation)
     "act_enabled", "act_timeout", "act_fix_rounds", "test_cmd", "test_timeout",
     # model routing + parallelism
-    "llm_roles", "max_parallel_acts", "max_parallel_loops",
-    "repo_snapshot_max_chars",
+    "llm_roles", "repo_snapshot_max_chars",
     # PR workflow
     "act_open_pr", "pr_auto_remediate",
     # governance: budgets, path policy, per-kind autonomy, acceptance tests
     "budget_daily_tokens", "max_acts_per_day", "protected_paths",
     "gates_by_kind", "require_tests_for_kinds",
-    # vault auto-commit after runs/scans (default on)
-    "vault_autocommit",
 }
+RADAR_CONFIG_KEYS = _RADAR_CONFIG_KEYS - HUB_CONFIG_KEYS
 
 
 def load_config(root: Path) -> dict:
@@ -68,7 +70,8 @@ def load_config(root: Path) -> dict:
             continue
         try:
             overrides = json.loads(config_file.read_text())
-            unknown = set(overrides) - set(DEFAULT_CONFIG) - RADAR_CONFIG_KEYS
+            known = set(DEFAULT_CONFIG) | RADAR_CONFIG_KEYS | HUB_CONFIG_KEYS
+            unknown = set(overrides) - known
             if unknown:
                 warn(f"{name} unknown keys ignored by scan: {', '.join(sorted(unknown))}")
             cfg.update(overrides)
