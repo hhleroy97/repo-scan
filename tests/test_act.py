@@ -220,6 +220,30 @@ def test_daemon_tick_survives_live_act_thread(act_repo):
         del daemon_mod._act_threads["fake-run-id"]
 
 
+def test_reclaim_orphan_runs_resurrects_work(act_repo, tmp_path):
+    """A run left 'running' by a dead process is reclaimed at startup and
+    the next tick restarts the act from its checkpoints."""
+    from repo_scan.hub.daemon import reclaim_orphan_runs
+    from repo_scan.hub.state import create_run, update_run
+    from repo_scan.radar.act import act_problem
+    root, cfg = act_repo
+    cfg["llm_cli"] = [_stub_agent(tmp_path, IMPLEMENT_AGENT)]
+    cfg["gates"] = {"pre_implement": "auto", "post_implement": "auto"}
+    cfg["max_parallel_acts"] = 1
+    save_meta(root, cfg, {"last_scan": time.time()})
+
+    problem = act_problem("tkt-0001", "2026-01-01-fix-the-thing-spec")
+    run = create_run(root, cfg, problem, ticket="tkt-0001", kind="act")
+    update_run(root, cfg, run["id"], "running")  # owner "died" here
+
+    assert daemon_tick(root, cfg) == []  # starved: stale run blocks the slot
+    assert reclaim_orphan_runs(root, cfg) == [run["id"]]
+    actions = daemon_tick(root, cfg)
+    assert any(a.startswith("act-started:") for a in actions)
+    assert load_runs(root, cfg)[-1]["status"] == "done"
+    assert "VALUE = 42" in _git(root, "show", "radar/tkt-0001:impl.py")
+
+
 def test_daemon_fans_out_parallel_acts(act_repo, tmp_path):
     """Two approved specs -> two act runs in the same tick, isolated worktrees."""
     root, cfg = act_repo

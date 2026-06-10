@@ -137,6 +137,25 @@ def _spawn_act(root: Path, cfg: dict, run: dict, parallel: bool) -> None:
     t.start()
 
 
+def reclaim_orphan_runs(root: Path, cfg: dict) -> list[str]:
+    """Mark queued/running runs with no owning thread as stopped.
+
+    Called at daemon startup: if a previous process died mid-run, its run
+    records would otherwise sit in "running" forever and starve the
+    scheduler. Stopping them lets the normal fan-out resurrect the work —
+    checkpoints (branch, worktree, completed stages) and inbox decisions
+    survive, so the resume is cheap and consistent.
+    """
+    reclaimed = []
+    for r in active_runs(root, cfg):
+        if r["status"] in ("queued", "running") and r["id"] not in _act_threads:
+            update_run(root, cfg, r["id"], "stopped",
+                       note="reclaimed at daemon startup (owner died)")
+            warn(f"reclaimed orphaned run {r['id']} ({r.get('ticket')})")
+            reclaimed.append(r["id"])
+    return reclaimed
+
+
 def daemon_tick(root: Path, cfg: dict) -> list[str]:
     """One scheduling pass. Returns the actions taken (for logs and tests)."""
     actions: list[str] = []
@@ -229,13 +248,19 @@ def daemon_tick(root: Path, cfg: dict) -> list[str]:
 
 def cmd_daemon(root: Path, cfg: dict, poll_seconds: int | None = None) -> int:
     header("radar daemon")
+    reclaim_orphan_runs(root, cfg)
     poll = int(poll_seconds or cfg.get("daemon_poll_seconds", 20))
     info(f"polling every {poll}s — scans every {cfg.get('daemon_scan_hours', 6)}h "
          f"(state: {cfg['docs_dir']}/.radar/)")
     try:
         while True:
-            for action in daemon_tick(root, cfg):
-                ok(f"tick: {action}")
+            try:
+                for action in daemon_tick(root, cfg):
+                    ok(f"tick: {action}")
+            except Exception as e:  # a bad tick must never kill the scheduler
+                import traceback
+                warn(f"tick failed: {e}")
+                traceback.print_exc()
             time.sleep(poll)
     except KeyboardInterrupt:
         info("daemon stopped")
