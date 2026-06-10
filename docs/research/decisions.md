@@ -114,3 +114,5 @@
 | 2026-06-10 14:02 UTC | pre_implement | auto | implement [[2026-06-10-i-want-to-add-a-more-robust-way-to-visua-spec]] on branch radar/tkt-0012 for tkt-0012 |
 | 2026-06-10 14:02 UTC | post_implement | approved (dashboard) | PROTECTED paths touched (repo_scan/config.py) — tests passed; 12 files changed, 412 insertions(+), 32 deletions(-) on ra |
 | 2026-06-10 17:18 UTC | post_analyze | paused | Extract hub-owned defaults and key names into repo_scan/hub/settings.py (HUB_DEFAULTS + HUB_CONFIG_KEYS), have daemon.py |
+| 2026-06-10 17:18 UTC | post_analyze | approved (dashboard) | Extract hub-owned defaults and key names into repo_scan/hub/settings.py (HUB_DEFAULTS + HUB_CONFIG_KEYS), have daemon.py |
+| 2026-06-10 17:20 UTC | post_analyze | paused | Extract repo_scan/hub/contract.py owning API route constants, ticket status/order/badge maps (sourced from repo_scan.tic |
