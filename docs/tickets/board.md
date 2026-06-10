@@ -16,6 +16,7 @@ kanban-plugin: board
 ## Approved
 
 - [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
+- [ ] [[tkt-0032|Move the agentic loop graph and untracked code section to above the graph controls so filter graph and pancake graph options are just above +\- controls]]
 
 ## In progress
 

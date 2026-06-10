@@ -79,7 +79,7 @@ Tune from `stages.jsonl` and `usage.jsonl` rollups on the hub Activity tab.
 
 | Surface | Audience | When to use |
 |---------|----------|-------------|
-| `scan.json` | Tools, agents, reports | Full structural truth; trend diffs |
+| `scan.json` | Tools, agents, reports | Full structural truth; trend diffs; `vault_health` + `citations` |
 | `digest.md` | LLM with tight budget | Single-file export |
 | `repo_snapshot()` | In-flight prompts | Fresh ranked context; not committed |
 | `research/sources/*.md` | Humans + analyze stage | External claims with provenance |
@@ -94,6 +94,9 @@ scan → ticket (auto-propose) → loop (research→analyze→draft→audit)
      → spec (approved) → act → PR → merge → rescan → trend delta
 ```
 
+**Diagrams:** [[architecture/agentic-loop]] (ASCII-first, no horizontal scroll)
+**Graph viewer:** [[architecture/graph-viewer-roadmap]]
+
 Ground truth updates at: ingest (sources), analyze (findings), record (spec),
 act (code + changelog), rescan (metrics).
 
@@ -106,5 +109,6 @@ act (code + changelog), rescan (metrics).
 | Ingest fetchers | arxiv, github, url, file | npm, HN, Semantic Scholar |
 | Metric-triggered loop | Tickets auto-propose; manual loop | Threshold auto-fire |
 | `linked_files` | Mostly manual | Auto-suggest at analyze |
-| Telemetry | Per-LLM usage ledger | Per-stage timing + burn rate |
+| Telemetry | Per-stage timing + burn rate (hub Activity) | Role-level routing from burn data |
 | Theory layer | `theory.md` (this milestone) | Human-curated, agent-suggested |
+| Graph viewing | Obsidian + static Mermaid in reports | Hub pan/zoom graph tab → optional Kuzu/Neo4j index |

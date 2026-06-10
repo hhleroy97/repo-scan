@@ -25,6 +25,9 @@ RADAR closes all three.
 
 ## Loop architecture
 
+> **Ground-truth diagrams:** [[architecture/agentic-loop]] — ASCII-first (no horizontal scroll in Obsidian).
+> **Interactive graphs (planned):** [[architecture/graph-viewer-roadmap]] — hub viewer, then graph DB if needed.
+
 RADAR is a five-stage pipeline:
 
     R — Research    find and ingest relevant external sources

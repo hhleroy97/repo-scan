@@ -18,5 +18,6 @@ RADAR loop context.
 | 2 | [[phase-2-week2]] | Pre-act bundle, Record stage, auto-close tickets | **Done** |
 | 3 | [[phase-3-week3]] | Loading states, SSE hub, gate drawer, doc drift | **Done** |
 | 4 | [[phase-4-week4]] | Stage timing, token burn, north star + theory docs | **Done** |
+| 5 | [[phase-5-week5]] | Vault provenance scoring, code↔doc citations, coverage view | Shipped |
 
 Research run for Phase 1: [[2026-06-10-phase1-planning-research]]
