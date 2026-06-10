@@ -80,3 +80,4 @@
 | 2026-06-10 07:39 UTC | post_analyze | approved (dashboard) | Create `tests/test_sources.py` by migrating and extending existing `test_radar_ingest.py` source tests (add title-trunca |
 | 2026-06-10 07:48 UTC | post_analyze | paused | Extend the existing Markdown+Mermaid pipeline with auto-generated, ticket-scoped diagrams sourced from scan.json: add a  |
 | 2026-06-10 07:53 UTC | post_analyze | paused | Extract `repo_scan/report_pipeline.py` with a typed `ReportPayload` (or reuse `ScanContext` read-only view) and a single |
+| 2026-06-10 07:54 UTC | post_audit | paused | audit revise: Well-aligned with radon findings, tkt-0005 acceptance criteria, and sibling audit fixes (scan.json baselin |
