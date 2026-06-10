@@ -1,4 +1,8 @@
-"""radar CLI — research-to-implementation loop on the repo-scan docs/ base."""
+"""radar CLI — argparse façade for research-to-implementation loop commands.
+
+Gate flag vocabulary (--approve, --gates) is sourced from ``gates``; this module
+must not duplicate gate names or mode literals.
+"""
 
 import argparse
 import sys
@@ -7,6 +11,7 @@ from pathlib import Path
 from ..config import VERSION, load_config
 from ..utils import ensure_dirs, err, git_root, header, info, ok, step
 from .fetchers import FetchError, fetch
+from .gates import ACT_GATE_NAMES, LOOP_GATE_NAMES, gate_cli_parent
 from .sources import rebuild_research_index, write_source
 
 
@@ -62,23 +67,33 @@ def main():
     p_research.add_argument("question", help="Natural-language research question")
     p_research.add_argument("--max-sources", type=int, default=3)
 
-    p_loop = sub.add_parser("loop", help="Full R-A-D-A-R pipeline for a problem")
+    p_loop = sub.add_parser(
+        "loop",
+        help="Full R-A-D-A-R pipeline for a problem",
+        parents=[gate_cli_parent(
+            approve_help=f"Pre-approve a gate ({', '.join(LOOP_GATE_NAMES)}); repeatable",
+            include_gates=True,
+        )],
+    )
     p_loop.add_argument("problem", help="Natural-language problem description")
-    p_loop.add_argument("--approve", action="append", default=[], metavar="GATE",
-                        help="Pre-approve a gate (post_analyze, post_audit); repeatable")
-    p_loop.add_argument("--gates", choices=["prompt", "auto", "deny"],
-                        help="Override all gate modes for this run")
     p_loop.add_argument("--max-sources", type=int, default=3)
 
-    p_full = sub.add_parser("full", help="Metric-triggered loop over RADAR candidates")
-    p_full.add_argument("--approve", action="append", default=[], metavar="GATE")
-    p_full.add_argument("--gates", choices=["prompt", "auto", "deny"])
+    p_full = sub.add_parser(
+        "full",
+        help="Metric-triggered loop over RADAR candidates",
+        parents=[gate_cli_parent(approve_help=None, include_gates=True)],
+    )
 
-    p_act = sub.add_parser("act", help="Implement an approved spec (tests as hard gate)")
+    p_act = sub.add_parser(
+        "act",
+        help="Implement an approved spec (tests as hard gate)",
+        parents=[gate_cli_parent(
+            approve_help=f"Pre-approve a gate ({', '.join(ACT_GATE_NAMES)}); repeatable",
+            include_gates=False,
+        )],
+    )
     p_act.add_argument("--ticket", default=None, metavar="TKT-ID",
                        help="Target ticket (default: highest-priority in-progress with approved spec)")
-    p_act.add_argument("--approve", action="append", default=[], metavar="GATE",
-                       help="Pre-approve a gate (pre_implement, post_implement); repeatable")
     p_act.add_argument("--worktree", action="store_true",
                        help="Implement in an isolated worktree (parallel-safe)")
 

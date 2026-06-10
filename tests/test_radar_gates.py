@@ -4,7 +4,17 @@ import json
 from pathlib import Path
 
 from repo_scan.config import load_config
-from repo_scan.radar.gates import clear_pending, gate, gate_mode, write_pending
+from repo_scan.radar.gates import (
+    ACT_GATE_NAMES,
+    GATE_MODES,
+    GATE_NAMES,
+    LOOP_GATE_NAMES,
+    clear_pending,
+    gate,
+    gate_cli_parent,
+    gate_mode,
+    write_pending,
+)
 
 
 def _cfg(tmp_repo: Path, gates: dict | None = None) -> dict:
@@ -60,3 +70,25 @@ def test_gate_preapproved_consumes_pending(tmp_repo):
 def test_clear_pending_missing_is_noop(tmp_repo):
     cfg = _cfg(tmp_repo)
     clear_pending(tmp_repo, cfg, "post_audit")  # must not raise
+
+
+def test_gate_modes_and_name_slices():
+    assert GATE_MODES == ("prompt", "auto", "deny")
+    assert LOOP_GATE_NAMES == GATE_NAMES[:2]
+    assert ACT_GATE_NAMES == GATE_NAMES[2:]
+    assert LOOP_GATE_NAMES == ("post_analyze", "post_audit")
+    assert ACT_GATE_NAMES == ("pre_implement", "post_implement")
+
+
+def test_gate_cli_parent_choices_and_include_gates():
+    with_gates = gate_cli_parent(approve_help="help text", include_gates=True)
+    assert with_gates.parse_args([]).approve == []
+    gates_action = next(
+        a for a in with_gates._actions if a.dest == "gates"  # noqa: SLF001
+    )
+    assert gates_action.choices == list(GATE_MODES)
+
+    without_gates = gate_cli_parent(include_gates=False)
+    assert not any(a.dest == "gates" for a in without_gates._actions)  # noqa: SLF001
+
+    assert with_gates is not without_gates
