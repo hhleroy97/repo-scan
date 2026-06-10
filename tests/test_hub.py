@@ -225,6 +225,21 @@ def test_server_requires_token(hub_server):
     assert _get(f"{base}/?token={token}")[0] == 200  # query token works too
 
 
+def test_server_serves_vendored_mermaid(hub_server):
+    root, cfg, token, base = hub_server
+    code, _ = _get(f"{base}/static/mermaid.min.js", token)
+    assert code == 200
+
+
+def test_server_state_includes_agentic_loop_mermaid(hub_server):
+    root, cfg, token, base = hub_server
+    code, state = _get(f"{base}/api/state", token)
+    assert code == 200
+    mmd = state.get("agentic_loop_mermaid", "")
+    assert "graph TD" in mmd
+    assert "subgraph radar" in mmd
+
+
 def test_server_state_payload(hub_server):
     root, cfg, token, base = hub_server
     from repo_scan.radar.gates import write_pending

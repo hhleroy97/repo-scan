@@ -106,6 +106,20 @@ class RunRow(TypedDict, total=False):
     updated_at: str
 
 
+class TrendSparklineRow(TypedDict, total=False):
+    when: str
+    files: int
+    lines: int
+    hotspots: int
+    vault_pct: float | None
+
+
+class VaultDelta(TypedDict, total=False):
+    coverage_pct: float
+    untracked: int
+    stale: int
+
+
 class HubState(TypedDict, total=False):
     version: str
     boot: str
@@ -121,11 +135,15 @@ class HubState(TypedDict, total=False):
     usage: dict
     telemetry: dict
     prs: list[dict]
+    agentic_loop_mermaid: str
+    trend_sparkline: list[TrendSparklineRow]
+    vault_delta: VaultDelta | None
 
 
 HUB_STATE_KEYS = frozenset({
     "version", "boot", "repo", "now", "scan", "gates", "tickets",
     "runs", "live_runs", "activity", "events", "usage", "telemetry", "prs",
+    "agentic_loop_mermaid", "trend_sparkline", "vault_delta",
 })
 
 

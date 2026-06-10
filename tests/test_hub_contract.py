@@ -11,6 +11,8 @@ from repo_scan.config import DEFAULT_CONFIG
 from repo_scan.hub import ui
 from repo_scan.hub.contract import (
     API_DOC,
+    API_GRAPH,
+    API_GRAPH_CHAIN,
     API_EVENTS,
     API_GATE,
     API_PR_PREFIX,
@@ -61,7 +63,7 @@ def test_server_imports_contract_for_routes_and_actions():
     src = Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "server.py"
     text = src.read_text()
     for const in (
-        "API_STATE", "API_EVENTS", "API_DOC", "API_GATE",
+        "API_STATE", "API_GRAPH", "API_GRAPH_CHAIN", "API_EVENTS", "API_DOC", "API_GATE",
         "API_PR_PREFIX", "API_TICKET", "API_TICKET_NEW",
         "TICKET_ACTION_STATUSES",
     ):
@@ -95,6 +97,8 @@ def test_dashboard_js_api_paths_match_contract():
     assert "/api/" not in after_contract, "bare /api/ paths must come from contract only"
     for name, path in (
         ("API_STATE", API_STATE),
+        ("API_GRAPH", API_GRAPH),
+        ("API_GRAPH_CHAIN", API_GRAPH_CHAIN),
         ("API_EVENTS", API_EVENTS),
         ("API_DOC", API_DOC),
         ("API_GATE", API_GATE),

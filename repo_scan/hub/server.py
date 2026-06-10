@@ -16,6 +16,8 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+_STATIC_DIR = Path(__file__).resolve().parent / "static"
 from urllib.parse import parse_qs, urlparse
 
 SSE_HEARTBEAT_SECONDS = 15
@@ -24,6 +26,8 @@ from ..config import VERSION
 from ..utils import git_branch, header, info, ok
 from .contract import (
     API_DOC,
+    API_GRAPH,
+    API_GRAPH_CHAIN,
     API_EVENTS,
     API_GATE,
     API_PR_PREFIX,
@@ -123,6 +127,26 @@ def build_state(root: Path, cfg: dict) -> HubState:
     live = [{k: r.get(k) for k in ("id", "problem", "ticket", "kind", "status",
                                     "stage", "stage_detail", "gate", "updated_at")}
             for r in active_runs(root, cfg)]
+    from .agentic_loop import build_agentic_loop_mermaid
+    from ..trends import load_previous_summary, load_trend_sparkline
+
+    last_done = next((r for r in all_runs if r.get("status") in ("done", "stopped")), None)
+
+    prev = load_previous_summary(root, cfg)
+    vault_delta = None
+    if prev and "vault_coverage_pct" in prev:
+        vh = scan.get("vault_health", {}) if scan else {}
+        if vh:
+            vault_delta = {
+                "coverage_pct": round(
+                    vh.get("coverage_pct", 0) - prev.get("vault_coverage_pct", 0), 4),
+                "untracked": (
+                    vh.get("untracked_code_count", 0)
+                    - prev.get("untracked_code_count", 0)
+                ),
+                "stale": vh.get("stale_docs_count", 0),
+            }
+
     return {
         "version": VERSION,
         "boot": BOOT_ID,
@@ -143,6 +167,10 @@ def build_state(root: Path, cfg: dict) -> HubState:
             "views": stage_burn_views(root, cfg),
         },
         "prs": list_open_prs(root, cfg),
+        "agentic_loop_mermaid": build_agentic_loop_mermaid(
+            live, gates, last_completed_run=last_done),
+        "trend_sparkline": load_trend_sparkline(root, cfg),
+        "vault_delta": vault_delta,
     }
 
 
@@ -239,8 +267,26 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._send(200, DASHBOARD_HTML.encode("utf-8"),
                                   "text/html; charset=utf-8", extra)
 
+            if url.path == "/static/mermaid.min.js":
+                path = _STATIC_DIR / "mermaid.min.js"
+                if not path.is_file():
+                    return self._json({"error": "not found"}, 404)
+                return self._send(200, path.read_bytes(),
+                                  "application/javascript; charset=utf-8")
+
             if url.path == API_STATE:
                 return self._json(build_state(root, cfg))
+
+            if url.path == API_GRAPH:
+                from .graph import build_graph
+                return self._json(build_graph(root, cfg))
+
+            if url.path == API_GRAPH_CHAIN:
+                from .graph import build_chain
+                node_id = parse_qs(url.query).get("id", [""])[0]
+                if not node_id:
+                    return self._json({"error": "id required"}, 400)
+                return self._json(build_chain(root, cfg, node_id))
 
             if url.path == API_EVENTS:
                 return self._sse_events()
