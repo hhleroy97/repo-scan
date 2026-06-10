@@ -289,9 +289,16 @@ Set `max_parallel_loops` to 1 to force the old one-at-a-time behavior.
 ```
 
 - `prompt` — CLI y/n; non-interactive runs pause to `docs/research/pending/`
-  and resume with `radar loop "..." --approve post_analyze`
+  and resume with `--approve` on the same command (`radar loop "..." --approve
+  post_analyze`, or `radar act --approve pre_implement`)
 - `auto` — pass through silently (abstract the gate away once trusted)
 - `deny` — hard stop
+
+`radar loop` and `radar full` also accept `--gates prompt|auto|deny` to override
+both loop gates (`post_analyze`, `post_audit`) for one run. `--approve GATE` is
+repeatable; gate names are command-scoped — loop/full: `post_analyze`,
+`post_audit`; act: `pre_implement`, `post_implement` (no `--gates` on act; use
+config or `gates_by_kind`).
 
 Every decision is appended to `docs/research/decisions.md`. Loop runs are
 recorded to `docs/changelog/{date}-loop.md`; specs land in `docs/specs/`

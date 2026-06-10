@@ -1,10 +1,11 @@
 # Research index
-_Rebuilt 2026-06-10 17:16 UTC — 51 source(s)_
+_Rebuilt 2026-06-10 17:32 UTC — 52 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
 | [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]] | github | architecture, ci, dependencies, imports, linter, module-boundaries, pypi, python, repo, static-analysis | 2026-06-10 17:16 UTC |
 | [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]] | github | bytecode, cloud-systems, configuration, csv-output, dependency-analysis, distributed-systems, fse-2020, hadoop, html, java, repo, research-artifact, static-analysis, taint-tracking | 2026-06-10 17:15 UTC |
+| [[sources/gh-python-cpython\|python/cpython — The Python programming language]] | github | cpython, interpreter, language-runtime, python, reference-implementation, repo, standard-library, static-analysis | 2026-06-10 17:14 UTC |
 | [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys |…]] | url | article, json, pep, pep-589, python, standards-track, static-analysis, structured-data, type-hints, typeddict, typing | 2026-06-10 17:14 UTC |
 | [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]] | url | article, code-quality, connascence, coupling, dry, enums, magic-values, rails, refactoring, software-design, vocabulary | 2026-06-10 17:14 UTC |
 | [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]] | url | api-design, api-evolution, article, backward-compatibility, builder-pattern, configuration-object, cumulative-factory, java, java-beans, javascript, options-object | 2026-06-10 17:14 UTC |

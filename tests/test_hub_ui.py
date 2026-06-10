@@ -1,51 +1,40 @@
 """Hub dashboard UI: open-ticket helpers embedded in DASHBOARD_HTML."""
 
+import json
 import re
 
 import pytest
 
+from repo_scan.hub.contract import TICKET_BADGE_CLS, TICKET_STATUS_ORDER, js_contract_block
 from repo_scan.hub.ui import DASHBOARD_HTML
-from repo_scan.tickets import OPEN_STATUSES
-
-# --- helpers mirroring client-side filter/sort (constants parsed from source) ---
-
-_OPEN_STATUSES_RE = re.compile(
-    r"OPEN_TICKET_STATUSES=new Set\(\[([^\]]+)\]\)"
-)
-_STATUS_ORDER_RE = re.compile(
-    r"TICKET_STATUS_ORDER=\{([^}]+)\}"
-)
+from repo_scan.tickets import OPEN_STATUSES as TICKETS_OPEN_STATUSES
 
 
-def _parse_open_statuses(html: str) -> set[str]:
-    m = _OPEN_STATUSES_RE.search(html)
-    assert m, "OPEN_TICKET_STATUSES Set definition missing from dashboard"
-    return {s.strip().strip("'\"") for s in m.group(1).split(",")}
+def _parse_open_statuses_from_block(block: str) -> set[str]:
+    m = re.search(r"OPEN_TICKET_STATUSES=new Set\((\[.*?\])\)", block)
+    assert m, "OPEN_TICKET_STATUSES Set missing from contract block"
+    return set(json.loads(m.group(1)))
 
 
-def _parse_status_order(html: str) -> dict[str, int]:
-    m = _STATUS_ORDER_RE.search(html)
-    assert m, "TICKET_STATUS_ORDER map missing from dashboard"
-    pairs = re.findall(r"([\w-]+):(\d+)", m.group(1))
-    return {k: int(v) for k, v in pairs}
-
-
-def _filter_open(tickets: list[dict], open_statuses: set[str]) -> list[dict]:
-    return [t for t in tickets if t.get("status") in open_statuses]
-
-
-def _sort_tickets(tickets: list[dict], order: dict[str, int]) -> list[dict]:
-    return sorted(tickets, key=lambda t: order.get(t.get("status", ""), 9))
+def _parse_status_order_from_block(block: str) -> dict[str, int]:
+    m = re.search(r"TICKET_STATUS_ORDER=(\{[^}]+\})", block)
+    assert m, "TICKET_STATUS_ORDER missing from contract block"
+    return json.loads(m.group(1))
 
 
 @pytest.fixture
-def open_statuses() -> set[str]:
-    return _parse_open_statuses(DASHBOARD_HTML)
+def contract_block() -> str:
+    return js_contract_block()
 
 
 @pytest.fixture
-def status_order() -> dict[str, int]:
-    return _parse_status_order(DASHBOARD_HTML)
+def open_statuses(contract_block) -> set[str]:
+    return _parse_open_statuses_from_block(contract_block)
+
+
+@pytest.fixture
+def status_order(contract_block) -> dict[str, int]:
+    return _parse_status_order_from_block(contract_block)
 
 
 @pytest.fixture
@@ -59,7 +48,7 @@ def all_status_tickets() -> list[dict]:
     ]
 
 
-def test_open_tickets_helpers_defined_in_source():
+def test_open_tickets_helpers_defined_in_source(contract_block):
     for name in (
         "OPEN_TICKET_STATUSES",
         "TICKET_STATUS_ORDER",
@@ -69,16 +58,17 @@ def test_open_tickets_helpers_defined_in_source():
         "rOpenTickets",
     ):
         assert name in DASHBOARD_HTML, f"{name} missing from dashboard source"
+    assert contract_block in DASHBOARD_HTML
 
 
 def test_open_ticket_statuses_match_python_contract(open_statuses):
-    assert open_statuses == OPEN_STATUSES
+    assert open_statuses == TICKETS_OPEN_STATUSES
 
 
 def test_open_tickets_filter_includes_only_non_terminal(
     open_statuses, all_status_tickets,
 ):
-    filtered = _filter_open(all_status_tickets, open_statuses)
+    filtered = [t for t in all_status_tickets if t.get("status") in open_statuses]
     assert {t["status"] for t in filtered} == {"proposed", "approved", "in-progress"}
     assert {t["id"] for t in filtered} == {"tkt-0001", "tkt-0002", "tkt-0003"}
 
@@ -89,8 +79,10 @@ def test_open_tickets_sort_follows_workflow_order(open_statuses, status_order):
         {"id": "tkt-0001", "status": "proposed", "title": "P"},
         {"id": "tkt-0002", "status": "approved", "title": "A"},
     ]
-    ordered = _sort_tickets(_filter_open(tickets, open_statuses), status_order)
+    filtered = [t for t in tickets if t.get("status") in open_statuses]
+    ordered = sorted(filtered, key=lambda t: status_order.get(t.get("status", ""), 9))
     assert [t["status"] for t in ordered] == ["proposed", "approved", "in-progress"]
+    assert status_order == TICKET_STATUS_ORDER
 
 
 def test_rnow_open_tickets_renders_rows_for_fixture():
@@ -145,3 +137,8 @@ def test_ticket_cards_render_card_outcome_and_criteria_count():
         "View ticket",
     ):
         assert needle in DASHBOARD_HTML, f"{needle} missing from dashboard"
+
+
+def test_badge_cls_injected_from_contract(contract_block):
+    assert json.dumps(TICKET_BADGE_CLS, separators=(",", ":")) in contract_block
+    assert "TICKET_BADGE_CLS" in DASHBOARD_HTML

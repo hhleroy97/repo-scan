@@ -22,6 +22,17 @@ SSE_HEARTBEAT_SECONDS = 15
 
 from ..config import VERSION
 from ..utils import git_branch, header, info, ok
+from .contract import (
+    API_DOC,
+    API_EVENTS,
+    API_GATE,
+    API_PR_PREFIX,
+    API_STATE,
+    API_TICKET,
+    API_TICKET_NEW,
+    HubState,
+    TICKET_ACTION_STATUSES,
+)
 from .settings import cfg_hub
 from .state import get_token, load_events, load_runs, submit_decision
 from .ui import DASHBOARD_HTML
@@ -43,8 +54,8 @@ def _read_json(root: Path, rel: str) -> dict:
         return {}
 
 
-def build_state(root: Path, cfg: dict) -> dict:
-    """Everything the dashboard renders, in one payload."""
+def build_state(root: Path, cfg: dict) -> HubState:
+    """Everything the dashboard renders, in one payload (see ``HubState``)."""
     from ..tickets import load_tickets
     docs = root / cfg["docs_dir"]
 
@@ -221,13 +232,13 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._send(200, DASHBOARD_HTML.encode("utf-8"),
                                   "text/html; charset=utf-8", extra)
 
-            if url.path == "/api/state":
+            if url.path == API_STATE:
                 return self._json(build_state(root, cfg))
 
-            if url.path == "/api/events":
+            if url.path == API_EVENTS:
                 return self._sse_events()
 
-            if url.path == "/api/doc":
+            if url.path == API_DOC:
                 rel = parse_qs(url.query).get("path", [""])[0]
                 text = _safe_doc(root, cfg, rel)
                 if text is None:
@@ -246,7 +257,7 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._json({"error": "bad json"}, 400)
             url = urlparse(self.path)
 
-            if url.path == "/api/gate":
+            if url.path == API_GATE:
                 gate = str(body.get("gate", ""))
                 problem = str(body.get("problem", ""))
                 decision = str(body.get("decision", ""))
@@ -257,7 +268,7 @@ def make_handler(root: Path, cfg: dict, token: str):
                                 comment=comment, source="dashboard")
                 return self._json({"ok": True})
 
-            if url.path == "/api/pr/merge":
+            if url.path == f"{API_PR_PREFIX}merge":
                 from .prs import merge_pr
                 try:
                     number = int(body.get("number", 0))
@@ -269,7 +280,7 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._json({"ok": done, "message": msg},
                                   200 if done else 502)
 
-            if url.path == "/api/pr/update":
+            if url.path == f"{API_PR_PREFIX}update":
                 from .prs import remediate_pr
                 try:
                     number = int(body.get("number", 0))
@@ -283,7 +294,7 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._json(result, 200 if result.get("diagnosis") is not None
                                   or result.get("message") else 502)
 
-            if url.path == "/api/ticket/new":
+            if url.path == API_TICKET_NEW:
                 from ..tickets import new_ticket
                 title = str(body.get("title", "")).strip()
                 if not title:
@@ -301,13 +312,11 @@ def make_handler(root: Path, cfg: dict, token: str):
                     return self._json({"error": str(e)[:200]}, 400)
                 return self._json({"ok": True, "id": t["id"], "status": t["status"]})
 
-            if url.path == "/api/ticket":
+            if url.path == API_TICKET:
                 from ..tickets import load_tickets, set_ticket_status
                 tid = str(body.get("id", ""))
                 action = str(body.get("action", ""))
-                statuses = {"approve": "approved", "reject": "rejected",
-                            "start": "in-progress", "done": "done"}
-                if not (tid and action in statuses):
+                if not (tid and action in TICKET_ACTION_STATUSES):
                     return self._json({"error": "id and valid action required"}, 400)
                 if action == "approve":
                     ticket = next((t for t in load_tickets(root, cfg)
@@ -316,7 +325,7 @@ def make_handler(root: Path, cfg: dict, token: str):
                         return self._json(
                             {"error": "acceptance criteria required before approving"}, 400)
                 try:
-                    set_ticket_status(root, cfg, tid, statuses[action])
+                    set_ticket_status(root, cfg, tid, TICKET_ACTION_STATUSES[action])
                 except Exception as e:
                     return self._json({"error": str(e)[:200]}, 400)
                 return self._json({"ok": True})
@@ -333,7 +342,7 @@ def make_handler(root: Path, cfg: dict, token: str):
                 return self._json({"error": "bad json"}, 400)
             url = urlparse(self.path)
 
-            if url.path == "/api/ticket":
+            if url.path == API_TICKET:
                 from ..tickets import update_ticket_criteria
                 tid = str(body.get("id", ""))
                 raw = body.get("criteria")

@@ -1,10 +1,14 @@
 """Human-in-the-loop gates with progressive autonomy.
 
+``GATE_NAMES``, ``GATE_MODES``, ``LOOP_GATE_NAMES``, and ``ACT_GATE_NAMES`` are
+the canonical CLI vocabulary; ``gate_cli_parent`` registers shared argparse
+flags from those tuples. ``cli.py`` must not duplicate gate or mode literals.
+
 Per-repo config in .repo-scan.json:
 
     "gates": { "post_analyze": "prompt", "post_audit": "prompt" }
 
-Modes:
+Modes (``GATE_MODES``):
 - prompt — ask y/n on the CLI (the default; non-interactive runs pause instead)
 - auto   — pass through silently (the gate "abstracted away" once trusted)
 - deny   — always stop (hard checkpoint)
@@ -15,6 +19,7 @@ and the loop exits cleanly. Re-running the same loop command with --approve
 but plain files instead of a checkpointer.
 """
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -22,12 +27,36 @@ from pathlib import Path
 from ..utils import info, now_iso, ok, warn
 
 GATE_NAMES = ("post_analyze", "post_audit", "pre_implement", "post_implement")
+GATE_MODES = ("prompt", "auto", "deny")
+LOOP_GATE_NAMES = GATE_NAMES[:2]
+ACT_GATE_NAMES = GATE_NAMES[2:]
 DEFAULT_GATES = {name: "prompt" for name in GATE_NAMES}
+
+
+def gate_cli_parent(*, approve_help: str | None = None,
+                    include_gates: bool = True) -> argparse.ArgumentParser:
+    """Return a fresh ``ArgumentParser`` (``add_help=False``) with shared gate flags.
+
+    Each subcommand must call this separately — reusing one parent across
+    subparsers breaks argparse.
+    """
+    parser = argparse.ArgumentParser(add_help=False)
+    approve_kwargs: dict = {"action": "append", "default": [], "metavar": "GATE"}
+    if approve_help is not None:
+        approve_kwargs["help"] = approve_help
+    parser.add_argument("--approve", **approve_kwargs)
+    if include_gates:
+        parser.add_argument(
+            "--gates",
+            choices=list(GATE_MODES),
+            help="Override all gate modes for this run",
+        )
+    return parser
 
 
 def gate_mode(name: str, cfg: dict) -> str:
     mode = str(cfg.get("gates", {}).get(name, "prompt")).lower()
-    return mode if mode in ("prompt", "auto", "deny") else "prompt"
+    return mode if mode in GATE_MODES else "prompt"
 
 
 def gates_for_kind(cfg: dict, kind: str) -> dict:

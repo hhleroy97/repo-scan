@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 17:16 UTC_
+_Rebuilt 2026-06-10 17:32 UTC_
 
 ## 12-factor-agents
 
@@ -306,6 +306,10 @@ _Rebuilt 2026-06-10 17:16 UTC_
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 
+## cpython
+
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
+
 ## css-preprocessors
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
@@ -605,6 +609,10 @@ _Rebuilt 2026-06-10 17:16 UTC_
 
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 
+## interpreter
+
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
+
 ## issue-tracker
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
@@ -667,6 +675,10 @@ _Rebuilt 2026-06-10 17:16 UTC_
 ## language-detection
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## language-runtime
+
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 
 ## large-active-files
 
@@ -969,6 +981,7 @@ _Rebuilt 2026-06-10 17:16 UTC_
 ## python
 
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 - [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
@@ -1030,6 +1043,10 @@ _Rebuilt 2026-06-10 17:16 UTC_
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
+## reference-implementation
+
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
+
 ## regression-testing
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -1038,6 +1055,7 @@ _Rebuilt 2026-06-10 17:16 UTC_
 
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 - [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
@@ -1218,6 +1236,10 @@ _Rebuilt 2026-06-10 17:16 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## standard-library
+
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
+
 ## standards-track
 
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
@@ -1226,6 +1248,7 @@ _Rebuilt 2026-06-10 17:16 UTC_
 
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
+- [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
