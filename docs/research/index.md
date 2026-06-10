@@ -1,8 +1,13 @@
 # Research index
-_Rebuilt 2026-06-10 13:15 UTC — 38 source(s)_
+_Rebuilt 2026-06-10 16:21 UTC — 43 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]] | url | context-engineering, repo-map, graph-ranking, token-budget, agents, repo-scan | 2026-06-10 16:00 UTC |
+| [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]] | url | mermaid, coupling, subgraph, tickets, visualization | 2026-06-10 16:00 UTC |
+| [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]] | url | context-engineering, token-budget, snapshot, deduplication, agents | 2026-06-10 16:00 UTC |
+| [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]] | url | sse, stdlib, dashboard, live-updates, hub, deferred | 2026-06-10 16:00 UTC |
+| [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]] | url | context-engineering, research-plan-implement, human-in-the-loop, agents, repo-scan | 2026-06-10 16:00 UTC |
 | [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]] | url | article, clean-code, conditionals, consolidate-duplicate-conditio, control-flow, deduplication, readability, refactoring, slide-statements | 2026-06-10 13:15 UTC |
 | [[sources/url-refactoring-com-catalog-decomposeconditional-html\|Decompose Conditional]] | url | article, clean-code, conditionals, decompose-conditional, extract-method, readability, refactoring, self-documenting-code | 2026-06-10 13:14 UTC |
 | [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]] | arxiv | code-level-migration, dependencies, microservices, migration-automation, monolith-decomposition, paper, refactoring, service-extraction, software-architecture | 2026-06-10 07:51 UTC |

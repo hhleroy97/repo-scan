@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 13:15 UTC_
+_Rebuilt 2026-06-10 16:21 UTC_
 
 ## 12-factor-agents
 
@@ -16,6 +16,12 @@ _Rebuilt 2026-06-10 13:15 UTC_
 ## agentic-development
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## agents
+
+- [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
+- [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
+- [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
 
 ## aggregation
 
@@ -210,6 +216,9 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 ## context-engineering
 
+- [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
+- [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
+- [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## control-flow
@@ -217,9 +226,17 @@ _Rebuilt 2026-06-10 13:15 UTC_
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
 
+## coupling
+
+- [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
+
 ## css-preprocessors
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## dashboard
+
+- [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
 
 ## dataview
 
@@ -231,7 +248,12 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 ## deduplication
 
+- [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
+
+## deferred
+
+- [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
 
 ## dependencies
 
@@ -378,6 +400,10 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 
+## graph-ranking
+
+- [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
+
 ## graph-theory
 
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
@@ -406,8 +432,13 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 
+## hub
+
+- [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
+
 ## human-in-the-loop
 
+- [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
@@ -521,6 +552,10 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 
+## live-updates
+
+- [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
+
 ## llm
 
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
@@ -559,6 +594,7 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 ## mermaid
 
+- [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## metadata
@@ -831,6 +867,15 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
+## repo-map
+
+- [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
+
+## repo-scan
+
+- [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
+- [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
+
 ## reporting
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
@@ -838,6 +883,10 @@ _Rebuilt 2026-06-10 13:15 UTC_
 ## repository-mining
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
+## research-plan-implement
+
+- [[sources/url-humanlayer-advanced-context-engineering\|HumanLayer — Advanced Context Engineering workshop]]
 
 ## rest-api
 
@@ -925,6 +974,10 @@ _Rebuilt 2026-06-10 13:15 UTC_
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
+## snapshot
+
+- [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
+
 ## snapshot-testing
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -945,6 +998,10 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 
+## sse
+
+- [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
+
 ## staged-disclosure
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
@@ -961,6 +1018,14 @@ _Rebuilt 2026-06-10 13:15 UTC_
 ## static-site
 
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
+
+## stdlib
+
+- [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
+
+## subgraph
+
+- [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 
 ## sum-of-couplings
 
@@ -1040,6 +1105,15 @@ _Rebuilt 2026-06-10 13:15 UTC_
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## tickets
+
+- [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
+
+## token-budget
+
+- [[sources/url-aider-chat-docs-repomap\|Aider — Repository map documentation]]
+- [[sources/url-githits-repo-snapshot-token-budget\|GitHits — Repo snapshot digest with token budget (PraisonAI pattern)]]
+
 ## typescript
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
@@ -1099,6 +1173,7 @@ _Rebuilt 2026-06-10 13:15 UTC_
 
 ## visualization
 
+- [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## wizards
