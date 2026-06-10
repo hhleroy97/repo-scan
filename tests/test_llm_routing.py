@@ -52,6 +52,16 @@ def test_role_model():
     assert role_model({}, "act") is None
 
 
+def test_role_model_default_fallback():
+    """llm_roles["default"] catches every unrouted role — one knob to pin
+    all operations to a cheap model when the API budget is gone."""
+    cfg = {"llm_roles": {"default": "composer-2.5", "audit": "gpt-5.3-codex"}}
+    assert role_model(cfg, "research") == "composer-2.5"
+    assert role_model(cfg, "act") == "composer-2.5"
+    assert role_model(cfg, "audit") == "gpt-5.3-codex"  # explicit wins
+    assert role_model(cfg, None) == "composer-2.5"
+
+
 def _argv_dumping_backend(tmp_path: Path) -> tuple[str, Path]:
     """Backend that records its argv and replies with a cursor-style envelope."""
     argv_file = tmp_path / "argv.json"

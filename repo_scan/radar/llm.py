@@ -56,10 +56,11 @@ def available_backend(cfg: dict) -> list[str] | None:
 
 def role_model(cfg: dict, role: str | None) -> str | None:
     """Model override for a pipeline role ("research", "analyze", "draft",
-    "audit", "act", "act_fix"), or None to use the backend's default."""
-    if not role:
-        return None
-    model = cfg.get("llm_roles", {}).get(role)
+    "audit", "act", "act_fix"). Unrouted roles fall back to
+    llm_roles["default"]; None means use the backend's own default."""
+    roles = cfg.get("llm_roles", {})
+    model = roles.get(role) if role else None
+    model = model or roles.get("default")
     return str(model) if model else None
 
 
