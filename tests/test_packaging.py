@@ -30,7 +30,7 @@ def _load_pyproject(path: Path) -> dict:
     if sys.version_info >= (3, 11):
         import tomllib
 
-        return tomllib.loads(raw)
+        return tomllib.loads(raw.decode("utf-8"))
     text = raw.decode()
     assert f'name = "{_EXPECTED_NAME}"' in text
     assert f'version = "{_EXPECTED_VERSION}"' in text
