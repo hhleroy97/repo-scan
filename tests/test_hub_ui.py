@@ -1,7 +1,9 @@
 """Hub dashboard UI: open-ticket helpers embedded in DASHBOARD_HTML."""
 
+import hashlib
 import json
 import re
+from pathlib import Path
 
 import pytest
 
@@ -142,3 +144,30 @@ def test_ticket_cards_render_card_outcome_and_criteria_count():
 def test_badge_cls_injected_from_contract(contract_block):
     assert json.dumps(TICKET_BADGE_CLS, separators=(",", ":")) in contract_block
     assert "TICKET_BADGE_CLS" in DASHBOARD_HTML
+
+
+_DASHBOARD_HTML_SHA256 = (
+    "110b50e47230d0983c45e7347132b0fe5e13231ac421de83ea926c83173ee977"
+)
+_UI_PACKAGE = Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui"
+_UI_LINE_CAP = 300
+
+
+def test_ui_package_modules_under_line_cap():
+    for path in sorted(_UI_PACKAGE.glob("*.py")):
+        lines = path.read_text().splitlines()
+        assert len(lines) <= _UI_LINE_CAP, f"{path.name} has {len(lines)} lines"
+
+
+def test_dashboard_html_byte_parity():
+    digest = hashlib.sha256(DASHBOARD_HTML.encode()).hexdigest()
+    assert digest == _DASHBOARD_HTML_SHA256
+
+
+def test_dashboard_contract_marker_placement():
+    assert "/* __HUB_CONTRACT__ */" not in DASHBOARD_HTML
+    block = js_contract_block()
+    render_idx = DASHBOARD_HTML.index("function render(")
+    filter_idx = DASHBOARD_HTML.index("function filterOpenTickets")
+    block_idx = DASHBOARD_HTML.index(block)
+    assert render_idx < block_idx < filter_idx
