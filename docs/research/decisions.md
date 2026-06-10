@@ -78,3 +78,4 @@
 | 2026-06-10 07:36 UTC | post_analyze | approved (dashboard) | Create `tests/test_sources.py` by migrating and extending existing `test_radar_ingest.py` source tests (add title-trunca |
 | 2026-06-10 07:38 UTC | post_analyze | approved (dashboard) | Create `tests/test_sources.py` by migrating and extending existing `test_radar_ingest.py` source tests (add title-trunca |
 | 2026-06-10 07:39 UTC | post_analyze | approved (dashboard) | Create `tests/test_sources.py` by migrating and extending existing `test_radar_ingest.py` source tests (add title-trunca |
+| 2026-06-10 07:48 UTC | post_analyze | paused | Extend the existing Markdown+Mermaid pipeline with auto-generated, ticket-scoped diagrams sourced from scan.json: add a  |

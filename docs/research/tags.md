@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 07:32 UTC_
+_Rebuilt 2026-06-10 07:47 UTC_
 
 ## 12-factor-agents
 
@@ -8,6 +8,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 ## acceptance-criteria
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
+
+## adam-tornhill
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 
 ## agentic-development
 
@@ -37,8 +41,14 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
 
+## architecture-analysis
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
 ## article
 
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
@@ -64,6 +74,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 
+## behavioral-code-analysis
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
 ## build-isolation
 
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
@@ -80,6 +94,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 ## chain-of-thought
 
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
+
+## change-coupling
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## characterization-tests
 
@@ -110,6 +128,18 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-XAMPPRocky-tokei\|XAMPPRocky/tokei — Count your code, quickly.]]
 
+## clojure
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
+## code-churn
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
+## code-organization
+
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
+
 ## code-quality
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
@@ -130,11 +160,19 @@ _Rebuilt 2026-06-10 07:32 UTC_
 - [[sources/gh-networkx-networkx\|networkx/networkx — Network Analysis in Python]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## codescene
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
 ## coding-agents
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## command-pattern
+
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 
 ## commonjs
 
@@ -187,6 +225,14 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
+## design-patterns
+
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
+
+## diagrams-as-code
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
 ## distribution
 
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
@@ -205,6 +251,7 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 ## documentation
 
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 
 ## empirical-evaluation
@@ -219,6 +266,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 ## evaluation
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## extract-class
+
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 
 ## extract-function
 
@@ -237,10 +288,18 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-pytest-dev-pytest\|pytest-dev/pytest — The pytest framework makes it easy to write small tests, yet scales to support…]]
 
+## flowchart
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
 ## frontmatter
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
+
+## gantt
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## generated-code
 
@@ -250,9 +309,21 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
+## git-history
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
+## git-log-analysis
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
 ## gitattributes
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
+
+## github-markdown
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## gitignore
 
@@ -342,6 +413,7 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 ## javascript
 
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
@@ -413,6 +485,14 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
+## logical-coupling
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
+## logical-dependencies
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
 ## long-methods
 
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -432,19 +512,35 @@ _Rebuilt 2026-06-10 07:32 UTC_
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
 
+## mermaid
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
 ## metadata
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-pypa-sampleproject\|pypa/sampleproject — A sample project that exists for PyPUG's "Tutorial on Packaging and…]]
 
+## method-object
+
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
+
 ## michael-feathers
 
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
+## microservices
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
 ## migration
 
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
+
+## mindmap
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## mobile-design
 
@@ -470,13 +566,22 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## npm
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
 ## obsidian
 
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
 ## obsidian-plugin
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
+
+## ownership-metrics
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 
 ## package-metadata
 
@@ -616,6 +721,7 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 ## refactoring
 
+- [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -629,6 +735,8 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 ## repo
 
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
@@ -658,9 +766,17 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 
+## repository-mining
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
 ## rest-api
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## retrospectives
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
 ## roadmaps
 
@@ -702,6 +818,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
+
+## sequence-diagram
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## serialization
 
@@ -757,6 +877,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]]
 
+## sum-of-couplings
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
 ## sync
 
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
@@ -773,12 +897,18 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 
+## team-topology
+
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
 ## team-workflows
 
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## technical-debt
 
+- [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
@@ -827,6 +957,7 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 ## typescript
 
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
@@ -835,6 +966,10 @@ _Rebuilt 2026-06-10 07:32 UTC_
 - [[sources/gh-phoenix-assistant-impact-graph\|phoenix-assistant/impact-graph — If I change this function, what breaks? Change impact analysis with call graphs…]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 - [[sources/gh-yamadashy-repomix\|yamadashy/repomix — Repomix is a powerful tool that packs your entire repository into a single,…]]
+
+## uml
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## unit-testing
 
@@ -869,9 +1004,17 @@ _Rebuilt 2026-06-10 07:32 UTC_
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
+## version-control-mining
+
+- [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
+
 ## versioning
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
+
+## visualization
+
+- [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
 
 ## wizards
 

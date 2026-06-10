@@ -1,8 +1,12 @@
 # Research index
-_Rebuilt 2026-06-10 07:32 UTC — 30 source(s)_
+_Rebuilt 2026-06-10 07:47 UTC — 34 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]] | url | architecture-analysis, article, change-coupling, codescene, git-history, logical-dependencies, microservices, retrospectives, sum-of-couplings, team-topology, technical-debt | 2026-06-10 07:46 UTC |
+| [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from…]] | github | adam-tornhill, behavioral-code-analysis, clojure, code-churn, git-log-analysis, logical-coupling, ownership-metrics, repo, repository-mining, technical-debt, version-control-mining | 2026-06-10 07:45 UTC |
+| [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from…]] | github | diagrams-as-code, documentation, flowchart, gantt, github-markdown, javascript, mermaid, mindmap, npm, obsidian, repo, sequence-diagram, typescript, uml, visualization | 2026-06-10 07:45 UTC |
+| [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]] | url | article, code-organization, command-pattern, design-patterns, extract-class, method-object, refactoring | 2026-06-10 07:41 UTC |
 | [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]] | url | aggregation, article, code-readability, loop-optimization, martin-fowler, performance-tradeoff, refactoring, separation-of-concerns, split-loop | 2026-06-10 07:32 UTC |
 | [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for…]] | github | dataview, frontmatter, indexing, inline-fields, knowledge-base, markdown, metadata, obsidian, obsidian-plugin, query-language, repo, tasks, typescript, yaml | 2026-06-10 07:23 UTC |
 | [[sources/gh-eyeseast-python-frontmatter\|eyeseast/python-frontmatter — Parse and manage posts with YAML (or other) frontmatter]] | github | document-parsing, frontmatter, markdown, metadata, pypi, python, repo, round-trip, static-site, yaml | 2026-06-10 07:21 UTC |
