@@ -6,21 +6,21 @@ kanban-plugin: board
 
 ## Proposed
 
-- [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
 - [ ] [[tkt-0019|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_hub.py (60% coupled)]]
 - [ ] [[tkt-0021|Knowledge silo: repo_scan/radar/llm.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0023|Hidden seam: repo_scan/hub/ui.py <-> tests/test_hub.py (52% coupled)]]
-- [ ] [[tkt-0026|Split repo_scan/tickets.py (654 lines)]]
 - [ ] [[tkt-0027|Knowledge silo: repo_scan/radar/act.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0028|Refactor repo_scan/hub/server.py (CC 21, 11 commits, untested)]]
 - [ ] [[tkt-0029|Knowledge silo: pyproject.toml (hartley.leroy1997@gmail.com owns 100%)]]
 
 ## Approved
 
+- [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
 
 ## In progress
 
 - [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]]
+- [ ] [[tkt-0026|Split repo_scan/tickets.py (654 lines)]]
 
 ## Done
 

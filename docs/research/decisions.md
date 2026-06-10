@@ -144,3 +144,10 @@
 | 2026-06-10 18:35 UTC | post_audit | approved (dashboard) | audit revise: The package/concat/contract-injection approach is sound and line caps are achievable, but fragment boundar |
 | 2026-06-10 18:36 UTC | pre_implement | auto | implement [[2026-06-10-split-repo-scan-hub-ui-py-706-lines-repo-spec]] on branch radar/tkt-0025 for tkt-0025 |
 | 2026-06-10 18:39 UTC | post_implement | auto | tests passed; 3 files changed, 31 insertions(+), 713 deletions(-) on radar/tkt-0025 — commit? |
+| 2026-06-10 18:50 UTC | post_analyze | paused | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 18:51 UTC | post_analyze | paused | Convert `repo_scan/tickets.py` into `repo_scan/tickets/` with modules `constants`, `parse`, `evidence`, `propose`, `io`, |
+| 2026-06-10 18:51 UTC | post_analyze | approved (dashboard) | Extract daemon's act orchestration from _run_act into repo_scan/hub/act_run.py (run invocation, RC→run-state mapping, va |
+| 2026-06-10 18:52 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/tickets.py` into `repo_scan/tickets/` with modules `constants`, `parse`, `evidence`, `propose`, `io`, |
+| 2026-06-10 18:55 UTC | post_audit | paused | audit revise: The split boundaries, ≤300 cap feasibility, facade re-export strategy, and lazy-import cycle breaks are so |
+| 2026-06-10 19:09 UTC | post_analyze | approved (dashboard) | Convert `repo_scan/tickets.py` into `repo_scan/tickets/` with modules `constants`, `parse`, `evidence`, `propose`, `io`, |
+| 2026-06-10 19:09 UTC | post_audit | approved (dashboard) | audit revise: The split boundaries, ≤300 cap feasibility, facade re-export strategy, and lazy-import cycle breaks are so |

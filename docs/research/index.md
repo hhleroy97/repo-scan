@@ -1,8 +1,13 @@
 # Research index
-_Rebuilt 2026-06-10 18:28 UTC — 55 source(s)_
+_Rebuilt 2026-06-10 18:50 UTC — 60 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method…]] | arxiv | arxiv, change-impact-analysis, co-change-analysis, dependency-prediction, java, learning-to-rank, paper, pull-requests, random-forest, software-maintenance | 2026-06-10 18:49 UTC |
+| [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between…]] | github | architecture-testing, archunit-inspired, dependency-rules, import-analysis, module-boundaries, plantuml, pytest, pytestarch, python, repo, static-analysis | 2026-06-10 18:49 UTC |
+| [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]] | url | article, constructor-injection, coupling, dependency-injection, dependency-inversion, design-principles, explicit-dependencies, maintainability, solid, testability | 2026-06-10 18:49 UTC |
+| [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]] | url | api-design, article, dunder-all, imports, modules, naming-conventions, packages, pep-8, public-api, python, wildcard-imports | 2026-06-10 18:49 UTC |
+| [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]] | url | article, code-organization, coupling, encapsulation, martin-fowler, move-function, move-method, object-oriented-design, refactoring | 2026-06-10 18:49 UTC |
 | [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven…]] | arxiv | ai-agents, code-quality, code-smells, coupling, llm-generated-code, maintainability, paper, prompt-engineering, software-architecture, technical-debt | 2026-06-10 18:27 UTC |
 | [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]] | url | article, bytecode-cache, cpython, imports, language-fundamentals, main-guard, modules, namespaces, python, standard-library, sys-path | 2026-06-10 18:27 UTC |
 | [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]] | url | article, class-design, cohesion, delegation, extract-class, inline-class, martin-fowler, refactoring, single-responsibility | 2026-06-10 18:27 UTC |

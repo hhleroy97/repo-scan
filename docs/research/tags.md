@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 18:28 UTC_
+_Rebuilt 2026-06-10 18:50 UTC_
 
 ## 12-factor-agents
 
@@ -50,6 +50,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## api-design
 
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 - [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 
@@ -69,8 +70,19 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 
+## architecture-testing
+
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
+
+## archunit-inspired
+
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
+
 ## article
 
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
@@ -91,6 +103,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## arxiv
 
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
@@ -148,6 +161,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## change-coupling
 
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
+
+## change-impact-analysis
+
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
 
 ## change-proneness
 
@@ -210,6 +227,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## co-change-analysis
 
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 
 ## code-churn
@@ -222,6 +240,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## code-organization
 
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 
 ## code-quality
@@ -301,6 +320,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm\|Slide Statements]]
 
+## constructor-injection
+
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
+
 ## consumer-driven-contracts
 
 - [[sources/gh-pact-foundation-pact-python\|pact-foundation/pact-python — Python version of Pact. Enables consumer driven contract testing, providing a…]]
@@ -323,6 +346,8 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## coupling
 
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
@@ -395,9 +420,25 @@ _Rebuilt 2026-06-10 18:28 UTC_
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
 - [[sources/gh-codemix-deprank\|codemix/deprank — Use PageRank to find the most important files in your codebase.]]
 
+## dependency-injection
+
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
+
+## dependency-inversion
+
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
+
+## dependency-prediction
+
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
+
 ## dependency-resolution
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## dependency-rules
+
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 
 ## deployment
 
@@ -406,6 +447,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## design-patterns
 
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
+
+## design-principles
+
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 
 ## diagrams-as-code
 
@@ -440,6 +485,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
+## dunder-all
+
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
+
 ## early-return
 
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
@@ -451,6 +500,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## encapsulation
 
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 
 ## enums
@@ -464,6 +514,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## evaluation
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## explicit-dependencies
+
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 
 ## extract-class
 
@@ -596,12 +650,17 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 
+## import-analysis
+
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
+
 ## importlib-metadata
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
 
 ## imports
 
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 - [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 
@@ -651,6 +710,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## java
 
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 - [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
@@ -724,6 +784,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
 
+## learning-to-rank
+
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
+
 ## legacy-code
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
@@ -789,6 +853,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## maintainability
 
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 - [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 
 ## markdown
@@ -799,6 +864,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## martin-fowler
 
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
@@ -851,6 +917,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## module-boundaries
 
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 
 ## module-prioritization
@@ -863,11 +930,20 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## modules
 
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 - [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 
 ## monolith-decomposition
 
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
+
+## move-function
+
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
+
+## move-method
+
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 
 ## multi-agent
 
@@ -881,6 +957,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 
+## naming-conventions
+
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
+
 ## nested-conditionals
 
 - [[sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla\|Replace Nested Conditional with Guard Clauses]]
@@ -892,6 +972,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## npm
 
 - [[sources/gh-mermaid-js-mermaid\|mermaid-js/mermaid — Generation of diagrams like flowcharts or sequence diagrams from text in a…]]
+
+## object-oriented-design
+
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 
 ## obsidian
 
@@ -913,6 +997,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## package-metadata
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
+
+## packages
+
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 
 ## packaging
 
@@ -936,6 +1024,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## paper
 
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
 - [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
@@ -960,6 +1049,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 
+## pep-8
+
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
+
 ## performance-tradeoff
 
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
@@ -971,6 +1064,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## planning
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
+
+## plantuml
+
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 
 ## plugins
 
@@ -1005,9 +1102,17 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 
+## public-api
+
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
+
 ## published-interface
 
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
+
+## pull-requests
+
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
 
 ## pycharm
 
@@ -1032,6 +1137,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## pytest
 
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 - [[sources/gh-JetBrains-Research-PyNose\|JetBrains-Research/PyNose — A test smell detector for Python.]]
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
@@ -1040,8 +1146,14 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/gh-pytest-dev-pytest-html\|pytest-dev/pytest-html — Plugin for generating HTML reports for pytest results]]
 
+## pytestarch
+
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
+
 ## python
 
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 - [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
@@ -1071,6 +1183,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
+## random-forest
+
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
+
 ## react
 
 - [[sources/gh-makeplane-plane\|makeplane/plane — Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a…]]
@@ -1091,6 +1207,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## refactoring
 
+- [[sources/url-refactoring-com-catalog-movefunction-html\|Move Function]]
 - [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
@@ -1117,6 +1234,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## repo
 
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
@@ -1289,9 +1407,17 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
+## software-maintenance
+
+- [[sources/arxiv-2411.19099\|Enhancing Software Maintenance: A Learning to Rank Approach for Co-changed Method Identification]]
+
 ## software-quality
 
 - [[sources/arxiv-2006.10892\|Prioritizing documentation effort: Can we do better?]]
+
+## solid
+
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 
 ## split-loop
 
@@ -1316,6 +1442,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## static-analysis
 
+- [[sources/gh-zyskarch-pytestarch\|zyskarch/pytestarch — Test framework for software architecture based on imports between modules.]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
@@ -1419,6 +1546,7 @@ _Rebuilt 2026-06-10 18:28 UTC_
 
 ## testability
 
+- [[sources/url-deviq-com-principles-explicit-dependencies-principle\|Explicit Dependencies Principle]]
 - [[sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode\|ThoughtWorksInc/WorkingEffectivelyWithLegacyCode — GitHub repository]]
 
 ## testing
@@ -1517,6 +1645,10 @@ _Rebuilt 2026-06-10 18:28 UTC_
 ## vocabulary
 
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
+
+## wildcard-imports
+
+- [[sources/url-realpython-com-python-all-attribute\|Python's __all__: Packages, Modules, and Wildcard Imports – Real Python]]
 
 ## wizards
 
