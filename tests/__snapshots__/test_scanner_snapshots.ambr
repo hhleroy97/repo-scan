@@ -1,0 +1,48 @@
+# serializer version: 1
+# name: test_scan_tickets_snapshot
+  '''
+  ---
+  
+  kanban-plugin: board
+  
+  ---
+  
+  ## Proposed
+  
+  - [ ] [[tkt-0001|Refactor src/app.py (CC 24, 12 commits)]]
+  - [ ] [[tkt-0002|Refactor src/util.py (CC 12, 4 commits, untested)]]
+  - [ ] [[tkt-0003|Hidden seam: src/app.py <-> src/util.py (67% coupled)]]
+  
+  ## Approved
+  
+  
+  ## In progress
+  
+  
+  ## Done
+  
+  
+  ## Rejected
+  
+  
+  %% kanban:settings
+  ```
+  {"kanban-plugin":"board"}
+  ```
+  %%
+  
+  '''
+# ---
+# name: test_scan_trend_first_run_snapshot
+  '''
+  # Scan trend
+  
+  One row per scan — the long-term memory that makes interventions
+  measurable. Newest at the bottom.
+  
+  | When | Files | Lines | Hotspot fns | Critical | Δ lines | Δ hotspots |
+  |------|-------|-------|-------------|----------|---------|------------|
+  | 2026-01-01 00:00 UTC | 4 | 1180 | 2 | 1 | — | — |
+  
+  '''
+# ---
