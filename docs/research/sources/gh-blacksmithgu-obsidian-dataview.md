@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/blacksmithgu/obsidian-dataview"
 raw_url: "https://github.com/blacksmithgu/obsidian-dataview"
 tags: ["dataview", "frontmatter", "indexing", "inline-fields", "knowledge-base", "markdown", "metadata", "obsidian", "obsidian-plugin", "query-language", "repo", "tasks", "typescript", "yaml"]
-linked_files: []
+linked_files: ["repo_scan/radar/sources.py"]
 relevance: "repo-scan already stores tickets, research sources, and radar artifacts as YAML-frontmatter Markdown explicitly designed to be Dataview-queryable, so this project is the canonical reference for how to query, aggregate, and visualize that metadata in Obsidian (boards, filtered lists, task views) without building a custom UI."
 ingested_at: "2026-06-10 07:23 UTC"
 ---

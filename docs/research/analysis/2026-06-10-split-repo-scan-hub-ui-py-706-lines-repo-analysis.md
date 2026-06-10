@@ -4,6 +4,7 @@ problem: "Split repo_scan/hub/ui.py (706 lines). `repo_scan/hub/ui.py` is 706 li
 confidence: "high"
 sources: ["arxiv-2605.02741", "url-refactoring-com-catalog-extractclass-html", "url-docs-python-org-3-tutorial-modules-html-packages"]
 generated_at: "2026-06-10 18:28 UTC"
+linked_files: ["tests/test_hub_ui.py"]
 ---
 
 # Analysis — Split repo_scan/hub/ui.py (706 lines). `repo_scan/hub/ui.py` is 706 lines — past the 600-line critical threshold where files become hard to navigate and review. Acceptance criteria: No resulting file above 300 lines; All tests still pass. Research current best practices and draft a spec for this work.

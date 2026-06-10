@@ -3,6 +3,8 @@
 Decisions are the multi-writer primitive: any surface (web UI, CLI, future
 chat bots) submits a decision file keyed by (problem, gate); the gate itself
 consumes it on the next pipeline pass. Files persist until the loop finishes
+
+Vault: docs/tickets/tkt-0035
 so re-running a paused loop is idempotent — earlier gates re-pass from their
 recorded decisions instead of re-prompting.
 

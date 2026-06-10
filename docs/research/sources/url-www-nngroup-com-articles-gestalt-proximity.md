@@ -4,7 +4,7 @@ type: "url"
 url: "https://www.nngroup.com/articles/gestalt-proximity/"
 raw_url: "https://www.nngroup.com/articles/gestalt-proximity/"
 tags: ["article", "form-design", "gestalt-principles", "grouping", "information-architecture", "mobile-ux", "proximity", "responsive-design", "ui-design", "usability", "visual-design", "whitespace"]
-linked_files: []
+linked_files: ["repo_scan/hub/ui/_graph_dashboard.py"]
 relevance: "When designing the mobile hub dashboard and graph UI, related metrics, controls, and labels should be grouped with tight spacing while unrelated sections are separated by whitespace so users can quickly scan vault health, loop stages, and actions without missing far-placed or poorly grouped elements."
 ingested_at: "2026-06-10 21:08 UTC"
 ---

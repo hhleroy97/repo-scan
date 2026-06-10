@@ -4,7 +4,7 @@ type: "url"
 url: "https://peps.python.org/pep-0589/"
 raw_url: "https://peps.python.org/pep-0589/"
 tags: ["article", "json", "pep", "pep-589", "python", "standards-track", "static-analysis", "structured-data", "type-hints", "typeddict", "typing"]
-linked_files: []
+linked_files: ["repo_scan/hub/contract.py"]
 relevance: "repo-scan can use TypedDict to type-check JSON-shaped scan outputs, radar payloads, and LLM response dicts without dataclass overhead, giving precise per-key typing for parsers and report writers while keeping runtime values as plain dicts."
 ingested_at: "2026-06-10 17:14 UTC"
 ---

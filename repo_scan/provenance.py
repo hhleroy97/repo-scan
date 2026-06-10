@@ -1,4 +1,8 @@
-"""Vault provenance scoring — evidence, linked, cited signals (fresh is vanity)."""
+"""Vault provenance scoring — evidence, linked, cited signals (fresh is vanity).
+
+See docs/planning/phase-5-week5 for provenance contract.
+See docs/changelog/2026-06-11-vault-provenance for implementation notes.
+"""
 
 from __future__ import annotations
 
@@ -167,7 +171,7 @@ def _iter_vault_nodes(root: Path, cfg: dict) -> list[dict]:
         for path in sorted(base.glob(glob)):
             fm = parse_frontmatter(path.read_text(encoding="utf-8", errors="ignore"))
             key = path.stem
-            rel = f"{folder}/{path.name}"
+            rel = str(path.relative_to(docs))
             nodes.append({
                 "id": f"{kind}:{key}",
                 "kind": kind,

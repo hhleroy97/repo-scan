@@ -3,6 +3,9 @@
 Hub/daemon keys and defaults live in ``repo_scan.hub.settings`` (imported
 below); they are merged into ``DEFAULT_CONFIG`` and validated separately from
 ``RADAR_CONFIG_KEYS``.
+
+Vault: docs/tickets/tkt-0016, docs/tickets/tkt-0020, docs/tickets/tkt-0024
+Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-config-py-repo-sca-spec
 """
 
 import json

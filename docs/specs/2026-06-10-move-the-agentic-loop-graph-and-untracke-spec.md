@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-move-the-agentic-loop-graph-and-untracke-analysis]]"
 drafted_at: "2026-06-10 21:37 UTC"
+linked_files: ["repo_scan/hub/ui/_css.py", "repo_scan/hub/ui/_graph.py", "repo_scan/hub/ui/_graph_dashboard.py", "tests/test_hub_ui.py"]
 ---
 
 # Spec — Move the agentic loop graph and untracked code section to above the graph controls so filter graph and pancake graph options are just above +\- controls. _captured from intent — refine before approving_ Acceptance criteria: controls dispaly in stacked scetion together without break. Research current best practices and draft a spec for this work.

@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/cytoscape/cytoscape.js"
 raw_url: "https://github.com/cytoscape/cytoscape.js"
 tags: ["cytoscape", "cytoscapejs", "dependency-graph", "force-layout", "graph-theory", "graph-visualization", "interactive-graph", "javascript", "mit-license", "network-analysis", "npm", "pan-zoom", "repo", "visualization"]
-linked_files: []
+linked_files: ["repo_scan/hub/graph.py"]
 relevance: "Recommended candidate for the hub Graph tab’s interactive pan/zoom viewer over scan.json import edges and vault provenance chains, replacing static Mermaid where the graph-viewer roadmap needs mobile-friendly force layouts and tap-to-drill-down UX."
 ingested_at: "2026-06-10 21:08 UTC"
 ---

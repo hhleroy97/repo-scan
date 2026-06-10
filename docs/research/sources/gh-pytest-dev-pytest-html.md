@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/pytest-dev/pytest-html"
 raw_url: "https://github.com/pytest-dev/pytest-html"
 tags: ["ci-artifacts", "html", "pytest", "pytest-plugin", "python", "repo", "reporting", "test-results", "testing"]
-linked_files: []
+linked_files: ["tests/conftest.py"]
 relevance: "For repo-scan or similar pytest-based projects, pytest-html offers a ready-made way to publish human-readable test run artifacts alongside existing markdown scan reports in CI or local workflows."
 ingested_at: "2026-06-10 01:50 UTC"
 ---

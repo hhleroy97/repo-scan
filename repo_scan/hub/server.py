@@ -3,6 +3,9 @@
 Single user, low traffic: ThreadingHTTPServer is plenty, and it keeps the
 runtime zero-dependency. Reads come straight from the vault; writes go
 through the same decision inbox and ticket APIs the CLI uses, so the
+
+Vault: docs/tickets/tkt-0010, docs/tickets/tkt-0014, docs/tickets/tkt-0028
+Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-spec
 dashboard is just another surface — never a second source of truth.
 
 Auth is a per-repo bearer token (docs/<docs_dir>/.radar/token). Pair with

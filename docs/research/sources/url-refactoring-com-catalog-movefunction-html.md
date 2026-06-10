@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/moveFunction.html"
 raw_url: "https://refactoring.com/catalog/moveFunction.html"
 tags: ["article", "code-organization", "coupling", "encapsulation", "martin-fowler", "move-function", "move-method", "object-oriented-design", "refactoring"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "Useful when repo-scan modules grow misplaced helpers or methods that reach into other components—relocate those functions to the owning module (hub, radar, telemetry, etc.) to simplify dependencies and make the architecture easier to scan and maintain."
 ingested_at: "2026-06-10 18:49 UTC"
 ---

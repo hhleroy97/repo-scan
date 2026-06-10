@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-09-should-repo-scan-replace-its-heuristic-i-analysis]]"
 drafted_at: "2026-06-09 23:48 UTC"
+linked_files: ["repo_scan/digest.py", "repo_scan/ranking.py", "repo_scan/writers.py", "tests/test_phase_a.py", "tests/test_radar_full.py"]
 ---
 
 # Spec — Should repo-scan replace its heuristic important-files ranking (centrality x churn x complexity) with a PageRank-style algorithm over the dependency graph, like aider's repomap does? Consider whether networkx is worth adding given the zero-required-dependencies design constraint.

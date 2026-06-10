@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-hub-daemon-py-cc-38-1-analysis]]"
 drafted_at: "2026-06-10 13:38 UTC"
+linked_files: ["repo_scan/hub/daemon.py", "repo_scan/hub/state.py", "repo_scan/radar/act.py", "repo_scan/radar/pipeline.py", "repo_scan/scanner.py"]
 ---
 
 # Spec — Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested). `repo_scan/hub/daemon.py` is both high-churn (11 commits) and high-complexity (total CC 38) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.

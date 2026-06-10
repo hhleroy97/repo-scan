@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/mermaid-js/mermaid"
 raw_url: "https://github.com/mermaid-js/mermaid"
 tags: ["diagrams-as-code", "documentation", "flowchart", "gantt", "github-markdown", "javascript", "mermaid", "mindmap", "npm", "obsidian", "repo", "sequence-diagram", "typescript", "uml", "visualization"]
-linked_files: []
+linked_files: ["repo_scan/hub/agentic_loop.py"]
 relevance: "repo-scan already emits dependency, call, and health charts as Mermaid in committed Markdown for GitHub and Obsidian, so this project is the canonical reference for syntax, rendering behavior, and ecosystem compatibility of those scan artifacts."
 ingested_at: "2026-06-10 07:45 UTC"
 ---

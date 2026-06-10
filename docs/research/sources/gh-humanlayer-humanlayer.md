@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/humanlayer/humanlayer"
 raw_url: "https://github.com/humanlayer/humanlayer"
 tags: ["12-factor-agents", "ai-agents", "claude-code", "coding-agents", "context-engineering", "human-in-the-loop", "ide", "parallel-agents", "repo", "team-workflows", "typescript"]
-linked_files: []
+linked_files: ["repo_scan/radar/gates.py"]
 relevance: "Useful reference for repo-scan's RADAR loop and agent orchestration: patterns for context engineering, multi-agent parallelism, and reliable agent workflows when researching and implementing features in complex codebases."
 ingested_at: "2026-06-10 05:35 UTC"
 ---

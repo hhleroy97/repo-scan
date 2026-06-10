@@ -4,6 +4,7 @@ problem: "Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested). `repo_
 confidence: "high"
 sources: ["url-refactoring-com-catalog-decomposeconditional-html", "url-refactoring-com-catalog-consolidateduplicateconditionalfragm"]
 generated_at: "2026-06-10 13:16 UTC"
+linked_files: ["repo_scan/hub/daemon.py", "tests/test_act.py", "tests/test_daemon.py", "tests/test_hub.py", "tests/test_intent_governance.py"]
 ---
 
 # Analysis — Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested). `repo_scan/hub/daemon.py` is both high-churn (11 commits) and high-complexity (total CC 38) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.

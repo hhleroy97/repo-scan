@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-split-repo-scan-hub-ui-py-706-lines-repo-analysis]]"
 drafted_at: "2026-06-10 18:35 UTC"
+linked_files: ["repo_scan/hub/ui/__init__.py", "tests/test_hub.py", "tests/test_hub_contract.py", "tests/test_hub_ui.py"]
 ---
 
 # Spec — Split repo_scan/hub/ui.py (706 lines). `repo_scan/hub/ui.py` is 706 lines — past the 600-line critical threshold where files become hard to navigate and review. Acceptance criteria: No resulting file above 300 lines; All tests still pass. Research current best practices and draft a spec for this work.

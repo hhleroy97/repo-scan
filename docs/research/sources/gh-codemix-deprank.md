@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/codemix/deprank"
 raw_url: "https://github.com/codemix/deprank"
 tags: ["codebase-analysis", "dependency-cruiser", "dependency-graph", "file-ranking", "javascript", "migration", "pagerank", "repo", "static-analysis", "typescript"]
-linked_files: []
+linked_files: ["repo_scan/ranking.py"]
 relevance: "Provides a concrete, dependency-graph-based alternative to heuristic file-importance ranking for repo-scan when prioritizing which files to analyze, summarize, or migrate first in JavaScript and TypeScript repositories."
 ingested_at: "2026-06-09 23:40 UTC"
 ---

@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/replaceNestedConditionalWithGuardClauses.html"
 raw_url: "https://refactoring.com/catalog/replaceNestedConditionalWithGuardClauses.html"
 tags: ["article", "clean-code", "control-flow", "early-return", "guard-clauses", "nested-conditionals", "readability", "refactoring"]
-linked_files: []
+linked_files: ["repo_scan/scanner.py"]
 relevance: "Apply this when auditing functions with layered if-else logic—such as status checks, permission gates, or validation—by extracting early returns to simplify maintenance and reduce bug risk from missed else branches."
 ingested_at: "2026-06-10 07:41 UTC"
 ---

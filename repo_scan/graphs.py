@@ -3,6 +3,9 @@
 Coupling subgraph builders normalize paths with ``behavior._norm_node`` and
 resolve import edges via ``ranking._module_to_file`` — the same rules as
 ``hidden_seams``. ``linkStyle`` indices are assigned after pairs are sorted
+
+Vault: docs/tickets/tkt-0003
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-graphs-py-cc-56-3-com-spec
 and capped so they stay aligned with rendered edges.
 """
 

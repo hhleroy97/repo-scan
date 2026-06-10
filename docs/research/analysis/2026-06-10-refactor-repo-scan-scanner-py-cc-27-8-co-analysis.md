@@ -4,6 +4,7 @@ problem: "Refactor repo_scan/scanner.py (CC 27, 8 commits, untested). `repo_scan
 confidence: "medium"
 sources: ["gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode", "arxiv-2401.15298", "url-www-socratopia-app-library-software-engineering-craft-en-cha"]
 generated_at: "2026-06-10 03:15 UTC"
+linked_files: ["repo_scan/scanner.py", "repo_scan/writers.py", "tests/test_scan.py"]
 ---
 
 # Analysis — Refactor repo_scan/scanner.py (CC 27, 8 commits, untested). `repo_scan/scanner.py` is both high-churn (8 commits) and high-complexity (total CC 27) with no matching test file. Research current best practices and draft a spec for this work.

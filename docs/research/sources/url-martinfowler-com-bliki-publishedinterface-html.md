@@ -4,7 +4,7 @@ type: "url"
 url: "https://martinfowler.com/bliki/PublishedInterface.html"
 raw_url: "https://martinfowler.com/bliki/PublishedInterface.html"
 tags: ["api-design", "article", "backward-compatibility", "encapsulation", "interface-contract", "martin-fowler", "published-interface", "refactoring"]
-linked_files: []
+linked_files: ["repo_scan/hub/contract.py"]
 relevance: "When exposing types, endpoints, or libraries from this project, treat anything external consumers depend on as a published interface and plan versioning, deprecation, and breaking-change policies accordingly rather than assuming internal refactors are safe."
 ingested_at: "2026-06-10 17:06 UTC"
 ---

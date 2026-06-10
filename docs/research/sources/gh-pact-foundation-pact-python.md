@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/pact-foundation/pact-python"
 raw_url: "https://github.com/pact-foundation/pact-python"
 tags: ["api-testing", "ci-cd", "consumer-driven-contracts", "contract-testing", "integration-testing", "microservices", "mock-server", "pact", "pact-broker", "python", "repo"]
-linked_files: []
+linked_files: ["repo_scan/hub/contract.py"]
 relevance: "Useful when a project needs to decouple service integration testing from full environments—especially for microservices or APIs where teams want fast local tests, safe deployments, and automated detection of breaking contract changes between consumers and providers."
 ingested_at: "2026-06-10 17:06 UTC"
 ---

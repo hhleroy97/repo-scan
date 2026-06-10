@@ -4,6 +4,7 @@ problem: "Refactor repo_scan/graphs.py (CC 56, 3 commits, untested). `repo_scan/
 confidence: "high"
 sources: ["gh-David-OConnor-pydeps", "gh-pahen-madge"]
 generated_at: "2026-06-10 03:27 UTC"
+linked_files: ["repo_scan/graphs.py", "tests/test_graphs.py"]
 ---
 
 # Analysis — Refactor repo_scan/graphs.py (CC 56, 3 commits, untested). `repo_scan/graphs.py` is both high-churn (3 commits) and high-complexity (total CC 56) with no matching test file. Research current best practices and draft a spec for this work.

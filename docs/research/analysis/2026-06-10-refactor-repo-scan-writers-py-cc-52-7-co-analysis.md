@@ -4,6 +4,7 @@ problem: "Refactor repo_scan/writers.py (CC 52, 7 commits, untested). `repo_scan
 confidence: "high"
 sources: ["url-refactoring-com-catalog-extractfunction-html"]
 generated_at: "2026-06-10 01:54 UTC"
+linked_files: ["repo_scan/writers.py", "tests/test_visuals.py"]
 ---
 
 # Analysis — Refactor repo_scan/writers.py (CC 52, 7 commits, untested). `repo_scan/writers.py` is both high-churn (7 commits) and high-complexity (total CC 52) with no matching test file. Research current best practices and draft a spec for this work.

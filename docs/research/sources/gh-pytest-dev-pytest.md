@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/pytest-dev/pytest"
 raw_url: "https://github.com/pytest-dev/pytest"
 tags: ["fixtures", "parametrization", "plugins", "python", "repo", "test-discovery", "test-runner", "testing", "unit-testing"]
-linked_files: []
+linked_files: ["tests/conftest.py"]
 relevance: "repo-scan already depends on pytest>=8 as its primary test harness in dev dependencies and CI, so pytest is the core platform for unit tests, snapshot characterization via syrupy, and future test tooling such as HTML or metadata reporting plugins."
 ingested_at: "2026-06-10 04:02 UTC"
 ---

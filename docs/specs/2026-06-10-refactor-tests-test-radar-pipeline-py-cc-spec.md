@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-tests-test-radar-pipeline-py-cc-analysis]]"
 drafted_at: "2026-06-10 07:17 UTC"
+linked_files: ["repo_scan/radar/pipeline.py", "tests/conftest.py", "tests/test_hub.py", "tests/test_radar_pipeline.py"]
 ---
 
 # Spec — Refactor tests/test_radar_pipeline.py (CC 19, 4 commits, untested). `tests/test_radar_pipeline.py` is both high-churn (4 commits) and high-complexity (total CC 19) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.

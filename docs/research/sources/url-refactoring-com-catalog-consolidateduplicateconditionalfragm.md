@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/consolidateDuplicateConditionalFragments.html"
 raw_url: "https://refactoring.com/catalog/consolidateDuplicateConditionalFragments.html"
 tags: ["article", "clean-code", "conditionals", "consolidate-duplicate-conditio", "control-flow", "deduplication", "readability", "refactoring", "slide-statements"]
-linked_files: []
+linked_files: ["repo_scan/scanner.py"]
 relevance: "Use this when scan or analysis code repeats the same setup or calculations in multiple if/else branches—reorder or slide shared statements first, then consolidate them to simplify control flow and reduce drift between branches."
 ingested_at: "2026-06-10 13:15 UTC"
 ---

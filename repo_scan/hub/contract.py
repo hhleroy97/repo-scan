@@ -3,6 +3,9 @@
 Single importable surface for ``/api/*`` route paths, ticket workflow maps,
 and the ``build_state()`` JSON wire shape. ``js_contract_block()`` injects
 the client-side literals into ``DASHBOARD_HTML`` at assembly time (no build
+
+Vault: docs/tickets/tkt-0014
+Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-spec
 step). Distinct from ``state.py`` (run lifecycle helpers).
 """
 

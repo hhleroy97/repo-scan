@@ -3,6 +3,8 @@
 One file per ticket in docs/tickets/, YAML frontmatter (Dataview-queryable),
 plus a generated board.md in Obsidian Kanban format. The scan auto-proposes
 tickets from its signals; humans review by editing `status` (or dragging
+
+Vault: docs/tickets/tkt-0010, docs/tickets/tkt-0011, docs/tickets/tkt-0012, docs/tickets/tkt-0026
 cards), and add their own tickets as plain files.
 
 Each ticket's markdown is ground truth. ``parse_ticket()`` derives a PM-facing

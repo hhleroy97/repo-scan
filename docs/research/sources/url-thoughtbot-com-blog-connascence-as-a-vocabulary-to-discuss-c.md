@@ -4,7 +4,7 @@ type: "url"
 url: "https://thoughtbot.com/blog/connascence-as-a-vocabulary-to-discuss-coupling"
 raw_url: "https://thoughtbot.com/blog/connascence-as-a-vocabulary-to-discuss-coupling"
 tags: ["article", "code-quality", "connascence", "coupling", "dry", "enums", "magic-values", "rails", "refactoring", "software-design", "vocabulary"]
-linked_files: []
+linked_files: ["repo_scan/behavior.py"]
 relevance: "A codebase analysis or architecture-review tool can use connascence types and dimensions to classify coupling findings, prioritize refactors (stronger forms with low locality and high degree first), and give reviewers shared terms for explaining why a dependency is risky."
 ingested_at: "2026-06-10 17:14 UTC"
 ---

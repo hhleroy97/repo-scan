@@ -4,7 +4,7 @@ type: "url"
 url: "https://docs.python.org/3/tutorial/modules.html#packages"
 raw_url: "https://docs.python.org/3/tutorial/modules.html#packages"
 tags: ["article", "bytecode-cache", "cpython", "imports", "language-fundamentals", "main-guard", "modules", "namespaces", "python", "standard-library", "sys-path"]
-linked_files: []
+linked_files: ["repo_scan/scanner.py"]
 relevance: "Directly informs how repo-scan should structure its `repo_scan` package, organize imports between hub, radar, and analysis modules, and reason about import side effects, reload behavior, and module discovery when scanning Python projects."
 ingested_at: "2026-06-10 18:27 UTC"
 ---

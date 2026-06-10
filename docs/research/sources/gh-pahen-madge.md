@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/pahen/madge"
 raw_url: "https://github.com/pahen/madge"
 tags: ["amd", "circular-dependencies", "cli", "commonjs", "css-preprocessors", "dependency-graph", "es6-modules", "graphviz", "javascript", "module-resolution", "repo", "static-analysis", "typescript"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "Useful reference for repo-scan when extending or comparing JavaScript/TypeScript dependency extraction, circular-import detection, orphan/leaf analysis, and graph export patterns against Python-centric tooling like pydeps and deprank."
 ingested_at: "2026-06-10 03:26 UTC"
 ---

@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-add-a-list-for-the-open-tickets-to-the-n-analysis]]"
 drafted_at: "2026-06-10 05:43 UTC"
+linked_files: ["tests/test_hub_ui.py"]
 ---
 
 # Spec — Add a list for the open tickets to the now page. To track open tickets or feature from the main lage Acceptance criteria: List properly appears with expected tickets and selected fields visible. Research current best practices and draft a spec for this work.

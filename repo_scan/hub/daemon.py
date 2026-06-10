@@ -3,6 +3,9 @@
 One tick (user-facing phases):
 1. Resume any waiting run whose gate decision arrived (checkpoints make this
    cheap — completed LLM stages skip). Act runs resume on threads.
+
+Vault: docs/tickets/tkt-0013, docs/tickets/tkt-0016, docs/tickets/tkt-0018, docs/tickets/tkt-0019
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-hub-daemon-py-cc-38-1-spec
 2. If the scan is stale and nothing is mid-flight, rescan (proposes tickets).
 3. Fan out act runs (approved specs) into isolated worktrees, up to
    max_parallel_acts at once — each on its own thread, each on its own

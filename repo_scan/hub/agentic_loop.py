@@ -1,4 +1,8 @@
-"""Mermaid source for the hub agentic loop diagram (live stage highlighting)."""
+"""Mermaid source for the hub agentic loop diagram (live stage highlighting).
+
+Vault: docs/tickets/tkt-0034
+See docs/architecture/agentic-loop for the canonical loop description.
+"""
 
 from __future__ import annotations
 

@@ -4,6 +4,7 @@ problem: "Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coup
 confidence: "high"
 sources: ["gh-seddonym-import-linter", "url-wiki-apidesign-org-wiki-configurationobject", "gh-xlab-uiuc-cdep-fse-ae"]
 generated_at: "2026-06-10 17:18 UTC"
+linked_files: ["repo_scan/config.py", "repo_scan/hub/daemon.py", "repo_scan/hub/settings.py"]
 ---
 
 # Analysis — Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled). `repo_scan/config.py` and `repo_scan/hub/daemon.py` changed together in 7 commits (58% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.

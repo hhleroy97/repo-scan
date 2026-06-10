@@ -4,7 +4,7 @@ type: "url"
 url: "https://docs.pytest.org/en/stable/reference/fixtures.html"
 raw_url: "https://docs.pytest.org/en/stable/reference/fixtures.html"
 tags: ["article", "conftest", "dependency-injection", "execution-order", "fixtures", "monkeypatch", "plugin-fixtures", "pytest", "test-isolation", "test-scoping", "tmp-path"]
-linked_files: []
+linked_files: ["tests/conftest.py"]
 relevance: "Useful when designing or refactoring test suites—especially shared fixtures in conftest.py, session-scoped setup, and ensuring deterministic fixture order for integration or hub/UI tests in this project."
 ingested_at: "2026-06-10 21:10 UTC"
 ---

@@ -4,6 +4,7 @@ problem: "Hidden seam: pyproject.toml <-> setup.py (100% coupled). `pyproject.to
 confidence: "high"
 sources: ["url-packaging-python-org-en-latest-guides-modernize-setup-py-pro", "url-packaging-python-org-en-latest-discussions-single-source-ver", "gh-pypa-sampleproject"]
 generated_at: "2026-06-10 06:47 UTC"
+linked_files: ["repo_scan/config.py"]
 ---
 
 # Analysis — Hidden seam: pyproject.toml <-> setup.py (100% coupled). `pyproject.toml` and `setup.py` changed together in 5 commits (100% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.

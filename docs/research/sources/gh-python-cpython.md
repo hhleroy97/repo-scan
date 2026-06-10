@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/python/cpython"
 raw_url: "https://github.com/python/cpython"
 tags: ["cpython", "interpreter", "language-runtime", "python", "reference-implementation", "repo", "standard-library", "static-analysis"]
-linked_files: []
+linked_files: ["repo_scan/scanner.py"]
 relevance: "repo-scan is a Python 3.10+ codebase-analysis tool, so CPython is the authoritative reference for language semantics, import behavior, AST/stdlib APIs, and runtime changes that affect parsing, dependency analysis, and test compatibility."
 ingested_at: "2026-06-10 17:14 UTC"
 ---

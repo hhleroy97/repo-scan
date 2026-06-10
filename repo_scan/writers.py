@@ -1,4 +1,8 @@
-"""Markdown report writers + scan.json sidecar + AGENTS.md scaffold."""
+"""Markdown report writers + scan.json sidecar + AGENTS.md scaffold.
+
+Vault: docs/tickets/tkt-0001, docs/tickets/tkt-0008, docs/tickets/tkt-0022
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co-spec
+"""
 
 import json
 from pathlib import Path

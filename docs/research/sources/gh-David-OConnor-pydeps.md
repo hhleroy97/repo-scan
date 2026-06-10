@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/David-OConnor/pydeps"
 raw_url: "https://github.com/David-OConnor/pydeps"
 tags: ["caching", "dependencies", "dependency-resolution", "heroku", "package-metadata", "pypi", "python", "repo", "rest-api"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "Useful reference for building or improving Python dependency scanning when warehouse metadata is insufficient and install-based resolution with shared caching is needed."
 ingested_at: "2026-06-10 03:25 UTC"
 ---

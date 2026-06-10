@@ -4,7 +4,7 @@ type: "url"
 url: "https://realpython.com/python-all-attribute/"
 raw_url: "https://realpython.com/python-all-attribute/"
 tags: ["api-design", "article", "dunder-all", "imports", "modules", "naming-conventions", "packages", "pep-8", "public-api", "python", "wildcard-imports"]
-linked_files: []
+linked_files: ["repo_scan/__init__.py"]
 relevance: "Informs how repo-scan should define and document the public surface of its `repo_scan` package—using `__all__` in `__init__.py` files and avoiding star-imports—to keep import graphs analyzable and module boundaries explicit when scanning Python projects."
 ingested_at: "2026-06-10 18:49 UTC"
 ---

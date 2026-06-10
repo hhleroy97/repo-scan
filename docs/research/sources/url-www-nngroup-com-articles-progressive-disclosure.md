@@ -4,7 +4,7 @@ type: "url"
 url: "https://www.nngroup.com/articles/progressive-disclosure/"
 raw_url: "https://www.nngroup.com/articles/progressive-disclosure/"
 tags: ["article", "complexity-management", "information-architecture", "interaction-design", "learnability", "mobile-design", "nngroup", "progressive-disclosure", "staged-disclosure", "task-analysis", "usability", "ux", "wizards"]
-linked_files: []
+linked_files: ["repo_scan/hub/ui/_graph.py"]
 relevance: "For repo-scan’s dashboard and ticket UI, this supports showing a concise summary of open tickets and gates on the home view while deferring full lists, filters, and advanced controls to dedicated secondary views."
 ingested_at: "2026-06-10 06:09 UTC"
 ---

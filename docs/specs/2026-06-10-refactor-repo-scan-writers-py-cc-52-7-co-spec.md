@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co-analysis]]"
 drafted_at: "2026-06-10 01:57 UTC"
+linked_files: ["repo_scan/scanner.py", "repo_scan/writers.py", "tests/conftest.py", "tests/test_visuals.py", "tests/test_writers_snapshots.py"]
 ---
 
 # Spec — Refactor repo_scan/writers.py (CC 52, 7 commits, untested). `repo_scan/writers.py` is both high-churn (7 commits) and high-complexity (total CC 52) with no matching test file. Research current best practices and draft a spec for this work.

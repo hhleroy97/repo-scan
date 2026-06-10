@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/extractFunction.html"
 raw_url: "https://refactoring.com/catalog/extractFunction.html"
 tags: ["article", "code-readability", "extract-function", "extract-method", "inline-function", "martin-fowler", "refactoring", "separation-of-concerns"]
-linked_files: []
+linked_files: ["repo_scan/writers.py"]
 relevance: "Useful when breaking up long or high-complexity functions in the codebase — such as large writer or radar modules — into smaller, testable helpers without changing behavior."
 ingested_at: "2026-06-10 01:53 UTC"
 ---

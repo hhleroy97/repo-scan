@@ -4,6 +4,8 @@ The backend shells out to whatever agent CLI is on PATH (cursor-agent, claude,
 or anything configured under `"llm_cli"` in .repo-scan.json). Tests point
 `llm_cli` at a fake script, so the whole loop is testable offline.
 
+Vault: docs/tickets/tkt-0021
+
 Two cross-cutting concerns live here so every stage gets them for free:
 
 - **model routing** — `"llm_roles": {"act": "composer-2.5", ...}` appends

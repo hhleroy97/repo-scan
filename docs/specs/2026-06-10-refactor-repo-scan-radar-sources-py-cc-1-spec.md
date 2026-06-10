@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-analysis]]"
 drafted_at: "2026-06-10 13:10 UTC"
+linked_files: ["repo_scan/radar/__init__.py", "repo_scan/radar/cli.py", "repo_scan/radar/research.py", "repo_scan/radar/sources.py", "tests/test_radar_ingest.py"]
 ---
 
 # Spec — Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested). `repo_scan/radar/sources.py` is both high-churn (3 commits) and high-complexity (total CC 14) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.

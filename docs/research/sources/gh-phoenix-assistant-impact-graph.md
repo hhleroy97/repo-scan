@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/phoenix-assistant/impact-graph"
 raw_url: "https://github.com/phoenix-assistant/impact-graph"
 tags: ["repo", "typescript"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "Production-style file/call-graph tool that ranks change risk with inline iterative PageRank plus separate depth/churn-like signals, mirroring repo-scan's composite goal without NetworkX."
 ingested_at: "2026-06-09 23:43 UTC"
 ---

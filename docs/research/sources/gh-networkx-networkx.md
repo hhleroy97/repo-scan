@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/networkx/networkx"
 raw_url: "https://github.com/networkx/networkx"
 tags: ["codebase-analysis", "complex-networks", "dependency-graph", "graph-algorithms", "graph-analysis", "graph-theory", "graph-visualization", "library", "pagerank", "python", "repo"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "Reference implementation for PageRank-based file or module importance ranking over dependency graphs—the pattern aider’s repomap uses and repo-scan is evaluating against its zero-required-dependencies constraint."
 ingested_at: "2026-06-09 23:43 UTC"
 ---

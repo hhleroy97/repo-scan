@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-hidden-seam-pyproject-toml-setup-py-100-analysis]]"
 drafted_at: "2026-06-10 06:55 UTC"
+linked_files: ["repo_scan/behavior.py", "repo_scan/identity.py", "tests/test_packaging.py"]
 ---
 
 # Spec — Hidden seam: pyproject.toml <-> setup.py (100% coupled). `pyproject.toml` and `setup.py` changed together in 5 commits (100% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.

@@ -4,6 +4,7 @@ problem: "Refactor tests/test_radar_pipeline.py (CC 19, 4 commits, untested). `t
 confidence: "high"
 sources: ["gh-JetBrains-Research-PyNose", "arxiv-2409.16739"]
 generated_at: "2026-06-10 07:01 UTC"
+linked_files: ["tests/conftest.py", "tests/test_hub.py", "tests/test_radar_pipeline.py"]
 ---
 
 # Analysis — Refactor tests/test_radar_pipeline.py (CC 19, 4 commits, untested). `tests/test_radar_pipeline.py` is both high-churn (4 commits) and high-complexity (total CC 19) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.

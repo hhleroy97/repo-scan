@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/zyskarch/pytestarch"
 raw_url: "https://github.com/zyskarch/pytestarch"
 tags: ["architecture-testing", "archunit-inspired", "dependency-rules", "import-analysis", "module-boundaries", "plantuml", "pytest", "pytestarch", "python", "repo", "static-analysis"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "Useful for repo-scan or similar projects that care about module layering and dependency hygiene, because it can turn import-graph constraints into automated pytest checks that fail CI when architectural boundaries are violated."
 ingested_at: "2026-06-10 18:49 UTC"
 ---

@@ -2,6 +2,9 @@
 
 Report writes delegate to ``report_pipeline.write_scan_reports``; this module
 no longer imports ``writers`` directly.
+
+Vault: docs/tickets/tkt-0002, docs/tickets/tkt-0008
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec
 """
 
 from dataclasses import dataclass, field

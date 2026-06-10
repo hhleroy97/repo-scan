@@ -4,7 +4,7 @@ type: "url"
 url: "https://deviq.com/principles/explicit-dependencies-principle/"
 raw_url: "https://deviq.com/principles/explicit-dependencies-principle/"
 tags: ["article", "constructor-injection", "coupling", "dependency-injection", "dependency-inversion", "design-principles", "explicit-dependencies", "maintainability", "solid", "testability"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "For this project, favor constructor or parameter injection over hidden globals, static accessors, and in-method instantiation so modules declare what they need, remain easy to test with fakes, and can be swapped without searching the whole codebase for hidden collaborators."
 ingested_at: "2026-06-10 18:49 UTC"
 ---

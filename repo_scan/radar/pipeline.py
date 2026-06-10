@@ -1,4 +1,8 @@
-"""The full RADAR pipeline: Research → Analyze → Gate 1 → Draft → Audit → Gate 2 → Record."""
+"""The full RADAR pipeline: Research → Analyze → Gate 1 → Draft → Audit → Gate 2 → Record.
+
+Vault: docs/tickets/tkt-0006, docs/tickets/tkt-0017
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-spec
+"""
 
 import json
 from pathlib import Path

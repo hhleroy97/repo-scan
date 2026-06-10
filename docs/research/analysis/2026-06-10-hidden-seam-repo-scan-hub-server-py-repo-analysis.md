@@ -4,6 +4,7 @@ problem: "Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coup
 confidence: "high"
 sources: ["url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c", "url-peps-python-org-pep-0589", "gh-seddonym-import-linter"]
 generated_at: "2026-06-10 17:20 UTC"
+linked_files: ["repo_scan/hub/contract.py", "repo_scan/hub/server.py", "tests/test_hub_ui.py"]
 ---
 
 # Analysis — Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled). `repo_scan/hub/server.py` and `repo_scan/hub/ui.py` changed together in 7 commits (88% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.

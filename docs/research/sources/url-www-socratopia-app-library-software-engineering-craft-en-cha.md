@@ -4,7 +4,7 @@ type: "url"
 url: "https://www.socratopia.app/library/software-engineering-craft-en/chapter-10"
 raw_url: "https://www.socratopia.app/library/software-engineering-craft-en/chapter-10"
 tags: ["ai-assisted-refactoring", "article", "behavior-preservation", "characterization-tests", "legacy-code", "mutation-testing", "refactoring", "safety-net", "technical-debt", "test-coverage", "test-then-refactor"]
-linked_files: []
+linked_files: ["repo_scan/behavior.py"]
 relevance: "For a codebase analysis project, this source supports flagging low-coverage, high-churn modules as refactor candidates and recommending characterization tests before structural changes to risky areas."
 ingested_at: "2026-06-10 03:15 UTC"
 ---

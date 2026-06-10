@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/stackingturtles/linearstories"
 raw_url: "https://github.com/stackingturtles/linearstories"
 tags: ["acceptance-criteria", "agentic-development", "cli", "coding-agents", "linear", "markdown", "project-management", "repo", "sync", "typescript", "user-stories"]
-linked_files: []
+linked_files: ["repo_scan/tickets/__init__.py"]
 relevance: "repo-scan already uses markdown tickets with checkbox acceptance criteria in its RADAR loop, so linearstories offers a concrete pattern—and optional Linear sync—for keeping agent-readable specs in-repo while exposing human-friendly views to project managers."
 ingested_at: "2026-06-10 06:09 UTC"
 ---

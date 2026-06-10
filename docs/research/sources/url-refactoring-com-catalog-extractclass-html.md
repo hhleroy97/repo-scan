@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/extractClass.html"
 raw_url: "https://refactoring.com/catalog/extractClass.html"
 tags: ["article", "class-design", "cohesion", "delegation", "extract-class", "inline-class", "martin-fowler", "refactoring", "single-responsibility"]
-linked_files: []
+linked_files: ["repo_scan/writers.py"]
 relevance: "Useful when scan or hub modules accumulate unrelated state and accessors—such as telemetry, progress, and UI concerns on one type—so cohesive sub-concepts can be split into smaller classes without changing outward behavior."
 ingested_at: "2026-06-10 18:27 UTC"
 ---

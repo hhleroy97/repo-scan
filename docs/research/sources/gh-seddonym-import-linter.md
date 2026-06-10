@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/seddonym/import-linter"
 raw_url: "https://github.com/seddonym/import-linter"
 tags: ["architecture", "ci", "dependencies", "imports", "linter", "module-boundaries", "pypi", "python", "repo", "static-analysis"]
-linked_files: []
+linked_files: ["repo_scan/graphs.py"]
 relevance: "repo-scan’s multi-package layout could use Import Linter in CI to codify layer boundaries and prevent accidental cross-package coupling as subsystems grow."
 ingested_at: "2026-06-10 17:16 UTC"
 ---

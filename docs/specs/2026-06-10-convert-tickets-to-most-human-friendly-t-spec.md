@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-convert-tickets-to-most-human-friendly-t-analysis]]"
 drafted_at: "2026-06-10 06:26 UTC"
+linked_files: ["repo_scan/hub/server.py", "repo_scan/hub/tui.py"]
 ---
 
 # Spec — Convert tickets to most human friendly/tech leas project manager terms in. The approval/ticket cards . Retain current ticket as ground truth and have these ticket be abstractions of that ground truth. Easier to interact with when making decisions form a mobile device Acceptance criteria: define acceptance criteria before approving. Research current best practices and draft a spec for this work.

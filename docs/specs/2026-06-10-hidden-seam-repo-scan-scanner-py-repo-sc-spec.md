@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-hidden-seam-repo-scan-scanner-py-repo-sc-analysis]]"
 drafted_at: "2026-06-10 13:31 UTC"
+linked_files: ["repo_scan/graphs.py", "repo_scan/report_pipeline.py", "repo_scan/scanner.py", "repo_scan/writers.py", "tests/test_behavior.py"]
 ---
 
 # Spec — Hidden seam: repo_scan/scanner.py <-> repo_scan/writers.py (67% coupled). `repo_scan/scanner.py` and `repo_scan/writers.py` changed together in 5 commits (67% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.

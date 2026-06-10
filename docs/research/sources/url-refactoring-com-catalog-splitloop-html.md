@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/splitLoop.html"
 raw_url: "https://refactoring.com/catalog/splitLoop.html"
 tags: ["aggregation", "article", "code-readability", "loop-optimization", "martin-fowler", "performance-tradeoff", "refactoring", "separation-of-concerns", "split-loop"]
-linked_files: []
+linked_files: ["repo_scan/scanner.py"]
 relevance: "Useful when repo-scan pipeline or radar code mixes unrelated per-item work in one loop—split or combine loops deliberately to balance clarity and single-pass efficiency."
 ingested_at: "2026-06-10 07:32 UTC"
 ---

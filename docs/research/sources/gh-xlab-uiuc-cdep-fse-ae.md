@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/xlab-uiuc/cdep-fse-ae"
 raw_url: "https://github.com/xlab-uiuc/cdep-fse-ae"
 tags: ["bytecode", "cloud-systems", "configuration", "csv-output", "dependency-analysis", "distributed-systems", "fse-2020", "hadoop", "html", "java", "repo", "research-artifact", "static-analysis", "taint-tracking"]
-linked_files: []
+linked_files: ["repo_scan/behavior.py"]
 relevance: "repo-scan already surfaces implicit coupling between modules (e.g. config.py and hub/daemon.py); cDep’s taxonomy and static-analysis approach could inform future rules or reports that detect when configuration knobs are logically entangled across packages or subsystems."
 ingested_at: "2026-06-10 17:15 UTC"
 ---

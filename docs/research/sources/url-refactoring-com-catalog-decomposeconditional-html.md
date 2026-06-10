@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/decomposeConditional.html"
 raw_url: "https://refactoring.com/catalog/decomposeConditional.html"
 tags: ["article", "clean-code", "conditionals", "decompose-conditional", "extract-method", "readability", "refactoring", "self-documenting-code"]
-linked_files: []
+linked_files: ["repo_scan/scanner.py"]
 relevance: "Use this when scan or analysis code accumulates nested if/else rules (pricing, eligibility, date windows, policy checks) so you can replace opaque boolean expressions with named predicates and branch helpers that are easier to test, reuse, and explain."
 ingested_at: "2026-06-10 13:14 UTC"
 ---

@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-split-repo-scan-tickets-py-654-lines-rep-analysis]]"
 drafted_at: "2026-06-10 19:09 UTC"
+linked_files: ["repo_scan/tickets/__init__.py", "repo_scan/tickets/board.py", "repo_scan/tickets/cli.py", "repo_scan/tickets/constants.py", "repo_scan/tickets/evidence.py"]
 ---
 
 # Spec — Split repo_scan/tickets.py (654 lines). `repo_scan/tickets.py` is 654 lines — past the 600-line critical threshold where files become hard to navigate and review. Acceptance criteria: No resulting file above 300 lines; All tests still pass. Research current best practices and draft a spec for this work.

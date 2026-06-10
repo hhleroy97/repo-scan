@@ -4,6 +4,7 @@ problem: "Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% 
 confidence: "high"
 sources: ["url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c", "arxiv-2302.09153", "gh-python-cpython"]
 generated_at: "2026-06-10 17:32 UTC"
+linked_files: ["repo_scan/radar/cli.py", "repo_scan/radar/gates.py"]
 ---
 
 # Analysis — Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled). `repo_scan/radar/cli.py` and `repo_scan/radar/gates.py` changed together in 4 commits (80% degree) but share no import edge — an implicit contract the dependency graph can't see. Acceptance criteria: Make the dependency explicit (shared module or import); Coupling degree drops below threshold in coupling.md. Research current best practices and draft a spec for this work.

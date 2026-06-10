@@ -4,7 +4,7 @@ type: "url"
 url: "https://wiki.apidesign.org/wiki/ConfigurationObject"
 raw_url: "https://wiki.apidesign.org/wiki/ConfigurationObject"
 tags: ["api-design", "api-evolution", "article", "backward-compatibility", "builder-pattern", "configuration-object", "cumulative-factory", "java", "java-beans", "javascript", "options-object"]
-linked_files: []
+linked_files: ["repo_scan/config.py"]
 relevance: "When designing repo-scan CLI flags, scan configuration, or radar/LLM settings, prefer a single options object or structured config over growing positional parameters so new scan dimensions and knobs can be added without breaking callers."
 ingested_at: "2026-06-10 17:14 UTC"
 ---

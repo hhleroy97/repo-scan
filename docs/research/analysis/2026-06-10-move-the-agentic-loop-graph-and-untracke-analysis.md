@@ -4,6 +4,7 @@ problem: "Move the agentic loop graph and untracked code section to above the gr
 confidence: "high"
 sources: ["url-www-nngroup-com-articles-gestalt-proximity", "url-www-w3-org-wai-aria-apg-patterns-toolbar", "gh-cytoscape-cytoscape.js"]
 generated_at: "2026-06-10 21:20 UTC"
+linked_files: ["tests/test_hub_ui.py"]
 ---
 
 # Analysis — Move the agentic loop graph and untracked code section to above the graph controls so filter graph and pancake graph options are just above +\- controls. _captured from intent — refine before approving_ Acceptance criteria: controls dispaly in stacked scetion together without break. Research current best practices and draft a spec for this work.

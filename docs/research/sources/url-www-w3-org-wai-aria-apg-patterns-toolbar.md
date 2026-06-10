@@ -4,7 +4,7 @@ type: "url"
 url: "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/"
 raw_url: "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/"
 tags: ["accessibility", "article", "focus-management", "keyboard-navigation", "roving-tabindex", "screen-readers", "toolbar", "ui-patterns", "wai-aria"]
-linked_files: []
+linked_files: ["repo_scan/hub/ui/_graph.py"]
 relevance: "Applies when building grouped action bars or editor toolbars in the hub UI so controls are accessible, use a single tab stop with arrow-key traversal, and follow correct ARIA roles, labels, and orientation."
 ingested_at: "2026-06-10 21:08 UTC"
 ---

@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/eyeseast/python-frontmatter"
 raw_url: "https://github.com/eyeseast/python-frontmatter"
 tags: ["document-parsing", "frontmatter", "markdown", "metadata", "pypi", "python", "repo", "round-trip", "static-site", "yaml"]
-linked_files: []
+linked_files: ["repo_scan/radar/sources.py"]
 relevance: "repo-scan already writes and parses YAML frontmatter for tickets, research sources, and radar artifacts via a stdlib-only helper in repo_scan/radar/sources.py, so python-frontmatter is a reference implementation for richer parsing (JSON/TOML, nested structures) or a potential optional dependency if the custom writer/parser hits edge cases—without adding a dependency today."
 ingested_at: "2026-06-10 07:21 UTC"
 ---

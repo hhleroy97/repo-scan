@@ -4,7 +4,7 @@ type: "url"
 url: "https://refactoring.com/catalog/replaceFunctionWithCommand.html"
 raw_url: "https://refactoring.com/catalog/replaceFunctionWithCommand.html"
 tags: ["article", "code-organization", "command-pattern", "design-patterns", "extract-class", "method-object", "refactoring"]
-linked_files: []
+linked_files: ["repo_scan/radar/pipeline.py"]
 relevance: "Use this when a project has grown complex procedural code—scoring, parsing, or pipeline steps with many locals—and you want clearer structure, easier unit testing, or room to split logic across smaller methods without passing large parameter lists."
 ingested_at: "2026-06-10 07:41 UTC"
 ---

@@ -4,6 +4,7 @@ problem: "Refactor repo_scan/languages.py (CC 18, 3 commits, untested). `repo_sc
 confidence: "high"
 sources: ["gh-XAMPPRocky-tokei", "gh-pytest-dev-pytest", "gh-github-linguist"]
 generated_at: "2026-06-10 04:03 UTC"
+linked_files: ["repo_scan/languages.py", "tests/test_languages.py", "tests/test_portability.py", "tests/test_scan.py"]
 ---
 
 # Analysis — Refactor repo_scan/languages.py (CC 18, 3 commits, untested). `repo_scan/languages.py` is both high-churn (3 commits) and high-complexity (total CC 18) with no matching test file. Research current best practices and draft a spec for this work.

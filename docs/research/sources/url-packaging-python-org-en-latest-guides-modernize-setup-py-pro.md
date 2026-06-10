@@ -4,7 +4,7 @@ type: "url"
 url: "https://packaging.python.org/en/latest/guides/modernize-setup-py-project/"
 raw_url: "https://packaging.python.org/en/latest/guides/modernize-setup-py-project/"
 tags: ["article", "build-isolation", "build-system", "packaging", "pip", "project-metadata", "pyproject-toml", "python", "setup-py", "setuptools"]
-linked_files: []
+linked_files: ["pyproject.toml"]
 relevance: "Useful when repo-scan or its dependencies still use setup.py and need a low-risk path to modern PEP 517/518 packaging without breaking installs, CI, or tools that expect setup.py to remain present."
 ingested_at: "2026-06-10 06:45 UTC"
 ---

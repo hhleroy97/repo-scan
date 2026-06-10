@@ -1,4 +1,8 @@
-"""Language detection and line counting."""
+"""Language detection and line counting.
+
+Vault: docs/tickets/tkt-0004
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec
+"""
 
 import json
 from pathlib import Path

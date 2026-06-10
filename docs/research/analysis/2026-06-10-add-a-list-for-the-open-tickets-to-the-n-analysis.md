@@ -4,6 +4,7 @@ problem: "Add a list for the open tickets to the now page. To track open tickets
 confidence: "high"
 sources: ["gh-humanlayer-humanlayer", "gh-makeplane-plane"]
 generated_at: "2026-06-10 05:38 UTC"
+linked_files: ["repo_scan/hub/tui.py"]
 ---
 
 # Analysis — Add a list for the open tickets to the now page. To track open tickets or feature from the main lage Acceptance criteria: List properly appears with expected tickets and selected fields visible. Research current best practices and draft a spec for this work.

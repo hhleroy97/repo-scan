@@ -4,6 +4,7 @@ problem: "Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested). `rep
 confidence: "high"
 sources: ["url-refactoring-com-catalog-splitloop-html"]
 generated_at: "2026-06-10 07:35 UTC"
+linked_files: ["repo_scan/radar/sources.py", "tests/test_radar_ingest.py", "tests/test_sources.py"]
 ---
 
 # Analysis — Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested). `repo_scan/radar/sources.py` is both high-churn (3 commits) and high-complexity (total CC 14) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.

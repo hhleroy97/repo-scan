@@ -3,6 +3,8 @@
 Flow (each gate is file-backed and phone-answerable like all others):
 
     pick in-progress ticket with approved spec
+
+Vault: docs/tickets/tkt-0027
       -> Gate pre_implement
       -> branch radar/<ticket-id>, agent CLI implements the spec
       -> run the test suite; on failure, feed output back (bounded fix rounds)

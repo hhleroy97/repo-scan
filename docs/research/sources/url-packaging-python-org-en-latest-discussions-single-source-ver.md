@@ -4,7 +4,7 @@ type: "url"
 url: "https://packaging.python.org/en/latest/discussions/single-source-version/"
 raw_url: "https://packaging.python.org/en/latest/discussions/single-source-version/"
 tags: ["article", "build-system", "importlib-metadata", "packaging", "pyproject-toml", "python", "single-source-of-truth", "testing", "vcs-tags", "versioning"]
-linked_files: []
+linked_files: ["pyproject.toml"]
 relevance: "Useful when repo-scan or similar tools need one authoritative project version that stays aligned across pyproject.toml, package __version__, and metadata at runtime."
 ingested_at: "2026-06-10 06:45 UTC"
 ---

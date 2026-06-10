@@ -5,6 +5,7 @@ status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-graphs-py-cc-56-3-com-analysis]]"
 drafted_at: "2026-06-10 03:51 UTC"
+linked_files: ["repo_scan/__init__.py", "repo_scan/graphs.py", "repo_scan/scanner.py", "repo_scan/writers.py", "tests/conftest.py"]
 ---
 
 # Spec — Refactor repo_scan/graphs.py (CC 56, 3 commits, untested). `repo_scan/graphs.py` is both high-churn (3 commits) and high-complexity (total CC 56) with no matching test file. Research current best practices and draft a spec for this work.

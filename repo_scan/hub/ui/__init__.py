@@ -3,6 +3,9 @@
 No build step, no framework, no CDN — everything inline so it works on a
 phone over Tailscale with zero external requests. ``DASHBOARD_HTML`` is the
 template plus ``contract.js_contract_block()`` at ``/* __HUB_CONTRACT__ */``.
+
+Vault: docs/tickets/tkt-0023, docs/tickets/tkt-0025
+Spec:  docs/specs/2026-06-10-split-repo-scan-hub-ui-py-706-lines-repo-spec
 The page polls ``API_STATE`` and renders five tabs: Now (open-ticket summary,
 stats, runs, agent feed), Gates, Tickets, Activity, Dashboard (vault audit,
 then context panels — agentic loop and untracked queue — then a unified graph

@@ -3,6 +3,9 @@
 Every ingested source normalizes to one Source and one markdown file at
 docs/research/sources/{id}.md with YAML frontmatter, so Obsidian graph view
 and Dataview see real tags and properties instead of opaque code blocks.
+
+Vault: docs/tickets/tkt-0005
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-spec
 Index and tags markdown are rebuilt from source files via private helpers.
 """
 

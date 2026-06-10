@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/syrupy-project/syrupy"
 raw_url: "https://github.com/syrupy-project/syrupy"
 tags: ["cli", "pytest", "python", "regression-testing", "repo", "serialization", "snapshot-testing", "syrupy", "test-fixtures", "testing"]
-linked_files: []
+linked_files: ["tests/test_writers_snapshots.py", "tests/test_scanner_snapshots.py"]
 relevance: "Useful for repo-scan or similar Python projects that want maintainable regression tests over structured outputs (reports, scan results, LLM responses) without hand-writing large expected-value assertions."
 ingested_at: "2026-06-10 01:50 UTC"
 ---

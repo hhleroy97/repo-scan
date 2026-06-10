@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/XAMPPRocky/tokei"
 raw_url: "https://github.com/XAMPPRocky/tokei"
 tags: ["cli", "cloc", "code-statistics", "gitignore", "json-output", "library", "line-counting", "repo", "rust", "sloc", "static-analysis", "yaml-output"]
-linked_files: []
+linked_files: ["repo_scan/languages.py"]
 relevance: "repo-scan already documents tokei as an optional line-count tool and drives health/index reports from per-file line metrics, so Tokei's fast accurate counting and JSON output could replace or augment the built-in get_line_counts path in scan.json and size-threshold workflows."
 ingested_at: "2026-06-10 04:02 UTC"
 ---

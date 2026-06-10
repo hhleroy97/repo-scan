@@ -4,7 +4,7 @@ type: "url"
 url: "https://codescene.io/docs/guides/technical/change-coupling.html"
 raw_url: "https://codescene.io/docs/guides/technical/change-coupling.html"
 tags: ["architecture-analysis", "article", "change-coupling", "codescene", "git-history", "logical-dependencies", "microservices", "retrospectives", "sum-of-couplings", "team-topology", "technical-debt"]
-linked_files: []
+linked_files: ["repo_scan/behavior.py"]
 relevance: "A repo-scan project could mine commit history to detect co-changing modules, visualize logical dependencies and cross-team coupling, and flag mismatches between intended architecture and how the codebase actually evolves."
 ingested_at: "2026-06-10 07:46 UTC"
 ---

@@ -1,4 +1,8 @@
-"""Knowledge graph payload for the hub — code imports + vault provenance."""
+"""Knowledge graph payload for the hub — code imports + vault provenance.
+
+Vault: docs/tickets/tkt-0032
+Spec:  docs/specs/2026-06-10-move-the-agentic-loop-graph-and-untracke-spec
+"""
 
 from __future__ import annotations
 

@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/github-linguist/linguist"
 raw_url: "https://github.com/github-linguist/linguist"
 tags: ["cli", "code-statistics", "generated-code", "git", "gitattributes", "json-output", "language-detection", "repo", "repo-analysis", "ruby", "sloc", "static-analysis", "vendored-files"]
-linked_files: []
+linked_files: ["repo_scan/languages.py"]
 relevance: "repo-scan could adopt Linguist’s detection strategies, vendored/generated filtering, and JSON language-breakdown output to align repository metrics with GitHub’s canonical language classification or to validate its own heuristics."
 ingested_at: "2026-06-10 04:03 UTC"
 ---

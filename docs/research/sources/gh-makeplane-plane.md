@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/makeplane/plane"
 raw_url: "https://github.com/makeplane/plane"
 tags: ["agpl", "analytics", "django", "docker", "issue-tracker", "jira-alternative", "kanban", "kubernetes", "postgresql", "product-management", "project-management", "react", "redis", "repo", "roadmaps", "self-hosting", "typescript"]
-linked_files: []
+linked_files: ["repo_scan/tickets/__init__.py"]
 relevance: "Useful reference for repo-scan’s ticket board, Obsidian Kanban output, and agent-facing docs: how a production issue-tracking product models work items, views, cycles, and markdown-friendly project artifacts in a large React/Django monorepo."
 ingested_at: "2026-06-10 05:35 UTC"
 ---

@@ -4,7 +4,7 @@ type: "url"
 url: "https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf"
 raw_url: "https://www.ime.usp.br/~gerosa/papers/changecoupling.pdf"
 tags: ["architecture-analysis", "article", "association-rules", "change-coupling", "connascence", "empirical-software-engineering", "git-history", "hidden-dependencies", "impact-analysis", "logical-dependencies", "refactoring", "software-evolution"]
-linked_files: []
+linked_files: ["repo_scan/behavior.py"]
 relevance: "Directly grounds repo-scan's git-history coupling analysis, degree thresholds, hidden-seam detection, and coupling visualizations as established practice for surfacing implicit module dependencies that static import graphs miss."
 ingested_at: "2026-06-10 21:08 UTC"
 ---

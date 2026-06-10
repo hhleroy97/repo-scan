@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/adamtornhill/code-maat"
 raw_url: "https://github.com/adamtornhill/code-maat"
 tags: ["adam-tornhill", "behavioral-code-analysis", "clojure", "code-churn", "git-log-analysis", "logical-coupling", "ownership-metrics", "repo", "repository-mining", "technical-debt", "version-control-mining"]
-linked_files: []
+linked_files: ["repo_scan/churn.py", "repo_scan/behavior.py"]
 relevance: "For a repo-scan project, Code Maat offers a proven, scriptable pipeline to turn Git history into coupling, ownership, and churn metrics that can flag hotspots, implicit dependencies, and maintenance risks worth prioritizing in scans or reports."
 ingested_at: "2026-06-10 07:45 UTC"
 ---

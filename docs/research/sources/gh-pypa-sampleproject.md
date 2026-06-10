@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/pypa/sampleproject"
 raw_url: "https://github.com/pypa/sampleproject"
 tags: ["distribution", "metadata", "packaging", "pypa", "pypi", "pyproject-toml", "python", "readme", "repo", "sample-project"]
-linked_files: []
+linked_files: ["pyproject.toml"]
 relevance: "Useful as a canonical starting point when structuring a Python project's packaging configuration, pyproject.toml metadata, and PyPI-ready README format."
 ingested_at: "2026-06-10 06:45 UTC"
 ---

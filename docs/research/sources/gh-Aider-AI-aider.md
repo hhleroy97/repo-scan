@@ -4,7 +4,7 @@ type: "github"
 url: "https://github.com/Aider-AI/aider"
 raw_url: "https://github.com/Aider-AI/aider"
 tags: ["repo", "python"]
-linked_files: []
+linked_files: ["repo_scan/handoff.py"]
 relevance: "Primary reference: `aider/repomap.py` builds a file/symbol reference graph and ranks it with personalized `networkx.pagerank`, showing exactly what repo-scan’s heuristic is standing in for."
 ingested_at: "2026-06-09 23:37 UTC"
 ---
