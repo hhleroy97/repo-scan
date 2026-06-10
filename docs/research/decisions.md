@@ -116,3 +116,5 @@
 | 2026-06-10 17:18 UTC | post_analyze | paused | Extract hub-owned defaults and key names into repo_scan/hub/settings.py (HUB_DEFAULTS + HUB_CONFIG_KEYS), have daemon.py |
 | 2026-06-10 17:18 UTC | post_analyze | approved (dashboard) | Extract hub-owned defaults and key names into repo_scan/hub/settings.py (HUB_DEFAULTS + HUB_CONFIG_KEYS), have daemon.py |
 | 2026-06-10 17:20 UTC | post_analyze | paused | Extract repo_scan/hub/contract.py owning API route constants, ticket status/order/badge maps (sourced from repo_scan.tic |
+| 2026-06-10 17:21 UTC | post_analyze | approved (dashboard) | Extract repo_scan/hub/contract.py owning API route constants, ticket status/order/badge maps (sourced from repo_scan.tic |
+| 2026-06-10 17:29 UTC | post_audit | paused | audit revise: The contract-extraction direction matches analysis and code evidence, but the spec should fix AC2 commit m |
