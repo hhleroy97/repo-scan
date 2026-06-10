@@ -59,6 +59,9 @@ def submit_decision(root: Path, cfg: dict, gate: str, problem: str,
         "source": source,
         "decided_at": now_iso(),
     }, indent=2) + "\n", encoding="utf-8")
+    from .events import broadcast
+    broadcast({"type": "gate", "gate": gate, "decision": decision,
+               "problem": problem[:80]})
     return path
 
 
@@ -147,7 +150,10 @@ def create_run(root: Path, cfg: dict, problem: str, ticket: str | None = None,
         runs = [r for r in runs if r["id"] != run["id"]]
         runs.append(run)
         _save_runs(root, cfg, runs[-50:])
-        return run
+    from .events import broadcast
+    broadcast({"type": "run", "id": run["id"], "status": run["status"],
+               "ticket": run.get("ticket")})
+    return run
 
 
 def update_run(root: Path, cfg: dict, run_id: str, status: str, **fields):
@@ -155,13 +161,20 @@ def update_run(root: Path, cfg: dict, run_id: str, status: str, **fields):
         raise ValueError(f"unknown run status {status!r}")
     with _RUNS_LOCK:
         runs = load_runs(root, cfg)
+        updated = None
         for r in runs:
             if r["id"] == run_id:
                 r["status"] = status
                 r["updated_at"] = now_iso()
                 r.update(fields)
+                updated = dict(r)
                 break
         _save_runs(root, cfg, runs)
+    if updated:
+        from .events import broadcast
+        broadcast({"type": "run", "id": run_id, "status": status,
+                   "gate": updated.get("gate"), "ticket": updated.get("ticket"),
+                   "stage": updated.get("stage")})
 
 
 def active_runs(root: Path, cfg: dict) -> list[dict]:
@@ -186,6 +199,10 @@ def set_run_stage(root: Path, cfg: dict, problem: str, stage: str, detail: str =
                 r["stage_detail"] = detail[:160]
                 r["updated_at"] = now_iso()
                 _save_runs(root, cfg, runs)
+                from .events import broadcast
+                broadcast({"type": "run", "id": rid, "status": r["status"],
+                             "stage": stage, "stage_detail": detail[:80],
+                             "ticket": r.get("ticket")})
                 return
 
 
@@ -211,6 +228,8 @@ def append_event(root: Path, cfg: dict, kind: str, text: str, **fields):
         lines = path.read_text(encoding="utf-8").splitlines()
         if len(lines) > EVENTS_KEEP * 2:
             path.write_text("\n".join(lines[-EVENTS_KEEP:]) + "\n", encoding="utf-8")
+    from .events import broadcast
+    broadcast({"type": "feed", "feed_kind": kind, "text": text[:120]})
 
 
 def load_events(root: Path, cfg: dict, limit: int = 30) -> list[dict]:

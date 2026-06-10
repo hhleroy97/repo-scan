@@ -11,11 +11,14 @@ server to the open internet.
 """
 
 import json
+import queue
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
+
+SSE_HEARTBEAT_SECONDS = 15
 
 from ..config import VERSION
 from ..utils import git_branch, header, info, ok
@@ -167,6 +170,37 @@ def make_handler(root: Path, cfg: dict, token: str):
         def _deny(self):
             self._json({"error": "unauthorized"}, 401)
 
+        def _sse_write(self, chunk: bytes):
+            self.wfile.write(chunk)
+            self.wfile.flush()
+
+        def _sse_events(self):
+            """Stream hub changes as Server-Sent Events (stdlib, no deps)."""
+            from .events import subscribe, unsubscribe
+
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Connection", "keep-alive")
+            self.end_headers()
+            q = subscribe()
+            try:
+                self._sse_write(
+                    f"data: {json.dumps({'type': 'connected', 'boot': BOOT_ID})}\n\n"
+                    .encode("utf-8"))
+                while True:
+                    try:
+                        event = q.get(timeout=SSE_HEARTBEAT_SECONDS)
+                        self._sse_write(
+                            f"data: {json.dumps(event, separators=(',', ':'))}\n\n"
+                            .encode("utf-8"))
+                    except queue.Empty:
+                        self._sse_write(b": heartbeat\n\n")
+            except (BrokenPipeError, ConnectionResetError, OSError):
+                pass
+            finally:
+                unsubscribe(q)
+
         # --- routes -----------------------------------------------------
         def do_GET(self):
             url = urlparse(self.path)
@@ -185,6 +219,9 @@ def make_handler(root: Path, cfg: dict, token: str):
 
             if url.path == "/api/state":
                 return self._json(build_state(root, cfg))
+
+            if url.path == "/api/events":
+                return self._sse_events()
 
             if url.path == "/api/doc":
                 rel = parse_qs(url.query).get("path", [""])[0]
