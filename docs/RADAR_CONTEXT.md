@@ -1,5 +1,8 @@
 # RADAR — research and implementation loop
 
+> **North star:** [[NORTH_STAR]] — mission, ground-truth hierarchy, time/tokens/quality balance.
+> **Distilled principles:** [[research/theory]]
+
 ## What this is
 
 RADAR is a research-to-implementation pipeline designed to keep a codebase external knowledge (papers, tools, articles, repos) tightly coupled to its internal structure. It runs per-repository, writes into docs/, and is committed to git alongside the code it describes.

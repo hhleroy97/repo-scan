@@ -1,5 +1,5 @@
 # Research tags
-_Rebuilt 2026-06-10 17:32 UTC_
+_Rebuilt 2026-06-10 18:28 UTC_
 
 ## 12-factor-agents
 
@@ -33,6 +33,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## ai-agents
 
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
 
 ## ai-assisted-refactoring
@@ -70,6 +71,8 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## article
 
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/url-wiki-apidesign-org-wiki-configurationobject\|ConfigurationObject]]
@@ -130,6 +133,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
 
+## bytecode-cache
+
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+
 ## caching
 
 - [[sources/gh-David-OConnor-pydeps\|David-OConnor/pydeps — Store dependency info for each PyPi package]]
@@ -166,6 +173,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 ## circular-dependencies
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
+
+## class-design
+
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 
 ## claude-code
 
@@ -215,6 +226,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## code-quality
 
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/arxiv-2401.15298\|Together We Go Further: LLMs and IDE Static Analysis for Extract Method Refactoring]]
@@ -223,6 +235,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
+
+## code-smells
+
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 
 ## code-statistics
 
@@ -243,6 +259,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 - [[sources/gh-stackingturtles-linearstories\|stackingturtles/linearstories — A tool for managing Agent Developer requirements in Linear]]
 - [[sources/gh-humanlayer-humanlayer\|humanlayer/humanlayer — The best way to get AI coding agents to solve hard problems in complex…]]
+
+## cohesion
+
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 
 ## command-pattern
 
@@ -303,11 +323,13 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## coupling
 
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/url-githits-mermaid-coupling-subgraph\|GitHits — Mermaid subgraph coupling diagrams]]
 
 ## cpython
 
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 
 ## css-preprocessors
@@ -342,6 +364,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 ## deferred
 
 - [[sources/url-githits-sse-stdlib-dashboard\|GitHits — Python stdlib SSE live dashboard]]
+
+## delegation
+
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 
 ## dependencies
 
@@ -441,6 +467,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## extract-class
 
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-refactoring-com-catalog-replacefunctionwithcommand-html\|Replace Function with Command]]
 
 ## extract-function
@@ -575,6 +602,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## imports
 
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 
 ## indexing
@@ -584,6 +612,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 ## information-architecture
 
 - [[sources/url-www-nngroup-com-articles-progressive-disclosure\|Progressive Disclosure]]
+
+## inline-class
+
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 
 ## inline-fields
 
@@ -676,6 +708,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/gh-github-linguist\|github/linguist — Language Savant. If your repository's language is being reported incorrectly,…]]
 
+## language-fundamentals
+
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+
 ## language-runtime
 
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
@@ -723,6 +759,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/arxiv-2411.12924\|Human-In-the-Loop Software Development Agents]]
 
+## llm-generated-code
+
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
+
 ## logical-coupling
 
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]
@@ -743,6 +783,14 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 
+## main-guard
+
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+
+## maintainability
+
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
+
 ## markdown
 
 - [[sources/gh-blacksmithgu-obsidian-dataview\|blacksmithgu/obsidian-dataview — A data index and query language over Markdown files, for https://obsidian.md/.]]
@@ -751,6 +799,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## martin-fowler
 
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
 - [[sources/url-refactoring-com-catalog-splitloop-html\|Split Loop]]
 - [[sources/url-refactoring-com-catalog-extractfunction-html\|Extract Function]]
@@ -812,6 +861,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/gh-pahen-madge\|pahen/madge — Create graphs from your CommonJS, AMD or ES6 module dependencies]]
 
+## modules
+
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+
 ## monolith-decomposition
 
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
@@ -823,6 +876,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 ## mutation-testing
 
 - [[sources/url-www-socratopia-app-library-software-engineering-craft-en-cha\|Refactoring Under Test — The Safety Net Story | Software Engineering Craft]]
+
+## namespaces
+
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 
 ## nested-conditionals
 
@@ -879,6 +936,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## paper
 
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 - [[sources/arxiv-2409.16739\|Automated Unit Test Refactoring]]
@@ -943,6 +1001,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
+## prompt-engineering
+
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
+
 ## published-interface
 
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
@@ -980,6 +1042,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## python
 
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]]
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 - [[sources/url-peps-python-org-pep-0589\|PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys | peps.python.org]]
@@ -1028,6 +1091,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## refactoring
 
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
 - [[sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c\|Connascence as a vocabulary to discuss Coupling]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/url-martinfowler-com-bliki-publishedinterface-html\|bliki: Published Interface]]
@@ -1186,6 +1250,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro\|How to modernize a setup.py based project?¶]]
 
+## single-responsibility
+
+- [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]]
+
 ## single-source-of-truth
 
 - [[sources/url-packaging-python-org-en-latest-discussions-single-source-ver\|Single-sourcing the Project Version¶]]
@@ -1209,6 +1277,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## software-architecture
 
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/arxiv-2510.03050\|Refactoring Towards Microservices: Preparing the Ground for Service Extraction]]
 
@@ -1238,6 +1307,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## standard-library
 
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
 - [[sources/gh-python-cpython\|python/cpython — The Python programming language]]
 
 ## standards-track
@@ -1285,6 +1355,10 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 - [[sources/gh-syrupy-project-syrupy\|syrupy-project/syrupy — :pancakes: The sweeter pytest snapshot plugin]]
 
+## sys-path
+
+- [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]]
+
 ## taint-tracking
 
 - [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]]
@@ -1307,6 +1381,7 @@ _Rebuilt 2026-06-10 17:32 UTC_
 
 ## technical-debt
 
+- [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven Development]]
 - [[sources/arxiv-2302.09153\|Towards the Assisted Decomposition of Large-Active Files]]
 - [[sources/url-codescene-io-docs-guides-technical-change-coupling-html\|Change Coupling: Visualize Logical Dependencies¶]]
 - [[sources/gh-adamtornhill-code-maat\|adamtornhill/code-maat — A command line tool to mine and analyze data from version-control systems]]

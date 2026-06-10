@@ -1,8 +1,11 @@
 # Research index
-_Rebuilt 2026-06-10 17:32 UTC — 52 source(s)_
+_Rebuilt 2026-06-10 18:28 UTC — 55 source(s)_
 
 | Source | Type | Tags | Ingested |
 |--------|------|------|----------|
+| [[sources/arxiv-2605.02741\|AI-Generated Smells: An Analysis of Code and Architecture in LLM and Agent-Driven…]] | arxiv | ai-agents, code-quality, code-smells, coupling, llm-generated-code, maintainability, paper, prompt-engineering, software-architecture, technical-debt | 2026-06-10 18:27 UTC |
+| [[sources/url-docs-python-org-3-tutorial-modules-html-packages\|6. Modules]] | url | article, bytecode-cache, cpython, imports, language-fundamentals, main-guard, modules, namespaces, python, standard-library, sys-path | 2026-06-10 18:27 UTC |
+| [[sources/url-refactoring-com-catalog-extractclass-html\|Extract Class]] | url | article, class-design, cohesion, delegation, extract-class, inline-class, martin-fowler, refactoring, single-responsibility | 2026-06-10 18:27 UTC |
 | [[sources/gh-seddonym-import-linter\|seddonym/import-linter — Lint your Python architecture.]] | github | architecture, ci, dependencies, imports, linter, module-boundaries, pypi, python, repo, static-analysis | 2026-06-10 17:16 UTC |
 | [[sources/gh-xlab-uiuc-cdep-fse-ae\|xlab-uiuc/cdep-fse-ae — Configuration dependency analysis for cloud software]] | github | bytecode, cloud-systems, configuration, csv-output, dependency-analysis, distributed-systems, fse-2020, hadoop, html, java, repo, research-artifact, static-analysis, taint-tracking | 2026-06-10 17:15 UTC |
 | [[sources/gh-python-cpython\|python/cpython — The Python programming language]] | github | cpython, interpreter, language-runtime, python, reference-implementation, repo, standard-library, static-analysis | 2026-06-10 17:14 UTC |

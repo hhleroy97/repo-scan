@@ -137,3 +137,4 @@
 | 2026-06-10 17:42 UTC | pre_implement | auto | implement [[2026-06-10-hidden-seam-repo-scan-radar-cli-py-repo-spec]] on branch radar/tkt-0015 for tkt-0015 |
 | 2026-06-10 17:43 UTC | post_implement | approved (dashboard) | PROTECTED paths touched (repo_scan/config.py) — tests passed; 6 files changed, 38 insertions(+), 23 deletions(-) on rada |
 | 2026-06-10 17:45 UTC | post_implement | auto | tests passed; 6 files changed, 142 insertions(+), 17 deletions(-) on radar/tkt-0015 — commit? |
+| 2026-06-10 18:28 UTC | post_analyze | paused | Convert `repo_scan/hub/ui.py` into a `repo_scan/hub/ui/` subpackage that exports the same `DASHBOARD_HTML` from `__init_ |

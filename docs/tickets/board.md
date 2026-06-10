@@ -6,21 +6,21 @@ kanban-plugin: board
 
 ## Proposed
 
-- [ ] [[tkt-0017|Hidden seam: repo_scan/radar/gates.py <-> repo_scan/radar/pipeline.py (53% coupled)]]
 - [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
 - [ ] [[tkt-0019|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_hub.py (60% coupled)]]
-- [ ] [[tkt-0020|Knowledge silo: repo_scan/config.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0021|Knowledge silo: repo_scan/radar/llm.py (hartley.leroy1997@gmail.com owns 100%)]]
-- [ ] [[tkt-0022|Knowledge silo: repo_scan/writers.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [ ] [[tkt-0023|Hidden seam: repo_scan/hub/ui.py <-> tests/test_hub.py (52% coupled)]]
+- [ ] [[tkt-0026|Split repo_scan/tickets.py (654 lines)]]
+- [ ] [[tkt-0027|Knowledge silo: repo_scan/radar/act.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [ ] [[tkt-0028|Refactor repo_scan/hub/server.py (CC 21, 11 commits, untested)]]
+- [ ] [[tkt-0029|Knowledge silo: pyproject.toml (hartley.leroy1997@gmail.com owns 100%)]]
 
 ## Approved
 
+- [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]]
 
 ## In progress
 
-- [ ] [[tkt-0014|Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled)]]
-- [ ] [[tkt-0015|Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled)]]
-- [ ] [[tkt-0016|Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled)]]
 
 ## Done
 
@@ -37,6 +37,15 @@ kanban-plugin: board
 - [x] [[tkt-0011|Convert tickets to most human friendly/tech leas project manager terms in. The approval/ticket cards . Retain current ticket as ground truth and have these ticket be abstractions of that ground truth]]
 - [x] [[tkt-0012|I want to add a more robust way to visualize changes out ogther a list of low hanging options we could include in the tickets such as simple visual diagrams as aid or soemthinf]]
 - [x] [[tkt-0013|Refactor repo_scan/hub/daemon.py (CC 38, 11 commits, untested)]]
+- [x] [[tkt-0014|Hidden seam: repo_scan/hub/server.py <-> repo_scan/hub/ui.py (88% coupled)]]
+- [x] [[tkt-0015|Hidden seam: repo_scan/radar/cli.py <-> repo_scan/radar/gates.py (80% coupled)]]
+- [x] [[tkt-0016|Hidden seam: repo_scan/config.py <-> repo_scan/hub/daemon.py (58% coupled)]]
+- [x] [[tkt-0017|Hidden seam: repo_scan/radar/gates.py <-> repo_scan/radar/pipeline.py (53% coupled)]]
+- [x] [[tkt-0020|Knowledge silo: repo_scan/config.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [x] [[tkt-0022|Knowledge silo: repo_scan/writers.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [x] [[tkt-0024|Hidden seam: README.md <-> repo_scan/config.py (50% coupled)]]
+- [x] [[tkt-0030|Knowledge silo: repo_scan/radar/gates.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [x] [[tkt-0031|Knowledge silo: repo_scan/radar/cli.py (hartley.leroy1997@gmail.com owns 100%)]]
 
 ## Rejected
 
