@@ -1,14 +1,14 @@
 ---
 type: "spec"
 problem: "Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested). `repo_scan/radar/sources.py` is both high-churn (3 commits) and high-complexity (total CC 14) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work."
-status: "draft"
+status: "approved"
 audit_verdict: "revise"
 analysis: "[[2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-analysis]]"
-drafted_at: "2026-06-10 07:54 UTC"
+drafted_at: "2026-06-10 13:10 UTC"
 ---
 
 # Spec — Refactor repo_scan/radar/sources.py (CC 14, 3 commits, untested). `repo_scan/radar/sources.py` is both high-churn (3 commits) and high-complexity (total CC 14) with no matching test file. Acceptance criteria: Complexity of every function below rank C; Test file exists and passes; Trend delta confirms complexity drop. Research current best practices and draft a spec for this work.
-_Drafted 2026-06-10 07:54 UTC by radar — **status: draft**_
+_Drafted 2026-06-10 13:10 UTC by radar — **status: approved**_
 
 Reviewing the codebase so the revised spec matches repo conventions and addresses every audit issue.
 Drafting the revised spec with all audit fixes, keeping it under 80 lines.

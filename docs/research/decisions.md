@@ -82,3 +82,5 @@
 | 2026-06-10 07:53 UTC | post_analyze | paused | Extract `repo_scan/report_pipeline.py` with a typed `ReportPayload` (or reuse `ScanContext` read-only view) and a single |
 | 2026-06-10 07:54 UTC | post_audit | paused | audit revise: Well-aligned with radon findings, tkt-0005 acceptance criteria, and sibling audit fixes (scan.json baselin |
 | 2026-06-10 07:59 UTC | post_analyze | paused | Introduce a private `RadarLoopRunner` (Replace Function with Command) that holds `root`, `cfg`, `problem`, `ckpt`, `resu |
+| 2026-06-10 13:10 UTC | post_analyze | approved (dashboard) | Create `tests/test_sources.py` by migrating and extending existing `test_radar_ingest.py` source tests (add title-trunca |
+| 2026-06-10 13:10 UTC | post_audit | approved (dashboard) | audit revise: Well-aligned with radon findings, tkt-0005 acceptance criteria, and sibling audit fixes (scan.json baselin |
