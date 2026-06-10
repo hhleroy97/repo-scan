@@ -90,3 +90,5 @@
 | 2026-06-10 13:14 UTC | post_analyze | approved (dashboard) | Extend the existing Markdown+Mermaid pipeline with auto-generated, ticket-scoped diagrams sourced from scan.json: add a  |
 | 2026-06-10 13:15 UTC | post_analyze | approved (dashboard) | Introduce a private `RadarLoopRunner` (Replace Function with Command) that holds `root`, `cfg`, `problem`, `ckpt`, `resu |
 | 2026-06-10 13:16 UTC | post_analyze | paused | Follow the repo's characterization-then-extract playbook: snapshot radon output and a copy of `docs/scan.json`, then add |
+| 2026-06-10 13:18 UTC | post_analyze | approved (dashboard) | Follow the repo's characterization-then-extract playbook: snapshot radon output and a copy of `docs/scan.json`, then add |
+| 2026-06-10 13:20 UTC | post_audit | paused | audit revise: The spec aligns well with existing Mermaid writers, coupling/seam signals, and fingerprinted tickets, but  |
