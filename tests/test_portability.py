@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 import repo_scan
+from repo_scan.complexity import _ccn_rank, _min_ccn, get_complexity, get_lizard_complexity
 from repo_scan.config import DEFAULT_CONFIG
 from repo_scan.graphs import get_ts_dep_edges
 from repo_scan.languages import get_line_counts
@@ -35,3 +36,38 @@ def test_ts_edges_are_repo_relative_and_find_tsx_imports(tmp_path: Path):
     edges, reason = get_ts_dep_edges(repo, [src / "App.tsx", src / "util.tsx"])
     assert reason == ""
     assert ("src/App.tsx", "src/util.tsx") in edges
+
+
+def test_ccn_rank_mapping():
+    assert _ccn_rank(1) == "A"
+    assert _ccn_rank(11) == "C"
+    assert _ccn_rank(42) == "F"
+    assert _min_ccn("C") == 11
+    assert _min_ccn("A") == 1
+
+
+COMPLEX_TS = "export function branchy(n: number) {\n" + "".join(
+    f"  if (n === {i}) return {i};\n" for i in range(15)
+) + "  return -1;\n}\n"
+
+
+@pytest.mark.skipif(shutil.which("lizard") is None, reason="lizard not installed")
+def test_lizard_covers_typescript(tmp_repo: Path):
+    (tmp_repo / "branchy.ts").write_text(COMPLEX_TS)
+    rows = get_lizard_complexity(tmp_repo, DEFAULT_CONFIG)
+    match = [r for r in rows if r["file"] == "branchy.ts"]
+    assert match and match[0]["complexity"] >= 11
+    assert match[0]["rank"] in "CDEF"
+
+    # merged path: python rows via radon (if present) + ts rows via lizard
+    merged = get_complexity(tmp_repo, [tmp_repo / "main.py"], DEFAULT_CONFIG)
+    assert any(r["file"] == "branchy.ts" for r in merged)
+
+
+@pytest.mark.skipif(shutil.which("lizard") is None, reason="lizard not installed")
+def test_lizard_skips_excluded_dirs(tmp_repo: Path):
+    vendored = tmp_repo / "node_modules" / "pkg"
+    vendored.mkdir(parents=True)
+    (vendored / "dep.ts").write_text(COMPLEX_TS)
+    rows = get_lizard_complexity(tmp_repo, DEFAULT_CONFIG)
+    assert not any("node_modules" in r["file"] for r in rows)

@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from .churn import get_git_churn
-from .complexity import get_python_complexity
+from .complexity import get_complexity, get_python_complexity
 from .config import load_config
 from .digest import write_digest
 from .graphs import edges_to_mermaid, get_c_call_graph_mermaid, get_python_dep_edges, get_ts_dep_edges
@@ -62,11 +62,11 @@ def scan(root: Path, quiet: bool = False, include_handoff: bool = False):
     ok(f"{len(churn)} files in history")
 
     step("Analyzing complexity")
-    complexity = get_python_complexity(root, languages["py"], cfg)
+    complexity = get_complexity(root, languages["py"], cfg)
     if complexity:
         ok(f"{len(complexity)} complex functions (rank {cfg['complexity_min_rank']}+)")
     else:
-        info("radon not available or no Python files")
+        info("no functions at threshold (or radon/lizard not installed)")
 
     step("Building dependency graphs")
     ts_edges, ts_reason = get_ts_dep_edges(root, languages["ts"])
@@ -124,7 +124,7 @@ def collect_digest_inputs(root: Path, cfg: dict) -> dict:
     languages = detect_languages(root, cfg)
     line_counts = get_line_counts(root, cfg)
     churn = get_git_churn(root, cfg)
-    complexity = get_python_complexity(root, languages["py"], cfg)
+    complexity = get_complexity(root, languages["py"], cfg)
     edges = get_python_dep_edges(root, languages["py"], cfg) + get_ts_dep_edges(root, languages["ts"])[0]
     ranking = rank_files(line_counts, churn, complexity, edges,
                          cfg.get("rank_top_n", 15), exclude_prefix=cfg["docs_dir"] + "/")

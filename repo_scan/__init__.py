@@ -7,7 +7,7 @@ entry point keep working after the A2 monolith split.
 
 from .churn import get_git_churn
 from .cli import check_deps, main
-from .complexity import get_python_complexity
+from .complexity import get_complexity, get_python_complexity
 from .config import DEFAULT_CONFIG, VERSION, load_config, write_default_config
 from .digest import write_digest
 from .graphs import (
