@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+linked_files: ["[[repo_scan/radar/llm.py]]", "[[repo_scan/radar/research.py]]"]
+---
 # 2026-06-09 — Phase B2: LLM backend + radar research
 
 The loop gets a brain: CLI-backed LLM completion and the first reasoning

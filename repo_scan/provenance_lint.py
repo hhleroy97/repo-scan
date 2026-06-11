@@ -65,11 +65,13 @@ def lint(root: Path, cfg: dict) -> list[dict]:
             linked = _parse_linked(fm)
 
             if not linked:
-                issues.append({
-                    "file": str(path.relative_to(root)),
-                    "problem": "missing_linked_files",
-                    "detail": "no linked_files in frontmatter",
-                })
+                has_field = "linked_files" in fm
+                if not has_field:
+                    issues.append({
+                        "file": str(path.relative_to(root)),
+                        "problem": "missing_linked_files",
+                        "detail": "no linked_files in frontmatter",
+                    })
                 continue
 
             for lf in linked:

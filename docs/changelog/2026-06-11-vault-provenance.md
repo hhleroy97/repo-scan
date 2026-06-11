@@ -1,3 +1,13 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - vault
+  - provenance
+linked_files: ["[[repo_scan/provenance.py]]", "[[repo_scan/provenance_audit.py]]", "[[repo_scan/provenance_lint.py]]", "[[repo_scan/citations.py]]", "[[repo_scan/hub/graph.py]]"]
+---
+
 # Phase 5 — vault provenance scoring
 
 **Date:** 2026-06-11

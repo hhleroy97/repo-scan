@@ -1,7 +1,8 @@
 """Vault provenance scoring — evidence, linked, cited signals (fresh is vanity).
 
-See docs/planning/phase-5-week5 for provenance contract.
-See docs/changelog/2026-06-11-vault-provenance for implementation notes.
+Vault: docs/planning/phase-5-week5
+Vault: docs/changelog/2026-06-11-vault-provenance
+Vault: docs/changelog/2026-06-11-boundary-hardening
 """
 
 from __future__ import annotations

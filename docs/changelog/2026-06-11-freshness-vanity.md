@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - provenance
+linked_files: ["[[repo_scan/provenance.py]]"]
+---
 # Freshness demoted to vanity metric
 
 **Date:** 2026-06-11

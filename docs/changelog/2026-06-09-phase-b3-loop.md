@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+linked_files: ["[[repo_scan/radar/gates.py]]", "[[repo_scan/radar/pipeline.py]]"]
+---
 # 2026-06-09 — Phase B3: gates + the full RADAR loop
 
 The core deliverable: `radar loop "<problem>"` runs Research → Analyze →

@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+  - architecture
+linked_files: ["[[repo_scan/ranking.py]]", "[[repo_scan/writers.py]]", "[[repo_scan/digest.py]]"]
+---
 # 2026-06-09 — PageRank centrality (first RADAR-driven change)
 
 This change went through the full RADAR loop before a line was written —

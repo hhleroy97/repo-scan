@@ -7,6 +7,9 @@ and when checks fail or the branch conflicts, diagnose the blocker and
 
 Reads are cached briefly so the dashboard's poll loop doesn't hammer the
 GitHub API; any write (merge, update-branch, remediate) invalidates it.
+
+Vault: docs/tickets/tkt-0014
+Vault: docs/changelog/2026-06-11-boundary-hardening
 """
 
 import json

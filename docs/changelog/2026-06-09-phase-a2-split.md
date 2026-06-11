@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - architecture
+linked_files: ["[[repo_scan/cli.py]]", "[[repo_scan/scanner.py]]", "[[repo_scan/config.py]]", "[[repo_scan/ranking.py]]", "[[repo_scan/writers.py]]"]
+---
 # 2026-06-09 — Phase A2: module split
 
 The 1,380-line monolith `repo_scan.py` is now the `repo_scan/` package, following

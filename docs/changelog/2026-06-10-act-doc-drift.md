@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - radar
+linked_files: ["[[repo_scan/radar/act.py]]"]
+---
 # Act doc drift check
 
 **Date:** 2026-06-10

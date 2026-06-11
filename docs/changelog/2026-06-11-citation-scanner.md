@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - provenance
+linked_files: ["[[repo_scan/citations.py]]"]
+---
 # Code → vault citation scanner
 
 **Date:** 2026-06-11

@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+linked_files: ["[[repo_scan/radar/sources.py]]", "[[repo_scan/radar/fetchers.py]]"]
+---
 # 2026-06-09 — Phase B1: radar ingest
 
 First RADAR phase: the `radar` CLI exists and can pull external knowledge into

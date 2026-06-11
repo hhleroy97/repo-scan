@@ -1,4 +1,8 @@
-"""Shared helpers: subprocess, terminal output, git metadata."""
+"""Shared helpers: subprocess, terminal output, git metadata.
+
+Vault: docs/changelog/2026-06-11-boundary-hardening
+Vault: docs/tickets/tkt-0024
+"""
 
 import re
 import subprocess

@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+  - testing
+linked_files: ["[[repo_scan/trends.py]]", "[[repo_scan/tests_map.py]]"]
+---
 # 2026-06-09 — Assessment hardening: the reflexion-loop foundation
 
 The scan is the sensor layer for RADAR; this phase makes it strong enough

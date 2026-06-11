@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - provenance
+  - architecture
+linked_files: ["[[repo_scan/radar/sources.py]]", "[[repo_scan/radar/pipeline.py]]"]
+---
 # 2026-06-09 — Obsidian graph: frontmatter + provenance links
 
 Follow-on to B4. Graph view only renders resolved wikilinks, and radar's

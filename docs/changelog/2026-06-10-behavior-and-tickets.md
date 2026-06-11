@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - tickets
+  - radar
+linked_files: ["[[repo_scan/behavior.py]]", "[[repo_scan/tickets.py]]"]
+---
 # 2026-06-10 — C1 behavioral metrics + C2 tickets engine
 
 GitHits research (code-maat, wily, jscpd, git-of-theseus, Backlog.md,

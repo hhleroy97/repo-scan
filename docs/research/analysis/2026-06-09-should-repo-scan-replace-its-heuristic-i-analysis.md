@@ -4,6 +4,7 @@ problem: "Should repo-scan replace its heuristic important-files ranking (centra
 confidence: "medium"
 sources: ["gh-networkx-networkx", "gh-phoenix-assistant-impact-graph"]
 generated_at: "2026-06-09 23:46 UTC"
+linked_files: ["repo_scan/ranking.py"]
 ---
 
 # Analysis — Should repo-scan replace its heuristic important-files ranking (centrality x churn x complexity) with a PageRank-style algorithm over the dependency graph, like aider's repomap does? Consider whether networkx is worth adding given the zero-required-dependencies design constraint.

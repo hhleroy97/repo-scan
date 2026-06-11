@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - hub
+linked_files: ["[[repo_scan/hub/ui/_graph_loop.py]]", "[[repo_scan/hub/ui/_runtime.py]]"]
+---
 # Mermaid diagram flash fix
 
 **Date:** 2026-06-11

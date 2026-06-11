@@ -4,6 +4,7 @@ problem: "I want to add a more robust way to visualize changes out ogther a list
 confidence: "high"
 sources: ["gh-adamtornhill-code-maat", "gh-mermaid-js-mermaid", "url-codescene-io-docs-guides-technical-change-coupling-html"]
 generated_at: "2026-06-10 07:48 UTC"
+linked_files: ["repo_scan/writers.py", "repo_scan/behavior.py"]
 ---
 
 # Analysis — I want to add a more robust way to visualize changes out ogther a list of low hanging options we could include in the tickets such as simple visual diagrams as aid or soemthinf. _captured from intent — refine before approving_ Acceptance criteria: Tbd. Research current best practices and draft a spec for this work.

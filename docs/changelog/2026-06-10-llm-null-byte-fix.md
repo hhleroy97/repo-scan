@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - radar
+linked_files: ["[[repo_scan/radar/llm.py]]", "[[repo_scan/radar/fetchers.py]]"]
+---
 # 2026-06-10 — Strip NUL bytes before LLM subprocess
 
 Background daemon loops crashed with `ValueError: embedded null byte` when

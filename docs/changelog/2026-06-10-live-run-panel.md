@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - hub
+linked_files: []
+---
 # Live run panel on hub Now tab
 
 **Date:** 2026-06-10

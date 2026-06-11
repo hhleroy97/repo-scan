@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - hub
+linked_files: []
+---
 # Hub loading states
 
 **Date:** 2026-06-10

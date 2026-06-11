@@ -4,6 +4,7 @@ problem: "Convert tickets to most human friendly/tech leas project manager terms
 confidence: "high"
 sources: ["arxiv-2411.12924", "gh-stackingturtles-linearstories", "url-www-nngroup-com-articles-progressive-disclosure"]
 generated_at: "2026-06-10 06:11 UTC"
+linked_files: ["repo_scan/tickets/parse.py", "repo_scan/hub/ui/_tickets.py"]
 ---
 
 # Analysis — Convert tickets to most human friendly/tech leas project manager terms in. The approval/ticket cards . Retain current ticket as ground truth and have these ticket be abstractions of that ground truth. Easier to interact with when making decisions form a mobile device Acceptance criteria: define acceptance criteria before approving. Research current best practices and draft a spec for this work.

@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - radar
+  - hub
+linked_files: ["[[repo_scan/radar/pipeline.py]]"]
+---
 # 2026-06-10 — Pipeline telemetry and north star docs
 
 Stage timing and token burn rate are now tracked end-to-end.

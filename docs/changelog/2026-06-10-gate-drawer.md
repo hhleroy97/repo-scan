@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - hub
+linked_files: ["[[repo_scan/hub/gate_drawer.py]]"]
+---
 # Gate drawer on hub
 
 **Date:** 2026-06-10

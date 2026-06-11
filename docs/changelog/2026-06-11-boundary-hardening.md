@@ -1,3 +1,13 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - architecture
+  - boundary-hardening
+linked_files: ["[[repo_scan/frontmatter.py]]", "[[repo_scan/config.py]]", "[[repo_scan/utils.py]]", "[[repo_scan/provenance.py]]", "[[repo_scan/provenance_audit.py]]", "[[repo_scan/schemas/scan.schema.json]]", "[[pyproject.toml]]", "[[.github/workflows/ci.yml]]"]
+---
+
 # Stage 0 — Boundary hardening (import contracts + scan.json schema)
 
 **Date:** 2026-06-11

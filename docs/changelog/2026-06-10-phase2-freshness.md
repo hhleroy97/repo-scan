@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - radar
+  - tickets
+linked_files: ["[[repo_scan/radar/act.py]]"]
+---
 # Phase 2 — agent freshness depth
 
 **Date:** 2026-06-10

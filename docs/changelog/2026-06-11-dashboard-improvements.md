@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - hub
+  - provenance
+linked_files: ["[[repo_scan/hub/ui/_graph_dashboard.py]]", "[[repo_scan/trends.py]]", "[[repo_scan/provenance.py]]", "[[repo_scan/hub/graph.py]]", "[[repo_scan/hub/server.py]]", "[[repo_scan/hub/contract.py]]", "[[repo_scan/hub/agentic_loop.py]]"]
+---
 # Dashboard audit improvements
 
 **Date:** 2026-06-11

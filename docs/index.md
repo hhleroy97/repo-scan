@@ -1,28 +1,25 @@
 # Repo index
-_Last scan: 2026-06-11 03:18 UTC_
+_Last scan: 2026-06-11 13:37 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
 > [!warning] 1 file(s) exceed 600 lines — see [[reports/health]]
 > Largest: `repo_scan/hub/static/mermaid.min.js` (2028 lines)
 
-> [!note] Since last scan (2026-06-11 01:31 UTC)
-> lines +236, files +5, hotspot functions 0, critical files 0
-> - `repo_scan/hub/server.py` complexity +2
-> - `repo_scan/tickets/merge.py` complexity +1
-> - `repo_scan/radar/research.py` complexity +1
+> [!note] Since last scan (2026-06-11 13:34 UTC)
+> lines +2, files 0, hotspot functions 0, critical files 0
 
 ## Overview
 
 | Metric | Value |
 |--------|-------|
 | Source files | 133 |
-| Total lines | 19,742 |
+| Total lines | 19,758 |
 | Languages | TS: 1, PY: 132 |
 | Large files (>300 lines) | 14 |
 | Critical files (>600 lines) | 1 |
 | Branch | main |
-| Last commit | 89bf2e7 feat: boundary hardening — import contracts + scan.json schema |
+| Last commit | c414bbe docs: check off handoff acceptance criteria — Stage 0 complete |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml` |
 
@@ -38,10 +35,10 @@ _"Imported by" counts direct dependents only; PageRank captures transitive impor
 
 | File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |
 |------|-------|----------|-------------|---------|----|-------|-------|
-| `repo_scan/utils.py` | 35.5 | 0.1375 | 35 | 0 | 0 | 97 | **no** |
-| `repo_scan/provenance.py` | 30.1 | 0.0134 | 8 | 0 | 82 | 333 | yes |
+| `repo_scan/utils.py` | 35.5 | 0.1375 | 35 | 0 | 0 | 101 | **no** |
+| `repo_scan/provenance.py` | 30.1 | 0.0134 | 8 | 0 | 82 | 334 | yes |
 | `repo_scan/radar/act.py` | 28.7 | 0.0111 | 13 | 0 | 76 | 541 | yes |
-| `repo_scan/hub/prs.py` | 26.8 | 0.0063 | 6 | 0 | 74 | 530 | yes |
+| `repo_scan/hub/prs.py` | 26.8 | 0.0063 | 6 | 0 | 74 | 533 | yes |
 | `repo_scan/hub/graph.py` | 25.2 | 0.0059 | 4 | 0 | 70 | 480 | yes |
 | `repo_scan/config.py` | 23.2 | 0.0543 | 44 | 19 | 0 | 104 | **no** |
 | `repo_scan/graphs.py` | 21.7 | 0.0148 | 8 | 0 | 54 | 294 | yes |
@@ -52,7 +49,7 @@ _"Imported by" counts direct dependents only; PageRank captures transitive impor
 | `repo_scan/ranking.py` | 13.7 | 0.0110 | 4 | 0 | 34 | 113 | **no** |
 | `repo_scan/radar/pipeline.py` | 12.9 | 0.0110 | 13 | 16 | 0 | 524 | yes |
 | `repo_scan/hub/state.py` | 12.5 | 0.0450 | 39 | 0 | 0 | 212 | **no** |
-| `repo_scan/provenance_audit.py` | 11.8 | 0.0076 | 2 | 0 | 30 | 136 | yes |
+| `repo_scan/provenance_audit.py` | 11.8 | 0.0076 | 2 | 0 | 30 | 138 | yes |
 
 ```mermaid
 xychart-beta

@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+  - testing
+linked_files: ["[[repo_scan/graphs.py]]", "[[repo_scan/ranking.py]]", "[[repo_scan/languages.py]]"]
+---
 # 2026-06-09 — Portability fixes from first external-repo run
 
 First run against a real external repo (`hhl_site`, a Vite/React/TSX site

@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - hub
+linked_files: []
+---
 # 2026-06-10 — Now tab layout refresh
 
 Phone hub **Now** tab reorganized for faster action:

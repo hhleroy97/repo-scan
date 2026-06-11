@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - radar
+  - testing
+linked_files: ["[[repo_scan/radar/cli.py]]"]
+---
 # 2026-06-09 — Phase B4: metric-triggered autonomy + e2e
 
 Final planned phase. The loop can now trigger itself off scan metrics, and the

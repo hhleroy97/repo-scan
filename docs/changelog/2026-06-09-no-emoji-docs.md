@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - architecture
+linked_files: ["[[repo_scan/utils.py]]"]
+---
 # 2026-06-09 — Emoji-free generated docs
 
 Emoji/pictographs were rendering as tofu boxes in the Obsidian viewer

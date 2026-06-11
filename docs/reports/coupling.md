@@ -1,5 +1,5 @@
 # Change coupling
-_Generated 2026-06-11 03:18 UTC_
+_Generated 2026-06-11 13:37 UTC_
 
 Files that change together (≥4 shared commits, ≥50% degree).
 Coupled pairs **without** an import edge are hidden seams — an implicit

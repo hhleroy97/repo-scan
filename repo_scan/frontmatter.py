@@ -2,6 +2,10 @@
 
 Extracted from ``radar/sources.py`` so lower layers (tickets, vault) can
 use frontmatter without importing radar.
+
+Vault: docs/changelog/2026-06-11-boundary-hardening
+Vault: docs/research/sources/gh-eyeseast-python-frontmatter
+Spec:  docs/specs/2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-spec
 """
 
 from __future__ import annotations

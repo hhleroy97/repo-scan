@@ -1,8 +1,8 @@
 # Health report
-_Generated 2026-06-11 03:18 UTC_  |  _Branch: main_  |  _Last commit: 89bf2e7 feat: boundary hardening — import contracts + scan.json schema_
+_Generated 2026-06-11 13:37 UTC_  |  _Branch: main_  |  _Last commit: c414bbe docs: check off handoff acceptance criteria — Stage 0 complete_
 
 > [!note] Vault provenance: 107/146 docs fully traced (73%)
-> Untracked ranked code: 5
+> Untracked ranked code: 3
 > Stale docs: 0
 
 ## Vault health
@@ -10,7 +10,7 @@ _Generated 2026-06-11 03:18 UTC_  |  _Branch: main_  |  _Last commit: 89bf2e7 fe
 | Metric | Value |
 |--------|-------|
 | Coverage | 73% (107/146) |
-| Untracked code (ranked) | 5 |
+| Untracked code (ranked) | 3 |
 | Stale docs | 0 |
 | Orphan analysiss | 19 |
 | Orphan sources | 13 |
@@ -21,7 +21,7 @@ _Generated 2026-06-11 03:18 UTC_  |  _Branch: main_  |  _Last commit: 89bf2e7 fe
 
 ```mermaid
 pie title Lines of code by directory
-    "repo_scan" : 13807
+    "repo_scan" : 13823
     "tests" : 5861
     "(root)" : 74
 ```
@@ -33,7 +33,7 @@ pie title Lines of code by directory
 | `repo_scan/hub/static/mermaid.min.js` | 2028 | 3258.6 KB | **critical** |
 | `repo_scan/writers.py` | 553 | 24.6 KB | *large* |
 | `repo_scan/radar/act.py` | 541 | 26.7 KB | *large* |
-| `repo_scan/hub/prs.py` | 530 | 23.5 KB | *large* |
+| `repo_scan/hub/prs.py` | 533 | 23.6 KB | *large* |
 | `repo_scan/radar/pipeline.py` | 524 | 24.0 KB | *large* |
 | `repo_scan/hub/graph.py` | 480 | 19.3 KB | *large* |
 | `tests/test_hub_ui.py` | 410 | 19.4 KB | *large* |
@@ -42,7 +42,7 @@ pie title Lines of code by directory
 | `tests/test_hub.py` | 389 | 20.2 KB | *large* |
 | `repo_scan/hub/daemon.py` | 379 | 17.3 KB | *large* |
 | `tests/test_daemon.py` | 337 | 17.1 KB | *large* |
-| `repo_scan/provenance.py` | 333 | 13.4 KB | *large* |
+| `repo_scan/provenance.py` | 334 | 13.4 KB | *large* |
 | `tests/test_hub_graph.py` | 311 | 13.3 KB | *large* |
 | `repo_scan/graphs.py` | 294 | 13.0 KB | ok |
 | `repo_scan/hub/ui/_graph_dashboard.py` | 293 | 15.5 KB | ok |
@@ -77,14 +77,14 @@ pie title Lines of code by directory
 |------|----------|------|-------|------|
 | `repo_scan/radar/act.py` | `cmd_act` | F | 54 | 336 |
 | `repo_scan/radar/llm.py` | `complete` | E | 38 | 168 |
-| `repo_scan/hub/prs.py` | `remediate_pr` | E | 33 | 469 |
-| `repo_scan/provenance_audit.py` | `audit` | D | 30 | 53 |
+| `repo_scan/hub/prs.py` | `remediate_pr` | E | 33 | 472 |
+| `repo_scan/provenance_audit.py` | `audit` | D | 30 | 55 |
 | `repo_scan/hub/tui.py` | `frame_lines` | D | 29 | 92 |
 | `repo_scan/hub/server.py` | `build_state` | D | 29 | 68 |
-| `repo_scan/provenance.py` | `vault_coverage` | D | 27 | 226 |
-| `repo_scan/hub/prs.py` | `_agent_remediate_pr` | D | 25 | 343 |
-| `repo_scan/provenance.py` | `score_node` | D | 22 | 109 |
-| `repo_scan/provenance.py` | `autolink_orphan_analyses` | C | 20 | 295 |
+| `repo_scan/provenance.py` | `vault_coverage` | D | 27 | 227 |
+| `repo_scan/hub/prs.py` | `_agent_remediate_pr` | D | 25 | 346 |
+| `repo_scan/provenance.py` | `score_node` | D | 22 | 110 |
+| `repo_scan/provenance.py` | `autolink_orphan_analyses` | C | 20 | 296 |
 | `repo_scan/ranking.py` | `rank_files` | C | 19 | 76 |
 | `repo_scan/tickets/propose.py` | `propose_from_scan` | C | 19 | 4 |
 | `repo_scan/radar/research.py` | `repo_snapshot` | C | 18 | 71 |
@@ -93,7 +93,7 @@ pie title Lines of code by directory
 | `repo_scan/graphs.py` | `get_python_dep_edges` | C | 17 | 248 |
 | `repo_scan/hub/gate_drawer.py` | `enrich_gate` | C | 16 | 71 |
 | `repo_scan/hub/graph.py` | `_code_layer` | C | 16 | 85 |
-| `repo_scan/hub/prs.py` | `_failed_ci_details` | C | 16 | 214 |
+| `repo_scan/hub/prs.py` | `_failed_ci_details` | C | 16 | 217 |
 | `repo_scan/tickets/generation.py` | `generate_tickets` | C | 16 | 14 |
 
 ## Git churn (most changed files)
@@ -101,28 +101,28 @@ pie title Lines of code by directory
 ```mermaid
 xychart-beta
     title "Commits touching each file"
-    x-axis ["decisions.md", "2026-06-10-loop.md", "board.md", "README.md", "index.md", "tags.md", "dependency-graph.…", "index.md", "calls.md", "dependencies.md"]
+    x-axis ["decisions.md", "2026-06-10-loop.md", "board.md", "README.md", "dependency-graph.…", "index.md", "calls.md", "dependencies.md", "health.md", "index.md"]
     y-axis "Commits" 0 --> 64
-    bar [64, 48, 32, 30, 21, 21, 20, 20, 20, 20]
+    bar [64, 48, 33, 30, 21, 21, 21, 21, 21, 21]
 ```
 
 | File | Commits |
 |------|---------|
 | `docs/research/decisions.md` | 64 |
 | `docs/changelog/2026-06-10-loop.md` | 48 |
-| `docs/tickets/board.md` | 32 |
+| `docs/tickets/board.md` | 33 |
 | `README.md` | 30 |
+| `docs/architecture/dependency-graph.md` | 21 |
+| `docs/index.md` | 21 |
+| `docs/reports/calls.md` | 21 |
+| `docs/reports/dependencies.md` | 21 |
+| `docs/reports/health.md` | 21 |
 | `docs/research/index.md` | 21 |
 | `docs/research/tags.md` | 21 |
-| `docs/architecture/dependency-graph.md` | 20 |
-| `docs/index.md` | 20 |
-| `docs/reports/calls.md` | 20 |
-| `docs/reports/dependencies.md` | 20 |
-| `docs/reports/health.md` | 20 |
+| `docs/scan.json` | 20 |
 | `repo_scan/config.py` | 19 |
-| `docs/scan.json` | 19 |
+| `docs/research/candidates.md` | 18 |
 | `docs/changelog/2026-06-10-act.md` | 18 |
-| `repo_scan/hub/server.py` | 17 |
 
 ## Knowledge map (bus factor)
 

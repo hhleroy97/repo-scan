@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-10
+tags:
+  - changelog
+  - radar
+  - tickets
+linked_files: ["[[repo_scan/tickets.py]]", "[[repo_scan/radar/pipeline.py]]"]
+---
 # 2026-06-10 — C3: ticket review workflow + RADAR integration
 
 Closes the circuit the project was always aiming at:

@@ -1,3 +1,12 @@
+---
+type: changelog
+date: 2026-06-09
+tags:
+  - changelog
+  - hub
+  - architecture
+linked_files: ["[[repo_scan/writers.py]]", "[[repo_scan/scanner.py]]"]
+---
 # 2026-06-09 — Visual layer for generated docs
 
 Make the Obsidian/GitHub-rendered docs human-scannable: charts where there

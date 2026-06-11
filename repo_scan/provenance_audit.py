@@ -1,6 +1,8 @@
 """radar audit-provenance — vault coverage audit with regression detection.
 
 Vault: docs/changelog/2026-06-11-dashboard-improvements
+Vault: docs/changelog/2026-06-11-boundary-hardening
+Vault: docs/changelog/2026-06-11-vault-provenance
 
 Reports coverage histogram, missing signals per doc, untracked code,
 and optionally checks for regression against the last scan.json baseline.

@@ -1,3 +1,11 @@
+---
+type: changelog
+date: 2026-06-11
+tags:
+  - changelog
+  - architecture
+linked_files: []
+---
 # Project state checkpoint — 2026-06-11
 
 **Version:** 0.2.0  

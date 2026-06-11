@@ -4,6 +4,7 @@ problem: "Split repo_scan/tickets.py (654 lines). `repo_scan/tickets.py` is 654 
 confidence: "high"
 sources: ["url-refactoring-com-catalog-movefunction-html", "url-realpython-com-python-all-attribute"]
 generated_at: "2026-06-10 18:51 UTC"
+linked_files: ["repo_scan/tickets/__init__.py"]
 ---
 
 # Analysis — Split repo_scan/tickets.py (654 lines). `repo_scan/tickets.py` is 654 lines — past the 600-line critical threshold where files become hard to navigate and review. Acceptance criteria: No resulting file above 300 lines; All tests still pass. Research current best practices and draft a spec for this work.
