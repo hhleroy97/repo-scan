@@ -1,26 +1,28 @@
 # Repo index
-_Last scan: 2026-06-11 01:31 UTC_
+_Last scan: 2026-06-11 03:18 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
 > [!warning] 1 file(s) exceed 600 lines — see [[reports/health]]
 > Largest: `repo_scan/hub/static/mermaid.min.js` (2028 lines)
 
-> [!warning] Since last scan (2026-06-11 01:13 UTC)
-> lines +115, files +1, hotspot functions +1, critical files 0
-> - `tests/test_hub_ui.py` complexity +14
+> [!note] Since last scan (2026-06-11 01:31 UTC)
+> lines +236, files +5, hotspot functions 0, critical files 0
+> - `repo_scan/hub/server.py` complexity +2
+> - `repo_scan/tickets/merge.py` complexity +1
+> - `repo_scan/radar/research.py` complexity +1
 
 ## Overview
 
 | Metric | Value |
 |--------|-------|
-| Source files | 129 |
-| Total lines | 19,506 |
-| Languages | TS: 1, PY: 128 |
+| Source files | 133 |
+| Total lines | 19,742 |
+| Languages | TS: 1, PY: 132 |
 | Large files (>300 lines) | 14 |
 | Critical files (>600 lines) | 1 |
 | Branch | main |
-| Last commit | 5d56df5 feat: force graph tuning controls — sliders, edge toggles, freeze |
+| Last commit | 89bf2e7 feat: boundary hardening — import contracts + scan.json schema |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml` |
 
@@ -36,28 +38,28 @@ _"Imported by" counts direct dependents only; PageRank captures transitive impor
 
 | File | Score | PageRank | Imported by | Commits | CC | Lines | Tests |
 |------|-------|----------|-------------|---------|----|-------|-------|
-| `repo_scan/utils.py` | 35.4 | 0.1349 | 32 | 0 | 0 | 84 | **no** |
-| `repo_scan/provenance.py` | 30.2 | 0.0136 | 8 | 0 | 82 | 333 | yes |
-| `repo_scan/radar/act.py` | 28.8 | 0.0113 | 13 | 0 | 76 | 541 | yes |
-| `repo_scan/hub/prs.py` | 26.8 | 0.0064 | 6 | 0 | 74 | 530 | yes |
-| `repo_scan/hub/graph.py` | 25.3 | 0.0060 | 4 | 0 | 70 | 480 | yes |
-| `repo_scan/graphs.py` | 21.8 | 0.0150 | 8 | 0 | 54 | 294 | yes |
-| `repo_scan/config.py` | 21.3 | 0.0481 | 43 | 18 | 0 | 81 | **no** |
-| `repo_scan/radar/llm.py` | 21.0 | 0.0172 | 16 | 0 | 50 | 274 | yes |
-| `repo_scan/hub/server.py` | 19.7 | 0.0078 | 6 | 16 | 27 | 403 | **no** |
-| `repo_scan/radar/research.py` | 18.5 | 0.0073 | 5 | 0 | 50 | 268 | **no** |
-| `repo_scan/ranking.py` | 13.8 | 0.0112 | 4 | 0 | 34 | 113 | **no** |
-| `README.md` | 13.6 | 0.0000 | 0 | 29 | 0 | 0 | **no** |
-| `repo_scan/hub/state.py` | 12.9 | 0.0457 | 39 | 0 | 0 | 212 | **no** |
-| `repo_scan/radar/pipeline.py` | 12.5 | 0.0111 | 13 | 15 | 0 | 522 | yes |
-| `repo_scan/provenance_audit.py` | 11.8 | 0.0077 | 2 | 0 | 30 | 136 | yes |
+| `repo_scan/utils.py` | 35.5 | 0.1375 | 35 | 0 | 0 | 97 | **no** |
+| `repo_scan/provenance.py` | 30.1 | 0.0134 | 8 | 0 | 82 | 333 | yes |
+| `repo_scan/radar/act.py` | 28.7 | 0.0111 | 13 | 0 | 76 | 541 | yes |
+| `repo_scan/hub/prs.py` | 26.8 | 0.0063 | 6 | 0 | 74 | 530 | yes |
+| `repo_scan/hub/graph.py` | 25.2 | 0.0059 | 4 | 0 | 70 | 480 | yes |
+| `repo_scan/config.py` | 23.2 | 0.0543 | 44 | 19 | 0 | 104 | **no** |
+| `repo_scan/graphs.py` | 21.7 | 0.0148 | 8 | 0 | 54 | 294 | yes |
+| `repo_scan/radar/llm.py` | 20.9 | 0.0169 | 16 | 0 | 50 | 274 | yes |
+| `repo_scan/hub/server.py` | 20.8 | 0.0077 | 6 | 17 | 29 | 405 | **no** |
+| `repo_scan/radar/research.py` | 18.7 | 0.0072 | 5 | 0 | 51 | 272 | **no** |
+| `README.md` | 14.1 | 0.0000 | 0 | 30 | 0 | 0 | **no** |
+| `repo_scan/ranking.py` | 13.7 | 0.0110 | 4 | 0 | 34 | 113 | **no** |
+| `repo_scan/radar/pipeline.py` | 12.9 | 0.0110 | 13 | 16 | 0 | 524 | yes |
+| `repo_scan/hub/state.py` | 12.5 | 0.0450 | 39 | 0 | 0 | 212 | **no** |
+| `repo_scan/provenance_audit.py` | 11.8 | 0.0076 | 2 | 0 | 30 | 136 | yes |
 
 ```mermaid
 xychart-beta
     title "Importance score (top files)"
-    x-axis ["utils.py", "provenance.py", "act.py", "prs.py", "graph.py", "graphs.py", "config.py", "llm.py"]
+    x-axis ["utils.py", "provenance.py", "act.py", "prs.py", "graph.py", "config.py", "graphs.py", "llm.py"]
     y-axis "Score" 0 --> 100
-    bar [35.4, 30.2, 28.8, 26.8, 25.3, 21.8, 21.3, 21]
+    bar [35.5, 30.1, 28.7, 26.8, 25.2, 23.2, 21.7, 20.9]
 ```
 
 ```mermaid
@@ -73,14 +75,14 @@ quadrantChart
     act.py: [0.02, 0.93]
     prs.py: [0.02, 0.90]
     graph.py: [0.02, 0.85]
+    config.py: [0.63, 0.02]
     graphs.py: [0.02, 0.66]
-    config.py: [0.62, 0.02]
     llm.py: [0.02, 0.61]
-    server.py: [0.55, 0.33]
-    research.py: [0.02, 0.61]
-    ranking.py: [0.02, 0.41]
+    server.py: [0.57, 0.35]
+    research.py: [0.02, 0.62]
     README.md: [0.98, 0.02]
-    pipeline.py: [0.52, 0.02]
+    ranking.py: [0.02, 0.41]
+    pipeline.py: [0.53, 0.02]
 ```
 
 ## Structure
@@ -131,12 +133,15 @@ repo-scan/
 │   │   ├── 2026-06-10-repo-snapshot.md
 │   │   ├── 2026-06-10-tkt-0001-writers-refactor.md
 │   │   ├── 2026-06-10-vault-autocommit.md
+│   │   ├── 2026-06-11-boundary-hardening.md
 │   │   ├── 2026-06-11-citation-scanner.md
 │   │   ├── 2026-06-11-dashboard-improvements.md
 │   │   ├── 2026-06-11-freshness-vanity.md
 │   │   ├── 2026-06-11-mermaid-flash-fix.md
+│   │   ├── 2026-06-11-project-state-checkpoint.md
 │   │   └── 2026-06-11-vault-provenance.md
 │   ├── planning/
+│   │   ├── HANDOFF_06_10_2026_Repo_Reorg.md
 │   │   ├── phase-1-week1.md
 │   │   ├── phase-2-week2.md
 │   │   ├── phase-3-week3.md
@@ -219,7 +224,9 @@ repo-scan/
 │   │   ├── tkt-0034.md
 │   │   ├── tkt-0035.md
 │   │   ├── tkt-0036.md
-│   │   └── tkt-0037.md
+│   │   ├── tkt-0037.md
+│   │   ├── tkt-0038.md
+│   │   └── tkt-0039.md
 │   ├── digest.md
 │   ├── index.md
 │   ├── NORTH_STAR.md
@@ -232,11 +239,6 @@ repo-scan/
 │   │   ├── __init__.py
 │   │   ├── act_run.py
 │   │   ├── agentic_loop.py
-│   │   ├── contract.py
-│   │   ├── daemon.py
-│   │   ├── events.py
-│   │   ├── gate_drawer.py
-│   │   ├── graph.py
 │   │   └── …
 │   └── …
 └── …
