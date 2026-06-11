@@ -1,5 +1,5 @@
 # Health report
-_Generated 2026-06-11 13:37 UTC_  |  _Branch: main_  |  _Last commit: c414bbe docs: check off handoff acceptance criteria — Stage 0 complete_
+_Generated 2026-06-11 15:13 UTC_  |  _Branch: main_  |  _Last commit: db06a3f docs: documentation pass — vault citations, frontmatter, provenance lint_
 
 > [!note] Vault provenance: 107/146 docs fully traced (73%)
 > Untracked ranked code: 3
@@ -101,28 +101,28 @@ pie title Lines of code by directory
 ```mermaid
 xychart-beta
     title "Commits touching each file"
-    x-axis ["decisions.md", "2026-06-10-loop.md", "board.md", "README.md", "dependency-graph.…", "index.md", "calls.md", "dependencies.md", "health.md", "index.md"]
+    x-axis ["decisions.md", "2026-06-10-loop.md", "board.md", "README.md", "dependency-graph.…", "index.md", "calls.md", "dependencies.md", "health.md", "scan.json"]
     y-axis "Commits" 0 --> 64
-    bar [64, 48, 33, 30, 21, 21, 21, 21, 21, 21]
+    bar [64, 49, 34, 30, 22, 22, 22, 22, 22, 21]
 ```
 
 | File | Commits |
 |------|---------|
 | `docs/research/decisions.md` | 64 |
-| `docs/changelog/2026-06-10-loop.md` | 48 |
-| `docs/tickets/board.md` | 33 |
+| `docs/changelog/2026-06-10-loop.md` | 49 |
+| `docs/tickets/board.md` | 34 |
 | `README.md` | 30 |
-| `docs/architecture/dependency-graph.md` | 21 |
-| `docs/index.md` | 21 |
-| `docs/reports/calls.md` | 21 |
-| `docs/reports/dependencies.md` | 21 |
-| `docs/reports/health.md` | 21 |
+| `docs/architecture/dependency-graph.md` | 22 |
+| `docs/index.md` | 22 |
+| `docs/reports/calls.md` | 22 |
+| `docs/reports/dependencies.md` | 22 |
+| `docs/reports/health.md` | 22 |
+| `docs/scan.json` | 21 |
 | `docs/research/index.md` | 21 |
 | `docs/research/tags.md` | 21 |
-| `docs/scan.json` | 20 |
+| `docs/changelog/2026-06-10-act.md` | 19 |
+| `docs/research/candidates.md` | 19 |
 | `repo_scan/config.py` | 19 |
-| `docs/research/candidates.md` | 18 |
-| `docs/changelog/2026-06-10-act.md` | 18 |
 
 ## Knowledge map (bus factor)
 
@@ -135,16 +135,16 @@ _Top-author share near 100% on an active file = knowledge silo._
 | `pyproject.toml` | 9 | 1 | 100% | 0 | silo |
 | `repo_scan/radar/research.py` | 8 | 1 | 100% | 0 | silo |
 | `repo_scan/hub/state.py` | 6 | 1 | 100% | 0 | silo |
+| `repo_scan/hub/prs.py` | 5 | 1 | 100% | 0 | silo |
+| `repo_scan/provenance.py` | 5 | 1 | 100% | 0 | silo |
 | `repo_scan/hub/graph.py` | 4 | 1 | 100% | 0 | — |
-| `repo_scan/provenance.py` | 4 | 1 | 100% | 0 | — |
-| `repo_scan/hub/prs.py` | 4 | 1 | 100% | 0 | — |
 | `tests/test_prs.py` | 4 | 1 | 100% | 0 | — |
+| `repo_scan/provenance_lint.py` | 3 | 1 | 100% | 0 | — |
 | `repo_scan/__init__.py` | 3 | 1 | 100% | 0 | — |
 | `repo_scan/digest.py` | 3 | 1 | 100% | 0 | — |
 | `repo_scan/hub/agentic_loop.py` | 3 | 1 | 100% | 0 | — |
 | `repo_scan/ranking.py` | 3 | 1 | 100% | 0 | — |
 | `repo_scan/radar/fetchers.py` | 3 | 1 | 100% | 0 | — |
-| `tests/test_llm_routing.py` | 3 | 1 | 100% | 0 | — |
 
 ## Action items
 

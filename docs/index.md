@@ -1,13 +1,12 @@
 # Repo index
-_Last scan: 2026-06-11 13:37 UTC_
+_Last scan: 2026-06-11 15:13 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
 > [!warning] 1 file(s) exceed 600 lines — see [[reports/health]]
 > Largest: `repo_scan/hub/static/mermaid.min.js` (2028 lines)
 
-> [!note] Since last scan (2026-06-11 13:34 UTC)
-> lines +2, files 0, hotspot functions 0, critical files 0
+> [!tip] No metric changes since last scan
 
 ## Overview
 
@@ -19,7 +18,7 @@ _Last scan: 2026-06-11 13:37 UTC_
 | Large files (>300 lines) | 14 |
 | Critical files (>600 lines) | 1 |
 | Branch | main |
-| Last commit | c414bbe docs: check off handoff acceptance criteria — Stage 0 complete |
+| Last commit | db06a3f docs: documentation pass — vault citations, frontmatter, provenance lint |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml` |
 

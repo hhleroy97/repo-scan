@@ -15,6 +15,8 @@ kanban-plugin: board
 - [ ] [[tkt-0035|Knowledge silo: repo_scan/hub/state.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0036|Knowledge silo: repo_scan/radar/research.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0037|Hidden seam: repo_scan/graphs.py <-> repo_scan/languages.py (73% coupled)]]
+- [ ] [[tkt-0040|Knowledge silo: repo_scan/hub/prs.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [ ] [[tkt-0041|Knowledge silo: repo_scan/provenance.py (hartley.leroy1997@gmail.com owns 100%)]]
 
 ## Approved
 

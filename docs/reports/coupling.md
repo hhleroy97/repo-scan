@@ -1,5 +1,5 @@
 # Change coupling
-_Generated 2026-06-11 13:37 UTC_
+_Generated 2026-06-11 15:13 UTC_
 
 Files that change together (≥4 shared commits, ≥50% degree).
 Coupled pairs **without** an import edge are hidden seams — an implicit
@@ -76,7 +76,7 @@ linkStyle 19 stroke:#95a5a6,stroke-width:1px
 
 | File A | File B | Shared commits | Degree | Import edge |
 |--------|--------|----------------|--------|-------------|
-| `repo_scan/hub/prs.py` | `tests/test_prs.py` | 4 | 100% | yes |
+| `repo_scan/hub/prs.py` | `tests/test_prs.py` | 4 | 89% | yes |
 | `repo_scan/radar/cli.py` | `repo_scan/radar/gates.py` | 7 | 78% | yes |
 | `repo_scan/graphs.py` | `repo_scan/languages.py` | 5 | 77% | **none — seam** |
 | `repo_scan/radar/pipeline.py` | `tests/test_radar_pipeline.py` | 8 | 64% | yes |
