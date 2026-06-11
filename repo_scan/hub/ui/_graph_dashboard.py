@@ -1,8 +1,10 @@
-"""Vault audit panels for the Knowledge dashboard tab.
+"""Vault audit panels and provenance tools for the Knowledge dashboard tab.
 
 ``rGraphDashboard()`` renders summary, signal matrix, histogram, thin-links, and
-trend only. Miss filters and untracked queue live in ``rGraphControlsStack`` /
-``rGraphContextPanels`` (``_graph.py``) so view controls sit contiguous above the canvas.
+trend chart. ``rDashProvenanceTools()`` renders the lint/auto-link quick-action
+panel in the context section below the canvas.
+
+Vault: docs/research/sources/url-www-nngroup-com-articles-gestalt-proximity
 """
 
 _FRAGMENT = r"""const DASH_SIGNALS=['evidence','linked','cited','fresh'];
@@ -174,6 +176,109 @@ function openUntrackedPanel(){
   if(!el)return;
   el.open=true;
   el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+let _lintCache=null,_lintLoading=false;
+function rDashProvenanceTools(){
+  const c=_lintCache;
+  const statusHtml=c
+    ?`<span class="dim small">${c.total} issue${c.total!==1?'s':''}</span>`
+    +(c.broken?` <span class="badge warn">${c.broken} broken</span>`:'')
+    +(c.missing?` <span class="badge bad">${c.missing} no linked_files</span>`:'')
+    +(!c.total?' <span class="badge ok">clean</span>':'')
+    :'<span class="dim small">Not checked yet</span>';
+  return `<div class="card dash-panel dash-tools-panel">
+    <div class="title" style="margin-bottom:10px">Provenance tools</div>
+    <div class="dash-tools-grid">
+      <div class="dash-tool-row">
+        <div style="flex:1">
+          <div class="small" style="font-weight:600">Lint vault links</div>
+          <div>${statusHtml}</div>
+        </div>
+        <button class="ghost" type="button" style="flex:none;padding:6px 12px;font-size:11px" onclick="runProvenanceLint(this)" ${_lintLoading?'disabled':''}>
+          ${_lintLoading?'Running…':'Check'}
+        </button>
+      </div>
+      <div class="dash-tool-row">
+        <div style="flex:1">
+          <div class="small" style="font-weight:600">Auto-link orphans</div>
+          <div class="dim small">Propagate linked_files from sources to analyses</div>
+        </div>
+        <button class="ghost" type="button" style="flex:none;padding:6px 12px;font-size:11px" onclick="runProvenanceAutolink(this)">Fix</button>
+      </div>
+      <div class="dash-tool-row">
+        <div style="flex:1">
+          <div class="small" style="font-weight:600">Full audit</div>
+          <div class="dim small">Run <span class="mono">radar audit-provenance</span> in terminal</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+async function runProvenanceLint(btn){
+  _lintLoading=true;
+  beginPending('lint-vault','Linting vault links…',{btn,btnLabel:'Running…'});
+  try{
+    _lintCache=await api(API_PROVENANCE_LINT);
+    const n=_lintCache.total;
+    toast(n?`${n} lint issue${n!==1?'s':''} found`:'Vault links clean');
+  }catch(e){toast('Lint failed: '+e.message)}
+  finally{_lintLoading=false;endPending('lint-vault')}
+  const el=document.getElementById('main');
+  if(el&&tab==='dashboard')el.innerHTML=rGraph();
+  mountGraph();
+}
+async function runProvenanceAutolink(btn){
+  beginPending('autolink','Auto-linking orphans…',{btn,btnLabel:'Running…'});
+  try{
+    const res=await api(API_PROVENANCE_AUTOLINK);
+    toast(res.updated?`Updated ${res.updated} file${res.updated!==1?'s':''}`:'No orphans to link');
+    _lintCache=null;
+  }catch(e){toast('Auto-link failed: '+e.message)}
+  finally{endPending('autolink')}
+  mountGraph();
+}
+
+function rGraphGuide(){
+  const st=graphData?.stats||{};
+  const cov=graphData?.coverage||{};
+  const nodeDetail=`${st.code_nodes||0} code files and ${st.vault_nodes||0} vault documents (${(cov.docs||0)} scored)`;
+  return `<details class="card dash-panel graph-guide">
+    <summary class="title" style="cursor:pointer">How to read this graph</summary>
+    <div class="guide-body">
+      <div class="guide-section">
+        <div class="guide-heading">What you're looking at</div>
+        <p>This provenance graph maps <strong>${nodeDetail}</strong> in your repo. Every vault document
+        (ticket, spec, analysis, research source) is scored 0–3 on three signals that measure whether it's
+        actually grounded in code:</p>
+        <div class="guide-signals">
+          <div><span class="dash-sig dash-sig-ok">E</span> <strong>Evidence</strong> — doc contains wikilinks, analysis references, or substantive content</div>
+          <div><span class="dash-sig dash-sig-ok">L</span> <strong>Linked</strong> — doc's <code>linked_files</code> frontmatter points to real code paths in scan.json</div>
+          <div><span class="dash-sig dash-sig-ok">C</span> <strong>Cited</strong> — at least one Python module cites this doc via <code>Vault:</code> or <code>Spec:</code> in its docstring</div>
+          <div><span class="dash-sig dash-sig-miss">F</span> <strong>Fresh</strong> — doc is newer than its linked code (vanity — shown but not scored)</div>
+        </div>
+      </div>
+      <div class="guide-section">
+        <div class="guide-heading">Edge types</div>
+        <p><span class="graph-edge-loop" style="display:inline-block"></span> <strong>Closed loop</strong> — bidirectional: code cites doc AND doc links code. Strongest provenance.
+        <br><span class="graph-edge-cite" style="display:inline-block"></span> <strong>Cites</strong> — code file references this doc (<code># see docs/tickets/tkt-XXXX</code>).
+        <br><span class="graph-edge-link" style="display:inline-block"></span> <strong>Linked</strong> — doc's frontmatter declares <code>linked_files</code> to this code.
+        <br><span class="graph-edge-wiki" style="display:inline-block"></span> <strong>Wikilink</strong> — doc references another doc via <code>[[wikilink]]</code>.</p>
+      </div>
+      <div class="guide-section">
+        <div class="guide-heading">Layer filters</div>
+        <p><strong>Coverage</strong> (default) hides code nodes with no vault connections — showing only the documented portion of the codebase.
+        <strong>Vault</strong> isolates documents only. <strong>Code</strong> shows the dependency graph between modules.
+        <strong>All</strong> renders everything. The signal filters (E/L/C/F) narrow vault nodes to those <em>missing</em> a specific signal.</p>
+      </div>
+      <div class="guide-section">
+        <div class="guide-heading">How to use it</div>
+        <p><strong>Tap any node</strong> to open its provenance chain — a tree showing what evidence supports that document, which signals it passes, and where the gaps are.
+        Score rings around vault nodes are colored: <span style="color:var(--ok)">green</span> (3/3), <span style="color:var(--accent)">blue</span> (2/3), <span style="color:var(--warn)">amber</span> (1/3), <span style="color:var(--bad)">red</span> (0/3).</p>
+        <p>Look for <strong>red/amber clusters</strong> — those are areas where documentation exists but isn't anchored to code. Fix them by adding <code>linked_files</code> frontmatter or <code>Vault:</code> citations in the relevant module.</p>
+      </div>
+    </div>
+  </details>`;
 }
 
 function rGraphDashboard(){

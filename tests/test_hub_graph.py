@@ -8,7 +8,9 @@ import pytest
 pytest_plugins = ["tests.test_hub"]
 
 from repo_scan.config import DEFAULT_CONFIG
-from repo_scan.hub.graph import build_chain, build_graph
+from repo_scan.hub.graph import (
+    _truncate_graph, build_chain, build_graph, change_impact,
+)
 from repo_scan.hub.state import create_run, update_run
 
 
@@ -224,3 +226,135 @@ def test_api_graph_chain_endpoint(hub_server):
         body = json.loads(resp.read().decode())
     assert body["root"] == "ticket:missing"
     assert "chain" in body
+
+
+def test_graph_includes_dir_coverage(tmp_repo):
+    scan = {
+        "files": {"repo_scan/a.py": {"lines": 10}, "repo_scan/b.py": {"lines": 20}},
+        "ranking": [{"file": "repo_scan/a.py", "score": 10}],
+        "dependency_edges": {"python": [["repo_scan.a", "repo_scan.b"]]},
+        "citations": [],
+    }
+    docs = tmp_repo / "docs"
+    docs.mkdir(parents=True, exist_ok=True)
+    (docs / "scan.json").write_text(json.dumps(scan), encoding="utf-8")
+    g = build_graph(tmp_repo, DEFAULT_CONFIG)
+    assert "dir_coverage" in g["coverage"]
+    dirs = g["coverage"]["dir_coverage"]
+    assert isinstance(dirs, list)
+
+
+def test_graph_includes_stale_queue(tmp_repo):
+    docs = tmp_repo / "docs"
+    (docs / "specs").mkdir(parents=True)
+    (docs / "scan.json").write_text(json.dumps({"files": {}, "citations": []}), encoding="utf-8")
+    (docs / "specs" / "old-spec.md").write_text("---\nstatus: draft\n---\n", encoding="utf-8")
+    g = build_graph(tmp_repo, DEFAULT_CONFIG)
+    assert "stale_queue" in g["coverage"]
+    assert isinstance(g["coverage"]["stale_queue"], list)
+
+
+def test_graph_includes_citation_density(tmp_repo):
+    scan = {
+        "files": {"repo_scan/x.py": {"lines": 10}},
+        "ranking": [{"file": "repo_scan/x.py", "score": 5}],
+        "dependency_edges": {"python": []},
+        "citations": [{"file": "repo_scan/x.py", "target_kind": "ticket", "target_id": "tkt-0001"}],
+    }
+    docs = tmp_repo / "docs"
+    (docs / "tickets").mkdir(parents=True)
+    (docs / "scan.json").write_text(json.dumps(scan), encoding="utf-8")
+    (docs / "tickets" / "tkt-0001.md").write_text("---\ntitle: T\n---\nbody\n", encoding="utf-8")
+    g = build_graph(tmp_repo, DEFAULT_CONFIG)
+    assert "citation_density" in g["coverage"]
+    density = g["coverage"]["citation_density"]
+    cited = [r for r in density if r["citations"] > 0]
+    assert len(cited) >= 1
+
+
+def test_change_impact_without_git(tmp_repo):
+    docs = tmp_repo / "docs"
+    docs.mkdir(parents=True, exist_ok=True)
+    (docs / "scan.json").write_text("{}", encoding="utf-8")
+    result = change_impact(tmp_repo, DEFAULT_CONFIG)
+    assert "changed" in result
+    assert "affected_docs" in result
+
+
+def test_truncate_graph_keeps_connected_drops_orphans():
+    nodes = [
+        {"id": "code:a.py", "kind": "code"},
+        {"id": "ticket:t1", "kind": "ticket"},
+        {"id": "source:s1", "kind": "source"},
+        {"id": "code:orphan.py", "kind": "code"},
+    ]
+    edges = [
+        {"source": "code:a.py", "target": "ticket:t1", "kind": "cites"},
+        {"source": "source:s1", "target": "code:a.py", "kind": "linked_file"},
+    ]
+    kept_n, kept_e = _truncate_graph(nodes, edges, cap=3)
+    kept_ids = {n["id"] for n in kept_n}
+    assert "code:orphan.py" not in kept_ids
+    assert "code:a.py" in kept_ids
+    assert "ticket:t1" in kept_ids
+    assert "source:s1" in kept_ids
+    assert len(kept_e) == 2
+
+
+def test_truncate_graph_prefers_core_vault_over_ancillary():
+    nodes = [
+        {"id": "report:r1", "kind": "report"},
+        {"id": "analysis:a1", "kind": "analysis"},
+        {"id": "doc:d1", "kind": "doc"},
+        {"id": "source:s1", "kind": "source"},
+    ]
+    edges = []
+    kept_n, _ = _truncate_graph(nodes, edges, cap=2)
+    kept_kinds = {n["kind"] for n in kept_n}
+    assert "analysis" in kept_kinds
+    assert "source" in kept_kinds
+
+
+def test_truncate_graph_cleans_dangling_edges():
+    nodes = [
+        {"id": "code:a.py", "kind": "code"},
+        {"id": "ticket:t1", "kind": "ticket"},
+        {"id": "code:orphan.py", "kind": "code"},
+    ]
+    edges = [
+        {"source": "code:a.py", "target": "ticket:t1", "kind": "cites"},
+        {"source": "code:orphan.py", "target": "ticket:t1", "kind": "cites"},
+    ]
+    kept_n, kept_e = _truncate_graph(nodes, edges, cap=2)
+    kept_ids = {n["id"] for n in kept_n}
+    for e in kept_e:
+        assert e["source"] in kept_ids
+        assert e["target"] in kept_ids
+
+
+def test_build_graph_includes_all_vault_kinds(tmp_repo):
+    """All four vault kinds appear when under the node cap."""
+    docs = tmp_repo / "docs"
+    (docs / "tickets").mkdir(parents=True)
+    (docs / "specs").mkdir(parents=True)
+    (docs / "research" / "analysis").mkdir(parents=True)
+    (docs / "research" / "sources").mkdir(parents=True)
+    (docs / "scan.json").write_text(
+        json.dumps({"files": {}, "citations": [], "dependency_edges": {"python": []}, "ranking": []}),
+        encoding="utf-8",
+    )
+    (docs / "tickets" / "tkt-0001.md").write_text(
+        "---\ntitle: T\n---\n## Evidence\n[[seam-spec]]\n", encoding="utf-8")
+    (docs / "specs" / "seam-spec.md").write_text(
+        "---\nstatus: approved\nanalysis: [[research/analysis/a1]]\n---\n", encoding="utf-8")
+    (docs / "research" / "analysis" / "a1.md").write_text(
+        "# A\n[[sources/src-1]]\n", encoding="utf-8")
+    (docs / "research" / "sources" / "src-1.md").write_text(
+        "---\ntitle: S\n---\nbody\n", encoding="utf-8")
+
+    g = build_graph(tmp_repo, DEFAULT_CONFIG)
+    kinds = {n["kind"] for n in g["nodes"]}
+    assert "ticket" in kinds
+    assert "spec" in kinds
+    assert "analysis" in kinds
+    assert "source" in kinds

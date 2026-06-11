@@ -1,6 +1,7 @@
 """Knowledge graph payload for the hub — code imports + vault provenance.
 
 Vault: docs/tickets/tkt-0032
+Vault: docs/research/sources/gh-cytoscape-cytoscape.js
 Spec:  docs/specs/2026-06-10-move-the-agentic-loop-graph-and-untracke-spec
 """
 
@@ -8,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
 from ..citations import citation_index
@@ -18,7 +20,7 @@ from ..radar.sources import parse_frontmatter
 _WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)")
 _MAX_CODE_NODES = 40
 _MAX_CODE_EDGES = 80
-_MAX_VAULT_NODES = 60
+_DEFAULT_MAX_GRAPH_NODES = 250
 
 _PIPELINE = [
     {"id": "scan", "label": "repo-scan"},
@@ -202,10 +204,6 @@ def _vault_layer(root: Path, cfg: dict) -> tuple[list[dict], list[dict]]:
                         "kind": "linked_file",
                     })
 
-    if len(nodes) > _MAX_VAULT_NODES:
-        keep = set(list(nodes.keys())[:_MAX_VAULT_NODES])
-        nodes = {k: v for k, v in nodes.items() if k in keep}
-        edges = [e for e in edges if e["source"] in keep and e["target"] in keep]
     return list(nodes.values()), edges
 
 
@@ -248,6 +246,49 @@ def _citation_edges(scan: dict, nodes: dict) -> list[dict]:
         seen.add(key)
         edges.append({"source": src, "target": tgt, "kind": "cites"})
     return edges
+
+
+def _truncate_graph(nodes: list[dict], edges: list[dict],
+                    cap: int) -> tuple[list[dict], list[dict]]:
+    """Drop lowest-priority nodes when the graph exceeds *cap*.
+
+    Priority ranking (higher = kept first):
+    - Nodes with edges (connected) beat nodes without (orphans)
+    - Among connected nodes: higher edge degree wins
+    - Core vault kinds (ticket, spec, analysis, source) beat ancillary
+      kinds (report, doc, gate) at equal degree
+    - Code nodes that are linked/cited survive; unconnected code drops first
+
+    After node removal, dangling edges are cleaned up.
+    """
+    if len(nodes) <= cap:
+        return nodes, edges
+
+    degree: dict[str, int] = {}
+    for e in edges:
+        degree[e["source"]] = degree.get(e["source"], 0) + 1
+        degree[e["target"]] = degree.get(e["target"], 0) + 1
+
+    _CORE_KINDS = frozenset({"ticket", "spec", "analysis", "source"})
+
+    def priority(n: dict) -> tuple:
+        kind = n.get("kind", "")
+        deg = degree.get(n["id"], 0)
+        is_core = kind in _CORE_KINDS
+        is_code = kind == "code"
+        return (
+            1 if deg > 0 else 0,       # connected beats orphan
+            0 if is_code and deg == 0 else 1,  # unlinked code drops first
+            1 if is_core else 0,        # core vault kinds preferred
+            deg,                        # higher degree wins
+        )
+
+    ranked = sorted(nodes, key=priority, reverse=True)
+    kept_nodes = ranked[:cap]
+    kept_ids = {n["id"] for n in kept_nodes}
+    kept_edges = [e for e in edges
+                  if e["source"] in kept_ids and e["target"] in kept_ids]
+    return kept_nodes, kept_edges
 
 
 _VAULT_SIGNALS = ("evidence", "linked", "cited", "fresh")
@@ -300,6 +341,70 @@ _REL_OUT = {
     "analysis": frozenset({"evidence"}),
     "source": frozenset({"linked_file"}),
 }
+
+
+def _dir_coverage(nodes: list[dict], coverage: dict) -> list[dict]:
+    """Group code nodes by top-level directory; report tracked vs total."""
+    untracked = set(coverage.get("untracked_code") or [])
+    buckets: dict[str, dict] = {}
+    for n in nodes:
+        if n.get("kind") != "code":
+            continue
+        path = n.get("id", "").split(":", 1)[-1] if ":" in n.get("id", "") else ""
+        parts = path.split("/")
+        key = "/".join(parts[:2]) if len(parts) > 2 else parts[0] if parts else ""
+        if not key:
+            continue
+        b = buckets.setdefault(key, {"dir": key, "total": 0, "tracked": 0, "untracked": 0})
+        b["total"] += 1
+        if path in untracked:
+            b["untracked"] += 1
+        else:
+            b["tracked"] += 1
+    rows = sorted(buckets.values(), key=lambda r: r["total"], reverse=True)
+    return rows[:15]
+
+
+def _stale_queue(nodes: list[dict]) -> list[dict]:
+    """Vault docs with stale_days > 0, sorted by staleness."""
+    stale = []
+    for n in nodes:
+        if n.get("kind") == "code":
+            continue
+        days = n.get("stale_days")
+        if days and days > 0:
+            stale.append({
+                "id": n["id"], "label": n.get("label", ""),
+                "kind": n.get("kind", ""), "doc": n.get("doc", ""),
+                "stale_days": days, "score": n.get("score", 0),
+                "missing": n.get("missing", []),
+            })
+    stale.sort(key=lambda r: r["stale_days"], reverse=True)
+    return stale[:15]
+
+
+def _citation_density(nodes: list[dict], edges: list[dict]) -> list[dict]:
+    """Per code-node count of inbound 'cites' edges, sorted by importance."""
+    cite_count: dict[str, int] = {}
+    for e in edges:
+        if e.get("kind") == "cites":
+            tgt = e["target"]
+            cite_count[tgt] = cite_count.get(tgt, 0) + 1
+            src = e["source"]
+            cite_count[src] = cite_count.get(src, 0) + 1
+    rows = []
+    for n in nodes:
+        if n.get("kind") != "code":
+            continue
+        nid = n["id"]
+        path = nid.split(":", 1)[-1] if ":" in nid else n.get("label", "")
+        rows.append({
+            "file": path, "label": n.get("label", ""),
+            "citations": cite_count.get(nid, 0),
+            "score": n.get("score", 0),
+        })
+    rows.sort(key=lambda r: (-r.get("score", 0), -r["citations"]))
+    return rows[:20]
 
 
 def build_chain(root: Path, cfg: dict, node_id: str) -> dict:
@@ -356,8 +461,10 @@ def build_graph(root: Path, cfg: dict) -> dict:
     for n in code_nodes + vault_nodes:
         node_map[n["id"]] = n
     cite_edges = _citation_edges(scan, node_map)
-    nodes = list(node_map.values())
-    edges = code_edges + vault_edges + cite_edges
+    all_nodes = list(node_map.values())
+    all_edges = code_edges + vault_edges + cite_edges
+    cap = int(cfg.get("graph_max_nodes", _DEFAULT_MAX_GRAPH_NODES))
+    nodes, edges = _truncate_graph(all_nodes, all_edges, cap)
     _attach_scores(nodes, root, cfg, scan)
     coverage = vault_coverage(root, cfg, scan, scan.get("citations") or [])
     approved_unhealthy = [
@@ -367,13 +474,18 @@ def build_graph(root: Path, cfg: dict) -> dict:
     ]
     coverage["approved_unhealthy"] = len(approved_unhealthy)
     coverage["approved_unhealthy_list"] = [
-        {"id": n["id"], "label": n.get("label", "")}
+        {"id": n["id"], "label": n.get("label", ""),
+         "score": n.get("score", 0), "missing": n.get("missing", []),
+         "doc": n.get("doc", "")}
         for n in approved_unhealthy[:10]
     ]
     coverage["signal_matrix"] = _signal_matrix(nodes)
     coverage["untracked_ranked"] = _untracked_ranked(
         scan, coverage.get("untracked_code") or [],
     )
+    coverage["dir_coverage"] = _dir_coverage(nodes, coverage)
+    coverage["stale_queue"] = _stale_queue(nodes)
+    coverage["citation_density"] = _citation_density(nodes, edges)
     return {
         "generated_at": scan.get("generated_at"),
         "pipeline": _PIPELINE,
@@ -390,3 +502,42 @@ def build_graph(root: Path, cfg: dict) -> dict:
             "coverage_pct": coverage.get("coverage_pct", 0),
         },
     }
+
+
+def change_impact(root: Path, cfg: dict) -> dict:
+    """Recently changed files → vault docs whose linked_files point at them."""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD~5..HEAD"],
+            capture_output=True, text=True, cwd=root, timeout=5,
+        )
+        changed = [l.strip() for l in result.stdout.splitlines() if l.strip()]
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        changed = []
+    if not changed:
+        return {"changed": [], "affected_docs": []}
+
+    changed_set = set(changed)
+    docs = root / cfg["docs_dir"]
+    affected: list[dict] = []
+    for sub, kind in (("tickets", "ticket"), ("specs", "spec"),
+                      ("research/sources", "source"), ("research/analysis", "analysis")):
+        base = docs / sub
+        if not base.is_dir():
+            continue
+        for path in sorted(base.glob("*.md")):
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            fm = parse_frontmatter(text)
+            linked_raw = str(fm.get("linked_files", "") or "")
+            if not linked_raw:
+                continue
+            linked = [p.strip().strip("[]\"'") for p in linked_raw.replace("[", "").replace("]", "").split(",")]
+            hits = [p for p in linked if p in changed_set]
+            if hits:
+                affected.append({
+                    "doc": str(path.relative_to(docs)),
+                    "kind": kind,
+                    "label": str(fm.get("title") or path.stem)[:48],
+                    "linked_changed": hits,
+                })
+    return {"changed": changed[:20], "affected_docs": affected[:15]}
