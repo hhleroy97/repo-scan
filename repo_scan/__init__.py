@@ -3,6 +3,8 @@
 Public API re-exported from the module structure so existing imports
 (`import repo_scan; repo_scan.scan(...)`) and the `repo_scan:main` console
 entry point keep working after the A2 monolith split.
+
+Vault: docs/research/sources/url-realpython-com-python-all-attribute
 """
 
 from .churn import get_git_churn

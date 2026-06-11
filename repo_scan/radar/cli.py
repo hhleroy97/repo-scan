@@ -4,6 +4,7 @@ Gate flag vocabulary (--approve, --gates) is sourced from ``gates``; this module
 must not duplicate gate names or mode literals.
 
 Vault: docs/tickets/tkt-0015, docs/tickets/tkt-0031
+Vault: docs/research/analysis/2026-06-10-hidden-seam-repo-scan-radar-cli-py-repo-analysis
 Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-radar-cli-py-repo-spec
 """
 

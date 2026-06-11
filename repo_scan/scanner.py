@@ -4,6 +4,16 @@ Report writes delegate to ``report_pipeline.write_scan_reports``; this module
 no longer imports ``writers`` directly.
 
 Vault: docs/tickets/tkt-0002, docs/tickets/tkt-0008
+Vault: docs/research/analysis/2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-analysis
+Vault: docs/research/sources/url-www-socratopia-app-library-software-engineering-craft-en-cha
+Vault: docs/research/sources/url-refactoring-com-catalog-replacenestedconditionalwithguardcla
+Vault: docs/research/sources/url-refactoring-com-catalog-consolidateduplicateconditionalfragm
+Vault: docs/research/sources/url-refactoring-com-catalog-decomposeconditional-html
+Vault: docs/research/sources/url-docs-python-org-3-tutorial-modules-html-packages
+Vault: docs/research/sources/gh-python-cpython
+Vault: docs/research/sources/arxiv-2401.15298
+Vault: docs/research/sources/gh-ThoughtWorksInc-WorkingEffectivelyWithLegacyCode
+Vault: docs/research/sources/arxiv-2302.09153
 Spec:  docs/specs/2026-06-10-refactor-repo-scan-scanner-py-cc-27-8-co-spec
 """
 

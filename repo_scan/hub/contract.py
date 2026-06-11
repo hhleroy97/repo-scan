@@ -5,6 +5,11 @@ and the ``build_state()`` JSON wire shape. ``js_contract_block()`` injects
 the client-side literals into ``DASHBOARD_HTML`` at assembly time (no build
 
 Vault: docs/tickets/tkt-0014
+Vault: docs/research/analysis/2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-analysis
+Vault: docs/research/sources/url-peps-python-org-pep-0589
+Vault: docs/research/sources/url-martinfowler-com-bliki-publishedinterface-html
+Vault: docs/research/sources/gh-pact-foundation-pact-python
+Vault: docs/research/sources/gh-seddonym-import-linter
 Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-spec
 step). Distinct from ``state.py`` (run lifecycle helpers).
 """
@@ -21,6 +26,9 @@ from ..tickets import OPEN_STATUSES, STATUSES
 API_STATE = "/api/state"
 API_GRAPH = "/api/graph"
 API_GRAPH_CHAIN = "/api/graph/chain"
+API_PROVENANCE_LINT = "/api/provenance/lint"
+API_PROVENANCE_AUTOLINK = "/api/provenance/autolink"
+API_PROVENANCE_IMPACT = "/api/provenance/impact"
 API_EVENTS = "/api/events"
 API_DOC = "/api/doc"
 API_GATE = "/api/gate"
@@ -160,6 +168,9 @@ def js_contract_block() -> str:
         f"const API_STATE={json.dumps(API_STATE)};",
         f"const API_GRAPH={json.dumps(API_GRAPH)};",
         f"const API_GRAPH_CHAIN={json.dumps(API_GRAPH_CHAIN)};",
+        f"const API_PROVENANCE_LINT={json.dumps(API_PROVENANCE_LINT)};",
+        f"const API_PROVENANCE_AUTOLINK={json.dumps(API_PROVENANCE_AUTOLINK)};",
+        f"const API_PROVENANCE_IMPACT={json.dumps(API_PROVENANCE_IMPACT)};",
         f"const API_EVENTS={json.dumps(API_EVENTS)};",
         f"const API_DOC={json.dumps(API_DOC)};",
         f"const API_GATE={json.dumps(API_GATE)};",

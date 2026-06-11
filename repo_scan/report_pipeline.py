@@ -1,8 +1,13 @@
 """Scan-to-docs write pipeline — explicit orchestration→writers contract.
 
+Vault: docs/research/analysis/2026-06-10-hidden-seam-repo-scan-scanner-py-repo-sc-analysis
+Vault: docs/research/sources/arxiv-2510.03050
+
 ``ReportPayload`` carries precomputed scan outputs; ``write_scan_reports`` is
 the sole orchestration-layer entry that sequences ``writers.write_*`` calls
 and appends the trend log.
+
+Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-scanner-py-repo-sc-spec
 """
 
 from dataclasses import dataclass, field

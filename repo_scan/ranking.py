@@ -1,8 +1,15 @@
 """Important-files ranking from signals the scan already collects.
 
+Vault: docs/research/analysis/2026-06-09-should-repo-scan-replace-its-heuristic-i-analysis
+Vault: docs/research/sources/url-aider-chat-docs-repomap
+Vault: docs/research/sources/gh-codemix-deprank
+Vault: docs/research/sources/arxiv-2006.10892
+
 The structural term is PageRank over the import graph (inline power
 iteration, no networkx — per the approved spec in docs/specs/), so
 transitively depended-on hub modules rank above direct-import counts alone.
+
+Spec:  docs/specs/2026-06-09-should-repo-scan-replace-its-heuristic-i-spec
 """
 
 

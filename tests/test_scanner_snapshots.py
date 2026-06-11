@@ -1,5 +1,7 @@
 """E2E characterization for repo_scan.scanner (tkt-0002 Phase 1).
 
+Vault: docs/research/sources/gh-syrupy-project-syrupy
+
 Writer artifacts are compared to golden output from test_writers_snapshots
 constants (same stubbed inputs). Orchestration-only artifacts use syrupy.
 """

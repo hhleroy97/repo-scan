@@ -1,6 +1,9 @@
 """Language detection and line counting.
 
 Vault: docs/tickets/tkt-0004
+Vault: docs/research/analysis/2026-06-10-refactor-repo-scan-languages-py-cc-18-3-analysis
+Vault: docs/research/sources/gh-github-linguist
+Vault: docs/research/sources/gh-XAMPPRocky-tokei
 Spec:  docs/specs/2026-06-10-refactor-repo-scan-languages-py-cc-18-3-spec
 """
 

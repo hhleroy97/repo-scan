@@ -3,6 +3,7 @@
 ReAct-shaped: the model reasons over repo context, proposes acquisition
 
 Vault: docs/tickets/tkt-0036
+Vault: docs/research/sources/url-aider-chat-docs-repomap
 actions (source refs), the tool executes them, and the run is recorded to
 docs/research/runs/ so every research session is auditable.
 """

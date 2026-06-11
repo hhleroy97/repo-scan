@@ -1,6 +1,7 @@
 """Mermaid source for the hub agentic loop diagram (live stage highlighting).
 
 Vault: docs/tickets/tkt-0034
+Vault: docs/research/sources/gh-mermaid-js-mermaid
 See docs/architecture/agentic-loop for the canonical loop description.
 """
 

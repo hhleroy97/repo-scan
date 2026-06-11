@@ -1,4 +1,8 @@
-"""Parse ticket markdown into structured dicts; derive PM-facing cards."""
+"""Parse ticket markdown into structured dicts; derive PM-facing cards.
+
+Vault: docs/research/analysis/2026-06-10-convert-tickets-to-most-human-friendly-t-analysis
+Vault: docs/research/sources/arxiv-2411.12924
+"""
 
 import re
 from pathlib import Path

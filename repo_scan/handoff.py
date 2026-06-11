@@ -1,4 +1,8 @@
-"""HANDOFF.md generator — one-time bootstrap doc for building this tool."""
+"""HANDOFF.md generator — one-time bootstrap doc for building this tool.
+
+Vault: docs/research/sources/gh-yamadashy-repomix
+Vault: docs/research/sources/gh-Aider-AI-aider
+"""
 
 import json
 from pathlib import Path

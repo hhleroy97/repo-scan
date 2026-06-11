@@ -1,7 +1,13 @@
 """Markdown report writers + scan.json sidecar + AGENTS.md scaffold.
 
 Vault: docs/tickets/tkt-0001, docs/tickets/tkt-0008, docs/tickets/tkt-0022
+Vault: docs/research/analysis/2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co-analysis
+Vault: docs/research/analysis/2026-06-10-i-want-to-add-a-more-robust-way-to-visua-analysis
+Vault: docs/research/sources/url-refactoring-com-catalog-extractfunction-html
+Vault: docs/research/sources/url-refactoring-com-catalog-extractclass-html
+Vault: docs/research/sources/gh-pytest-dev-pytest-html
 Spec:  docs/specs/2026-06-10-refactor-repo-scan-writers-py-cc-52-7-co-spec
+Spec:  docs/specs/2026-06-10-i-want-to-add-a-more-robust-way-to-visua-spec
 """
 
 import json

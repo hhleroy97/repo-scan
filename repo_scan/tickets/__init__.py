@@ -5,6 +5,12 @@ plus a generated board.md in Obsidian Kanban format. The scan auto-proposes
 tickets from its signals; humans review by editing `status` (or dragging
 
 Vault: docs/tickets/tkt-0010, docs/tickets/tkt-0011, docs/tickets/tkt-0012, docs/tickets/tkt-0026
+Vault: docs/research/analysis/2026-06-10-split-repo-scan-tickets-py-654-lines-rep-analysis
+Vault: docs/research/sources/url-githits-mermaid-coupling-subgraph
+Vault: docs/research/sources/gh-stackingturtles-linearstories
+Vault: docs/research/sources/gh-makeplane-plane
+Spec:  docs/specs/2026-06-10-split-repo-scan-tickets-py-654-lines-rep-spec
+Spec:  docs/specs/2026-06-10-convert-tickets-to-most-human-friendly-t-spec
 cards), and add their own tickets as plain files.
 
 Each ticket's markdown is ground truth. ``parse_ticket()`` derives a PM-facing

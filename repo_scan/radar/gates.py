@@ -5,6 +5,7 @@ the canonical CLI vocabulary; ``gate_cli_parent`` registers shared argparse
 flags from those tuples. ``cli.py`` must not duplicate gate or mode literals.
 
 Vault: docs/tickets/tkt-0015, docs/tickets/tkt-0017, docs/tickets/tkt-0030, docs/tickets/tkt-0033
+Vault: docs/research/sources/gh-humanlayer-humanlayer
 Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-radar-cli-py-repo-spec
 
 Per-repo config in .repo-scan.json:

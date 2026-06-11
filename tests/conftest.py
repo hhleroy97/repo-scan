@@ -1,3 +1,9 @@
+"""Shared fixtures and helpers for the repo-scan test suite.
+
+Vault: docs/research/sources/url-docs-pytest-org-en-stable-reference-fixtures-html
+Vault: docs/research/sources/gh-pytest-dev-pytest
+"""
+
 import subprocess
 import sys
 from pathlib import Path

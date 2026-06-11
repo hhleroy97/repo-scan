@@ -1,7 +1,12 @@
 """B3: full radar loop with the fake-LLM response queue (offline, deterministic).
 
+Vault: docs/research/sources/arxiv-2409.16739
+Vault: docs/research/sources/gh-JetBrains-Research-PyNose
+
 Private ``assert_*`` helpers keep the happy-path integration test readable (Assertion
 Roulette fix) without splitting the artifact graph into micro-tests.
+
+Spec:  docs/specs/2026-06-10-refactor-tests-test-radar-pipeline-py-cc-spec
 """
 
 import json

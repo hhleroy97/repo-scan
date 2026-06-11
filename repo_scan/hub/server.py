@@ -5,6 +5,7 @@ runtime zero-dependency. Reads come straight from the vault; writes go
 through the same decision inbox and ticket APIs the CLI uses, so the
 
 Vault: docs/tickets/tkt-0010, docs/tickets/tkt-0014, docs/tickets/tkt-0028
+Vault: docs/research/sources/url-githits-sse-stdlib-dashboard
 Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-hub-server-py-repo-spec
 dashboard is just another surface — never a second source of truth.
 
@@ -31,6 +32,9 @@ from .contract import (
     API_DOC,
     API_GRAPH,
     API_GRAPH_CHAIN,
+    API_PROVENANCE_AUTOLINK,
+    API_PROVENANCE_IMPACT,
+    API_PROVENANCE_LINT,
     API_EVENTS,
     API_GATE,
     API_PR_PREFIX,
@@ -290,6 +294,27 @@ def make_handler(root: Path, cfg: dict, token: str):
                 if not node_id:
                     return self._json({"error": "id required"}, 400)
                 return self._json(build_chain(root, cfg, node_id))
+
+            if url.path == API_PROVENANCE_LINT:
+                from ..provenance_lint import lint
+                issues = lint(root, cfg)
+                missing = [i for i in issues if i["problem"] == "missing_linked_files"]
+                broken = [i for i in issues if i["problem"] == "broken_link"]
+                return self._json({
+                    "total": len(issues),
+                    "missing": len(missing),
+                    "broken": len(broken),
+                    "broken_details": broken[:10],
+                })
+
+            if url.path == API_PROVENANCE_AUTOLINK:
+                from ..provenance import autolink_orphan_analyses
+                updated = autolink_orphan_analyses(root, cfg)
+                return self._json({"updated": len(updated), "files": updated})
+
+            if url.path == API_PROVENANCE_IMPACT:
+                from .graph import change_impact
+                return self._json(change_impact(root, cfg))
 
             if url.path == API_EVENTS:
                 return self._sse_events()

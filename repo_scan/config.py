@@ -5,7 +5,14 @@ below); they are merged into ``DEFAULT_CONFIG`` and validated separately from
 ``RADAR_CONFIG_KEYS``.
 
 Vault: docs/tickets/tkt-0016, docs/tickets/tkt-0020, docs/tickets/tkt-0024
+Vault: docs/research/analysis/2026-06-10-hidden-seam-repo-scan-config-py-repo-sca-analysis
+Vault: docs/research/analysis/2026-06-10-hidden-seam-pyproject-toml-setup-py-100-analysis
+Vault: docs/research/sources/url-wiki-apidesign-org-wiki-configurationobject
+Vault: docs/research/sources/url-packaging-python-org-en-latest-guides-modernize-setup-py-pro
+Vault: docs/research/sources/url-packaging-python-org-en-latest-discussions-single-source-ver
+Vault: docs/research/sources/gh-pypa-sampleproject
 Spec:  docs/specs/2026-06-10-hidden-seam-repo-scan-config-py-repo-sca-spec
+Spec:  docs/specs/2026-06-10-hidden-seam-pyproject-toml-setup-py-100-spec
 """
 
 import json

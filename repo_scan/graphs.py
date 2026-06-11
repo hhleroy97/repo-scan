@@ -5,6 +5,15 @@ resolve import edges via ``ranking._module_to_file`` — the same rules as
 ``hidden_seams``. ``linkStyle`` indices are assigned after pairs are sorted
 
 Vault: docs/tickets/tkt-0003
+Vault: docs/research/analysis/2026-06-10-refactor-repo-scan-graphs-py-cc-56-3-com-analysis
+Vault: docs/research/sources/url-githits-mermaid-coupling-subgraph
+Vault: docs/research/sources/url-refactoring-com-catalog-movefunction-html
+Vault: docs/research/sources/url-deviq-com-principles-explicit-dependencies-principle
+Vault: docs/research/sources/gh-phoenix-assistant-impact-graph
+Vault: docs/research/sources/gh-zyskarch-pytestarch
+Vault: docs/research/sources/gh-pahen-madge
+Vault: docs/research/sources/gh-David-OConnor-pydeps
+Vault: docs/research/sources/gh-networkx-networkx
 Spec:  docs/specs/2026-06-10-refactor-repo-scan-graphs-py-cc-56-3-com-spec
 and capped so they stay aligned with rendered edges.
 """

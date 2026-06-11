@@ -1,4 +1,7 @@
-"""Token-budgeted single-file digest export (repomix/gitingest-style)."""
+"""Token-budgeted single-file digest export (repomix/gitingest-style).
+
+Vault: docs/research/sources/url-githits-repo-snapshot-token-budget
+"""
 
 from pathlib import Path
 

@@ -5,6 +5,10 @@ docs/research/sources/{id}.md with YAML frontmatter, so Obsidian graph view
 and Dataview see real tags and properties instead of opaque code blocks.
 
 Vault: docs/tickets/tkt-0005
+Vault: docs/research/analysis/2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-analysis
+Vault: docs/research/sources/url-refactoring-com-catalog-splitloop-html
+Vault: docs/research/sources/gh-eyeseast-python-frontmatter
+Vault: docs/research/sources/gh-blacksmithgu-obsidian-dataview
 Spec:  docs/specs/2026-06-10-refactor-repo-scan-radar-sources-py-cc-1-spec
 Index and tags markdown are rebuilt from source files via private helpers.
 """

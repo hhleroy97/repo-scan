@@ -6,6 +6,13 @@ One `git log --numstat` pass yields three signals no static analysis can see:
   co-change degree but no import edge are hidden architectural seams
 - ownership / bus factor: per-file author concentration — knowledge silos
 - code age: days since last touch — stale-but-central files are risky
+
+Vault: docs/research/sources/url-www-ime-usp-br-gerosa-papers-changecoupling-pdf
+Vault: docs/research/sources/url-thoughtbot-com-blog-connascence-as-a-vocabulary-to-discuss-c
+Vault: docs/research/sources/url-codescene-io-docs-guides-technical-change-coupling-html
+Vault: docs/research/sources/gh-adamtornhill-code-maat
+Vault: docs/research/sources/gh-xlab-uiuc-cdep-fse-ae
+Vault: docs/research/sources/arxiv-2411.19099
 """
 
 import time

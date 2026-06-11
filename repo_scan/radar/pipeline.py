@@ -1,6 +1,9 @@
 """The full RADAR pipeline: Research → Analyze → Gate 1 → Draft → Audit → Gate 2 → Record.
 
 Vault: docs/tickets/tkt-0006, docs/tickets/tkt-0017
+Vault: docs/research/analysis/2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-analysis
+Vault: docs/research/sources/url-refactoring-com-catalog-replacefunctionwithcommand-html
+Vault: docs/research/sources/url-humanlayer-advanced-context-engineering
 Spec:  docs/specs/2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-spec
 """
 
