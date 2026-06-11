@@ -71,7 +71,7 @@ repo-scan --version           # print version
 ```
 docs/
   index.md                    # dashboard: identity, ranked files, structure, links
-  scan.json                   # machine-readable sidecar for agents (same data)
+  scan.json                   # machine-readable sidecar (versioned schema)
   digest.md                   # token-budgeted single-file LLM context (--digest)
   reports/
     health.md                 # file sizes, complexity, churn, knowledge map (bus factor)
@@ -105,6 +105,16 @@ ownership/bus-factor, and code age. `reports/coupling.md` renders the top couple
 pairs as a Mermaid network (dashed red edges = hidden seams with no import link;
 gray = import-backed). Coupled pairs with no import edge are also listed in the
 table below the diagram.
+
+### scan.json contract
+
+`scan.json` is the inter-cluster contract: hub, tickets, and radar all read it.
+The schema lives at `repo_scan/schemas/scan.schema.json` and ships with the
+package. Every emitted `scan.json` begins with `"schema_version": 1`. Consumers
+check this at load time and degrade gracefully on mismatch.
+
+**Bump policy:** breaking shape changes (removed/renamed keys, type changes)
+require incrementing `schema_version`. Additive optional fields do not.
 
 ## Tickets
 

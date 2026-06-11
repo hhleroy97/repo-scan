@@ -5,7 +5,7 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-from ..radar.sources import parse_frontmatter
+from ..frontmatter import parse_frontmatter
 
 _TICKET_RE = re.compile(r"tkt-\d{4}")
 _WIKILINK_RE = re.compile(r"\[\[([^\]|]+)")

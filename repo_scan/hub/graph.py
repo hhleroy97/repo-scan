@@ -15,7 +15,7 @@ from pathlib import Path
 from ..citations import citation_index
 from ..provenance import score_node, vault_coverage
 from ..ranking import _module_to_file
-from ..radar.sources import parse_frontmatter
+from ..frontmatter import parse_frontmatter
 
 _WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)")
 _MAX_CODE_NODES = 40

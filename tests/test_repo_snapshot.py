@@ -13,6 +13,7 @@ def _write_scan(repo, ranking=None, **extra):
     docs = repo / "docs"
     docs.mkdir(exist_ok=True)
     payload = {
+        "schema_version": 1,
         "generated_at": "2026-06-10 12:00 UTC",
         "repo": {"name": repo.name, "branch": "main"},
         "languages": {"py": 3},

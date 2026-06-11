@@ -36,16 +36,19 @@ def _commit(repo: Path, files: dict[str, str], msg: str = "c"):
     )
 
 
-def test_config_imports_hub_settings():
-    """config.py imports hub.settings for keys and defaults."""
+def test_config_defines_hub_settings():
+    """config.py defines HUB_CONFIG_KEYS and HUB_DEFAULTS (core layer)."""
     config_path = Path(__file__).resolve().parents[1] / "repo_scan" / "config.py"
-    tree = ast.parse(config_path.read_text())
+    source = config_path.read_text()
+    assert "HUB_CONFIG_KEYS" in source
+    assert "HUB_DEFAULTS" in source
+    tree = ast.parse(source)
     import_froms = {
         node.module
         for node in ast.walk(tree)
         if isinstance(node, ast.ImportFrom) and node.module
     }
-    assert "hub.settings" in import_froms
+    assert "hub.settings" not in import_froms, "config must not import hub (layer violation)"
 
 
 def test_daemon_imports_hub_settings():

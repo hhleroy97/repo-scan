@@ -1,8 +1,8 @@
 """Defaults and .repo-scan.json loading.
 
-Hub/daemon keys and defaults live in ``repo_scan.hub.settings`` (imported
-below); they are merged into ``DEFAULT_CONFIG`` and validated separately from
-``RADAR_CONFIG_KEYS``.
+Hub/daemon keys and their defaults are defined here (core layer) so that
+``load_config`` has no upward imports.  ``hub.settings`` re-exports them for
+backward compatibility.
 
 Vault: docs/tickets/tkt-0016, docs/tickets/tkt-0020, docs/tickets/tkt-0024
 Vault: docs/research/analysis/2026-06-10-hidden-seam-repo-scan-config-py-repo-sca-analysis
@@ -18,8 +18,35 @@ Spec:  docs/specs/2026-06-10-hidden-seam-pyproject-toml-setup-py-100-spec
 import json
 from pathlib import Path
 
-from .hub.settings import HUB_CONFIG_KEYS, HUB_DEFAULTS
 from .utils import warn
+
+HUB_CONFIG_KEYS = frozenset({
+    "serve_host",
+    "serve_port",
+    "daemon_poll_seconds",
+    "daemon_scan_hours",
+    "ntfy_topic",
+    "ntfy_server",
+    "dashboard_url",
+    "vault_autocommit",
+    "max_parallel_acts",
+    "max_parallel_loops",
+})
+
+HUB_DEFAULTS: dict = {
+    "serve_port": 8800,
+    "daemon_poll_seconds": 20,
+    "daemon_scan_hours": 6,
+    "ntfy_server": "https://ntfy.sh",
+    "vault_autocommit": True,
+    "max_parallel_acts": 2,
+    "max_parallel_loops": 2,
+}
+
+
+def cfg_hub(cfg: dict, key: str):
+    """Return a hub config value, falling back to ``HUB_DEFAULTS`` when absent."""
+    return cfg.get(key, HUB_DEFAULTS.get(key))
 
 VERSION = "0.2.0"
 

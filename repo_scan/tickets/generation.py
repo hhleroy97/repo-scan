@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+from ..utils import check_scan_schema_version
 from .board import write_board
 from .constants import METRIC_FINGERPRINT_PREFIXES, OPEN_STATUSES, _SCAN_PROPOSAL_KEYS
 from .io import load_tickets, next_ticket_num, write_ticket
@@ -87,6 +88,8 @@ def fingerprint_still_triggers(root: Path, cfg: dict, fingerprint: str) -> bool:
     try:
         data = json.loads(scan_json.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
+        return True
+    if not check_scan_schema_version(data):
         return True
     proposals = propose_from_scan(cfg, **signals_from_scan_json(data))
     return fingerprint in {p["fingerprint"] for p in proposals}

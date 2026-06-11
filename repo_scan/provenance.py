@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 from .citations import citation_index
-from .radar.sources import parse_frontmatter
+from .frontmatter import parse_frontmatter
 
 _WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)")
 _ALL_SIGNALS = ("evidence", "linked", "cited", "fresh")

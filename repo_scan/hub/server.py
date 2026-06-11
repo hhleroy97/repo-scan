@@ -27,7 +27,7 @@ from urllib.parse import parse_qs, urlparse
 SSE_HEARTBEAT_SECONDS = 15
 
 from ..config import VERSION
-from ..utils import git_branch, header, info, ok
+from ..utils import check_scan_schema_version, git_branch, header, info, ok
 from .contract import (
     API_DOC,
     API_GRAPH,
@@ -71,6 +71,8 @@ def build_state(root: Path, cfg: dict) -> HubState:
     docs = root / cfg["docs_dir"]
 
     scan = _read_json(root, f"{cfg['docs_dir']}/scan.json")
+    if scan and not check_scan_schema_version(scan):
+        scan = {}
     summary = {}
     if scan:
         files = scan.get("files", {})

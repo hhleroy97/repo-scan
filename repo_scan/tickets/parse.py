@@ -7,7 +7,7 @@ Vault: docs/research/sources/arxiv-2411.12924
 import re
 from pathlib import Path
 
-from ..radar.sources import parse_frontmatter
+from ..frontmatter import parse_frontmatter
 from .constants import PLACEHOLDER_CRITERIA
 
 

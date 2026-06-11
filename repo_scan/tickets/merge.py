@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+from ..utils import check_scan_schema_version
 from .generation import fingerprint_still_triggers, is_metric_fingerprint
 from .io import load_tickets
 from .workflow import append_ticket_note, set_ticket_status
@@ -25,6 +26,8 @@ def record_merge_verification(root: Path, cfg: dict, ticket_id: str,
     if scan_json.exists():
         try:
             data = json.loads(scan_json.read_text(encoding="utf-8"))
+            if not check_scan_schema_version(data):
+                data = {}
             curr = summarize_metrics(data.get("files", {}), data.get("complexity", []), cfg)
             delta = compute_delta(prev, curr)
             callout = trend_callout(delta)

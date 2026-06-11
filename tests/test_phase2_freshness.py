@@ -14,6 +14,7 @@ def test_build_act_context_includes_snapshot_and_criteria(tmp_repo):
     docs = tmp_repo / "docs"
     docs.mkdir(exist_ok=True)
     (docs / "scan.json").write_text(json.dumps({
+        "schema_version": 1,
         "generated_at": "2026-06-10 12:00 UTC",
         "repo": {"name": "repo", "branch": "main"},
         "languages": {"py": 1},

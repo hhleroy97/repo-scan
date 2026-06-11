@@ -28,7 +28,7 @@ import sys
 from pathlib import Path
 
 from .config import load_config
-from .radar.sources import parse_frontmatter
+from .frontmatter import parse_frontmatter
 
 
 _VAULT_PATTERNS = (

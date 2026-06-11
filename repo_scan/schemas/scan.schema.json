@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/hhleroy97/repo-scan/main/repo_scan/schemas/scan.schema.json",
+  "title": "repo-scan scan.json contract",
+  "description": "Machine-readable sidecar emitted by repo-scan. Consumed by tickets, radar (repo_snapshot), and hub. Bump schema_version on any breaking shape change; additive optional fields do not require a bump.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "repo", "languages", "files"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "generated_at": { "type": "string", "description": "ISO-8601 timestamp of scan" },
+    "repo": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "remote": { "type": ["string", "null"] },
+        "branch": { "type": ["string", "null"] },
+        "last_commit": { "type": ["string", "null"] },
+        "manifests": { "type": "array", "items": { "type": "string" } },
+        "entry_points": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "languages": {
+      "type": "object",
+      "description": "Map of language name → file count",
+      "additionalProperties": { "type": "integer" }
+    },
+    "files": {
+      "type": "object",
+      "description": "Map of file path → line metrics",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "lines": { "type": "integer" },
+          "blank": { "type": "integer" },
+          "comment": { "type": "integer" }
+        }
+      }
+    },
+    "churn": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "complexity": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "ranking": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "dependency_edges": {
+      "type": "object",
+      "properties": {
+        "python": { "type": "array", "items": { "type": "array" } },
+        "typescript": { "type": "array", "items": { "type": "array" } }
+      },
+      "additionalProperties": true
+    },
+    "behavior": {
+      "type": "object",
+      "properties": {
+        "coupling": { "type": "array", "items": { "type": "object" } },
+        "ownership": { "type": "array", "items": { "type": "object" } },
+        "age_days": { "type": "object", "additionalProperties": { "type": "number" } }
+      },
+      "additionalProperties": true
+    },
+    "citations": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "vault_health": {
+      "type": "object",
+      "properties": {
+        "coverage_pct": { "type": "number" },
+        "score_histogram": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "orphans_by_kind": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "untracked_code_count": { "type": "integer" },
+        "stale_docs_count": { "type": "integer" },
+        "healthy": { "type": "integer" },
+        "docs": { "type": "integer" },
+        "knowledge_debt": { "type": "number" },
+        "thin_citations": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": true
+    },
+    "config": { "type": "object" }
+  },
+  "additionalProperties": true
+}

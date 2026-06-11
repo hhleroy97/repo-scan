@@ -128,3 +128,20 @@ def git_branch(root: Path) -> str:
 def git_last_commit(root: Path) -> str:
     out, _, code = run(["git", "log", "-1", "--pretty=%h %s"], cwd=root)
     return out.strip() if code == 0 else "unknown"
+
+
+EXPECTED_SCAN_SCHEMA_VERSION = 1
+
+
+def check_scan_schema_version(data: dict) -> bool:
+    """Return True if scan.json carries the expected schema_version.
+
+    Logs a warning on mismatch — callers should degrade gracefully
+    (skip dependent features rather than rendering wrong data).
+    """
+    v = data.get("schema_version")
+    if v == EXPECTED_SCAN_SCHEMA_VERSION:
+        return True
+    warn(f"scan.json schema_version {v} != expected "
+         f"{EXPECTED_SCAN_SCHEMA_VERSION} — re-run repo-scan")
+    return False

@@ -19,7 +19,7 @@ def new_ticket(root: Path, cfg: dict, title: str, *, why: str = "",
     act -> PR) picks it up identically. Fingerprinted by kind+title slug so
     re-submitting the same idea dedups instead of duplicating.
     """
-    from ..radar.sources import slugify
+    from ..frontmatter import slugify
     title = title.strip()
     if not title:
         raise ValueError("ticket title required")

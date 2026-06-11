@@ -10,7 +10,7 @@ Spec:  docs/specs/2026-06-10-refactor-repo-scan-radar-pipeline-py-cc-spec
 import json
 from pathlib import Path
 
-from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step, warn, write_doc
+from ..utils import check_scan_schema_version, ensure_dirs, err, header, info, now_date, now_iso, ok, step, warn, write_doc
 from .gates import gate, gate_mode
 from .llm import LLMError, complete, complete_json
 from .research import repo_snapshot, run_research, write_run_log
@@ -514,6 +514,8 @@ def pick_candidate(root: Path, cfg: dict) -> str | None:
     try:
         data = json.loads(scan_json.read_text())
     except json.JSONDecodeError:
+        return None
+    if not check_scan_schema_version(data):
         return None
     churn = {c["file"]: c["commits"] for c in data.get("churn", [])}
     cc: dict[str, int] = {}

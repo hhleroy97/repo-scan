@@ -13,7 +13,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from ..utils import ensure_dirs, err, header, info, now_date, now_iso, ok, step, write_doc
+from ..utils import check_scan_schema_version, ensure_dirs, err, header, info, now_date, now_iso, ok, step, write_doc
 from .fetchers import FetchError, fetch
 from .llm import LLMError, complete_json, summarize_source
 from .sources import frontmatter, rebuild_research_index, slugify, write_source
@@ -83,6 +83,10 @@ def repo_snapshot(root: Path, cfg: dict, max_chars: int | None = None) -> str:
     try:
         data = json.loads(scan_json.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
+        text = repo_context_snippet(root, cfg, max_chars)
+        _SNAPSHOT_CACHE[digest] = text
+        return text
+    if not check_scan_schema_version(data):
         text = repo_context_snippet(root, cfg, max_chars)
         _SNAPSHOT_CACHE[digest] = text
         return text

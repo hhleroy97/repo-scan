@@ -5,7 +5,7 @@ from pathlib import Path
 
 import repo_scan.tickets as tickets_pkg
 
-from ..radar.sources import frontmatter
+from ..frontmatter import frontmatter
 from ..utils import write_doc
 from .constants import tickets_dir
 from .evidence import ticket_evidence_diagrams

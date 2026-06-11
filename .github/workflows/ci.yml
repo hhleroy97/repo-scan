@@ -27,5 +27,8 @@ jobs:
       - name: Install madge (TS dependency graphs)
         run: npm install -g madge
 
+      - name: Lint import layer contracts
+        run: lint-imports
+
       - name: Run tests
         run: pytest tests/ -q

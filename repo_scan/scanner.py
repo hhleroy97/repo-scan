@@ -31,8 +31,6 @@ from .identity import get_directory_tree
 from .languages import detect_languages, get_line_counts
 from .ranking import rank_files
 from .tests_map import find_tested_files, is_test_file
-from .tickets import generate_tickets
-from .citations import scan_citations
 from .report_pipeline import ReportPayload, write_scan_reports
 from .trends import compute_delta, load_previous_summary, summarize_metrics
 from .utils import BOLD, GREEN, ensure_dirs, fmt, header, info, ok, step, warn
@@ -163,6 +161,7 @@ def _rank_files(ctx: ScanContext) -> None:
 
 
 def _scan_citations(ctx: ScanContext) -> None:
+    from .citations import scan_citations
     step("Scanning code → doc citations")
     ctx.citations = scan_citations(ctx.root, ctx.cfg, ctx.line_counts)
     ok(f"{len(ctx.citations)} citation(s)")
@@ -217,6 +216,7 @@ def _maybe_run_radar(ctx: ScanContext) -> None:
 def _maybe_run_tickets(ctx: ScanContext) -> None:
     if not ctx.cfg.get("tickets_enabled", True):
         return
+    from .tickets import generate_tickets
     created, resolved = generate_tickets(ctx.root, ctx.cfg, {
         "line_counts": ctx.line_counts, "ranking": ctx.ranking, "churn": ctx.churn,
         "complexity": ctx.complexity, "tested": ctx.tested, "behavior": ctx.behavior,

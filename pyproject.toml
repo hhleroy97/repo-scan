@@ -10,16 +10,90 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
+# Forward-compatible markers for cluster rotation. No extra deps today
+# (runtime is stdlib-only), but they let consumers declare which clusters
+# they need when these eventually ship as separate distributions.
+vault = []
+tickets = []
+radar = []
+hub = []
+all = ["repo-scan[vault,tickets,radar,hub]"]
 # dev/test only — runtime stays zero-dependency.
 # syrupy 5.x requires pytest>=8 (snapshot characterization tests).
-dev = ["pytest>=8", "syrupy>=5", "radon", "lizard"]
+dev = ["pytest>=8", "syrupy>=5", "radon", "lizard", "import-linter>=2.0", "jsonschema>=4"]
 
 [project.scripts]
 repo-scan = "repo_scan:main"
 radar = "repo_scan.radar.cli:main"
 
 [tool.setuptools]
-packages = ["repo_scan", "repo_scan.radar", "repo_scan.hub"]
+packages = ["repo_scan", "repo_scan.radar", "repo_scan.hub", "repo_scan.hub.ui", "repo_scan.tickets", "repo_scan.schemas"]
 
 [tool.setuptools.package-data]
 "repo_scan.hub" = ["static/*.js"]
+"repo_scan.schemas" = ["*.json"]
+
+# ── Import layer contracts ────────────────────────────────────────────
+# Dependency DAG: hub → radar → {tickets, vault} → core
+# Composition-layer modules (scanner, cli, __init__) are allowed to
+# import any cluster and are intentionally excluded from core contracts.
+
+[tool.importlinter]
+root_package = "repo_scan"
+
+[[tool.importlinter.contracts]]
+name = "core must not import vault, tickets, radar, or hub"
+type = "forbidden"
+source_modules = [
+    "repo_scan.languages",
+    "repo_scan.graphs",
+    "repo_scan.ranking",
+    "repo_scan.complexity",
+    "repo_scan.churn",
+    "repo_scan.behavior",
+    "repo_scan.identity",
+    "repo_scan.tests_map",
+    "repo_scan.digest",
+    "repo_scan.handoff",
+    "repo_scan.trends",
+    "repo_scan.config",
+    "repo_scan.utils",
+    "repo_scan.frontmatter",
+    "repo_scan.hooks",
+]
+forbidden_modules = [
+    "repo_scan.citations",
+    "repo_scan.provenance",
+    "repo_scan.provenance_lint",
+    "repo_scan.provenance_audit",
+    "repo_scan.tickets",
+    "repo_scan.radar",
+    "repo_scan.hub",
+]
+
+[[tool.importlinter.contracts]]
+name = "vault must not import tickets, radar, or hub"
+type = "forbidden"
+source_modules = [
+    "repo_scan.citations",
+    "repo_scan.provenance",
+    "repo_scan.provenance_lint",
+    "repo_scan.provenance_audit",
+]
+forbidden_modules = [
+    "repo_scan.tickets",
+    "repo_scan.radar",
+    "repo_scan.hub",
+]
+
+[[tool.importlinter.contracts]]
+name = "tickets must not import radar or hub"
+type = "forbidden"
+source_modules = ["repo_scan.tickets"]
+forbidden_modules = ["repo_scan.radar", "repo_scan.hub"]
+
+# NOTE: "radar must not import hub" is a known seam — radar.act,
+# radar.pipeline, radar.gates, radar.llm, and radar.research all use
+# hub.progress/state/telemetry for live monitoring. Fixing requires
+# extracting abstract callbacks into core. Filed as a future task.
+# radar.cli is composition-layer (launches hub.server/daemon/tui).
