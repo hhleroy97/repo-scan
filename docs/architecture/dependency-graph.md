@@ -1,5 +1,5 @@
 # Dependency graph
-_Generated 2026-06-10 21:57 UTC_
+_Generated 2026-06-11 01:31 UTC_
 
 _Node color = PageRank tier: red = hub, amber = mid, gray = leaf._
 
@@ -23,6 +23,11 @@ graph TD
   repo_scan_report_pipeline["report_pipeline"] --> repo_scan_trends["trends"]
   repo_scan_report_pipeline["report_pipeline"] --> repo_scan_writers["writers"]
   repo_scan_languages["languages"] --> repo_scan_utils["utils"]
+  repo_scan_provenance_audit["provenance_audit"] --> repo_scan_citations["citations"]
+  repo_scan_provenance_audit["provenance_audit"] --> repo_scan_config["config"]
+  repo_scan_provenance_audit["provenance_audit"] --> repo_scan_provenance["provenance"]
+  repo_scan_provenance_audit["provenance_audit"] --> repo_scan_provenance_lint["provenance_lint"]
+  repo_scan_provenance_audit["provenance_audit"] --> repo_scan_utils["utils"]
   repo_scan_scanner["scanner"] --> repo_scan_behavior["behavior"]
   repo_scan_scanner["scanner"] --> repo_scan_churn["churn"]
   repo_scan_scanner["scanner"] --> repo_scan_complexity["complexity"]
@@ -47,6 +52,9 @@ graph TD
   repo_scan_graphs["graphs"] --> repo_scan_utils["utils"]
   repo_scan_provenance["provenance"] --> repo_scan_citations["citations"]
   repo_scan_provenance["provenance"] --> repo_scan_radar_sources["sources"]
+  repo_scan_provenance_lint["provenance_lint"] --> repo_scan_config["config"]
+  repo_scan_provenance_lint["provenance_lint"] --> repo_scan_radar_sources["sources"]
+  repo_scan_provenance_lint["provenance_lint"] --> repo_scan_utils["utils"]
   repo_scan_trends["trends"] --> repo_scan_utils["utils"]
   repo_scan_behavior["behavior"] --> repo_scan_utils["utils"]
   repo_scan_complexity["complexity"] --> repo_scan_utils["utils"]
@@ -111,6 +119,8 @@ graph TD
   repo_scan_hub_server["server"] --> repo_scan_trends["trends"]
   repo_scan_hub_server["server"] --> repo_scan_hub_events["events"]
   repo_scan_hub_server["server"] --> repo_scan_hub_graph["graph"]
+  repo_scan_hub_server["server"] --> repo_scan_provenance_lint["provenance_lint"]
+  repo_scan_hub_server["server"] --> repo_scan_provenance["provenance"]
   repo_scan_hub_server["server"] --> repo_scan_hub_daemon["daemon"]
   repo_scan_hub_progress["progress"] --> repo_scan_utils["utils"]
   repo_scan_hub_progress["progress"] --> repo_scan_hub_state["state"]
@@ -127,6 +137,8 @@ graph TD
   repo_scan_radar_cli["cli"] --> repo_scan_hub_tui["tui"]
   repo_scan_radar_cli["cli"] --> repo_scan_hub_daemon["daemon"]
   repo_scan_radar_cli["cli"] --> repo_scan_hub_server["server"]
+  repo_scan_radar_cli["cli"] --> repo_scan_provenance_audit["provenance_audit"]
+  repo_scan_radar_cli["cli"] --> repo_scan_provenance_lint["provenance_lint"]
   repo_scan_radar_pipeline["pipeline"] --> repo_scan_utils["utils"]
   repo_scan_radar_pipeline["pipeline"] --> repo_scan_radar_gates["gates"]
   repo_scan_radar_pipeline["pipeline"] --> repo_scan_radar_llm["llm"]
@@ -191,6 +203,7 @@ graph TD
   repo_scan_tickets_generation["generation"] --> repo_scan_tickets_propose["propose"]
   repo_scan_tickets_generation["generation"] --> repo_scan_tickets_workflow["workflow"]
   tests_conftest["conftest"] --> repo_scan["repo_scan"]
+  tests_test_provenance_audit["test_provenance_audit"] --> repo_scan_provenance_audit["provenance_audit"]
   tests_test_prs["test_prs"] --> repo_scan_config["config"]
   tests_test_prs["test_prs"] --> repo_scan_hub["hub"]
   tests_test_prs["test_prs"] --> repo_scan_hub_prs["prs"]
@@ -202,6 +215,7 @@ graph TD
   tests_test_scanner_unit["test_scanner_unit"] --> repo_scan_scanner["scanner"]
   tests_test_scanner_unit["test_scanner_unit"] --> tests_conftest["conftest"]
   tests_test_scanner_unit["test_scanner_unit"] --> tests_test_writers_snapshots["test_writers_snapshots"]
+  tests_test_orphan_autolinker["test_orphan_autolinker"] --> repo_scan_provenance["provenance"]
   tests_test_languages["test_languages"] --> repo_scan_config["config"]
   tests_test_languages["test_languages"] --> repo_scan_languages["languages"]
   tests_test_languages["test_languages"] --> repo_scan["repo_scan"]
@@ -277,6 +291,7 @@ graph TD
   tests_test_agentic_loop_mermaid["test_agentic_loop_mermaid"] --> repo_scan_hub_agentic_loop["agentic_loop"]
   tests_test_packaging["test_packaging"] --> repo_scan_behavior["behavior"]
   tests_test_packaging["test_packaging"] --> repo_scan_config["config"]
+  tests_test_ticket_linked_files["test_ticket_linked_files"] --> repo_scan_tickets_io["io"]
   tests_test_scan["test_scan"] --> repo_scan["repo_scan"]
   tests_test_provenance["test_provenance"] --> repo_scan_config["config"]
   tests_test_provenance["test_provenance"] --> repo_scan_provenance["provenance"]
@@ -297,6 +312,7 @@ graph TD
   tests_test_hub_act_run["test_hub_act_run"] --> repo_scan_hub["hub"]
   tests_test_hub_act_run["test_hub_act_run"] --> repo_scan_hub_act_run["act_run"]
   tests_test_hub_act_run["test_hub_act_run"] --> repo_scan_hub_state["state"]
+  tests_test_provenance_lint["test_provenance_lint"] --> repo_scan_provenance_lint["provenance_lint"]
   tests_test_radar_pipeline["test_radar_pipeline"] --> repo_scan_config["config"]
   tests_test_radar_pipeline["test_radar_pipeline"] --> repo_scan_radar_pipeline["pipeline"]
   tests_test_radar_pipeline["test_radar_pipeline"] --> repo_scan_radar_sources["sources"]
@@ -358,5 +374,5 @@ graph TD
   classDef cold fill:#d6dbdf,stroke:#85929e,color:#1a1a1a
   class repo_scan_utils hot
   class repo_scan_config,repo_scan_hub_state warm
-  class repo_scan,repo_scan_behavior,repo_scan_churn,repo_scan_citations,repo_scan_cli,repo_scan_complexity,repo_scan_digest,repo_scan_graphs,repo_scan_handoff,repo_scan_hooks,repo_scan_hub,repo_scan_hub_act_run,repo_scan_hub_agentic_loop,repo_scan_hub_contract,repo_scan_hub_daemon,repo_scan_hub_events,repo_scan_hub_gate_drawer,repo_scan_hub_graph,repo_scan_hub_notify,repo_scan_hub_progress,repo_scan_hub_prs,repo_scan_hub_server,repo_scan_hub_settings,repo_scan_hub_telemetry,repo_scan_hub_tui,repo_scan_hub_ui,repo_scan_identity,repo_scan_languages,repo_scan_provenance,repo_scan_radar_act,repo_scan_radar_cli,repo_scan_radar_fetchers,repo_scan_radar_gates,repo_scan_radar_llm,repo_scan_radar_pipeline,repo_scan_radar_research,repo_scan_radar_sources,repo_scan_ranking,repo_scan_report_pipeline,repo_scan_scanner,repo_scan_tests_map,repo_scan_tickets,repo_scan_tickets_board,repo_scan_tickets_cli,repo_scan_tickets_constants,repo_scan_tickets_evidence,repo_scan_tickets_generation,repo_scan_tickets_io,repo_scan_tickets_merge,repo_scan_tickets_parse,repo_scan_tickets_propose,repo_scan_tickets_workflow,repo_scan_trends,repo_scan_writers,tests_conftest,tests_support_act_fixtures,tests_test_act,tests_test_agentic_loop_mermaid,tests_test_behavior,tests_test_citations,tests_test_daemon,tests_test_gate_drawer,tests_test_graphs,tests_test_hub,tests_test_hub_act_run,tests_test_hub_contract,tests_test_hub_graph,tests_test_hub_settings,tests_test_hub_ui,tests_test_intent_governance,tests_test_languages,tests_test_llm_routing,tests_test_packaging,tests_test_phase2_freshness,tests_test_phase_a,tests_test_portability,tests_test_provenance,tests_test_prs,tests_test_radar_cli_gates,tests_test_radar_full,tests_test_radar_gates,tests_test_radar_ingest,tests_test_radar_llm,tests_test_radar_pipeline,tests_test_repo_snapshot,tests_test_report_pipeline,tests_test_scan,tests_test_scanner_snapshots,tests_test_scanner_unit,tests_test_sources,tests_test_telemetry,tests_test_tests_map,tests_test_tickets,tests_test_tickets_workflow,tests_test_trend_sparkline,tests_test_trends,tests_test_tui,tests_test_visuals,tests_test_writers_snapshots cold
+  class repo_scan,repo_scan_behavior,repo_scan_churn,repo_scan_citations,repo_scan_cli,repo_scan_complexity,repo_scan_digest,repo_scan_graphs,repo_scan_handoff,repo_scan_hooks,repo_scan_hub,repo_scan_hub_act_run,repo_scan_hub_agentic_loop,repo_scan_hub_contract,repo_scan_hub_daemon,repo_scan_hub_events,repo_scan_hub_gate_drawer,repo_scan_hub_graph,repo_scan_hub_notify,repo_scan_hub_progress,repo_scan_hub_prs,repo_scan_hub_server,repo_scan_hub_settings,repo_scan_hub_telemetry,repo_scan_hub_tui,repo_scan_hub_ui,repo_scan_identity,repo_scan_languages,repo_scan_provenance,repo_scan_provenance_audit,repo_scan_provenance_lint,repo_scan_radar_act,repo_scan_radar_cli,repo_scan_radar_fetchers,repo_scan_radar_gates,repo_scan_radar_llm,repo_scan_radar_pipeline,repo_scan_radar_research,repo_scan_radar_sources,repo_scan_ranking,repo_scan_report_pipeline,repo_scan_scanner,repo_scan_tests_map,repo_scan_tickets,repo_scan_tickets_board,repo_scan_tickets_cli,repo_scan_tickets_constants,repo_scan_tickets_evidence,repo_scan_tickets_generation,repo_scan_tickets_io,repo_scan_tickets_merge,repo_scan_tickets_parse,repo_scan_tickets_propose,repo_scan_tickets_workflow,repo_scan_trends,repo_scan_writers,tests_conftest,tests_support_act_fixtures,tests_test_act,tests_test_agentic_loop_mermaid,tests_test_behavior,tests_test_citations,tests_test_daemon,tests_test_gate_drawer,tests_test_graphs,tests_test_hub,tests_test_hub_act_run,tests_test_hub_contract,tests_test_hub_graph,tests_test_hub_settings,tests_test_hub_ui,tests_test_intent_governance,tests_test_languages,tests_test_llm_routing,tests_test_orphan_autolinker,tests_test_packaging,tests_test_phase2_freshness,tests_test_phase_a,tests_test_portability,tests_test_provenance,tests_test_provenance_audit,tests_test_provenance_lint,tests_test_prs,tests_test_radar_cli_gates,tests_test_radar_full,tests_test_radar_gates,tests_test_radar_ingest,tests_test_radar_llm,tests_test_radar_pipeline,tests_test_repo_snapshot,tests_test_report_pipeline,tests_test_scan,tests_test_scanner_snapshots,tests_test_scanner_unit,tests_test_sources,tests_test_telemetry,tests_test_tests_map,tests_test_ticket_linked_files,tests_test_tickets,tests_test_tickets_workflow,tests_test_trend_sparkline,tests_test_trends,tests_test_tui,tests_test_visuals,tests_test_writers_snapshots cold
 ```

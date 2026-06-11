@@ -14,6 +14,9 @@ kanban-plugin: board
 - [ ] [[tkt-0034|Split repo_scan/hub/static/mermaid.min.js (2028 lines)]]
 - [ ] [[tkt-0035|Knowledge silo: repo_scan/hub/state.py (hartley.leroy1997@gmail.com owns 100%)]]
 - [ ] [[tkt-0036|Knowledge silo: repo_scan/radar/research.py (hartley.leroy1997@gmail.com owns 100%)]]
+- [ ] [[tkt-0037|Hidden seam: repo_scan/graphs.py <-> repo_scan/languages.py (73% coupled)]]
+- [ ] [[tkt-0038|Hidden seam: repo_scan/radar/gates.py <-> repo_scan/radar/research.py (50% coupled)]]
+- [ ] [[tkt-0039|Hidden seam: repo_scan/radar/research.py <-> tests/test_radar_pipeline.py (50% coupled)]]
 
 ## Approved
 
@@ -21,8 +24,8 @@ kanban-plugin: board
 ## In progress
 
 - [ ] [[tkt-0018|Hidden seam: repo_scan/hub/daemon.py <-> tests/test_act.py (70% coupled)]]
-- [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]]
-- [ ] [[tkt-0026|Split repo_scan/tickets.py (654 lines)]]
+- [ ] [[tkt-0025|Split repo_scan/hub/ui.py (706 lines)]] — **metrics resolved, ready to close**
+- [ ] [[tkt-0026|Split repo_scan/tickets/__init__.py (654 lines)]] — **metrics resolved, ready to close**
 
 ## Done
 
