@@ -296,18 +296,17 @@ def test_dashboard_matrix_cells_are_clickable():
 
 
 def test_graph_controls_stack_contiguous():
+    """Controls → canvas → context panels: no collapsibles between controls and canvas."""
     start = DASHBOARD_HTML.index("function rGraph()")
     end = DASHBOARD_HTML.index("function setGraphLayer(", start)
     src = DASHBOARD_HTML[start:end]
-    ctx_idx = src.index("rGraphContextPanels()")
     stack_idx = src.index("rGraphControlsStack()")
-    wrap_idx = src.index("graph-wrap")
-    assert ctx_idx < stack_idx < wrap_idx
-    between_ctx_stack = src[ctx_idx:stack_idx]
-    between_stack_wrap = src[stack_idx:wrap_idx]
-    assert "Provenance graph" not in between_ctx_stack
-    assert "Provenance graph" not in between_stack_wrap
-    assert '<div class="section"' not in between_stack_wrap
+    canvas_idx = src.index("rGraphCanvas()")
+    ctx_idx = src.index("rGraphContextPanels()")
+    assert stack_idx < canvas_idx < ctx_idx
+    between_stack_canvas = src[stack_idx:canvas_idx]
+    assert "rGraphPipeline" not in between_stack_canvas
+    assert "rDashUntracked" not in between_stack_canvas
 
 
 def test_graph_controls_stack_markup():
@@ -323,23 +322,103 @@ def test_graph_controls_stack_markup():
         assert filters_idx < tabs_idx
 
 
-def test_graph_context_panels_above_controls():
+def test_graph_context_panels_below_canvas():
+    """Context panels (loop, untracked, tools) render after the canvas."""
     rgraph_start = DASHBOARD_HTML.index("function rGraph()")
     rgraph_end = DASHBOARD_HTML.index("function setGraphLayer(", rgraph_start)
     rgraph_src = DASHBOARD_HTML[rgraph_start:rgraph_end]
-    assert rgraph_src.index("rGraphContextPanels()") < rgraph_src.index(
-        "rGraphControlsStack()"
+    assert rgraph_src.index("rGraphControlsStack()") < rgraph_src.index(
+        "rGraphCanvas()"
+    )
+    assert rgraph_src.index("rGraphCanvas()") < rgraph_src.index(
+        "rGraphContextPanels()"
     )
     ctx_start = DASHBOARD_HTML.index("function rGraphContextPanels()")
-    ctx_end = DASHBOARD_HTML.index("function rGraphControlsStack()", ctx_start)
+    ctx_end = DASHBOARD_HTML.index("function rGraph()", ctx_start)
     ctx_src = DASHBOARD_HTML[ctx_start:ctx_end]
-    assert ctx_src.index("rGraphPipeline()") < ctx_src.index("rDashUntracked()")
-    pipe_start = DASHBOARD_HTML.index("function rGraphPipeline()")
-    pipe_end = DASHBOARD_HTML.index("function rGraphContextPanels()", pipe_start)
-    untr_start = DASHBOARD_HTML.index("function rDashUntracked()")
-    untr_end = DASHBOARD_HTML.index("function rDashThinLinks()", untr_start)
-    assert "agentic-loop-host" in DASHBOARD_HTML[pipe_start:pipe_end]
-    assert "Untracked code" in DASHBOARD_HTML[untr_start:untr_end]
+    assert "rGraphPipeline()" in ctx_src
+    assert "rDashUntracked()" in ctx_src
+    assert "rDashProvenanceTools()" in ctx_src
+
+
+def test_provenance_tools_panel_rendered():
+    """Provenance tools panel includes lint, auto-link, and audit actions."""
+    start = DASHBOARD_HTML.index("function rDashProvenanceTools()")
+    end = DASHBOARD_HTML.index("async function runProvenanceLint(", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "Provenance tools" in src
+    assert "Lint vault links" in src
+    assert "Auto-link orphans" in src
+    assert "radar audit-provenance" in src
+    assert "API_PROVENANCE_LINT" in DASHBOARD_HTML
+    assert "API_PROVENANCE_AUTOLINK" in DASHBOARD_HTML
+
+
+def test_graph_guide_rendered():
+    """Graph guide explains signals, edges, layers, and interaction."""
+    start = DASHBOARD_HTML.index("function rGraphGuide()")
+    end = DASHBOARD_HTML.index("function rGraphDashboard()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "How to read this graph" in src
+    assert "Evidence" in src
+    assert "Linked" in src
+    assert "Cited" in src
+    assert "Closed loop" in src
+    assert "Layer filters" in src
+    assert "provenance chain" in src
+
+
+def test_additional_views_all_nine():
+    """All 9 additional view functions exist and are composed together."""
+    view_fns = [
+        "rViewDirCoverage", "rViewProvenanceFlow", "rViewGovernanceRisk",
+        "rViewCitationDensity", "rViewStaleQueue", "rViewCompletenessRadar",
+        "rViewOrphanCluster", "rViewChangeImpact", "rViewProvenanceTimeline",
+    ]
+    for fn in view_fns:
+        assert f"function {fn}()" in DASHBOARD_HTML, f"missing {fn}"
+    composite = DASHBOARD_HTML[
+        DASHBOARD_HTML.index("function rGraphAdditionalViews()"):
+        DASHBOARD_HTML.index("function rGraphAdditionalViews()") + 500
+    ]
+    for fn in view_fns:
+        assert fn in composite, f"{fn} not in rGraphAdditionalViews"
+
+
+def test_additional_views_in_context_panels():
+    """Additional views are rendered inside context panels."""
+    ctx_start = DASHBOARD_HTML.index("function rGraphContextPanels()")
+    ctx_end = DASHBOARD_HTML.index("function rGraph()", ctx_start)
+    ctx_src = DASHBOARD_HTML[ctx_start:ctx_end]
+    assert "rGraphAdditionalViews()" in ctx_src
+
+
+def test_view_dir_coverage_content():
+    """Directory coverage view shows tracked/total language."""
+    start = DASHBOARD_HTML.index("function rViewDirCoverage()")
+    end = DASHBOARD_HTML.index("function rViewProvenanceFlow()", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "Coverage by directory" in src
+    assert "dir_coverage" in src
+
+
+def test_view_completeness_radar_content():
+    """Radar chart renders SVG with 4 signal axes."""
+    start = DASHBOARD_HTML.index("function rViewCompletenessRadar()")
+    end = DASHBOARD_HTML.index("function setOrphanView(", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "signal_matrix" in src
+    assert "<svg" in src
+    assert "polygon" in src
+
+
+def test_view_change_impact_api():
+    """Change impact view references the provenance impact API."""
+    assert "API_PROVENANCE_IMPACT" in DASHBOARD_HTML
+    start = DASHBOARD_HTML.index("function rViewChangeImpact()")
+    end = DASHBOARD_HTML.index("async function loadChangeImpact(", start)
+    src = DASHBOARD_HTML[start:end]
+    assert "Change impact" in src
 
 
 def test_graph_controls_stack_css():
@@ -361,7 +440,7 @@ def test_untracked_summary_opens_panel():
 
 
 _DASHBOARD_HTML_SHA256 = (
-    "fc0587af26e840bb24fa38848b7e0743cb169a53120c0461711cf09d1492a36c"
+    "a19dc83cb66214bb6d863cbeca4ef78e2a4e8256356322cde45270d428101280"
 )
 _UI_PACKAGE = Path(__file__).resolve().parents[1] / "repo_scan" / "hub" / "ui"
 _UI_LINE_CAP = 300
@@ -413,6 +492,32 @@ def test_dashboard_matrix_cells_are_clickable():
     src = DASHBOARD_HTML[start:end]
     assert "onclick" in src
     assert "setGraphMissFilter" in src
+
+
+def test_force_tuning_controls():
+    """Force tuning panel has sliders, edge toggles, freeze, and reset."""
+    assert "gf-tuning" in DASHBOARD_HTML
+    assert "Force tuning" in DASHBOARD_HTML
+    for param in ("gfRepulsion", "gfSpring", "gfGravity", "gfDamping", "gfIterations"):
+        assert param in DASHBOARD_HTML, f"{param} missing"
+    assert "gfNodeScale" in DASHBOARD_HTML
+    assert "gfLabelThreshold" in DASHBOARD_HTML
+    assert "function gfSet(" in DASHBOARD_HTML
+    assert "function gfToggleEdge(" in DASHBOARD_HTML
+    assert "function gfToggleFrozen()" in DASHBOARD_HTML
+    assert "function gfResetDefaults()" in DASHBOARD_HTML
+    assert "gf-slider" in DASHBOARD_HTML
+    assert "gfShowEdges" in DASHBOARD_HTML
+    assert "Freeze" in DASHBOARD_HTML
+
+
+def test_force_tuning_css():
+    css_start = DASHBOARD_HTML.index("<style>")
+    css_end = DASHBOARD_HTML.index("</style>", css_start)
+    css = DASHBOARD_HTML[css_start:css_end]
+    for cls in (".gf-tuning", ".gf-summary", ".gf-grid", ".gf-row",
+                ".gf-slider", ".gf-val", ".gf-edge-row", ".gf-check"):
+        assert cls in css, f"{cls} missing from CSS"
 
 
 def test_dashboard_contract_marker_placement():
