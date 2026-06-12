@@ -1,24 +1,25 @@
 # Repo index
-_Last scan: 2026-06-11 15:13 UTC_
+_Last scan: 2026-06-12 14:53 UTC_
 
 > Repo intelligence tool. Run it against any codebase — analyzes structure, generates dependency and call graphs as Mermaid diagrams, scores complexity, tracks git churn, writes everything to `docs/` committed to git and readable in Obsidian.
 
 > [!warning] 1 file(s) exceed 600 lines — see [[reports/health]]
 > Largest: `repo_scan/hub/static/mermaid.min.js` (2028 lines)
 
-> [!tip] No metric changes since last scan
+> [!note] Since last scan (2026-06-11 15:13 UTC)
+> lines +256, files +1, hotspot functions 0, critical files 0
 
 ## Overview
 
 | Metric | Value |
 |--------|-------|
-| Source files | 133 |
-| Total lines | 19,758 |
-| Languages | TS: 1, PY: 132 |
+| Source files | 134 |
+| Total lines | 20,014 |
+| Languages | TS: 1, PY: 133 |
 | Large files (>300 lines) | 14 |
 | Critical files (>600 lines) | 1 |
 | Branch | main |
-| Last commit | db06a3f docs: documentation pass — vault citations, frontmatter, provenance lint |
+| Last commit | ddd7727 vault: scheduled scan |
 | Remote | https://github.com/hhleroy97/repo-scan.git |
 | Manifests | `pyproject.toml` |
 
@@ -222,7 +223,9 @@ repo-scan/
 │   │   ├── tkt-0036.md
 │   │   ├── tkt-0037.md
 │   │   ├── tkt-0038.md
-│   │   └── tkt-0039.md
+│   │   ├── tkt-0039.md
+│   │   ├── tkt-0040.md
+│   │   └── tkt-0041.md
 │   ├── digest.md
 │   ├── index.md
 │   ├── NORTH_STAR.md
@@ -233,8 +236,6 @@ repo-scan/
 │   │   ├── static/
 │   │   ├── ui/
 │   │   ├── __init__.py
-│   │   ├── act_run.py
-│   │   ├── agentic_loop.py
 │   │   └── …
 │   └── …
 └── …

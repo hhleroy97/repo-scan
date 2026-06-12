@@ -1,5 +1,5 @@
 # RADAR candidates
-_Generated 2026-06-11 15:13 UTC_
+_Generated 2026-06-12 14:53 UTC_
 
 Files that are both high-churn and high-complexity — the most valuable
 targets for external research. Consumed by `radar` as a trigger feed.

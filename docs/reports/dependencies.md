@@ -1,5 +1,5 @@
 # Dependency graph
-_Generated 2026-06-11 15:13 UTC_
+_Generated 2026-06-12 14:53 UTC_
 
 _Node color = PageRank tier: red = hub, amber = mid, gray = leaf._
 
